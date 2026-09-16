@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0482C982D2
-	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 22:30:52 +0000 (UTC)
-Received: from mail-qk2-f36.google.com (mail-qk2-f36.google.com [74.125.230.228])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.27096.1789597848194371577
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9403AC982C1
+	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 22:31:03 +0000 (UTC)
+Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com [74.125.230.205])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.27129.1789597854684390678
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 15:30:48 -0700
+ Wed, 16 Sep 2026 15:30:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=QnYvo1D7;
- spf=pass (domain: konsulko.com, ip: 74.125.230.228, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk2-f36.google.com with SMTP id af79cd13be357-93910cadeb7so19070985a.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 15:30:48 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=p4DloOgQ;
+ spf=pass (domain: konsulko.com, ip: 74.125.230.205, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk2-f13.google.com with SMTP id af79cd13be357-93910a0cb7aso15221685a.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 15:30:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789597847; x=1790202647; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1789597854; x=1790202654; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=8SfJqpNNlZfm+F3fWHxrloIYqLX19PTFGzMoF+ExH0g=;
-        b=QnYvo1D7z/1sCaiJ0euImvOgidQt7tKIFv07TdU3+kbAze+kSkCzBuH+xTtFJ9KH5W
-         +zm+/RNPn3AHfuRJ/MBfJipO7msDgkJ182oEZasQm5W9zrnDI6Rm6nCzga+mR7AAdvqE
-         xo+HMa0us+a8WBB5sGfb5EXV7KacIBr+vGXl4=
+        bh=hszUt/DVlclh2KPOqFXHNnGL7bF2bwV2ABKNyTxbDPc=;
+        b=p4DloOgQSIm5TRdKjtRxQhR/mFgDSnQALSTzSp40+fvFvBEJkjo1/DNeTUBsCXlz+G
+         Rh9cPoH99FkMuLhKEqGbCncvCOp+0Z1SDDp7bB6elHUggEkLNFwYYzz3GgPiVIy/m4YR
+         Y1enf6Jzgc/SfPouG8zS1Lq5iX6mc9Xsg8rsY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789597847; x=1790202647;
+        d=1e100.net; s=20260707; t=1789597854; x=1790202654;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=8SfJqpNNlZfm+F3fWHxrloIYqLX19PTFGzMoF+ExH0g=;
-        b=1Ac37aOSg2nzZ8lhy3ehqHiFhKcu1NuySxCPgh7P1BrdRSjWRUNUeuP5/dkytAflWW
-         CqOIDX/GA6U6GSy2HYADTomBHgpeJ9TrFcV0T7xXYhyS5y3Pyg+qo3f7cmemGhUcBjMm
-         cbqGALGUAE1CV1mf8PK2UOSv53ubVs1olIlyrEWN3017WOglqLqkLisjRqJ/VGlZFEjZ
-         ynP9MvsZUSlcqSL9EMgYSCnCXLQK2tHHRJsecOsdrjSGfRRlh2xpSpTS4qb3xVJK80ZC
-         //wrj+axeyFVn5JVZLAWXjOys0HcuDMzMoGac3DIihD+UPHcgcqhVDotN1uIX2EXylMm
-         k4HA==
-X-Gm-Message-State: AFuF++nYnVeXL/+y2FBnBuYTF2YibU5rQLKpTBA4WEsnQuCLk459sI9r
-	wrQan5O8klvcbLrpOcZOhyyWPI0zW5lLKWOLovXYda29807WFiVOgQFDjPqXN3aDTN2uLqY1J7d
-	vIyaA
-X-Gm-Gg: AYBFou3bHGZSEPbqZMoofR3g8CVyc5qicQo22S+7kzA02ETcWFEetx2sVOtNJaNDB24
-	N+BSetYWKi+MoZLWkSzuVi83rb6SsshIwb1XXGbUH1Ym3knM1rPDR1dLrWGOyfNs4/v0XbWZIgH
-	7o2ffEUEJKEX+xfXYMK/wltNBy43RiiBIWRIA9WTMJeOvTd6PH8peGMzs4CTZEq8t0UGkjCy/gL
-	1I5jsqJdyf4BOvBgolM3hNfb7GVuQDkkRRqtZoSgOknTtN5X++MYVU4D1ztY4PrwSBGjL2ThKIP
-	WxYnLRDRDCqXIfOE05HtyWpnLVRr0+ffNuy89loJbI6KSPJPpdj+OMHf102bg9EVPH3OUHHnGXv
-	LSRX6v9fmCbcvweLQOgVVswmjjUEG9AyETRGruKPST/2/QDH7H3RWrpwjkXj9UgmmhTuleZiMjd
-	mkQhjFB9f268TECNjUOEbEc5C2X/357t/kJ72ilpc3mjn9IdexwI2ONDyg6t/8yyZFm2QO4yozL
-	aNAxbB/VmacXJAum3pAJd/Agn6dNEAjztYW20pZLvq7xsdNYiz+LGy3KqsLtmuJ7fINFhYTSBPw
-	ouBzNPL/9KPaUPN9i6+axCSFLT3SS8EMuYKu
-X-Received: by 2002:a05:620a:170b:b0:93a:583:49db with SMTP id af79cd13be357-93bb79299b5mr830948285a.39.1789597845831;
-        Wed, 16 Sep 2026 15:30:45 -0700 (PDT)
+        bh=hszUt/DVlclh2KPOqFXHNnGL7bF2bwV2ABKNyTxbDPc=;
+        b=JEtbbcW/Q6xaCW4jcQw/eLKmjQkk5WGPOecAf6Y8irbqAKGRsv5cc4plQlDKONmxnx
+         qN86u0Tcd5XsZe0G6zyCnvOm8EdmXNf+drSl3d8/XejIQOmIE6AyM40YIuEpLyc0Tkxt
+         ctK+vVUc/JtAg7+pB2tH/RcTIFh0UGdILpi7slZWJD7BeUC16obxzE/ifiUz8R6HOdjV
+         T4pBq79hEIDn2leHUO+D3x0dhQGDG2+R9B5I/VeICKHo9KFjzeaZIAPMP8RQiI9pNhjz
+         I4d7cjachLO86ugPAz/mntbG1aSY80JcuoiWWmvlSJbx3OrawP/X30pYFuZbgvjOUolD
+         YdLw==
+X-Gm-Message-State: AFuF++mOsQReab3LJr85aO/J1J78PH/3JZ6ccTBV0V100IjVJMOxXfcn
+	1PQEvsPqJz1RvegG2OZzk33jeiX4uVl9znDdowW3WP9+Aqn7EmUIoj6Nx9wCKkHFDEhEE4BPlh2
+	Oorar
+X-Gm-Gg: AYBFou3mrrFb3yQN0rVBBpvBDwSzeCNkD2bm9G4uvJUJ+8SUQoC1s7+de46BKPqmyW9
+	E9fzVXTe6ruj5qY0lEs6h2ZUTNBge7h7bLxMoMW1BHEe5Q5RrX2F4IcpOxoM5jmV/2jRDFVshVE
+	TE8yuPPgrtynXrBfBzFHK8pnnHb8RuD2riQF4J8YuXC7tGhranf+hhmdHkkzck7CIOWMDLYGMmp
+	0/P8qYASs9L+Ib9DevwE6FfueUcoXoW1LCCJZ224exeH5/3wgqFk1jZGrwcyY5GpKrI/U8i9e82
+	8zFGLoWAhoQg2nnvw3xFBFOp+CUQ++pCG1e8NleICiYdBYH0aevqDEkH+xDBosKnf9AWKGldI6R
+	a30lBGboicTmVISPban1+VqmRJfjm4lQlaBhMq40pI0N8YqeMlDY8GVq9W4al3U7DH+0O+5eA7B
+	FRG6hretjW1MCrm/fMphUKqRix9hrFVnfBY8QJfp9b6QdyAeMRHtgue6KyQIc3CVYuNlhJr6fjX
+	740RUMQuiuNG1IvgXbg3Md1uLtMKkpmWUeYpa/zCHluVY5Q3Wjq092znMIDX7cTtcsYbo2mzStT
+	Tzox37nZt6yrz2Tk5e+P+cJDIhyW5FF+PLk=
+X-Received: by 2002:a05:620a:1792:b0:937:6de8:b40 with SMTP id af79cd13be357-93bb7774487mr723953985a.15.1789597852339;
+        Wed, 16 Sep 2026 15:30:52 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781d94c0sm310900685a.10.2026.09.16.15.30.43
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781d94c0sm310900685a.10.2026.09.16.15.30.51
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 15:30:44 -0700 (PDT)
+        Wed, 16 Sep 2026 15:30:51 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][wrynose][PATCH 15/24] krill: upgrade 0.12.3 -> 0.16.0
-Date: Wed, 16 Sep 2026 18:30:09 -0400
-Message-ID: <958edac22e9e2304f8719d9dee8d5a0612d82b8d.1789597604.git.scott.murray@konsulko.com>
+Subject: [meta-security][wrynose][PATCH 22/24] crowdsec: upgrade 1.7.7 -> 1.8.1
+Date: Wed, 16 Sep 2026 18:30:16 -0400
+Message-ID: <81e1c3721655bf0eccb8204713a474f9bb88fa1d.1789597604.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1789597604.git.scott.murray@konsulko.com>
 References: <cover.1789597604.git.scott.murray@konsulko.com>
@@ -66,1481 +66,1130 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 22:30:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4892
+ <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 22:31:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4898
 
 Release notes:
-https://github.com/NLnetLabs/krill/releases/tag/v0.13.0
-https://github.com/NLnetLabs/krill/releases/tag/v0.13.1
-https://github.com/NLnetLabs/krill/releases/tag/v0.14.0
-https://github.com/NLnetLabs/krill/releases/tag/v0.14.1
-https://github.com/NLnetLabs/krill/releases/tag/v0.14.2
-https://github.com/NLnetLabs/krill/releases/tag/v0.14.3
-https://github.com/NLnetLabs/krill/releases/tag/v0.14.4
-https://github.com/NLnetLabs/krill/releases/tag/v0.14.5
-https://github.com/NLnetLabs/krill/releases/tag/v0.14.6
-https://github.com/NLnetLabs/krill/releases/tag/v0.15.0
-https://github.com/NLnetLabs/krill/releases/tag/v0.15.1
-https://github.com/NLnetLabs/krill/releases/tag/v0.16.0
+https://github.com/crowdsecurity/crowdsec/releases/tag/v1.7.8
+https://github.com/crowdsecurity/crowdsec/releases/tag/v1.8.0
+https://github.com/crowdsecurity/crowdsec/releases/tag/v1.8.1
 
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../files/0001-Disable-abort-on-panic.patch   |   24 +
- .../krill/files/panic_workaround.patch        |   16 -
- recipes-security/krill/krill-crates.inc       | 1332 ++++++++++-------
- .../{krill_0.12.3.bb => krill_0.16.0.bb}      |    8 +-
- 4 files changed, 847 insertions(+), 533 deletions(-)
- create mode 100644 recipes-security/krill/files/0001-Disable-abort-on-panic.patch
- delete mode 100644 recipes-security/krill/files/panic_workaround.patch
- rename recipes-security/krill/{krill_0.12.3.bb => krill_0.16.0.bb} (89%)
+ recipes-ids/crowdsec/crowdsec-go-mods.inc     | 408 +++++++++---------
+ recipes-ids/crowdsec/crowdsec-licenses.inc    | 321 +++++++-------
+ .../{crowdsec_1.7.7.bb => crowdsec_1.8.1.bb}  |   2 +-
+ 3 files changed, 374 insertions(+), 357 deletions(-)
+ rename recipes-ids/crowdsec/{crowdsec_1.7.7.bb => crowdsec_1.8.1.bb} (96%)
 
-diff --git a/recipes-security/krill/files/0001-Disable-abort-on-panic.patch b/recipes-security/krill/files/0001-Disable-abort-on-panic.patch
-new file mode 100644
-index 0000000..34943ee
---- /dev/null
-+++ b/recipes-security/krill/files/0001-Disable-abort-on-panic.patch
-@@ -0,0 +1,24 @@
-+From 2ab05412b6c4abf21c1eec11fb62b28068e5ea81 Mon Sep 17 00:00:00 2001
-+From: Armin Kuster <akuster808@gmail.com>
-+Date: Tue, 27 Jul 2021 08:06:43 -0700
-+Subject: [PATCH] Disable abort on panic
-+
-+Upstream-Status: Inappropriate [OE specific]
-+Signed-off-by: Armin Kuster <akuster808@gmail.com>
-+---
-+ Cargo.toml | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/Cargo.toml b/Cargo.toml
-+index 8e37e968..92e6fb9a 100644
-+--- a/Cargo.toml
-++++ b/Cargo.toml
-+@@ -107,7 +107,7 @@ urlparse  = "0.7"
-+ # Make sure that Krill crashes on panics, rather than losing threads and
-+ # limping on in a bad state.
-+ [profile.release]
-+-panic = "abort"
-++#panic = "abort"
-+ 
-+ # ------------------------------------------------------------------------------
-+ # START DEBIAN PACKAGING
-diff --git a/recipes-security/krill/files/panic_workaround.patch b/recipes-security/krill/files/panic_workaround.patch
-deleted file mode 100644
-index f63169f..0000000
---- a/recipes-security/krill/files/panic_workaround.patch
-+++ /dev/null
-@@ -1,16 +0,0 @@
--Upstream-Status: Inappropriate [OE specific]
--Signed-off-by: Armin Kuster <akuster808@gmail.com>
--
--Index: git/Cargo.toml
--===================================================================
----- git.orig/Cargo.toml
--+++ git/Cargo.toml
--@@ -91,7 +91,7 @@ hsm-tests-pkcs11 = [ "hsm" ]
-- # Make sure that Krill crashes on panics, rather than losing threads and
-- # limping on in a bad state.
-- [profile.release]
---panic = "abort"
--+#panic = "abort"
-- 
-- [dev-dependencies]
-- regex     = "1.5.5"
-diff --git a/recipes-security/krill/krill-crates.inc b/recipes-security/krill/krill-crates.inc
-index 85830ec..d0a3fcd 100644
---- a/recipes-security/krill/krill-crates.inc
-+++ b/recipes-security/krill/krill-crates.inc
-@@ -2,549 +2,855 @@
+diff --git a/recipes-ids/crowdsec/crowdsec-go-mods.inc b/recipes-ids/crowdsec/crowdsec-go-mods.inc
+index efdc7f3..31428e8 100644
+--- a/recipes-ids/crowdsec/crowdsec-go-mods.inc
++++ b/recipes-ids/crowdsec/crowdsec-go-mods.inc
+@@ -5,71 +5,70 @@
+ # running the update-modules task.
  
- # from Cargo.lock
- SRC_URI += " \
--    crate://crates.io/addr2line/0.17.0;name=addr2line-0.17.0 \
--    crate://crates.io/adler/1.0.2;name=adler-1.0.2 \
--    crate://crates.io/adler32/1.2.0;name=adler32-1.2.0 \
--    crate://crates.io/aho-corasick/0.7.18;name=aho-corasick-0.7.18 \
--    crate://crates.io/android_system_properties/0.1.5;name=android_system_properties-0.1.5 \
--    crate://crates.io/ansi_term/0.12.1;name=ansi_term-0.12.1 \
--    crate://crates.io/ascii/1.0.0;name=ascii-1.0.0 \
--    crate://crates.io/ascii-canvas/3.0.0;name=ascii-canvas-3.0.0 \
--    crate://crates.io/atty/0.2.14;name=atty-0.2.14 \
--    crate://crates.io/autocfg/1.1.0;name=autocfg-1.1.0 \
--    crate://crates.io/backoff/0.3.0;name=backoff-0.3.0 \
--    crate://crates.io/backtrace/0.3.66;name=backtrace-0.3.66 \
--    crate://crates.io/base64/0.13.0;name=base64-0.13.0 \
--    crate://crates.io/basic-cookies/0.1.4;name=basic-cookies-0.1.4 \
--    crate://crates.io/bcder/0.7.0;name=bcder-0.7.0 \
--    crate://crates.io/bit-set/0.5.2;name=bit-set-0.5.2 \
--    crate://crates.io/bit-vec/0.6.3;name=bit-vec-0.6.3 \
--    crate://crates.io/bitflags/1.3.2;name=bitflags-1.3.2 \
--    crate://crates.io/block-buffer/0.9.0;name=block-buffer-0.9.0 \
--    crate://crates.io/block-buffer/0.10.2;name=block-buffer-0.10.2 \
--    crate://crates.io/bumpalo/3.10.0;name=bumpalo-3.10.0 \
--    crate://crates.io/bytes/1.1.0;name=bytes-1.1.0 \
--    crate://crates.io/cc/1.0.73;name=cc-1.0.73 \
--    crate://crates.io/cfg-if/1.0.0;name=cfg-if-1.0.0 \
--    crate://crates.io/chrono/0.4.22;name=chrono-0.4.22 \
--    crate://crates.io/chunked_transfer/1.4.0;name=chunked_transfer-1.4.0 \
--    crate://crates.io/cipher/0.2.5;name=cipher-0.2.5 \
--    crate://crates.io/clap/2.34.0;name=clap-2.34.0 \
--    crate://crates.io/codespan-reporting/0.11.1;name=codespan-reporting-0.11.1 \
--    crate://crates.io/core-foundation/0.9.3;name=core-foundation-0.9.3 \
--    crate://crates.io/core-foundation-sys/0.8.3;name=core-foundation-sys-0.8.3 \
--    crate://crates.io/cpufeatures/0.2.2;name=cpufeatures-0.2.2 \
--    crate://crates.io/crc32fast/1.3.2;name=crc32fast-1.3.2 \
--    crate://crates.io/crunchy/0.2.2;name=crunchy-0.2.2 \
--    crate://crates.io/crypto-common/0.1.6;name=crypto-common-0.1.6 \
--    crate://crates.io/crypto-mac/0.10.1;name=crypto-mac-0.10.1 \
--    crate://crates.io/cryptoki/0.3.0;name=cryptoki-0.3.0 \
--    crate://crates.io/cryptoki-sys/0.1.4;name=cryptoki-sys-0.1.4 \
--    crate://crates.io/ctrlc/3.2.2;name=ctrlc-3.2.2 \
--    crate://crates.io/cxx/1.0.79;name=cxx-1.0.79 \
--    crate://crates.io/cxx-build/1.0.79;name=cxx-build-1.0.79 \
--    crate://crates.io/cxxbridge-flags/1.0.79;name=cxxbridge-flags-1.0.79 \
--    crate://crates.io/cxxbridge-macro/1.0.79;name=cxxbridge-macro-1.0.79 \
--    crate://crates.io/derivative/2.2.0;name=derivative-2.2.0 \
--    crate://crates.io/deunicode/0.4.3;name=deunicode-0.4.3 \
--    crate://crates.io/diff/0.1.13;name=diff-0.1.13 \
--    crate://crates.io/digest/0.9.0;name=digest-0.9.0 \
--    crate://crates.io/digest/0.10.3;name=digest-0.10.3 \
--    crate://crates.io/dirs-next/2.0.0;name=dirs-next-2.0.0 \
--    crate://crates.io/dirs-sys-next/0.1.2;name=dirs-sys-next-0.1.2 \
--    crate://crates.io/either/1.7.0;name=either-1.7.0 \
--    crate://crates.io/ena/0.14.0;name=ena-0.14.0 \
--    crate://crates.io/encoding_rs/0.8.31;name=encoding_rs-0.8.31 \
--    crate://crates.io/enum-display-derive/0.1.1;name=enum-display-derive-0.1.1 \
--    crate://crates.io/enum-flags/0.1.8;name=enum-flags-0.1.8 \
--    crate://crates.io/error-chain/0.11.0;name=error-chain-0.11.0 \
--    crate://crates.io/fastrand/1.7.0;name=fastrand-1.7.0 \
--    crate://crates.io/fern/0.5.9;name=fern-0.5.9 \
--    crate://crates.io/fixedbitset/0.4.2;name=fixedbitset-0.4.2 \
--    crate://crates.io/fnv/1.0.7;name=fnv-1.0.7 \
--    crate://crates.io/foreign-types/0.3.2;name=foreign-types-0.3.2 \
--    crate://crates.io/foreign-types-shared/0.1.1;name=foreign-types-shared-0.1.1 \
--    crate://crates.io/form_urlencoded/1.0.1;name=form_urlencoded-1.0.1 \
--    crate://crates.io/fslock/0.2.1;name=fslock-0.2.1 \
--    crate://crates.io/futures/0.3.21;name=futures-0.3.21 \
--    crate://crates.io/futures-channel/0.3.21;name=futures-channel-0.3.21 \
--    crate://crates.io/futures-core/0.3.21;name=futures-core-0.3.21 \
--    crate://crates.io/futures-executor/0.3.21;name=futures-executor-0.3.21 \
--    crate://crates.io/futures-io/0.3.21;name=futures-io-0.3.21 \
--    crate://crates.io/futures-macro/0.3.21;name=futures-macro-0.3.21 \
--    crate://crates.io/futures-sink/0.3.21;name=futures-sink-0.3.21 \
--    crate://crates.io/futures-task/0.3.21;name=futures-task-0.3.21 \
--    crate://crates.io/futures-util/0.3.21;name=futures-util-0.3.21 \
--    crate://crates.io/generic-array/0.14.5;name=generic-array-0.14.5 \
--    crate://crates.io/getrandom/0.2.7;name=getrandom-0.2.7 \
--    crate://crates.io/gimli/0.26.2;name=gimli-0.26.2 \
--    crate://crates.io/h2/0.3.13;name=h2-0.3.13 \
--    crate://crates.io/hashbrown/0.12.3;name=hashbrown-0.12.3 \
--    crate://crates.io/hermit-abi/0.1.19;name=hermit-abi-0.1.19 \
--    crate://crates.io/hex/0.4.3;name=hex-0.4.3 \
--    crate://crates.io/hmac/0.10.1;name=hmac-0.10.1 \
--    crate://crates.io/http/0.2.8;name=http-0.2.8 \
--    crate://crates.io/http-body/0.4.5;name=http-body-0.4.5 \
--    crate://crates.io/httparse/1.7.1;name=httparse-1.7.1 \
--    crate://crates.io/httpdate/1.0.2;name=httpdate-1.0.2 \
--    crate://crates.io/hyper/0.14.20;name=hyper-0.14.20 \
--    crate://crates.io/hyper-tls/0.5.0;name=hyper-tls-0.5.0 \
--    crate://crates.io/iana-time-zone/0.1.51;name=iana-time-zone-0.1.51 \
--    crate://crates.io/iana-time-zone-haiku/0.1.1;name=iana-time-zone-haiku-0.1.1 \
--    crate://crates.io/idna/0.2.3;name=idna-0.2.3 \
--    crate://crates.io/impl-trait-for-tuples/0.2.2;name=impl-trait-for-tuples-0.2.2 \
--    crate://crates.io/indexmap/1.9.1;name=indexmap-1.9.1 \
--    crate://crates.io/instant/0.1.12;name=instant-0.1.12 \
--    crate://crates.io/intervaltree/0.2.7;name=intervaltree-0.2.7 \
--    crate://crates.io/ipnet/2.5.0;name=ipnet-2.5.0 \
--    crate://crates.io/itertools/0.10.3;name=itertools-0.10.3 \
--    crate://crates.io/itoa/1.0.2;name=itoa-1.0.2 \
--    crate://crates.io/jmespatch/0.3.0;name=jmespatch-0.3.0 \
--    crate://crates.io/js-sys/0.3.58;name=js-sys-0.3.58 \
--    crate://crates.io/kmip-protocol/0.4.2;name=kmip-protocol-0.4.2 \
--    crate://crates.io/kmip-ttlv/0.3.3;name=kmip-ttlv-0.3.3 \
--    crate://crates.io/lalrpop/0.19.8;name=lalrpop-0.19.8 \
--    crate://crates.io/lalrpop-util/0.19.8;name=lalrpop-util-0.19.8 \
--    crate://crates.io/lazy_static/1.4.0;name=lazy_static-1.4.0 \
--    crate://crates.io/libc/0.2.126;name=libc-0.2.126 \
--    crate://crates.io/libflate/1.2.0;name=libflate-1.2.0 \
--    crate://crates.io/libflate_lz77/1.1.0;name=libflate_lz77-1.1.0 \
--    crate://crates.io/libloading/0.7.3;name=libloading-0.7.3 \
--    crate://crates.io/link-cplusplus/1.0.7;name=link-cplusplus-1.0.7 \
--    crate://crates.io/lock_api/0.4.7;name=lock_api-0.4.7 \
--    crate://crates.io/log/0.4.17;name=log-0.4.17 \
--    crate://crates.io/maplit/1.0.2;name=maplit-1.0.2 \
--    crate://crates.io/matchers/0.0.1;name=matchers-0.0.1 \
--    crate://crates.io/matches/0.1.9;name=matches-0.1.9 \
--    crate://crates.io/maybe-async/0.2.6;name=maybe-async-0.2.6 \
--    crate://crates.io/memchr/2.5.0;name=memchr-2.5.0 \
--    crate://crates.io/mime/0.3.16;name=mime-0.3.16 \
--    crate://crates.io/miniz_oxide/0.5.3;name=miniz_oxide-0.5.3 \
--    crate://crates.io/mio/0.8.4;name=mio-0.8.4 \
--    crate://crates.io/native-tls/0.2.10;name=native-tls-0.2.10 \
--    crate://crates.io/new_debug_unreachable/1.0.4;name=new_debug_unreachable-1.0.4 \
--    crate://crates.io/nix/0.24.2;name=nix-0.24.2 \
--    crate://crates.io/num-bigint/0.4.3;name=num-bigint-0.4.3 \
--    crate://crates.io/num-integer/0.1.45;name=num-integer-0.1.45 \
--    crate://crates.io/num-traits/0.2.15;name=num-traits-0.2.15 \
--    crate://crates.io/num_cpus/1.13.1;name=num_cpus-1.13.1 \
--    crate://crates.io/oauth2/4.2.3;name=oauth2-4.2.3 \
--    crate://crates.io/object/0.29.0;name=object-0.29.0 \
--    crate://crates.io/once_cell/1.13.0;name=once_cell-1.13.0 \
--    crate://crates.io/opaque-debug/0.3.0;name=opaque-debug-0.3.0 \
--    crate://crates.io/openidconnect/2.3.2;name=openidconnect-2.3.2 \
--    crate://crates.io/openssl/0.10.41;name=openssl-0.10.41 \
--    crate://crates.io/openssl-macros/0.1.0;name=openssl-macros-0.1.0 \
--    crate://crates.io/openssl-probe/0.1.5;name=openssl-probe-0.1.5 \
--    crate://crates.io/openssl-src/111.25.0+1.1.1t;name=openssl-src-111.25.0+1.1.1t \
--    crate://crates.io/openssl-sys/0.9.75;name=openssl-sys-0.9.75 \
--    crate://crates.io/ordered-float/2.10.0;name=ordered-float-2.10.0 \
--    crate://crates.io/oso/0.12.4;name=oso-0.12.4 \
--    crate://crates.io/parking_lot/0.12.1;name=parking_lot-0.12.1 \
--    crate://crates.io/parking_lot_core/0.9.3;name=parking_lot_core-0.9.3 \
--    crate://crates.io/pbkdf2/0.7.5;name=pbkdf2-0.7.5 \
--    crate://crates.io/percent-encoding/2.1.0;name=percent-encoding-2.1.0 \
--    crate://crates.io/petgraph/0.6.2;name=petgraph-0.6.2 \
--    crate://crates.io/phf_shared/0.10.0;name=phf_shared-0.10.0 \
--    crate://crates.io/pico-args/0.4.2;name=pico-args-0.4.2 \
--    crate://crates.io/pin-project-lite/0.2.9;name=pin-project-lite-0.2.9 \
--    crate://crates.io/pin-utils/0.1.0;name=pin-utils-0.1.0 \
--    crate://crates.io/pkg-config/0.3.25;name=pkg-config-0.3.25 \
--    crate://crates.io/polar-core/0.12.4;name=polar-core-0.12.4 \
--    crate://crates.io/ppv-lite86/0.2.16;name=ppv-lite86-0.2.16 \
--    crate://crates.io/precomputed-hash/0.1.1;name=precomputed-hash-0.1.1 \
--    crate://crates.io/priority-queue/1.2.2;name=priority-queue-1.2.2 \
--    crate://crates.io/proc-macro2/1.0.40;name=proc-macro2-1.0.40 \
--    crate://crates.io/quick-xml/0.23.0;name=quick-xml-0.23.0 \
--    crate://crates.io/quote/1.0.20;name=quote-1.0.20 \
--    crate://crates.io/r2d2/0.8.10;name=r2d2-0.8.10 \
--    crate://crates.io/rand/0.8.5;name=rand-0.8.5 \
--    crate://crates.io/rand_chacha/0.3.1;name=rand_chacha-0.3.1 \
--    crate://crates.io/rand_core/0.6.3;name=rand_core-0.6.3 \
--    crate://crates.io/redox_syscall/0.2.13;name=redox_syscall-0.2.13 \
--    crate://crates.io/redox_users/0.4.3;name=redox_users-0.4.3 \
--    crate://crates.io/regex/1.6.0;name=regex-1.6.0 \
--    crate://crates.io/regex-automata/0.1.10;name=regex-automata-0.1.10 \
--    crate://crates.io/regex-syntax/0.6.27;name=regex-syntax-0.6.27 \
--    crate://crates.io/remove_dir_all/0.5.3;name=remove_dir_all-0.5.3 \
--    crate://crates.io/reqwest/0.11.11;name=reqwest-0.11.11 \
--    crate://crates.io/ring/0.16.20;name=ring-0.16.20 \
--    crate://crates.io/rle-decode-fast/1.0.3;name=rle-decode-fast-1.0.3 \
--    crate://crates.io/routecore/0.2.0;name=routecore-0.2.0 \
--    crate://crates.io/rpassword/5.0.1;name=rpassword-5.0.1 \
--    crate://crates.io/rpki/0.15.8;name=rpki-0.15.8 \
--    crate://crates.io/rustc-demangle/0.1.21;name=rustc-demangle-0.1.21 \
--    crate://crates.io/rustc_version/0.4.0;name=rustc_version-0.4.0 \
--    crate://crates.io/rustls/0.19.1;name=rustls-0.19.1 \
--    crate://crates.io/rustversion/1.0.8;name=rustversion-1.0.8 \
--    crate://crates.io/ryu/1.0.10;name=ryu-1.0.10 \
--    crate://crates.io/salsa20/0.7.2;name=salsa20-0.7.2 \
--    crate://crates.io/schannel/0.1.20;name=schannel-0.1.20 \
--    crate://crates.io/scheduled-thread-pool/0.2.6;name=scheduled-thread-pool-0.2.6 \
--    crate://crates.io/scopeguard/1.1.0;name=scopeguard-1.1.0 \
--    crate://crates.io/scratch/1.0.2;name=scratch-1.0.2 \
--    crate://crates.io/scrypt/0.6.5;name=scrypt-0.6.5 \
--    crate://crates.io/sct/0.6.1;name=sct-0.6.1 \
--    crate://crates.io/security-framework/2.6.1;name=security-framework-2.6.1 \
--    crate://crates.io/security-framework-sys/2.6.1;name=security-framework-sys-2.6.1 \
--    crate://crates.io/semver/1.0.12;name=semver-1.0.12 \
--    crate://crates.io/serde/1.0.139;name=serde-1.0.139 \
--    crate://crates.io/serde-value/0.7.0;name=serde-value-0.7.0 \
--    crate://crates.io/serde_bytes/0.11.6;name=serde_bytes-0.11.6 \
--    crate://crates.io/serde_derive/1.0.139;name=serde_derive-1.0.139 \
--    crate://crates.io/serde_json/1.0.82;name=serde_json-1.0.82 \
--    crate://crates.io/serde_path_to_error/0.1.7;name=serde_path_to_error-0.1.7 \
--    crate://crates.io/serde_urlencoded/0.7.1;name=serde_urlencoded-0.7.1 \
--    crate://crates.io/sha2/0.9.9;name=sha2-0.9.9 \
--    crate://crates.io/sha2/0.10.2;name=sha2-0.10.2 \
--    crate://crates.io/sharded-slab/0.1.4;name=sharded-slab-0.1.4 \
--    crate://crates.io/signal-hook-registry/1.4.0;name=signal-hook-registry-1.4.0 \
--    crate://crates.io/siphasher/0.3.10;name=siphasher-0.3.10 \
--    crate://crates.io/slab/0.4.6;name=slab-0.4.6 \
--    crate://crates.io/slug/0.1.4;name=slug-0.1.4 \
--    crate://crates.io/smallvec/1.9.0;name=smallvec-1.9.0 \
--    crate://crates.io/socket2/0.4.4;name=socket2-0.4.4 \
--    crate://crates.io/spin/0.5.2;name=spin-0.5.2 \
--    crate://crates.io/string_cache/0.8.4;name=string_cache-0.8.4 \
--    crate://crates.io/strsim/0.8.0;name=strsim-0.8.0 \
--    crate://crates.io/subtle/2.4.1;name=subtle-2.4.1 \
--    crate://crates.io/syn/1.0.98;name=syn-1.0.98 \
--    crate://crates.io/syslog/4.0.1;name=syslog-4.0.1 \
--    crate://crates.io/target-lexicon/0.12.4;name=target-lexicon-0.12.4 \
--    crate://crates.io/tempfile/3.3.0;name=tempfile-3.3.0 \
--    crate://crates.io/term/0.7.0;name=term-0.7.0 \
--    crate://crates.io/termcolor/1.1.3;name=termcolor-1.1.3 \
--    crate://crates.io/textwrap/0.11.0;name=textwrap-0.11.0 \
--    crate://crates.io/thiserror/1.0.31;name=thiserror-1.0.31 \
--    crate://crates.io/thiserror-impl/1.0.31;name=thiserror-impl-1.0.31 \
--    crate://crates.io/thread_local/1.1.4;name=thread_local-1.1.4 \
--    crate://crates.io/time/0.1.44;name=time-0.1.44 \
--    crate://crates.io/tiny-keccak/2.0.2;name=tiny-keccak-2.0.2 \
--    crate://crates.io/tiny_http/0.8.2;name=tiny_http-0.8.2 \
--    crate://crates.io/tinyvec/1.6.0;name=tinyvec-1.6.0 \
--    crate://crates.io/tinyvec_macros/0.1.0;name=tinyvec_macros-0.1.0 \
--    crate://crates.io/tokio/1.20.4;name=tokio-1.20.4 \
--    crate://crates.io/tokio-macros/1.8.0;name=tokio-macros-1.8.0 \
--    crate://crates.io/tokio-native-tls/0.3.0;name=tokio-native-tls-0.3.0 \
--    crate://crates.io/tokio-rustls/0.22.0;name=tokio-rustls-0.22.0 \
--    crate://crates.io/tokio-util/0.7.3;name=tokio-util-0.7.3 \
--    crate://crates.io/toml/0.5.9;name=toml-0.5.9 \
--    crate://crates.io/tower-service/0.3.2;name=tower-service-0.3.2 \
--    crate://crates.io/tracing/0.1.35;name=tracing-0.1.35 \
--    crate://crates.io/tracing-attributes/0.1.22;name=tracing-attributes-0.1.22 \
--    crate://crates.io/tracing-core/0.1.28;name=tracing-core-0.1.28 \
--    crate://crates.io/tracing-log/0.1.3;name=tracing-log-0.1.3 \
--    crate://crates.io/tracing-serde/0.1.3;name=tracing-serde-0.1.3 \
--    crate://crates.io/tracing-subscriber/0.2.25;name=tracing-subscriber-0.2.25 \
--    crate://crates.io/trait-set/0.2.0;name=trait-set-0.2.0 \
--    crate://crates.io/try-lock/0.2.3;name=try-lock-0.2.3 \
--    crate://crates.io/typenum/1.15.0;name=typenum-1.15.0 \
--    crate://crates.io/unicode-bidi/0.3.8;name=unicode-bidi-0.3.8 \
--    crate://crates.io/unicode-ident/1.0.2;name=unicode-ident-1.0.2 \
--    crate://crates.io/unicode-normalization/0.1.21;name=unicode-normalization-0.1.21 \
--    crate://crates.io/unicode-width/0.1.9;name=unicode-width-0.1.9 \
--    crate://crates.io/unicode-xid/0.2.3;name=unicode-xid-0.2.3 \
--    crate://crates.io/untrusted/0.7.1;name=untrusted-0.7.1 \
--    crate://crates.io/url/2.2.2;name=url-2.2.2 \
--    crate://crates.io/urlparse/0.7.3;name=urlparse-0.7.3 \
--    crate://crates.io/uuid/1.1.2;name=uuid-1.1.2 \
--    crate://crates.io/valuable/0.1.0;name=valuable-0.1.0 \
--    crate://crates.io/vcpkg/0.2.15;name=vcpkg-0.2.15 \
--    crate://crates.io/vec_map/0.8.2;name=vec_map-0.8.2 \
--    crate://crates.io/version_check/0.9.4;name=version_check-0.9.4 \
--    crate://crates.io/want/0.3.0;name=want-0.3.0 \
--    crate://crates.io/wasi/0.10.0+wasi-snapshot-preview1;name=wasi-0.10.0+wasi-snapshot-preview1 \
--    crate://crates.io/wasi/0.11.0+wasi-snapshot-preview1;name=wasi-0.11.0+wasi-snapshot-preview1 \
--    crate://crates.io/wasm-bindgen/0.2.81;name=wasm-bindgen-0.2.81 \
--    crate://crates.io/wasm-bindgen-backend/0.2.81;name=wasm-bindgen-backend-0.2.81 \
--    crate://crates.io/wasm-bindgen-futures/0.4.31;name=wasm-bindgen-futures-0.4.31 \
--    crate://crates.io/wasm-bindgen-macro/0.2.81;name=wasm-bindgen-macro-0.2.81 \
--    crate://crates.io/wasm-bindgen-macro-support/0.2.81;name=wasm-bindgen-macro-support-0.2.81 \
--    crate://crates.io/wasm-bindgen-shared/0.2.81;name=wasm-bindgen-shared-0.2.81 \
--    crate://crates.io/web-sys/0.3.58;name=web-sys-0.3.58 \
--    crate://crates.io/webpki/0.21.4;name=webpki-0.21.4 \
--    crate://crates.io/winapi/0.3.9;name=winapi-0.3.9 \
--    crate://crates.io/winapi-i686-pc-windows-gnu/0.4.0;name=winapi-i686-pc-windows-gnu-0.4.0 \
--    crate://crates.io/winapi-util/0.1.5;name=winapi-util-0.1.5 \
--    crate://crates.io/winapi-x86_64-pc-windows-gnu/0.4.0;name=winapi-x86_64-pc-windows-gnu-0.4.0 \
--    crate://crates.io/windows-sys/0.36.1;name=windows-sys-0.36.1 \
--    crate://crates.io/windows_aarch64_msvc/0.36.1;name=windows_aarch64_msvc-0.36.1 \
--    crate://crates.io/windows_i686_gnu/0.36.1;name=windows_i686_gnu-0.36.1 \
--    crate://crates.io/windows_i686_msvc/0.36.1;name=windows_i686_msvc-0.36.1 \
--    crate://crates.io/windows_x86_64_gnu/0.36.1;name=windows_x86_64_gnu-0.36.1 \
--    crate://crates.io/windows_x86_64_msvc/0.36.1;name=windows_x86_64_msvc-0.36.1 \
--    crate://crates.io/winreg/0.10.1;name=winreg-0.10.1 \
-+    crate://crates.io/adler32/1.2.0 \
-+    crate://crates.io/aho-corasick/1.1.4 \
-+    crate://crates.io/allocator-api2/0.2.21 \
-+    crate://crates.io/android_system_properties/0.1.5 \
-+    crate://crates.io/anstream/0.6.21 \
-+    crate://crates.io/anstyle/1.0.13 \
-+    crate://crates.io/anstyle-parse/0.2.7 \
-+    crate://crates.io/anstyle-query/1.1.5 \
-+    crate://crates.io/anstyle-wincon/3.0.11 \
-+    crate://crates.io/anyhow/1.0.101 \
-+    crate://crates.io/arc-swap/1.8.2 \
-+    crate://crates.io/ascii-canvas/3.0.0 \
-+    crate://crates.io/atomic-waker/1.1.2 \
-+    crate://crates.io/autocfg/1.5.0 \
-+    crate://crates.io/aws-lc-rs/1.15.4 \
-+    crate://crates.io/aws-lc-sys/0.37.1 \
-+    crate://crates.io/backoff/0.4.0 \
-+    crate://crates.io/base16ct/0.2.0 \
-+    crate://crates.io/base64/0.21.7 \
-+    crate://crates.io/base64/0.22.1 \
-+    crate://crates.io/base64ct/1.8.3 \
-+    crate://crates.io/basic-cookies/0.1.5 \
-+    crate://crates.io/bcder/0.7.6 \
-+    crate://crates.io/bit-set/0.5.3 \
-+    crate://crates.io/bit-vec/0.6.3 \
-+    crate://crates.io/bitflags/2.11.0 \
-+    crate://crates.io/block-buffer/0.10.4 \
-+    crate://crates.io/bumpalo/3.19.1 \
-+    crate://crates.io/bytes/1.11.1 \
-+    crate://crates.io/cc/1.2.56 \
-+    crate://crates.io/cesu8/1.1.0 \
-+    crate://crates.io/cfg-if/1.0.4 \
-+    crate://crates.io/cfg_aliases/0.2.1 \
-+    crate://crates.io/chacha20/0.10.0 \
-+    crate://crates.io/chrono/0.4.43 \
-+    crate://crates.io/cipher/0.4.4 \
-+    crate://crates.io/clap/4.5.59 \
-+    crate://crates.io/clap_builder/4.5.59 \
-+    crate://crates.io/clap_derive/4.5.55 \
-+    crate://crates.io/clap_lex/1.0.0 \
-+    crate://crates.io/cmake/0.1.57 \
-+    crate://crates.io/colorchoice/1.0.4 \
-+    crate://crates.io/combine/4.6.7 \
-+    crate://crates.io/const-oid/0.9.6 \
-+    crate://crates.io/core-foundation/0.9.4 \
-+    crate://crates.io/core-foundation/0.10.1 \
-+    crate://crates.io/core-foundation-sys/0.8.7 \
-+    crate://crates.io/core2/0.4.0 \
-+    crate://crates.io/cpufeatures/0.2.17 \
-+    crate://crates.io/cpufeatures/0.3.0 \
-+    crate://crates.io/crc32fast/1.5.0 \
-+    crate://crates.io/crunchy/0.2.4 \
-+    crate://crates.io/crypto-bigint/0.5.5 \
-+    crate://crates.io/crypto-common/0.1.7 \
-+    crate://crates.io/cryptoki/0.12.0 \
-+    crate://crates.io/cryptoki-sys/0.5.0 \
-+    crate://crates.io/curve25519-dalek/4.1.3 \
-+    crate://crates.io/curve25519-dalek-derive/0.1.1 \
-+    crate://crates.io/darling/0.21.3 \
-+    crate://crates.io/darling_core/0.21.3 \
-+    crate://crates.io/darling_macro/0.21.3 \
-+    crate://crates.io/dary_heap/0.3.8 \
-+    crate://crates.io/der/0.7.10 \
-+    crate://crates.io/deranged/0.5.6 \
-+    crate://crates.io/digest/0.10.7 \
-+    crate://crates.io/dirs-next/2.0.0 \
-+    crate://crates.io/dirs-sys-next/0.1.2 \
-+    crate://crates.io/displaydoc/0.2.5 \
-+    crate://crates.io/dunce/1.0.5 \
-+    crate://crates.io/dyn-clone/1.0.20 \
-+    crate://crates.io/ecdsa/0.16.9 \
-+    crate://crates.io/ed25519/2.2.3 \
-+    crate://crates.io/ed25519-dalek/2.2.0 \
-+    crate://crates.io/either/1.15.0 \
-+    crate://crates.io/elliptic-curve/0.13.8 \
-+    crate://crates.io/ena/0.14.4 \
-+    crate://crates.io/encoding_rs/0.8.35 \
-+    crate://crates.io/enum-display-derive/0.1.1 \
-+    crate://crates.io/enum-flags/0.1.8 \
-+    crate://crates.io/equivalent/1.0.2 \
-+    crate://crates.io/errno/0.3.14 \
-+    crate://crates.io/fastrand/2.3.0 \
-+    crate://crates.io/fd-lock/4.0.4 \
-+    crate://crates.io/fern/0.7.1 \
-+    crate://crates.io/ff/0.13.1 \
-+    crate://crates.io/fiat-crypto/0.2.9 \
-+    crate://crates.io/filetime/0.2.27 \
-+    crate://crates.io/find-msvc-tools/0.1.9 \
-+    crate://crates.io/fixedbitset/0.4.2 \
-+    crate://crates.io/fnv/1.0.7 \
-+    crate://crates.io/foldhash/0.1.5 \
-+    crate://crates.io/foldhash/0.2.0 \
-+    crate://crates.io/foreign-types/0.3.2 \
-+    crate://crates.io/foreign-types-shared/0.1.1 \
-+    crate://crates.io/form_urlencoded/1.2.2 \
-+    crate://crates.io/fs_extra/1.3.0 \
-+    crate://crates.io/futures-channel/0.3.32 \
-+    crate://crates.io/futures-core/0.3.32 \
-+    crate://crates.io/futures-macro/0.3.32 \
-+    crate://crates.io/futures-sink/0.3.32 \
-+    crate://crates.io/futures-task/0.3.32 \
-+    crate://crates.io/futures-util/0.3.32 \
-+    crate://crates.io/generic-array/0.14.7 \
-+    crate://crates.io/getrandom/0.2.17 \
-+    crate://crates.io/getrandom/0.3.4 \
-+    crate://crates.io/getrandom/0.4.1 \
-+    crate://crates.io/group/0.13.0 \
-+    crate://crates.io/h2/0.4.13 \
-+    crate://crates.io/hashbrown/0.12.3 \
-+    crate://crates.io/hashbrown/0.15.5 \
-+    crate://crates.io/hashbrown/0.16.1 \
-+    crate://crates.io/heck/0.5.0 \
-+    crate://crates.io/hermit-abi/0.5.2 \
-+    crate://crates.io/hex/0.4.3 \
-+    crate://crates.io/hkdf/0.12.4 \
-+    crate://crates.io/hmac/0.12.1 \
-+    crate://crates.io/hostname/0.4.2 \
-+    crate://crates.io/http/1.4.0 \
-+    crate://crates.io/http-body/1.0.1 \
-+    crate://crates.io/http-body-util/0.1.3 \
-+    crate://crates.io/httparse/1.10.1 \
-+    crate://crates.io/httpdate/1.0.3 \
-+    crate://crates.io/hyper/1.8.1 \
-+    crate://crates.io/hyper-rustls/0.27.7 \
-+    crate://crates.io/hyper-util/0.1.20 \
-+    crate://crates.io/iana-time-zone/0.1.65 \
-+    crate://crates.io/iana-time-zone-haiku/0.1.2 \
-+    crate://crates.io/icu_collections/2.1.1 \
-+    crate://crates.io/icu_locale_core/2.1.1 \
-+    crate://crates.io/icu_normalizer/2.1.1 \
-+    crate://crates.io/icu_normalizer_data/2.1.1 \
-+    crate://crates.io/icu_properties/2.1.2 \
-+    crate://crates.io/icu_properties_data/2.1.2 \
-+    crate://crates.io/icu_provider/2.1.1 \
-+    crate://crates.io/id-arena/2.3.0 \
-+    crate://crates.io/ident_case/1.0.1 \
-+    crate://crates.io/idna/1.1.0 \
-+    crate://crates.io/idna_adapter/1.2.1 \
-+    crate://crates.io/indexmap/1.9.3 \
-+    crate://crates.io/indexmap/2.13.0 \
-+    crate://crates.io/inout/0.1.4 \
-+    crate://crates.io/instant/0.1.13 \
-+    crate://crates.io/intervaltree/0.2.7 \
-+    crate://crates.io/ipnet/2.11.0 \
-+    crate://crates.io/iri-string/0.7.10 \
-+    crate://crates.io/is-terminal/0.4.17 \
-+    crate://crates.io/is_terminal_polyfill/1.70.2 \
-+    crate://crates.io/itertools/0.10.5 \
-+    crate://crates.io/itertools/0.11.0 \
-+    crate://crates.io/itoa/1.0.17 \
-+    crate://crates.io/jni/0.21.1 \
-+    crate://crates.io/jni-sys/0.3.0 \
-+    crate://crates.io/jobserver/0.1.34 \
-+    crate://crates.io/js-sys/0.3.85 \
-+    crate://crates.io/kmip-protocol/0.4.3 \
-+    crate://crates.io/kmip-ttlv/0.3.5 \
-+    crate://crates.io/lalrpop/0.20.2 \
-+    crate://crates.io/lalrpop-util/0.20.2 \
-+    crate://crates.io/lazy_static/1.5.0 \
-+    crate://crates.io/leb128fmt/0.1.0 \
-+    crate://crates.io/libc/0.2.180 \
-+    crate://crates.io/libflate/2.2.1 \
-+    crate://crates.io/libflate_lz77/2.2.0 \
-+    crate://crates.io/libloading/0.8.9 \
-+    crate://crates.io/libm/0.2.16 \
-+    crate://crates.io/libredox/0.1.12 \
-+    crate://crates.io/linux-raw-sys/0.11.0 \
-+    crate://crates.io/litemap/0.8.1 \
-+    crate://crates.io/lock_api/0.4.14 \
-+    crate://crates.io/log/0.4.29 \
-+    crate://crates.io/lru-slab/0.1.2 \
-+    crate://crates.io/maybe-async/0.2.10 \
-+    crate://crates.io/memchr/2.8.0 \
-+    crate://crates.io/mime/0.3.17 \
-+    crate://crates.io/mio/1.1.1 \
-+    crate://crates.io/new_debug_unreachable/1.0.6 \
-+    crate://crates.io/nix/0.31.1 \
-+    crate://crates.io/num-bigint-dig/0.8.6 \
-+    crate://crates.io/num-conv/0.2.0 \
-+    crate://crates.io/num-integer/0.1.46 \
-+    crate://crates.io/num-iter/0.1.45 \
-+    crate://crates.io/num-traits/0.2.19 \
-+    crate://crates.io/num_threads/0.1.7 \
-+    crate://crates.io/oauth2/5.0.0 \
-+    crate://crates.io/once_cell/1.21.3 \
-+    crate://crates.io/once_cell_polyfill/1.70.2 \
-+    crate://crates.io/openidconnect/4.0.1 \
-+    crate://crates.io/openssl/0.10.75 \
-+    crate://crates.io/openssl-macros/0.1.1 \
-+    crate://crates.io/openssl-probe/0.2.1 \
-+    crate://crates.io/openssl-sys/0.9.111 \
-+    crate://crates.io/ordered-float/2.10.1 \
-+    crate://crates.io/p256/0.13.2 \
-+    crate://crates.io/p384/0.13.1 \
-+    crate://crates.io/parking_lot/0.12.5 \
-+    crate://crates.io/parking_lot_core/0.9.12 \
-+    crate://crates.io/pbkdf2/0.12.2 \
-+    crate://crates.io/pem-rfc7468/0.7.0 \
-+    crate://crates.io/percent-encoding/2.3.2 \
-+    crate://crates.io/petgraph/0.6.5 \
-+    crate://crates.io/phf_shared/0.11.3 \
-+    crate://crates.io/pico-args/0.5.0 \
-+    crate://crates.io/pin-project-lite/0.2.16 \
-+    crate://crates.io/pin-utils/0.1.0 \
-+    crate://crates.io/pkcs1/0.7.5 \
-+    crate://crates.io/pkcs8/0.10.2 \
-+    crate://crates.io/pkg-config/0.3.32 \
-+    crate://crates.io/potential_utf/0.1.4 \
-+    crate://crates.io/powerfmt/0.2.0 \
-+    crate://crates.io/ppv-lite86/0.2.21 \
-+    crate://crates.io/precomputed-hash/0.1.1 \
-+    crate://crates.io/prettyplease/0.2.37 \
-+    crate://crates.io/primeorder/0.13.6 \
-+    crate://crates.io/proc-macro2/1.0.106 \
-+    crate://crates.io/quick-xml/0.39.1 \
-+    crate://crates.io/quinn/0.11.9 \
-+    crate://crates.io/quinn-proto/0.11.13 \
-+    crate://crates.io/quinn-udp/0.5.14 \
-+    crate://crates.io/quote/1.0.44 \
-+    crate://crates.io/r-efi/5.3.0 \
-+    crate://crates.io/r2d2/0.8.10 \
-+    crate://crates.io/rand/0.8.5 \
-+    crate://crates.io/rand/0.9.2 \
-+    crate://crates.io/rand/0.10.0 \
-+    crate://crates.io/rand_chacha/0.3.1 \
-+    crate://crates.io/rand_chacha/0.9.0 \
-+    crate://crates.io/rand_core/0.6.4 \
-+    crate://crates.io/rand_core/0.9.5 \
-+    crate://crates.io/rand_core/0.10.0 \
-+    crate://crates.io/redox_syscall/0.5.18 \
-+    crate://crates.io/redox_syscall/0.7.1 \
-+    crate://crates.io/redox_users/0.4.6 \
-+    crate://crates.io/ref-cast/1.0.25 \
-+    crate://crates.io/ref-cast-impl/1.0.25 \
-+    crate://crates.io/regex/1.12.3 \
-+    crate://crates.io/regex-automata/0.4.14 \
-+    crate://crates.io/regex-syntax/0.8.9 \
-+    crate://crates.io/reqwest/0.13.2 \
-+    crate://crates.io/rfc6979/0.4.0 \
-+    crate://crates.io/ring/0.17.14 \
-+    crate://crates.io/rle-decode-fast/1.0.3 \
-+    crate://crates.io/rpassword/7.4.0 \
-+    crate://crates.io/rpki/0.19.2 \
-+    crate://crates.io/rsa/0.9.10 \
-+    crate://crates.io/rtoolbox/0.0.3 \
-+    crate://crates.io/rustc-hash/2.1.1 \
-+    crate://crates.io/rustc_version/0.4.1 \
-+    crate://crates.io/rustix/1.1.3 \
-+    crate://crates.io/rustls/0.23.36 \
-+    crate://crates.io/rustls-native-certs/0.8.3 \
-+    crate://crates.io/rustls-pemfile/2.2.0 \
-+    crate://crates.io/rustls-pki-types/1.14.0 \
-+    crate://crates.io/rustls-platform-verifier/0.6.2 \
-+    crate://crates.io/rustls-platform-verifier-android/0.1.1 \
-+    crate://crates.io/rustls-webpki/0.103.9 \
-+    crate://crates.io/rustversion/1.0.22 \
-+    crate://crates.io/salsa20/0.10.2 \
-+    crate://crates.io/same-file/1.0.6 \
-+    crate://crates.io/schannel/0.1.28 \
-+    crate://crates.io/scheduled-thread-pool/0.2.7 \
-+    crate://crates.io/schemars/0.9.0 \
-+    crate://crates.io/schemars/1.2.1 \
-+    crate://crates.io/scopeguard/1.2.0 \
-+    crate://crates.io/scrypt/0.11.0 \
-+    crate://crates.io/sec1/0.7.3 \
-+    crate://crates.io/secrecy/0.10.3 \
-+    crate://crates.io/security-framework/3.6.0 \
-+    crate://crates.io/security-framework-sys/2.16.0 \
-+    crate://crates.io/semver/1.0.27 \
-+    crate://crates.io/serde/1.0.228 \
-+    crate://crates.io/serde-value/0.7.0 \
-+    crate://crates.io/serde_bytes/0.11.19 \
-+    crate://crates.io/serde_core/1.0.228 \
-+    crate://crates.io/serde_derive/1.0.228 \
-+    crate://crates.io/serde_json/1.0.149 \
-+    crate://crates.io/serde_path_to_error/0.1.20 \
-+    crate://crates.io/serde_plain/1.0.2 \
-+    crate://crates.io/serde_spanned/1.0.4 \
-+    crate://crates.io/serde_with/3.16.1 \
-+    crate://crates.io/serde_with_macros/3.16.1 \
-+    crate://crates.io/sha2/0.10.9 \
-+    crate://crates.io/shlex/1.3.0 \
-+    crate://crates.io/signal-hook-registry/1.4.8 \
-+    crate://crates.io/signature/2.2.0 \
-+    crate://crates.io/siphasher/1.0.2 \
-+    crate://crates.io/slab/0.4.12 \
-+    crate://crates.io/smallvec/1.15.1 \
-+    crate://crates.io/socket2/0.6.2 \
-+    crate://crates.io/spin/0.9.8 \
-+    crate://crates.io/spki/0.7.3 \
-+    crate://crates.io/stable_deref_trait/1.2.1 \
-+    crate://crates.io/stderrlog/0.6.0 \
-+    crate://crates.io/string_cache/0.8.9 \
-+    crate://crates.io/strsim/0.11.1 \
-+    crate://crates.io/subtle/2.6.1 \
-+    crate://crates.io/syn/1.0.109 \
-+    crate://crates.io/syn/2.0.116 \
-+    crate://crates.io/sync_wrapper/1.0.2 \
-+    crate://crates.io/synstructure/0.13.2 \
-+    crate://crates.io/syslog/7.0.0 \
-+    crate://crates.io/system-configuration/0.7.0 \
-+    crate://crates.io/system-configuration-sys/0.6.0 \
-+    crate://crates.io/tar/0.4.44 \
-+    crate://crates.io/tempfile/3.25.0 \
-+    crate://crates.io/term/0.7.0 \
-+    crate://crates.io/termcolor/1.1.3 \
-+    crate://crates.io/terminal_size/0.4.3 \
-+    crate://crates.io/thiserror/1.0.69 \
-+    crate://crates.io/thiserror/2.0.18 \
-+    crate://crates.io/thiserror-impl/1.0.69 \
-+    crate://crates.io/thiserror-impl/2.0.18 \
-+    crate://crates.io/thread_local/1.1.9 \
-+    crate://crates.io/time/0.3.47 \
-+    crate://crates.io/time-core/0.1.8 \
-+    crate://crates.io/time-macros/0.2.27 \
-+    crate://crates.io/tiny-keccak/2.0.2 \
-+    crate://crates.io/tinystr/0.8.2 \
-+    crate://crates.io/tinyvec/1.10.0 \
-+    crate://crates.io/tinyvec_macros/0.1.1 \
-+    crate://crates.io/tokio/1.49.0 \
-+    crate://crates.io/tokio-macros/2.6.0 \
-+    crate://crates.io/tokio-rustls/0.26.4 \
-+    crate://crates.io/tokio-util/0.7.18 \
-+    crate://crates.io/toml/0.9.12+spec-1.1.0 \
-+    crate://crates.io/toml_datetime/0.7.5+spec-1.1.0 \
-+    crate://crates.io/toml_parser/1.0.9+spec-1.1.0 \
-+    crate://crates.io/toml_writer/1.0.6+spec-1.1.0 \
-+    crate://crates.io/tower/0.5.3 \
-+    crate://crates.io/tower-http/0.6.8 \
-+    crate://crates.io/tower-layer/0.3.3 \
-+    crate://crates.io/tower-service/0.3.3 \
-+    crate://crates.io/tracing/0.1.44 \
-+    crate://crates.io/tracing-core/0.1.36 \
-+    crate://crates.io/trait-set/0.2.0 \
-+    crate://crates.io/try-lock/0.2.5 \
-+    crate://crates.io/typenum/1.19.0 \
-+    crate://crates.io/unicode-ident/1.0.24 \
-+    crate://crates.io/unicode-normalization/0.1.25 \
-+    crate://crates.io/unicode-xid/0.2.6 \
-+    crate://crates.io/untrusted/0.9.0 \
-+    crate://crates.io/url/2.5.8 \
-+    crate://crates.io/urlparse/0.7.3 \
-+    crate://crates.io/utf8_iter/1.0.4 \
-+    crate://crates.io/utf8parse/0.2.2 \
-+    crate://crates.io/uuid/1.21.0 \
-+    crate://crates.io/vcpkg/0.2.15 \
-+    crate://crates.io/version_check/0.9.5 \
-+    crate://crates.io/walkdir/2.5.0 \
-+    crate://crates.io/want/0.3.1 \
-+    crate://crates.io/wasi/0.11.1+wasi-snapshot-preview1 \
-+    crate://crates.io/wasip2/1.0.2+wasi-0.2.9 \
-+    crate://crates.io/wasip3/0.4.0+wasi-0.3.0-rc-2026-01-06 \
-+    crate://crates.io/wasm-bindgen/0.2.108 \
-+    crate://crates.io/wasm-bindgen-futures/0.4.58 \
-+    crate://crates.io/wasm-bindgen-macro/0.2.108 \
-+    crate://crates.io/wasm-bindgen-macro-support/0.2.108 \
-+    crate://crates.io/wasm-bindgen-shared/0.2.108 \
-+    crate://crates.io/wasm-encoder/0.244.0 \
-+    crate://crates.io/wasm-metadata/0.244.0 \
-+    crate://crates.io/wasmparser/0.244.0 \
-+    crate://crates.io/web-sys/0.3.85 \
-+    crate://crates.io/web-time/1.1.0 \
-+    crate://crates.io/webpki-root-certs/1.0.6 \
-+    crate://crates.io/winapi/0.3.9 \
-+    crate://crates.io/winapi-i686-pc-windows-gnu/0.4.0 \
-+    crate://crates.io/winapi-util/0.1.11 \
-+    crate://crates.io/winapi-x86_64-pc-windows-gnu/0.4.0 \
-+    crate://crates.io/windows-core/0.62.2 \
-+    crate://crates.io/windows-implement/0.60.2 \
-+    crate://crates.io/windows-interface/0.59.3 \
-+    crate://crates.io/windows-link/0.2.1 \
-+    crate://crates.io/windows-registry/0.6.1 \
-+    crate://crates.io/windows-result/0.4.1 \
-+    crate://crates.io/windows-strings/0.5.1 \
-+    crate://crates.io/windows-sys/0.45.0 \
-+    crate://crates.io/windows-sys/0.52.0 \
-+    crate://crates.io/windows-sys/0.59.0 \
-+    crate://crates.io/windows-sys/0.60.2 \
-+    crate://crates.io/windows-sys/0.61.2 \
-+    crate://crates.io/windows-targets/0.42.2 \
-+    crate://crates.io/windows-targets/0.52.6 \
-+    crate://crates.io/windows-targets/0.53.5 \
-+    crate://crates.io/windows_aarch64_gnullvm/0.42.2 \
-+    crate://crates.io/windows_aarch64_gnullvm/0.52.6 \
-+    crate://crates.io/windows_aarch64_gnullvm/0.53.1 \
-+    crate://crates.io/windows_aarch64_msvc/0.42.2 \
-+    crate://crates.io/windows_aarch64_msvc/0.52.6 \
-+    crate://crates.io/windows_aarch64_msvc/0.53.1 \
-+    crate://crates.io/windows_i686_gnu/0.42.2 \
-+    crate://crates.io/windows_i686_gnu/0.52.6 \
-+    crate://crates.io/windows_i686_gnu/0.53.1 \
-+    crate://crates.io/windows_i686_gnullvm/0.52.6 \
-+    crate://crates.io/windows_i686_gnullvm/0.53.1 \
-+    crate://crates.io/windows_i686_msvc/0.42.2 \
-+    crate://crates.io/windows_i686_msvc/0.52.6 \
-+    crate://crates.io/windows_i686_msvc/0.53.1 \
-+    crate://crates.io/windows_x86_64_gnu/0.42.2 \
-+    crate://crates.io/windows_x86_64_gnu/0.52.6 \
-+    crate://crates.io/windows_x86_64_gnu/0.53.1 \
-+    crate://crates.io/windows_x86_64_gnullvm/0.42.2 \
-+    crate://crates.io/windows_x86_64_gnullvm/0.52.6 \
-+    crate://crates.io/windows_x86_64_gnullvm/0.53.1 \
-+    crate://crates.io/windows_x86_64_msvc/0.42.2 \
-+    crate://crates.io/windows_x86_64_msvc/0.52.6 \
-+    crate://crates.io/windows_x86_64_msvc/0.53.1 \
-+    crate://crates.io/winnow/0.7.14 \
-+    crate://crates.io/wit-bindgen/0.51.0 \
-+    crate://crates.io/wit-bindgen-core/0.51.0 \
-+    crate://crates.io/wit-bindgen-rust/0.51.0 \
-+    crate://crates.io/wit-bindgen-rust-macro/0.51.0 \
-+    crate://crates.io/wit-component/0.244.0 \
-+    crate://crates.io/wit-parser/0.244.0 \
-+    crate://crates.io/writeable/0.6.2 \
-+    crate://crates.io/xattr/1.6.1 \
-+    crate://crates.io/yoke/0.8.1 \
-+    crate://crates.io/yoke-derive/0.8.1 \
-+    crate://crates.io/zerocopy/0.8.39 \
-+    crate://crates.io/zerocopy-derive/0.8.39 \
-+    crate://crates.io/zerofrom/0.1.6 \
-+    crate://crates.io/zerofrom-derive/0.1.6 \
-+    crate://crates.io/zeroize/1.8.2 \
-+    crate://crates.io/zerotrie/0.2.3 \
-+    crate://crates.io/zerovec/0.11.5 \
-+    crate://crates.io/zerovec-derive/0.11.2 \
-+    crate://crates.io/zmij/1.0.21 \
+ SRC_URI += "\
+-    gomod://ariga.io/atlas;version=v0.31.1-0.20250212144724-069be8033e83;sha256sum=28fe83c0a57bd41a859cf9284fba1061893d1c415e511b882ee41027fb52277d \
+-    gomod://entgo.io/ent;version=v0.14.2;sha256sum=c21e4f67b52453a8a3a37326fa5a208cca1f989f5f37533877f097be197476e1 \
+-    gomod://filippo.io/edwards25519;version=v1.1.1;sha256sum=7e620dc84053ca8bf68180bbeada20ff586b1b9ebd8398039a5f7d5da17d3bb3 \
++    gomod://ariga.io/atlas;version=v1.1.0;sha256sum=1e8161d91f8f07204edb35fe4048cf75605e378df5bfdc60b6a9174d7a57e833 \
++    gomod://dario.cat/mergo;version=v1.0.2;sha256sum=67d2e9d83ca57d3a8ce1a0e0e626a7c03753b3966b58b41b95e97ca4e7b2c640 \
++    gomod://entgo.io/ent;version=v0.14.6;sha256sum=cf316ab8814166ec8870f2ebc89f7ea1d0ab6ca14abc8ab653c60f6cf2a49752 \
++    gomod://filippo.io/edwards25519;version=v1.2.0;sha256sum=98f2d3ca9b88daa031b0fb2fb521b7ea386af1fed61b6f445a20bef7fa381c17 \
+     gomod://github.com/AlecAivazis/survey/v2;version=v2.3.7;sha256sum=613a49c86cab69b67fbc8fb0f0b183c23bfdc2700122330c6b53020e01ebad60 \
+     gomod://github.com/BurntSushi/toml;version=v0.3.1;mod=1;sha256sum=28021b4180a59c3993607a95b18e230dd0bc6bea5242ffe8ea8bbfb4f4f7b4d7 \
+     gomod://github.com/Masterminds/goutils;version=v1.1.1;sha256sum=ef8778a20c37e98a92e3b1db5ab027cc201743a2f5bfb26ba228bf0515e20b48 \
+     gomod://github.com/Masterminds/semver/v3;version=v3.1.1;mod=1;sha256sum=0c22bf64508de083dc1e895935cffd9188ca546af08244e2f0b7a21e9ea023e4 \
+-    gomod://github.com/Masterminds/semver/v3;version=v3.2.0;mod=1;sha256sum=dcfed332546566ccebdfb44841c8d7b7c865f54eabfe1984a6cc44acb5d6ed84 \
+-    gomod://github.com/Masterminds/semver/v3;version=v3.2.1;sha256sum=d3e3b1dae669d44d9f92a314e02c3b2bbff2c5b2463f650cdbb7340f413e854b \
+-    gomod://github.com/Masterminds/sprig/v3;version=v3.2.3;sha256sum=2c533a1f9e700498bff05b051656e1024ffade38fe9a3e8bdfc439ee51d4821b \
++    gomod://github.com/Masterminds/semver/v3;version=v3.5.0;sha256sum=2cda916821eedb0e1d7ac45d80b6cb78320b035f0f77272ff18d082b7cd90713 \
++    gomod://github.com/Masterminds/sprig/v3;version=v3.3.0;sha256sum=c731370f7601711d1df9b4b0c9bb8488fc381b32fd3e7de97a03673e8287b719 \
+     gomod://github.com/Microsoft/go-winio;version=v0.6.2;mod=1;sha256sum=47fb19990ebb31954f3aa784ff45f4c93a9e86ac3e1297d7ca87c614aeffe2cb \
+     gomod://github.com/Netflix/go-expect;version=v0.0.0-20220104043353-73e0943537d2;mod=1;sha256sum=7e6a4e2dcf2df58a58cb81042f0d0ed99506f8c87667a89b11445116e6100b90 \
+     gomod://github.com/agext/levenshtein;version=v1.2.3;sha256sum=f24dcae174b3418f6340fb8f54797788a71130b960da4f07d3e08206cbcbdc02 \
+     gomod://github.com/alexliesenfeld/health;version=v0.8.1;sha256sum=687dc6b0928b4ca68e9ce580f5197cc55f9e9e798873915accb64f198d4c3b58 \
+-    gomod://github.com/apparentlymart/go-textseg/v13;version=v13.0.0;sha256sum=f3035ffd839b39f39c1802cde4f9a261eec50350c47e8edf1720bf8ef2d0d9fa \
+     gomod://github.com/apparentlymart/go-textseg/v15;version=v15.0.0;sha256sum=4886c2e43b8cd2f6ffbd3a78ef436bd7bc8da7825ab7426257969f346e7bb7eb \
+     gomod://github.com/appleboy/gin-jwt/v2;version=v2.10.3;sha256sum=9c7359efc2d016bae0e976f9654a3ec56a875042b220857f635760b1c59b3688 \
+-    gomod://github.com/asaskevich/govalidator;version=v0.0.0-20230301143203-a9d515a09cc2;sha256sum=0f8ec67bbc585d29ec115c0885cef6f2431a422cc1cc10008e466ebe8be5dc37 \
+-    gomod://github.com/aws/aws-lambda-go;version=v1.47.0;sha256sum=8c376e0fc949b13d0ee3a7faea6e42e78446d1b8837dd70cd5039c161bcdc472 \
+-    gomod://github.com/aws/aws-sdk-go-v2;version=v1.38.3;sha256sum=75ae4efcd06297afff7cec080ed7e1dfa9227f64fc7e9a3c5a54a8d53491d244 \
+-    gomod://github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream;version=v1.7.1;sha256sum=353f2cfb65dc2cfab4edb7c0734e9efeffaa17028f9310a16f584a31554af6b1 \
+-    gomod://github.com/aws/aws-sdk-go-v2/config;version=v1.31.6;sha256sum=f1ea171a198d9d28c677d770e569e185d8595eefb5d23026cc7dfc483afe26f1 \
+-    gomod://github.com/aws/aws-sdk-go-v2/credentials;version=v1.18.10;sha256sum=b0d7ab8c94bdcdb6b4b852253b99f40e9781786eca6cea803bc067316e871f37 \
+-    gomod://github.com/aws/aws-sdk-go-v2/feature/ec2/imds;version=v1.18.6;sha256sum=289cc88b4845db6da2e47552baf919acaf9ce9988628a5bae37db8defe064d02 \
+-    gomod://github.com/aws/aws-sdk-go-v2/feature/s3/manager;version=v1.19.4;sha256sum=e5a87121aeeb60e836ced35aef2914bdec380050761ae6a81275d9c53bc4a7c7 \
+-    gomod://github.com/aws/aws-sdk-go-v2/internal/configsources;version=v1.4.6;sha256sum=836183db8a8a13303444c9c43731f05f076e66c2edfe9b76958bf351e197bcfc \
+-    gomod://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2;version=v2.7.6;sha256sum=df22fff8b677924c88c179109ce95d34f53c76e2a4b83e6a8366a2a73eb8fc8e \
+-    gomod://github.com/aws/aws-sdk-go-v2/internal/ini;version=v1.8.3;sha256sum=7c134d09366b976ea1362c3dca8a394e130182af739a792d7b16089eefa8a514 \
+-    gomod://github.com/aws/aws-sdk-go-v2/internal/v4a;version=v1.4.6;sha256sum=ec2323e472854758865d8bbd54d529418719a46f628073a0ad589ba30a4c4a56 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs;version=v1.57.2;sha256sum=3435598cd204de80dd9463ba40b9d4d75ed313cb30cdf25f0fbabb6eb1d604e0 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding;version=v1.13.1;sha256sum=ae96d9155ddc1b4981ec4ef3957b3fd446a760aea9292f6e180fdfa2506bef43 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/internal/checksum;version=v1.8.6;sha256sum=a51af1acad71f770f6a0c1557c828bb43ae9d07a808825bc7c813ba6ecc6218d \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/internal/presigned-url;version=v1.13.6;sha256sum=dc1f26ffea71e7e5a1e96a279de3bec58ccfe6f1c482af8eb7804e249e459b86 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/internal/s3shared;version=v1.19.6;sha256sum=8945055471496857f9c051d05f31e0ef8cc8e31452d5bbded2244ef52a68fc98 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/kinesis;version=v1.40.1;sha256sum=e5c5fd7799b4d5f6807068af2f25d113661836ae99ff9cd4bb6c09025fdd2e6b \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/s3;version=v1.87.3;sha256sum=0647d8e741acbb3997b580ae09e85e6d85dee2c62b3bc02f4ff14407197cbe89 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/sqs;version=v1.42.3;sha256sum=4720fa7e83a3e823dadd1d952628bd760b9cf4b7994b4571e5ad027d1bbc1905 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/sso;version=v1.29.1;sha256sum=198f413c0864daec704b1069e50efb3d0c78f494525b09c27c4edae5016e4150 \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/ssooidc;version=v1.34.2;sha256sum=90cbec71c105f184dc08d7996bda517bc1d7c85e49da517a6ed8630034a5ca5f \
+-    gomod://github.com/aws/aws-sdk-go-v2/service/sts;version=v1.38.2;sha256sum=9a25104836efda5369d5377790463df2a8832a68fa593a208ebb5b9a85d492e1 \
+-    gomod://github.com/aws/smithy-go;version=v1.23.0;sha256sum=637116dbe7e99c3146f5c9043703a7f2317784d748e208655111bfb4e5cf8095 \
+-    gomod://github.com/beevik/etree;version=v1.4.1;sha256sum=5a0cfc145267ee9d8199affbe4f93700219ed479bc053f8b260f650c00eef7b5 \
++    gomod://github.com/aws/aws-lambda-go;version=v1.54.0;sha256sum=4dc4a889cf28e306149e4845a29355163e561e58d3b44ccca8af2fe4a9ebf40c \
++    gomod://github.com/aws/aws-sdk-go-v2;version=v1.43.6;sha256sum=d07b16918a5d088d78bcbc800f9b4cfb3280a6c509df7ca7dbc46e723b70c9eb \
++    gomod://github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream;version=v1.7.18;sha256sum=df6b679e2d32e966cdd363be28264f226e25e1ad35030e793add3816c11cc517 \
++    gomod://github.com/aws/aws-sdk-go-v2/config;version=v1.32.37;sha256sum=c77e4d9abf5526331107dcd02ebf4f8a467cc2ece2da028f97017c08efbf6f3d \
++    gomod://github.com/aws/aws-sdk-go-v2/credentials;version=v1.19.36;sha256sum=b6da89b27832da6aadb9df0f1e30a20371dca3c349f5544ea267c2ff5040438d \
++    gomod://github.com/aws/aws-sdk-go-v2/feature/ec2/imds;version=v1.18.37;sha256sum=4c4bfc37500b8c94ea8029f5db25c70cb53418e7b6af43655b56657b3815f8df \
++    gomod://github.com/aws/aws-sdk-go-v2/feature/s3/manager;version=v1.22.43;sha256sum=3d3046f7dce9fbe961b9c7faecba25cde3d68c9b16ef99216f1da33224860b89 \
++    gomod://github.com/aws/aws-sdk-go-v2/internal/configsources;version=v1.4.37;sha256sum=c95bda31df03689a4516b1be7a92b6bf5fb8933f1feb818633b4f4fc45a91a26 \
++    gomod://github.com/aws/aws-sdk-go-v2/internal/endpoints/v2;version=v2.7.37;sha256sum=19c76b91b117034d899864f5787bec2dd74640a29ebd5f2027beb81f3a053399 \
++    gomod://github.com/aws/aws-sdk-go-v2/internal/v4a;version=v1.4.38;sha256sum=49d13292e116e8ea0d49cd96bb5524b52bc019823cfce36f5fa1fa48f4a739a8 \
++    gomod://github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs;version=v1.82.2;sha256sum=115867a776c83e11b0316c0f204d11137889ea5a37360d0546ab1edce20ef487 \
++    gomod://github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding;version=v1.13.17;sha256sum=5da6d06e605d71ee3202d46bf2b11c20512210a9c641cb34541690995dcbb6d9 \
++    gomod://github.com/aws/aws-sdk-go-v2/service/internal/checksum;version=v1.9.30;sha256sum=9cf039ac3e98217e34c6d6078a9d4088cc74ccb2bd1b232196fcfe6112f86d1a \
++    gomod://github.com/aws/aws-sdk-go-v2/service/internal/presigned-url;version=v1.13.37;sha256sum=1f0f45888b51a524e091c8c3534aeaaca1a6e5d5aaede79f8249169615b222af \
++    gomod://github.com/aws/aws-sdk-go-v2/service/internal/s3shared;version=v1.19.38;sha256sum=207a5e12107653ad9c2b883ce0af9a3e025ca1b84c7d71e57e29b7f697a6da44 \
++    gomod://github.com/aws/aws-sdk-go-v2/service/kinesis;version=v1.46.6;sha256sum=e2a0c30bed2e361ae1b7868639039230f697e2c2c4c6ce24e5b0e5a3c0d7d2dc \
++    gomod://github.com/aws/aws-sdk-go-v2/service/s3;version=v1.107.2;sha256sum=173d0a705649cea5d63c95e18acda146e99ff6bff3427a9014769807cdf12c5f \
++    gomod://github.com/aws/aws-sdk-go-v2/service/signin;version=v1.5.6;sha256sum=6720b3e00de03856b23d4fdde8f8fd1f67135d104f5bdcafe2fe99975111252b \
++    gomod://github.com/aws/aws-sdk-go-v2/service/sqs;version=v1.46.6;sha256sum=5fcf9709577b18c9dac9f8f68ffee9dea4125418ffb02a4553a7f08843ebc375 \
++    gomod://github.com/aws/aws-sdk-go-v2/service/sso;version=v1.33.6;sha256sum=f2ea291a6e939f3c144291d0dc01e81762061a2157de6df24fe96b0f848bc4bc \
++    gomod://github.com/aws/aws-sdk-go-v2/service/ssooidc;version=v1.38.6;sha256sum=688a033c71b9ecc71c0ee414a2be6adf19b7a679fa851604b7edada850e9aff1 \
++    gomod://github.com/aws/aws-sdk-go-v2/service/sts;version=v1.45.6;sha256sum=6bea363338e61ca9049f3102c20fda348df3c3d12bee2bb46568d3ab63af8333 \
++    gomod://github.com/aws/smithy-go;version=v1.27.8;sha256sum=831b02e1447db3c2d47cefb15b184bd522f26db41cfd28e2635da87e030fdf69 \
++    gomod://github.com/beevik/etree;version=v1.7.1;sha256sum=b4885ad91fd1f277ae10a067b927443443b08539a11ea46e7ddf61839f698ea8 \
+     gomod://github.com/beorn7/perks;version=v1.0.1;sha256sum=25bd9e2d94aca770e6dbc1f53725f84f6af4432f631d35dd2c46f96ef0512f1a \
+     gomod://github.com/bluele/gcache;version=v0.0.2;sha256sum=6b74bf6b1a6c2d961e2cb6bd01f42d37f6f70bc340394a0b052a65486e26df7f \
+     gomod://github.com/bmatcuk/doublestar;version=v1.3.4;sha256sum=6da867cec2e9e748762e9c8d84b01e220a0fe4d917425be7825f9152c262a402 \
+-    gomod://github.com/buger/jsonparser;version=v1.1.2;sha256sum=07495b55fbdae886bcc970b6f5d5073435b5980291dc92674c53ab31d1ad298f \
+-    gomod://github.com/bytedance/sonic;version=v1.13.2;mod=1;sha256sum=48b374e6376605f71430279429e7a3aa12f7291138a799e6af817fac2f4daf80 \
+-    gomod://github.com/bytedance/sonic/loader;version=v0.1.1;mod=1;sha256sum=bb556f6ca29deaa276165a425c8f54fc15c204b048acd5fe9f702122c11a9163 \
+-    gomod://github.com/bytedance/sonic/loader;version=v0.2.4;mod=1;sha256sum=1235cd86fbdaf29fa9f2b6050f907b90be31688208f5d7199dcba9d6aecec31f \
++    gomod://github.com/buger/jsonparser;version=v1.6.1;sha256sum=672b5eafb3cfaf6d9df425332e440b8dcb692d3b0f2c3addb550d022730e761d \
++    gomod://github.com/bytedance/gopkg;version=v0.1.4;mod=1;sha256sum=2696b4470b22849ec7f594e9f3c438371e7dd2e89fcbcbf305bde4c691f80fb1 \
++    gomod://github.com/bytedance/sonic;version=v1.15.0;mod=1;sha256sum=4f7430bec0c45be62275926dff5d5fa20decdf54222ef44124ebcf9fb3389bc9 \
++    gomod://github.com/bytedance/sonic/loader;version=v0.5.1;mod=1;sha256sum=c5b463f674a8ce937d7c88d4bfaf9b65044818392acd86eb176e543bc30c5c7a \
+     gomod://github.com/cenkalti/backoff/v5;version=v5.0.3;sha256sum=58e4d9014277bc1c5c7ab64539137923964cc3920303a4f771d02a532939bedb \
+     gomod://github.com/cespare/xxhash/v2;version=v2.3.0;sha256sum=145a26cdc7c49db566017b807c4989ee7f7ddeb569423e9cb99f995fac3621d3 \
+-    gomod://github.com/cloudwego/base64x;version=v0.1.5;mod=1;sha256sum=bcc4065e9bd9d1bc09c7853d20b725e9412d94b44b200548c14f263437b916fb \
+-    gomod://github.com/cloudwego/iasm;version=v0.2.0;mod=1;sha256sum=f5acaceec1bd6e113747f772710d7a057560812a7366978123ef2800a6b102ae \
++    gomod://github.com/clipperhouse/uax29/v2;version=v2.7.0;sha256sum=67b1278f1ffb4e4d783a390e48fe7396864650138e785d4b4bfca5914333f761 \
++    gomod://github.com/cloudwego/base64x;version=v0.1.6;mod=1;sha256sum=8b494d199b3660a3320b502e73d59e20ef7da2ee802d643d3a5dfb33ef132121 \
+     gomod://github.com/cockroachdb/apd;version=v1.1.0;mod=1;sha256sum=46ec9e27ae0d6eb416eb02e219eb609747461362358fc17cf32d1bc3f929a0da \
+     gomod://github.com/containerd/errdefs;version=v1.0.0;sha256sum=b4ef42c38d00f2c81cf3e69646549b7f5dc8fb72de9402d7b391963dc0ac9162 \
+     gomod://github.com/containerd/errdefs/pkg;version=v0.3.0;sha256sum=593bf56f1991517e493510815d8fc6d344b8550fbfb3de56812f015096aab24f \
+-    gomod://github.com/corazawaf/libinjection-go;version=v0.2.2;sha256sum=eca55f2ee6ca8d235823090dd3c11a1124f35118cd16d4dd67cb3955df9e9587 \
++    gomod://github.com/corazawaf/libinjection-go;version=v0.3.2;sha256sum=034e123baa084430b11ec601ae6310e5508c558245de2cf0ea831a5cbc160ca2 \
+     gomod://github.com/coreos/go-systemd;version=v0.0.0-20190321100706-95778dfbb74e;mod=1;sha256sum=dceb172eab082cca6a93107d9fbdde58e1d213fcab1bb81277c58da738177dcd \
+     gomod://github.com/coreos/go-systemd;version=v0.0.0-20190719114852-fd7a80b32e1f;mod=1;sha256sum=dceb172eab082cca6a93107d9fbdde58e1d213fcab1bb81277c58da738177dcd \
+-    gomod://github.com/coreos/go-systemd/v22;version=v22.5.0;sha256sum=4c44e3a6b84de4db393e341537c7124031fa98d5f98860ad31b32b4890f2234c \
++    gomod://github.com/coreos/go-systemd/v22;version=v22.7.0;sha256sum=25c78b5dae5afa61291a8559328007cc77e60dd6747454af5c83423c26cfdfba \
+     gomod://github.com/cpuguy83/go-md2man/v2;version=v2.0.1;mod=1;sha256sum=14c3afa2ef623555c1b4834d1f88b14df77549afee85e5750c19102465b78aba \
+-    gomod://github.com/cpuguy83/go-md2man/v2;version=v2.0.6;sha256sum=b8059316e38bcfd28b69d2c2b32d34b9e800ccaa1ff4b5a61022cbe98fa7c710 \
++    gomod://github.com/cpuguy83/go-md2man/v2;version=v2.0.6;mod=1;sha256sum=bb81a9e2d14d9a586f0591853bdaad230d8cdf0d8d6ffa71dddae249ad573cc9 \
++    gomod://github.com/cpuguy83/go-md2man/v2;version=v2.0.7;sha256sum=9ad5f2cbc644c0bb648a9b182d6b70f92e7ac4dfab5cf0ef746bbeef944fda59 \
+     gomod://github.com/creack/pty;version=v1.1.17;mod=1;sha256sum=0413a4191dccd6c75b0cc74cb71af1564070f2ecbfce3ab4ba3ccc9d701fd82c \
+     gomod://github.com/creack/pty;version=v1.1.7;mod=1;sha256sum=5ec31d31b68c8b9854e121e09d579444eb7708b2b815a078bfa452c2e25b7b14 \
+-    gomod://github.com/crowdsecurity/coraza/v3;version=v3.3.3-crowdsec.20251113;sha256sum=6843c723c3eeb464a9f9c56feba3af79811d347f3363b0f42566ec1a2124a9b5 \
++    gomod://github.com/crowdsecurity/coraza/v3;version=v3.7.0-crowdsec.20260730;sha256sum=1848c256583056af990a73fe814f401627eeefa3d6d4c8c1a0bd39f0b99b5b30 \
+     gomod://github.com/crowdsecurity/dlog;version=v0.0.2;sha256sum=9769acaa57ea316b541bc68f19d5ed16050ca02146db16e7a579447c01b21645 \
+     gomod://github.com/crowdsecurity/go-cs-lib;version=v0.0.25;sha256sum=117acf585de553fcbf1df5bf65f0646b3f952cb5db252d1da0d8a49f78707d6e \
+     gomod://github.com/crowdsecurity/grokky;version=v0.2.2;sha256sum=71ff3370e344569c085b147c086512dc321f9b98834e9997759d5c97dcef947d \
+@@ -80,82 +79,88 @@ SRC_URI += "\
+     gomod://github.com/davecgh/go-spew;version=v1.1.1;mod=1;sha256sum=bcb29393251237b79a17b6c19bf29134f43e8f438c3198988fcd461a1cdf05cc \
+     gomod://github.com/davecgh/go-spew;version=v1.1.2-0.20180830191138-d8f796af33cc;sha256sum=b4d0923b169b194f0016ec46f3df1ab0c68e27999743e43fe2de59ecb2484128 \
+     gomod://github.com/distribution/reference;version=v0.6.0;sha256sum=08232852a7a908263599777daab50e4306bd877e2467df036206367496122bcc \
+-    gomod://github.com/docker/go-connections;version=v0.6.0;sha256sum=c9847dae346c572e5e35cbd910ab3cb8ba7bf2bf2bb63a733e53031dd6d17127 \
++    gomod://github.com/docker/go-connections;version=v0.7.0;sha256sum=44c583ae40f15bd8abfe95a8b243d121ffef79b4605e8c737e24d5853188746e \
+     gomod://github.com/docker/go-units;version=v0.5.0;sha256sum=039d53ebe64af1aefa0be94ce42c621a17a3052c58ad15e5b3f357529beeaff6 \
+     gomod://github.com/dustin/go-humanize;version=v1.0.1;mod=1;sha256sum=4325999d0a6841031258a2561c22879d9fbdf77abc6b32a17b1cb6edf0810fb2 \
+-    gomod://github.com/ebitengine/purego;version=v0.8.4;mod=1;sha256sum=4920ecc5239d79446d9b61542c3749c7389d2178d3a142e557e0379051866514 \
+-    gomod://github.com/expr-lang/expr;version=v1.17.7;sha256sum=9b0cbf9e267d26edde2e5b50a2b33fbfe5c0db5b70a528915e46fe2cae27abcd \
++    gomod://github.com/ebitengine/purego;version=v0.10.2;mod=1;sha256sum=4920ecc5239d79446d9b61542c3749c7389d2178d3a142e557e0379051866514 \
++    gomod://github.com/emicklei/go-restful/v3;version=v3.13.0;sha256sum=06bd60484b324de0b8e4366d4ed326db2e1dc730459b46e19a5306a108439c77 \
++    gomod://github.com/evanw/esbuild;version=v0.28.2;sha256sum=db0fc2918ef7d1769b1746ed123d40db4f92636e2536dda4e40f5d080ae30de2 \
++    gomod://github.com/expr-lang/expr;version=v1.17.8;sha256sum=82210321f9078349af5dbf774e2a2d9f4aabe79db23a3124034722cdc632cd80 \
+     gomod://github.com/fatih/color;version=v1.13.0;mod=1;sha256sum=f0ac49fdf878d4b36897025bfb18639e2fe67d884cea8e324e5c1915697f8b1c \
+-    gomod://github.com/fatih/color;version=v1.18.0;sha256sum=4dc6907b7f6807b37c21ad527d966437d398f03472115f471eaa8fe5875363d3 \
++    gomod://github.com/fatih/color;version=v1.19.0;sha256sum=694b4265dc678e2a65b196371d5a6ec4eed3739f12a16021dcd2f0c1355d0ec6 \
+     gomod://github.com/felixge/httpsnoop;version=v1.0.4;sha256sum=75aa471311265e9860df0e523400b4650ed0c1a33262786a421f07226792e494 \
++    gomod://github.com/fsnotify/fsnotify;version=v1.10.1;sha256sum=b2c6a334e0d518da2e046066bdd9da34cb26bad6df9f17701802d3de522ab016 \
+     gomod://github.com/fsnotify/fsnotify;version=v1.6.0;mod=1;sha256sum=83bf51fd60c28a81139f84189c7ba3e9d88fdbcd20fafd58392cb76501a61a64 \
+-    gomod://github.com/fsnotify/fsnotify;version=v1.9.0;sha256sum=94e64824b23591b7aa504e3321d5ec3f57de88f4d49882eaefbbf6820dab746e \
+-    gomod://github.com/gabriel-vasile/mimetype;version=v1.4.8;sha256sum=46ae70748c5e9444869682b3ceee50ffd58d7886db2ee5cf21e05c6aa3a9b070 \
++    gomod://github.com/fxamacker/cbor/v2;version=v2.9.1;sha256sum=e1e319f75e5565aab662a6afd7ddc1565ab415bd46ee82ff4958fde909da20eb \
++    gomod://github.com/gabriel-vasile/mimetype;version=v1.4.13;sha256sum=03b46aaa7bd4403d65dc23fb9d7e9b61214bb429491c864ee638490a42d55013 \
++    gomod://github.com/getkin/kin-openapi;version=v0.147.0;sha256sum=42d8f415d2a3e66d503eecaef9cfc104e36607c99ab8c33ec14d9b0f0d2dfd2a \
+     gomod://github.com/gin-contrib/gzip;version=v1.2.3;sha256sum=9df2eb0490af0b4dd1e2170268824ea5e35a0c60aff35710c3d3f4a619c8d228 \
+-    gomod://github.com/gin-contrib/sse;version=v1.0.0;sha256sum=fd804b0464cbf3658ad0799d3c070ee000533ae698d83dda01f58e90aaa637dd \
+-    gomod://github.com/gin-gonic/gin;version=v1.10.0;sha256sum=c983efe780ee7c250a287eb26f228e0f7b77667c5ff9f4448cd54f05d28f5e70 \
+-    gomod://github.com/go-co-op/gocron/v2;version=v2.19.1;sha256sum=f079bef66ea5bb6a293b3c8f789a96828da6db38fffb4904021cf38acb79c149 \
++    gomod://github.com/gin-contrib/sse;version=v1.1.1;sha256sum=6c129866d1d3cbb1556f2ae84d474f6b22871417aa6420a3be383a3c305049b9 \
++    gomod://github.com/gin-gonic/gin;version=v1.11.0;sha256sum=ef27dd16d3edd311b60b920d44a57b52b1c208b5bb8a3a6c712945e0f5562cdf \
++    gomod://github.com/go-co-op/gocron/v2;version=v2.22.0;sha256sum=25b29a1b6d28d990730022d8fd3b9ca8c8ca17a962b075de48a75ba4f24a8f83 \
++    gomod://github.com/go-json-experiment/json;version=v0.0.0-20260214004413-d219187c3433;sha256sum=4cd402f765c9dca0c492942b0c98da26a922905372e0bbb0364fcad3bcba0965 \
+     gomod://github.com/go-kit/log;version=v0.1.0;mod=1;sha256sum=310e49d7adae88ab632999a4b225be3360a64ac12b6a976914b542e64256a41a \
+     gomod://github.com/go-logfmt/logfmt;version=v0.5.0;mod=1;sha256sum=e23d20d0d9d1e72e042c6e234195b9f8ef5621da7f8b9860d6a318d799c960d1 \
+-    gomod://github.com/go-logr/logr;version=v1.2.0;mod=1;sha256sum=519b1d6da5eeef675b4a1857d628f05f110a2b8cb3c423b715fea80d0975a518 \
+     gomod://github.com/go-logr/logr;version=v1.2.2;mod=1;sha256sum=519b1d6da5eeef675b4a1857d628f05f110a2b8cb3c423b715fea80d0975a518 \
+     gomod://github.com/go-logr/logr;version=v1.4.3;sha256sum=523d7a3587fe73f61ef41c8bc627f7d7f38de8104d46278154b307e60770ad70 \
+     gomod://github.com/go-logr/stdr;version=v1.2.2;sha256sum=9dd6893bf700198485ae699640b49bc1efbc6c73b37cb5792a0476e1fd8f7fef \
+     gomod://github.com/go-ole/go-ole;version=v1.2.6;mod=1;sha256sum=de7da59858d6121956da002ded711242cc14ecf597e932a8625246418fd3bbaa \
+-    gomod://github.com/go-openapi/analysis;version=v0.23.0;sha256sum=075e696af39c9cfeed9fb6a9f6f8075a21d3bd163d87542857a2b1e5cf20a7a5 \
+-    gomod://github.com/go-openapi/errors;version=v0.22.2;sha256sum=32347ccf8bc672268f2da48a3364bf6076aa21b9f22dcd59c3d5a73d4305b9c5 \
+-    gomod://github.com/go-openapi/inflect;version=v0.19.0;sha256sum=fbcca36e347a2f560f50ac1c9c63f7d6cd97c8dff9800f08f370b5ce09b77c57 \
+-    gomod://github.com/go-openapi/jsonpointer;version=v0.21.0;sha256sum=8a36ba84f6f6148834875fff96da79fcc2b383ace69cc34d71756b3fa84b9952 \
+-    gomod://github.com/go-openapi/jsonreference;version=v0.21.0;sha256sum=53b9b8491e1791f5c561a5325e0e167bed2ae421b18bb798524c11cad5afe5c4 \
+-    gomod://github.com/go-openapi/loads;version=v0.22.0;sha256sum=04bde40647c4ea75ea89999bcd2cf160294913b89d073a71bb762652c6ec9e12 \
+-    gomod://github.com/go-openapi/spec;version=v0.21.0;sha256sum=14c938ac62955b4354762fbdf45148d3847c427af0f6fe662ee280ca43b6518c \
+-    gomod://github.com/go-openapi/strfmt;version=v0.23.0;sha256sum=d262deb01c8148b98c777fcddfc3908ea3232bd9bf593ab926f3ca3d19933c0e \
+-    gomod://github.com/go-openapi/swag;version=v0.23.1;sha256sum=788093d8d1045e55064b513b13f3a40e4b4c9944584c8df8cacd9db3c3beb44d \
+-    gomod://github.com/go-openapi/validate;version=v0.24.0;sha256sum=71931ab10633f86ca3dd5f16a1bf16ae531b09c600d659f8adf1ac591b41b07d \
++    gomod://github.com/go-ole/go-ole;version=v1.3.0;mod=1;sha256sum=fcf0840f2ff50fbc3b5a54b9d4cb240c64d47003ab03e420aeff0057015a8953 \
++    gomod://github.com/go-openapi/analysis;version=v0.26.0;sha256sum=302fefa87c709aadcf9540702f9669468514ec83936a044d9731f14c7266b34b \
++    gomod://github.com/go-openapi/errors;version=v0.22.8;sha256sum=29105371e583abec5440063d20b77c67f67bf6b017c959c88934a5da6e65ae92 \
++    gomod://github.com/go-openapi/inflect;version=v0.21.5;sha256sum=f04b7f703151f59d058b7941977b187c170cdd6b2837df7b6abd64526aabf920 \
++    gomod://github.com/go-openapi/jsonpointer;version=v1.0.0;sha256sum=403cc887595921a24880a173862ea95b7c46f0747725d7b75c31165e0647e157 \
++    gomod://github.com/go-openapi/jsonreference;version=v1.0.0;sha256sum=381714f9c672c76e573155e6e6fb38ab1ccceafba6163d672a52d4460a999f5b \
++    gomod://github.com/go-openapi/loads;version=v0.25.0;sha256sum=309d12a74ca10eacfe6d73a3b1f91a7fd4c5d30609bddb48afb05e101c3ac361 \
++    gomod://github.com/go-openapi/spec;version=v0.22.9;sha256sum=e99c84955b8268d1552d5a77ccaec6a9c92c5c397aeaa52ee693636b6be5cafd \
++    gomod://github.com/go-openapi/strfmt;version=v0.27.0;sha256sum=6e830c668d22047156cd9d1e991e9e2603a55fd2fbd7331ee2e4691e9646797e \
++    gomod://github.com/go-openapi/swag;version=v0.28.0;sha256sum=3d8ca6e12ec2e0ca5e14be6f2688cfb3005878b799d42fbe3828e293d375dd5b \
++    gomod://github.com/go-openapi/swag/cmdutils;version=v0.28.0;sha256sum=ec8d7c8093e697ab5aa09eb1c7644bc02f9bb48d2cd00278a1c851001c6f82c4 \
++    gomod://github.com/go-openapi/swag/conv;version=v0.28.0;sha256sum=0869a899afe4cdc64843f06a45cc9fe4feddb47be187e223730ffe4b57de854b \
++    gomod://github.com/go-openapi/swag/fileutils;version=v0.28.0;sha256sum=282c501d0d2f2539c5ea0ae18fcd0b3b544d958b91b483404426717610ffcacb \
++    gomod://github.com/go-openapi/swag/jsonutils;version=v0.28.0;sha256sum=9ec1021cfa869bcf862ec8a36b166c46ebbb47f736e2bb8fa2a6685b83170e34 \
++    gomod://github.com/go-openapi/swag/loading;version=v0.28.0;sha256sum=63c459ca5289190b2a231c05aff1d22710bab0f50c33a49fe5f0c6cb218612a0 \
++    gomod://github.com/go-openapi/swag/mangling;version=v0.28.0;sha256sum=2d16f070918e2fd8714aaf356dfb9984e84daf7643689a8e25cc58d5ded54b70 \
++    gomod://github.com/go-openapi/swag/netutils;version=v0.28.0;sha256sum=d7363cce443a04264c352c76d34d89d0993e7e299319b25c00854d7ab865672a \
++    gomod://github.com/go-openapi/swag/pools;version=v0.28.0;sha256sum=623705ee11fe884b4a998ca0e8305c4da03ada2f43c3b4c41e1f84486e627049 \
++    gomod://github.com/go-openapi/swag/stringutils;version=v0.28.0;sha256sum=e15348c48de427f551dc69583eb088a72510c257cf976f6ab382601ec602ab6c \
++    gomod://github.com/go-openapi/swag/typeutils;version=v0.28.0;sha256sum=9256dec49a60a1efca39e0486107c7d86d15f7c52c962cfb9a04a720023e3e0d \
++    gomod://github.com/go-openapi/swag/yamlutils;version=v0.28.0;sha256sum=66bffa6d57cfc00135695b8d873f08d11c6017f472aa00b777dd168b3ecec2c3 \
++    gomod://github.com/go-openapi/validate;version=v0.26.3;sha256sum=b630b6260bb14fc1fe45ce748057ebff07fa86affbe744ebaec0a4bbfb66ad4d \
+     gomod://github.com/go-playground/locales;version=v0.14.1;sha256sum=f33b53f2eef290d8b43b1011285f1f9cfcb1295c690defcb452598773baace7b \
+     gomod://github.com/go-playground/universal-translator;version=v0.18.1;sha256sum=77fc966f2d045c208ddeaa8343924f83688841b6f4c2ae005dc9ea5550c7d171 \
+-    gomod://github.com/go-playground/validator/v10;version=v10.26.0;sha256sum=ae8c142c473f0b58d2784f4e1411799c9b5e35e1c025f6137d41f5fc8db0777f \
+-    gomod://github.com/go-sql-driver/mysql;version=v1.9.3;sha256sum=fa0066aaca3f8932270d62c75dfdb291a0a1a38505464910de6c83a1332e161e \
++    gomod://github.com/go-playground/validator/v10;version=v10.30.2;sha256sum=19b740a35f29483539a143ff5226266e4fe5f39b339d30599a85cfc258a8b8c6 \
++    gomod://github.com/go-sql-driver/mysql;version=v1.10.0;sha256sum=dc93f5770556406e82bf750a980d2316f882a19d883a3689eadb820708c2b651 \
+     gomod://github.com/go-stack/stack;version=v1.8.0;mod=1;sha256sum=591552a7ca5f4351d9bef6b868f2d85a61ea028271442581f5f487dced196129 \
+-    gomod://github.com/go-test/deep;version=v1.0.4;mod=1;sha256sum=d1879e1f0d4d967bad2f1da3782b6094f3697935615575be97d171695c1d4aae \
+-    gomod://github.com/goccy/go-json;version=v0.10.5;sha256sum=96e417d4493705f470f7f29858a09cdbe68330f2d7e74cd024fbace4745c0615 \
+-    gomod://github.com/goccy/go-yaml;version=v1.18.0;sha256sum=51bf59a85a7e3e2b8e83e5f376a3229b01b673a39601c99e3a2c05931cc3e339 \
+-    gomod://github.com/godbus/dbus/v5;version=v5.0.4;mod=1;sha256sum=8743ea72fed21cc143c4a067408e21f7787610e662fdbe8d5943312ea8ae8816 \
++    gomod://github.com/go-viper/mapstructure/v2;version=v2.5.0;sha256sum=326f8e00f648af4ae8e6e18c606325e4206a92d6ed42f486dc2f4da8e1897547 \
++    gomod://github.com/goccy/go-json;version=v0.10.6;mod=1;sha256sum=9027c83efc1eb1e1f4dfdc0ecd03d6de89dcb68ecae41d442485028f366fa98b \
++    gomod://github.com/goccy/go-yaml;version=v1.19.2;sha256sum=9ea8b466385c1ecf61fa55b68e409ea048b3d7fb1178eba66c1e24a7a30dfffb \
+     gomod://github.com/gofrs/uuid;version=v4.0.0+incompatible;mod=1;sha256sum=f7b67ead741e2d9645740d1c7ef7b26de46f670ed24fdc399096ef011dc07d57 \
+-    gomod://github.com/gogo/protobuf;version=v1.3.2;sha256sum=dd2b73f163c8183941626360196c8f844addd95423d341a0412e1b22d0104ff7 \
+     gomod://github.com/golang/glog;version=v1.2.5;mod=1;sha256sum=6e86cbe37163d5e14017888a82c32bbe29e732e9bd66bbe9da8e42e08f6bfdcc \
+     gomod://github.com/golang/protobuf;version=v1.3.1;mod=1;sha256sum=c0a2031bf277087749d8ccc432449f6b1375787eac8641dd2f930074231aafb4 \
+     gomod://github.com/golang/protobuf;version=v1.5.0;mod=1;sha256sum=738cbb1de96b67a6238ac3b8081cd8b1bfb0daebcf6c9bbe8cbdb6d73baecd19 \
+     gomod://github.com/golang/protobuf;version=v1.5.2;mod=1;sha256sum=7c8e7610527afd7724c7e8b7e843f132b0db61e8c9dd49dc589d430e8929bcc4 \
+     gomod://github.com/golang/protobuf;version=v1.5.4;sha256sum=9a2f43d3eac8ceda506ebbeb4f229254b87235ce90346692a0e233614182190b \
+     gomod://github.com/golang-jwt/jwt/v4;version=v4.5.2;sha256sum=ec5ee69a31fd478fc197fddce7c06dad1abe7543095a55c4ee6546ae79d99a0f \
+-    gomod://github.com/google/go-cmp;version=v0.5.2;mod=1;sha256sum=4036ab5636aa42bd313296cd3bfcb4c88912760c56a9e6655ae422d8767c80da \
++    gomod://github.com/google/gnostic-models;version=v0.7.0;sha256sum=797a05cd73a30624ece79633c4db4631676adc1f30f07a0a7051ab39beca96c8 \
+     gomod://github.com/google/go-cmp;version=v0.5.5;mod=1;sha256sum=4036ab5636aa42bd313296cd3bfcb4c88912760c56a9e6655ae422d8767c80da \
+-    gomod://github.com/google/go-cmp;version=v0.5.6;mod=1;sha256sum=4036ab5636aa42bd313296cd3bfcb4c88912760c56a9e6655ae422d8767c80da \
+-    gomod://github.com/google/go-cmp;version=v0.5.7;mod=1;sha256sum=7b51bed534f39f6cdf63c9e8160aac20e7fa494979d8f5a9ade974347f89be36 \
++    gomod://github.com/google/go-cmp;version=v0.6.0;mod=1;sha256sum=e7c7669d4a1dd589ba3e024ba27f43f293db611fe075ce20d7b884370d63febd \
+     gomod://github.com/google/go-cmp;version=v0.7.0;sha256sum=64a9ce046f2c320e3783fba0d1f4a15f8a18f0b009b67bf27f7630919db3f539 \
+-    gomod://github.com/google/go-querystring;version=v1.1.0;sha256sum=a6aafc01f5602e6177928751074e325792a654e1d92f0e238b8e8739656dd72b \
++    gomod://github.com/google/go-querystring;version=v1.2.0;sha256sum=57b7ce2b82b33c68f59a224c6dd1305753e5ee3eecbefd09d43423a14f541e31 \
+     gomod://github.com/google/gofuzz;version=v1.0.0;mod=1;sha256sum=fb009c01ee165bbaa85c85e8a3a794ea8e83f80714d4183465dc81d811b54427 \
+-    gomod://github.com/google/gofuzz;version=v1.2.0;sha256sum=5948f40af1923d8f98dc1d4191311030e40e0057fb255df19ebc0360f2faac16 \
+     gomod://github.com/google/renameio;version=v0.1.0;mod=1;sha256sum=ba9b5eb0878008a891e16b08c17922b03f92c76a03e7bfe1832635eada1c1a35 \
+-    gomod://github.com/google/uuid;version=v1.1.1;mod=1;sha256sum=73da47b6338b00a082fd451aa35a3273d3adc09b8e9bba98dab01091e402af6e \
+     gomod://github.com/google/uuid;version=v1.6.0;sha256sum=d0f02f377217f42702e259684e06441edbf5140dddcc34ba9bea56038b38a6ed \
+-    gomod://github.com/google/winops;version=v0.0.0-20230712152054-af9b550d0601;mod=1;sha256sum=1591cec0bbca7f58da77ef4d372f7c61865b6d8ea440dda54573f2913fdb6238 \
++    gomod://github.com/google/winops;version=v0.0.0-20260218212338-878c3f651658;mod=1;sha256sum=6603a6b91c84d3d388b13876e5404039d4bfacebe963a3bf2b949c1c22949b02 \
+     gomod://github.com/goombaio/namegenerator;version=v0.0.0-20181006234301-989e774b106e;sha256sum=4fe2d8f6e7f0fd072be4c386550f5491f47ac6c634d95e728be497b780538a3c \
+-    gomod://github.com/gorilla/websocket;version=v1.4.2;mod=1;sha256sum=09dc8a9227a54c1069ea065d610a5f2ca195f1f5fba6e7dbb2d7eb0fd6e01df6 \
+-    gomod://github.com/gorilla/websocket;version=v1.5.0;sha256sum=690ea4d1ffe00ab5fcb6d63e2ec3783fc5a58e9d0f1789ea5dc9b6663deee6d5 \
+-    gomod://github.com/gotnospirit/makeplural;version=v0.0.0-20180622080156-a5f48d94d976;sha256sum=5750c916115b851f4881b76d90128802d090558958aa821c691d4fa378018093 \
+-    gomod://github.com/gotnospirit/messageformat;version=v0.0.0-20221001023931-dfe49f1eb092;sha256sum=8aa77e56fba5d816f9c01c9731b1fcdec01c7118d38d57710edffc4894287ca1 \
+-    gomod://github.com/hashicorp/go-hclog;version=v1.5.0;sha256sum=37eae99309c542b32aa7e28bcd0236e1ded8acce4aadc25d8e5a8ab03066482d \
+-    gomod://github.com/hashicorp/go-plugin;version=v1.6.3;sha256sum=4f55ff48a99e9a7c725285dd83d7df64e1476f47250aada3fc29e6ce2b74822c \
+-    gomod://github.com/hashicorp/go-version;version=v1.7.0;sha256sum=341bd10080b7f7e0754bab07afb09f9a37e997b5fdb1a528266972a890309053 \
+-    gomod://github.com/hashicorp/hcl/v2;version=v2.13.0;sha256sum=6e44472b272d578b63817a93aa498d0d13e5f1dcc13a67abceb3aeec836341bc \
+-    gomod://github.com/hashicorp/yamux;version=v0.1.1;sha256sum=8cd954cfc5cdc51cca9bb2dc2fe117bedcc5b0f7cd7f79fb5793d1c1f7538065 \
++    gomod://github.com/gorilla/websocket;version=v1.5.4-0.20250319132907-e064f32e3674;sha256sum=81809e9741b37f386c8d28c9c6a23511f4a2465fd024a690a4c44a439e32e832 \
++    gomod://github.com/hashicorp/go-hclog;version=v1.6.3;sha256sum=ebab3136e5327ad17606485f633c2d033c61eadb843b2f3629b6d65d6fbb1400 \
++    gomod://github.com/hashicorp/go-plugin;version=v1.8.0;sha256sum=4d2ec76dfd4266342eadebb3b12e198983684e9a9208d0e257fa2b8f65717aa9 \
++    gomod://github.com/hashicorp/go-version;version=v1.9.0;sha256sum=b6c05489bf11a28c81cf38119782284c859d6c2d193b811d3f0117592eb31fcb \
++    gomod://github.com/hashicorp/hcl/v2;version=v2.24.0;sha256sum=53fd4e96ac9c190e192759daf49b63397865214d337ab5f6dbf6e68c1b0f4810 \
++    gomod://github.com/hashicorp/yamux;version=v0.1.2;sha256sum=8ba2b4b2d37260d4aeabf85ac9c26841a287a264c02bc629f40f19d2bd977df4 \
+     gomod://github.com/hexops/gotextdiff;version=v1.0.3;sha256sum=a10c3942f09bc5132268d22d4bb9d0c1849122d533fe8cdf65ea69da05cebbaf \
+     gomod://github.com/hinshun/vt10x;version=v0.0.0-20220119200601-820417d04eec;mod=1;sha256sum=5791a0eeb9d7793b7d4c4c8429c889f2dea3196a2f5e8ac401173471bfb8ca36 \
+-    gomod://github.com/huandu/xstrings;version=v1.3.3;mod=1;sha256sum=33c7a6cfa483a6d2c3da52bf870469c716fe5948bbc3177868c726e7d73bba00 \
+     gomod://github.com/huandu/xstrings;version=v1.5.0;sha256sum=74bd0e897e5c35b1fd0e598cb8d9dfcebcb820b6edf3abf850d5404bfaaca6a2 \
+-    gomod://github.com/imdario/mergo;version=v0.3.11;sha256sum=47332eb559e993749cc31292807b3a639a470032ec603fd3c15fbe46f82192f6 \
+     gomod://github.com/inconshreveable/mousetrap;version=v1.0.0;mod=1;sha256sum=391daebc93b0df9bb89a89b14bfa60268d9eb9e27623ec415041abababdd005c \
+     gomod://github.com/inconshreveable/mousetrap;version=v1.1.0;mod=1;sha256sum=1c1b15911aa8a0bd5cd0f6670ec23d1086496f3615fdf53306aff2b476ce9be1 \
+     gomod://github.com/ivanpirog/coloredcobra;version=v1.0.1;sha256sum=417b2b8f75ea20cbfd6b0ddd339a16642a389247b4ad2884e0445753468f443b \
+@@ -183,106 +188,106 @@ SRC_URI += "\
+     gomod://github.com/jackc/pgproto3/v2;version=v2.1.1;mod=1;sha256sum=a3b244b626d4c9b628066e8d2bdd591395dc9863ea594c5e45c40867e3a0f9f5 \
+     gomod://github.com/jackc/pgproto3/v2;version=v2.3.3;sha256sum=53ea236cbfe241693b439092e2d51b404c2a635ee3fe64ea7aad1527cb715189 \
+     gomod://github.com/jackc/pgservicefile;version=v0.0.0-20200714003250-2b9c44734f2b;mod=1;sha256sum=a8f467defefd4d7655a8bbce0ff93c67408e9e14cc8a95d9015338770ecd51e1 \
+-    gomod://github.com/jackc/pgservicefile;version=v0.0.0-20221227161230-091c0ba34f0a;sha256sum=1f8bdf75b2a0d750e56c2a94b1d1b0b5be4b29d6df056aebd997162c29bfd8ab \
++    gomod://github.com/jackc/pgservicefile;version=v0.0.0-20221227161230-091c0ba34f0a;mod=1;sha256sum=5f70111b892c17eecec6f97e0cd961cc3922b5daece59c099c855e1062ed0277 \
++    gomod://github.com/jackc/pgservicefile;version=v0.0.0-20240606120523-5a60cdf6a761;sha256sum=c9e31c91aebf96eb246bd410d1849cc7666d955a1e20ca2eba1c30b4eb89335f \
+     gomod://github.com/jackc/pgtype;version=v0.0.0-20190421001408-4ed0de4755e0;mod=1;sha256sum=f49bb6b9634307e5aaa49c0dbd08ac5a11feb1e4e4598f703711fd3a16fc4c05 \
+     gomod://github.com/jackc/pgtype;version=v0.0.0-20190824184912-ab885b375b90;mod=1;sha256sum=d6051ef14c271dd83e7b3d9df6ff71af80be4c0edaf470da28bac6f461bff5e9 \
+     gomod://github.com/jackc/pgtype;version=v0.0.0-20190828014616-a8802b16cc59;mod=1;sha256sum=46ab0c8749c2e33d0bfe21cba0840aa4734853cd717c04bc529796d54c484e5d \
+-    gomod://github.com/jackc/pgtype;version=v1.14.0;sha256sum=7e67f5b944cbd401025c6473e624ef61ed196e3ed0f77ed437b0621cf820c0c9 \
++    gomod://github.com/jackc/pgtype;version=v1.14.0;mod=1;sha256sum=f21568dcee07beb4b6f49e86d9171ddd2884a999728fb548db2abf59036faea6 \
++    gomod://github.com/jackc/pgtype;version=v1.14.4;sha256sum=278546f16518069acadb957a00e9d7019911e5f36c079cb47a57e074ccc7a1b3 \
+     gomod://github.com/jackc/pgtype;version=v1.8.1-0.20210724151600-32e20a603178;mod=1;sha256sum=ecd06114685e63dace8ab017acd0cbdac6eb46801d41374ca00c5600f109603e \
+     gomod://github.com/jackc/pgx/v4;version=v4.0.0-20190420224344-cc3461e65d96;mod=1;sha256sum=80bb4f71b8995003c37ce96d4aa1ae8080150f8419eea800e9bfadb1f3a07b5d \
+     gomod://github.com/jackc/pgx/v4;version=v4.0.0-20190421002000-1b8f0016e912;mod=1;sha256sum=842f17766f4390d2a5842257643bb8dd0b558e2c818fdf71a05ab441332eeab4 \
+     gomod://github.com/jackc/pgx/v4;version=v4.0.0-pre1.0.20190824185557-6972a5742186;mod=1;sha256sum=806922680a7a4b89182d91264fbb8e634ef56c0d739fb5c9d284d08a85e3b948 \
+     gomod://github.com/jackc/pgx/v4;version=v4.12.1-0.20210724153913-640aa07df17c;mod=1;sha256sum=5dfb5d594b761c270502ba0942f71165105211cface4f36a5c70cb91669a8cfc \
+-    gomod://github.com/jackc/pgx/v4;version=v4.18.2;sha256sum=38693e9a8527ef49be7d753862ff1958a94d76d37ae91c55c8a5806269954e2f \
++    gomod://github.com/jackc/pgx/v4;version=v4.18.2;mod=1;sha256sum=2566b78179f5e3397897b74adfa60f9bff18abc12672f1526deee56f7c9bf43a \
++    gomod://github.com/jackc/pgx/v4;version=v4.18.3;sha256sum=1d5955dc65b8de8f72f9856865b33dcd9a2238f7cf9b1f2a00f1558e7d4965da \
+     gomod://github.com/jackc/puddle;version=v0.0.0-20190413234325-e4ced69a3a2b;mod=1;sha256sum=5fc99fa273fc5cac83f4a57d73b690769edc41b5a3423e30c51f8d2838b6cea2 \
+     gomod://github.com/jackc/puddle;version=v0.0.0-20190608224051-11cab39313c9;mod=1;sha256sum=5fc99fa273fc5cac83f4a57d73b690769edc41b5a3423e30c51f8d2838b6cea2 \
+     gomod://github.com/jackc/puddle;version=v1.1.3;mod=1;sha256sum=5fc99fa273fc5cac83f4a57d73b690769edc41b5a3423e30c51f8d2838b6cea2 \
+-    gomod://github.com/jarcoal/httpmock;version=v1.1.0;mod=1;sha256sum=10db6883b827724b94058d912e5b5b2847ec4eb847cdd27fb8f9425f870c24e0 \
+-    gomod://github.com/jedib0t/go-pretty/v6;version=v6.6.7;sha256sum=ceef0f6390e20c6d793cc3983f78972b7b717ba2b92fa621021a2e8b75a3f0b9 \
++    gomod://github.com/jackc/puddle;version=v1.3.0;mod=1;sha256sum=5fc99fa273fc5cac83f4a57d73b690769edc41b5a3423e30c51f8d2838b6cea2 \
++    gomod://github.com/jarcoal/httpmock;version=v1.4.2;mod=1;sha256sum=9a7442f7e093bdbc9f99735621c52a2f34bc8849de66b99ed45b46dbc8e06fda \
++    gomod://github.com/jedib0t/go-pretty/v6;version=v6.8.3;sha256sum=f6dfe2ff3f738dd91ba406aaffebdeb81a1b85edb240aec33f64306551373358 \
+     gomod://github.com/jonboulle/clockwork;version=v0.5.0;sha256sum=f6b22626f17e5d4be7c755f83f97b575764da4c9ea4deccd5c5794912ce508aa \
+-    gomod://github.com/josharian/intern;version=v1.0.0;sha256sum=5679bfd11c14adccdb45bd1a0f9cf4b445b95caeed6fb507ba96ecced11c248d \
+     gomod://github.com/json-iterator/go;version=v1.1.12;sha256sum=d001ea57081afd0e378467c8f4a9b6a51259996bb8bb763f78107eaf12f99501 \
+-    gomod://github.com/jszwec/csvutil;version=v1.5.1;sha256sum=c8db7ee7569f5ba63856716cef525ab2a96f1dbcad58d8cb851fa8f0df5d7309 \
+-    gomod://github.com/kaptinlin/go-i18n;version=v0.1.4;sha256sum=c54b28f4f7f4d11e58555d544869f7175665a35951235d1d253257fda98341ba \
+-    gomod://github.com/kaptinlin/jsonschema;version=v0.4.6;sha256sum=d5958c64818357a1c3534446fd6cd3b0b8082bf2326367a88754bd1644abf585 \
++    gomod://github.com/jszwec/csvutil;version=v1.10.0;sha256sum=041c812ed4bb4f6475195b3228c881756b69e45dc0a1116ece0ec8699a459952 \
++    gomod://github.com/kaptinlin/go-i18n;version=v0.3.1;sha256sum=282f491cdf38d1ccd8c36a038401587d2723e6824940eacfbd996efd577a7307 \
++    gomod://github.com/kaptinlin/jsonpointer;version=v0.4.17;sha256sum=e356905c58d7c931e9a7df2bc423af3e09eee9ba31dc4a111016bac8df78d78d \
++    gomod://github.com/kaptinlin/jsonschema;version=v0.7.7;sha256sum=69cdc4d592d82cd1224fc3400915658cfe19d09a041d5734d9fa12b0487e7050 \
++    gomod://github.com/kaptinlin/messageformat-go;version=v0.4.19;sha256sum=e11931a8d89d5a4e598345ac73f79e6afb1e3b969e6d62dbd6313c29243d6733 \
+     gomod://github.com/kballard/go-shellquote;version=v0.0.0-20180428030007-95032a82bc51;sha256sum=ae4cb7b097dc4eb0c248dff00ed3bbf0f36984c4162ad1d615266084e58bd6cc \
+-    gomod://github.com/kisielk/errcheck;version=v1.5.0;mod=1;sha256sum=107d26460d41b5322b6911c9b5eb233117421943b3a1453ba99f01c4fdf2f8e8 \
+     gomod://github.com/kisielk/gotool;version=v1.0.0;mod=1;sha256sum=77aca7bffc0ec29fc9f088d5962ab3128f405d7b10c7ceb9693ff7a08958955d \
+-    gomod://github.com/klauspost/compress;version=v1.15.9;mod=1;sha256sum=1c3aa9eb7f46201571df2ca0c1bd9c095d81b2c91c1ed9393808c2e654c3fc64 \
+-    gomod://github.com/klauspost/compress;version=v1.18.0;sha256sum=c4679e4cbc820a21758199d985be754abf5eb2a38e6f1de95cd70b2e7ef06905 \
+-    gomod://github.com/klauspost/cpuid/v2;version=v2.0.9;mod=1;sha256sum=66180bc563c8890e28b69ba64fbe6e1d2879a8574a3ffce7e597f1915f78bc6c \
+-    gomod://github.com/klauspost/cpuid/v2;version=v2.2.10;mod=1;sha256sum=ff61d47f254f2333bf44a8ff4187a2f2e973693807c10025033bb37143577237 \
+-    gomod://github.com/knz/go-libedit;version=v1.10.1;mod=1;sha256sum=68b2c910e9bd5de076a9f5d9be180ac3f2fef5f4a904ba61fa98af79c5645b9f \
++    gomod://github.com/klauspost/compress;version=v1.19.1;sha256sum=a77e019f60dff8bdf00ad137985c808957cc657381daa4281824843bc6b46910 \
++    gomod://github.com/klauspost/cpuid/v2;version=v2.3.0;mod=1;sha256sum=ff61d47f254f2333bf44a8ff4187a2f2e973693807c10025033bb37143577237 \
+     gomod://github.com/konsorten/go-windows-terminal-sequences;version=v1.0.1;mod=1;sha256sum=6b69dafd3cf64d7b57e978848a7e271a2be0a04d9a2564dd2556491d27d0a034 \
+     gomod://github.com/konsorten/go-windows-terminal-sequences;version=v1.0.2;mod=1;sha256sum=6b69dafd3cf64d7b57e978848a7e271a2be0a04d9a2564dd2556491d27d0a034 \
+     gomod://github.com/kr/pretty;version=v0.1.0;mod=1;sha256sum=e3d5d46d2f6ac94a666a54b5e867ec16bf199d9f4b700827cd731607efdd109a \
+     gomod://github.com/kr/pty;version=v1.1.1;mod=1;sha256sum=6da4c9c7364446894e5ef877e19f985cd51d671ce6e8f4ca87862b449f6dd7f6 \
+     gomod://github.com/kr/pty;version=v1.1.8;mod=1;sha256sum=84fd3216760a197e72c3799224956254c50b92c21c146852f6ef4f5785e3f15d \
+     gomod://github.com/kr/text;version=v0.1.0;mod=1;sha256sum=2fba9529e5c13dde62f371ef7383baf04d7132501dac6aa08e910f9ec0bf85c5 \
++    gomod://github.com/kylelemons/godebug;version=v1.1.0;mod=1;sha256sum=1605871e895331a39f5952559ebbc91228d86b8100354f857b562866eca5bb13 \
+     gomod://github.com/leodido/go-urn;version=v1.4.0;sha256sum=948fe5f705b9eab6c3bc7e34a3ad2549ead87a8f5f73e5a85a8c66f347612ab2 \
+     gomod://github.com/lib/pq;version=v1.0.0;mod=1;sha256sum=4c8ac83a989579853015fde612e6563b26cb67d1b937649bbe0a1877ac249114 \
+     gomod://github.com/lib/pq;version=v1.1.0;mod=1;sha256sum=4c8ac83a989579853015fde612e6563b26cb67d1b937649bbe0a1877ac249114 \
+     gomod://github.com/lib/pq;version=v1.10.2;mod=1;sha256sum=94c1488688b2b9822a96e1375e32002a652cc1aee71520f6bfa87bec8eb79c06 \
+     gomod://github.com/lib/pq;version=v1.2.0;mod=1;sha256sum=4c8ac83a989579853015fde612e6563b26cb67d1b937649bbe0a1877ac249114 \
+-    gomod://github.com/lufia/plan9stats;version=v0.0.0-20211012122336-39d0f177ccd0;mod=1;sha256sum=5bfa5aa9d2b1f15002ad9bef70a297ab14270d0c6b0d505882b8ec9facd95077 \
+-    gomod://github.com/magefile/mage;version=v1.15.1-0.20250615140142-78acbaf2e3ae;mod=1;sha256sum=c179221303b82802269c361abc52cfa144bc1a1bd36319a4fe77ab2145782a8b \
+-    gomod://github.com/mailru/easyjson;version=v0.9.0;sha256sum=090087778afa675a863f7f6c9c7e5dff41523639a72235c5a9014811dfd0a4bc \
++    gomod://github.com/lufia/plan9stats;version=v0.0.0-20260330125221-c963978e514e;mod=1;sha256sum=37a53f16d9ab910339d4395983695afb4490aae01435c0a59980675c45d0bd95 \
++    gomod://github.com/magefile/mage;version=v1.17.1;mod=1;sha256sum=0b82f958994d548d2bd8b65598fc28600eac06658589a07c73b461d6de75b381 \
+     gomod://github.com/mattn/go-colorable;version=v0.1.1;mod=1;sha256sum=eea1203659e82719021af821e1f4c66335e955fa630be09f7cb3fdb1bb193497 \
+     gomod://github.com/mattn/go-colorable;version=v0.1.12;mod=1;sha256sum=301b4efcc69da40b91ccc8d2cc58e88595e8ad8712aca01403f10086d96b1813 \
+-    gomod://github.com/mattn/go-colorable;version=v0.1.13;sha256sum=08be322dcc584a9fcfde5caf0cf878b4e11cd98f252e32bc704e92c5a4ba9d15 \
++    gomod://github.com/mattn/go-colorable;version=v0.1.14;sha256sum=5e0e7925a070bb5bd11b4097e1a7b608167f0217ee83901b44c135f6e5e85c78 \
+     gomod://github.com/mattn/go-colorable;version=v0.1.2;mod=1;sha256sum=a1161e694ac3bdfebf8550b34d8273fafddbe76fda0c62e85440f71799e56b9d \
+     gomod://github.com/mattn/go-colorable;version=v0.1.6;mod=1;sha256sum=adff3e24384bcd2ecf0c6d6a1a9e4e31065401e9b5d29ce6a120255ab3c02313 \
+     gomod://github.com/mattn/go-colorable;version=v0.1.9;mod=1;sha256sum=adff3e24384bcd2ecf0c6d6a1a9e4e31065401e9b5d29ce6a120255ab3c02313 \
+     gomod://github.com/mattn/go-isatty;version=v0.0.12;mod=1;sha256sum=1a062e56c0266d004bea51115acf8c2b597d1407ca55ad56cce01e97ada3da4b \
+     gomod://github.com/mattn/go-isatty;version=v0.0.14;mod=1;sha256sum=e9299133cd7243ec2667aa25a04b2dac6009234ae4c1cda4edb45749970dae9f \
+-    gomod://github.com/mattn/go-isatty;version=v0.0.16;mod=1;sha256sum=714766ec82d67db895ade8af6b8054ad430c3cea5e15b3a888f23ed2f3e1b863 \
+-    gomod://github.com/mattn/go-isatty;version=v0.0.20;sha256sum=f2d5f89ca451577e17464b9bb596dc0d0ecececb5eaa63622c41b57cd0b7b8cc \
++    gomod://github.com/mattn/go-isatty;version=v0.0.24;sha256sum=4fcffec0bae0ad4af7bf96e2497a817d85de64af19ffe31d82bda362148234b8 \
+     gomod://github.com/mattn/go-isatty;version=v0.0.5;mod=1;sha256sum=4f775a89be9a80189a826ef22dc303e389557c558f14bfd40b75b5ef2845e56f \
+     gomod://github.com/mattn/go-isatty;version=v0.0.7;mod=1;sha256sum=4f775a89be9a80189a826ef22dc303e389557c558f14bfd40b75b5ef2845e56f \
+     gomod://github.com/mattn/go-isatty;version=v0.0.8;mod=1;sha256sum=4f775a89be9a80189a826ef22dc303e389557c558f14bfd40b75b5ef2845e56f \
+-    gomod://github.com/mattn/go-runewidth;version=v0.0.16;sha256sum=179d2d900c76ee3560fbeda60d0237a3be6acb734d0cb7423b55e5ccb0cedbca \
+-    gomod://github.com/mattn/go-sqlite3;version=v1.14.24;sha256sum=c655f3f056f9e4422f9ccf4850841cbfc125058e0702715ef9c600449cdcd458 \
++    gomod://github.com/mattn/go-runewidth;version=v0.0.22;sha256sum=20a9d0b6365a245a6da5db173737750bc2442fe7085a9aa2ca928e1d6968726d \
++    gomod://github.com/mattn/go-sqlite3;version=v1.14.32;sha256sum=c70101000256656bc0b7286807cf177852c753a001a3aa3c55d5373575fb81aa \
+     gomod://github.com/mgutz/ansi;version=v0.0.0-20170206155736-9520e82c474b;mod=1;sha256sum=12e14b97ea604f1fcb9f7fcc85ee93d9ba7f858a03469ee29e929a07d55d0a4d \
+     gomod://github.com/mgutz/ansi;version=v0.0.0-20200706080929-d51e80ef957d;sha256sum=2e0c063f9597cb225904292981732f10298e95aa22a1b815297e318ba103dc1d \
+-    gomod://github.com/mitchellh/copystructure;version=v1.0.0;mod=1;sha256sum=f1caf5434296b380a55af8ea9994a01cac975e1170dc63b50cb33569d65bc5e1 \
+     gomod://github.com/mitchellh/copystructure;version=v1.2.0;sha256sum=4a1ce1f3c66bf99883e55da50fe1b3122299b79ad1d11c5407abbd74ace12550 \
+     gomod://github.com/mitchellh/go-wordwrap;version=v1.0.1;sha256sum=5f96426c4b3b3e90a9b7471568cb1d61d6a306744f5d4765a30fa8a61e1c0b47 \
+-    gomod://github.com/mitchellh/mapstructure;version=v1.5.0;sha256sum=118d5b2cb65c50dba967fb6d708f450a9caf93f321f8fc99080675b2ee374199 \
+-    gomod://github.com/mitchellh/reflectwalk;version=v1.0.0;mod=1;sha256sum=7a5fefd3afb6a309c9c38b51a5448e01cdc9cff07be066e29d53609f3290f2bb \
+     gomod://github.com/mitchellh/reflectwalk;version=v1.0.2;sha256sum=c96eed6b50f00b1acdc79224e8e55f66ef3e98e3f7c6373afa3e3b8c6ef440d1 \
+     gomod://github.com/moby/docker-image-spec;version=v1.3.1;sha256sum=e3fe212be410465c0cae032baa7e2c7282b9bb878f081f00549333edc260c306 \
+-    gomod://github.com/moby/moby/api;version=v1.52.1-0.20251116162601-e9ff10bf365a;sha256sum=35a38321db58305f469350fc48eabb2997d141bd4b000628daefb9808b69126f \
+-    gomod://github.com/moby/moby/client;version=v0.1.1-0.20251116162601-e9ff10bf365a;sha256sum=3ebdfd6bab474be0edabdef1cbdb5ce0def357c1ab52591f91cd2ee0f488bb6b \
++    gomod://github.com/moby/moby/api;version=v1.55.0;sha256sum=5e6428e58b17018a8e1ecffb176dbdffc7678b97f7bf4f50fd3f814747de4847 \
++    gomod://github.com/moby/moby/client;version=v0.5.1;sha256sum=1fbfaea19d085d23f99d47352f0665713c11986b383b8209625abac6db2e04b2 \
+     gomod://github.com/modern-go/concurrent;version=v0.0.0-20180228061459-e0a39a4cb421;mod=1;sha256sum=27a5e9f05c71089b6fd5e119fc1c8ce81f0c16da4ec3357157b1d85e2ba85ae2 \
+     gomod://github.com/modern-go/concurrent;version=v0.0.0-20180306012644-bacd9c7ef1dd;sha256sum=91ef49599bec459869d94ff3dec128871ab66bd2dfa61041f1e1169f9b4a8073 \
+-    gomod://github.com/modern-go/reflect2;version=v1.0.2;sha256sum=f46f41409c2e74293f82cfe6c70b5d582bff8ada0106a7d3ff5706520c50c21c \
++    gomod://github.com/modern-go/reflect2;version=v1.0.2;mod=1;sha256sum=099ee58ec210155280692f9e2360f523272e525f06272754be7a2a44dbfa0623 \
++    gomod://github.com/modern-go/reflect2;version=v1.0.3-0.20250322232337-35a7c28c31ee;sha256sum=49f3fb0f76b1b98b52b5e6e8eab2a48454eab33904b937625941c28138a7fea4 \
+     gomod://github.com/mohae/deepcopy;version=v0.0.0-20170929034955-c48cc78d4826;sha256sum=41ba726508a213f4af89e7d58937263ff778e352d591edd422d3a3dc3272585c \
+     gomod://github.com/munnerz/goautoneg;version=v0.0.0-20191010083416-a7dc8b61c822;sha256sum=3d7ce17916779890be02ea6b3dd6345c3c30c1df502ad9d8b5b9b310e636afd9 \
+-    gomod://github.com/ncruces/go-strftime;version=v0.1.9;mod=1;sha256sum=e5864a1dd9ac62bd778e7444e02e1e4130fa7c00d88eaea271c34f934e724f73 \
++    gomod://github.com/ncruces/go-strftime;version=v1.0.0;mod=1;sha256sum=e5864a1dd9ac62bd778e7444e02e1e4130fa7c00d88eaea271c34f934e724f73 \
+     gomod://github.com/nxadm/tail;version=v1.4.11;sha256sum=c42a7b1a10a9b31f61806742e7be99e524a2885c9180f18403be48a703b5667a \
+-    gomod://github.com/oklog/run;version=v1.0.0;sha256sum=108d409b7d235d61b82cfb6e1df139501123fcd8fa68fe94ddb024b53335cb48 \
+-    gomod://github.com/oklog/ulid;version=v1.3.1;sha256sum=40e502c064a922d5eb7f2bc2cda9c6a2a929ec0fc76c9aae4db54fb7b6b611ae \
++    gomod://github.com/oasdiff/yaml;version=v0.1.1;sha256sum=c7813b8bf97831462a9d3a347a8ea9dbd71644c53de7af55f6df45688a968af4 \
++    gomod://github.com/oasdiff/yaml3;version=v0.0.14;sha256sum=3e8b91dd2b5208d482fe592467b6654927291031a19f7792d51bb64781ad738c \
++    gomod://github.com/oklog/run;version=v1.2.0;sha256sum=730451ad4b759a648873e99b72abb9e8b3f7e23a4949f808d0238b827594073d \
++    gomod://github.com/oklog/ulid/v2;version=v2.1.1;sha256sum=312b5fea3f68df920adaffc327440efbaba43ad6a8df2f7e0c9e365743f6ff89 \
+     gomod://github.com/opencontainers/go-digest;version=v1.0.0;sha256sum=615efb31ff6cd71035b8aa38c3659d8b4da46f3cd92ac807cb50449adfe37c86 \
+     gomod://github.com/opencontainers/image-spec;version=v1.1.1;sha256sum=3a32eeb459719172947c20be78b5b7293c6ea84f4039184e846f6b676bc19574 \
+-    gomod://github.com/oschwald/geoip2-golang;version=v1.9.0;sha256sum=2fc05b05b02aac3f86b4752d7517fa6063a0b0d2ea9f6c50d89432c98c907f62 \
+-    gomod://github.com/oschwald/maxminddb-golang;version=v1.12.0;sha256sum=160a3e324bd889247553c362405f405800c955046499d5fa5d69c149218d9206 \
+-    gomod://github.com/pelletier/go-toml/v2;version=v2.2.4;sha256sum=82162be7b85077f3be49bfe0f1e01f308b9c9554c72a980a22a34432f94885f0 \
++    gomod://github.com/oschwald/geoip2-golang;version=v1.13.0;sha256sum=ae8e8157da293279d085518ca009aa11dab141aa7d5521cb9c9851ce52c8c418 \
++    gomod://github.com/oschwald/maxminddb-golang;version=v1.13.1;sha256sum=717e0e89131541827935e02a76aed474247009bae9653a76b0c0a9152ba49e20 \
++    gomod://github.com/pborman/getopt;version=v0.0.0-20170112200414-7148bc3a4c30;mod=1;sha256sum=35411c4b33e0d9eb3a694855ac64f9889d85c957f86a4984ed7dcc123952ec9f \
++    gomod://github.com/pelletier/go-toml/v2;version=v2.3.0;sha256sum=27ab9ac7f21fbe4c16c8b8252b27d10d4e86f29adea7dbca15fb920e07787f3d \
+     gomod://github.com/petar-dambovaliev/aho-corasick;version=v0.0.0-20250424160509-463d218d4745;sha256sum=e867b11b91e833e277f95a8d71e0a3462e647038bb49437eaef52d7b1ca881cb \
+-    gomod://github.com/pierrec/lz4/v4;version=v4.1.15;mod=1;sha256sum=2c89e56a6db7a7760fa45f2494631d9202e10d9c5c4cb8e7377c37212d7cb975 \
+-    gomod://github.com/pierrec/lz4/v4;version=v4.1.18;sha256sum=b397db34ff05610125e7c9de6de067a174a70ba3ba7dac81ba8ce4f22b1c0933 \
++    gomod://github.com/pierrec/lz4/v4;version=v4.1.26;sha256sum=cf67f99d8d4ed84775a51de3167b70907e5436dd2f501f37deffac46c0a51ae1 \
+     gomod://github.com/pkg/errors;version=v0.8.1;mod=1;sha256sum=df28c6a823f181d76179697177c0c5943c6ffb38f3c10b2dc53be360ee7d4589 \
+     gomod://github.com/pmezard/go-difflib;version=v0.0.0-20151028094244-d8ed2627bdf0;mod=1;sha256sum=74b2e766eb215377864d587badf57e95521f692d2a7860b3c7759093f9c9bec2 \
+     gomod://github.com/pmezard/go-difflib;version=v1.0.0;mod=1;sha256sum=74b2e766eb215377864d587badf57e95521f692d2a7860b3c7759093f9c9bec2 \
+-    gomod://github.com/pmezard/go-difflib;version=v1.0.1-0.20181226105442-5d4384ee4fb2;mod=1;sha256sum=74b2e766eb215377864d587badf57e95521f692d2a7860b3c7759093f9c9bec2 \
++    gomod://github.com/pmezard/go-difflib;version=v1.0.1-0.20181226105442-5d4384ee4fb2;sha256sum=24ff45e356f638a53bd0c89fff961fbeaecfdb0dc5e482ceed0a2230e0e5f3b7 \
+     gomod://github.com/power-devops/perfstat;version=v0.0.0-20240221224432-82ca36839d55;mod=1;sha256sum=05744a9262bcd294613e65624f3f8bae83d79a58aa48b8328c7df91190aa07bf \
+-    gomod://github.com/prometheus/client_golang;version=v1.23.2;sha256sum=dfcc6c52ad09e3d0dca2e9f41de7f8d1c0dde7baae4b867353d112918a1511de \
++    gomod://github.com/prometheus/client_golang;version=v1.24.1;sha256sum=90b627e392d9936cf410ed23066d6198fecc11130bbab2e17dda627da3a86fc3 \
+     gomod://github.com/prometheus/client_model;version=v0.6.2;sha256sum=67017b19f220c6ab91ecfdd10a93824e2a8b09fcb6390054dbdc49df3354a9ca \
+-    gomod://github.com/prometheus/common;version=v0.66.1;sha256sum=05d9e8e5c289209245dc22a7d07812b1b72472c67f372b5579dfabc3774e17b4 \
+-    gomod://github.com/prometheus/procfs;version=v0.16.1;sha256sum=e4b74815566cbf5aa372d23e1de32f16ac5c3c4c80bc94a31fdee60a1de6074a \
++    gomod://github.com/prometheus/common;version=v0.70.1;sha256sum=587d6d0890642e7f9ef2ce6a76cdf6dcbd71f70c59437282a2e19c98cf68c2b8 \
++    gomod://github.com/prometheus/procfs;version=v0.21.1;sha256sum=b417ab3081ad334ce4c6b367b2d5e74dea49e2eb3b5431c1dd5a65e1256736f9 \
++    gomod://github.com/quic-go/qpack;version=v0.6.0;sha256sum=3ac037cd1747420bc00bd6a793b4b197a2359fc354de12dc2187477417564914 \
++    gomod://github.com/quic-go/quic-go;version=v0.59.1;sha256sum=d00c08f9c9fa94654733baecbbfc930c41e86aa2c84a5eadfe25b8ccf9685fff \
+     gomod://github.com/r3labs/diff/v2;version=v2.15.1;sha256sum=58da63a4f92aaee6117b927788d60082418e0870be3e7c762341b748120ff510 \
+     gomod://github.com/remyoudompheng/bigfft;version=v0.0.0-20230129092748-24d4a6f8daec;mod=1;sha256sum=6401dabced8e037796108d28559bffc06d135305cd6222c3cea153767ea95680 \
+-    gomod://github.com/rivo/uniseg;version=v0.2.0;mod=1;sha256sum=6c7318a27a8d5473a8eb661e75fb00528176e0efc59310ed277ca13bd12a53f1 \
+-    gomod://github.com/rivo/uniseg;version=v0.4.7;sha256sum=b995e4aa0cc1e5779cc61138ac925cb8c1e963e40c80e4b93ee8553812ebb792 \
+     gomod://github.com/robfig/cron/v3;version=v3.0.1;sha256sum=ebe6454642220832a451b8cc50eae5f9150fd8d36b90b242a5de27676be86c70 \
+     gomod://github.com/rogpeppe/go-internal;version=v1.3.0;mod=1;sha256sum=33b55e839b0754283c3eeec1f33e16cc66432dffb8b8a96d24f536d01e51495b \
+     gomod://github.com/rs/xid;version=v1.2.1;mod=1;sha256sum=9825a682f345142b87e0d0a3de1ce877b4531961d5331f0f8c2cb869ca273c91 \
+@@ -290,24 +295,23 @@ SRC_URI += "\
+     gomod://github.com/rs/zerolog;version=v1.15.0;mod=1;sha256sum=a53fcb58074e9b31fa6bc5b2bb87853cd51d1b4d29489015dcbe439c79896b53 \
+     gomod://github.com/russross/blackfriday/v2;version=v2.1.0;sha256sum=7852750d58a053ce38b01f2c203208817564f552ebf371b2b630081d7004c6ae \
+     gomod://github.com/sanity-io/litter;version=v1.5.8;sha256sum=4880fcf58f4d2f712273bfd123a14d93161659054685ccb11aba31561e1bb17b \
+-    gomod://github.com/santhosh-tekuri/jsonschema/v6;version=v6.0.2;mod=1;sha256sum=48f5e138633d4d85be9f6cd447e2db32aabd00e530a00a45985695af5e0372e5 \
++    gomod://github.com/santhosh-tekuri/jsonschema/v6;version=v6.0.3;sha256sum=79282583888de6fd146e513f01e09bd3b228976942d2114688e97608279b1ebe \
+     gomod://github.com/satori/go.uuid;version=v1.2.0;mod=1;sha256sum=4179602495a0a2456cd6ad14a9964b3372683eb17998c287462eca379007c4ff \
+-    gomod://github.com/segmentio/kafka-go;version=v0.4.48;sha256sum=21feb8ed80b4a7edaf4f2142d9410b9a20e51d644e0d0a6dc27938b3795bf231 \
+-    gomod://github.com/sergi/go-diff;version=v1.3.1;mod=1;sha256sum=d0d5157e1c0396fdd42bd849a87542a5c34e55d81efa9c25177edf0884d65784 \
+-    gomod://github.com/shirou/gopsutil/v4;version=v4.25.8;sha256sum=c79f74d9e5466578ffcb6031e02424e4687b60cf86b25bf5edafcd3310db9be5 \
++    gomod://github.com/segmentio/kafka-go;version=v0.4.51;sha256sum=2ce854a2dff96c98deeaf93c24925de64db859f5cded5ad18e57a83c860bbefa \
++    gomod://github.com/shirou/gopsutil/v4;version=v4.26.7;sha256sum=e707bb272b2d66974997f49becc1dd991b23b35c400cbdecd5906461e42c236c \
+     gomod://github.com/shopspring/decimal;version=v0.0.0-20180709203117-cd690d0c9e24;mod=1;sha256sum=efb3296a57d42e30fbe229452070a1a87115dbbbafdd536dd738d18d46d55f52 \
+     gomod://github.com/shopspring/decimal;version=v1.2.0;mod=1;sha256sum=983f79d79f2dfb76233371da2a6d6bd7980eed64c3e43ef7d815ebd37dae9c1e \
+     gomod://github.com/shopspring/decimal;version=v1.4.0;sha256sum=751d4cd3460984afc72973d2a0df56ed9b10499c5cd0508d7f2207245d9e3315 \
++    gomod://github.com/sirupsen/logrus;version=v1.10.0;sha256sum=e9597626924d23f5e0e731fffe940b03cbf108ce7ec801fec65cdd48e5976e62 \
+     gomod://github.com/sirupsen/logrus;version=v1.4.1;mod=1;sha256sum=219855a87fbdc6db059e210407557f24621981b1f17505a924a55832ac709113 \
+     gomod://github.com/sirupsen/logrus;version=v1.4.2;mod=1;sha256sum=6c6bbbca5fad7ea9b863d9ec99c30caa77805785405b21e70d75783b5194c678 \
+-    gomod://github.com/sirupsen/logrus;version=v1.9.3;sha256sum=4501f4e6b858bfdd997671fcdd2f647a3178b29b6b4d1344caa7c07517121dd0 \
+-    gomod://github.com/slack-go/slack;version=v0.16.0;sha256sum=c241d63e8fc6a8931feab9af92e05c9d62f63070101ec7417422ee2ca1a1bb36 \
+-    gomod://github.com/spf13/cast;version=v1.3.1;mod=1;sha256sum=b98f2c1774e0b7c0c5747531a6a0c6c8c25a37cf397ff05f1971bbdd97d52fae \
+-    gomod://github.com/spf13/cast;version=v1.7.0;sha256sum=7b24198857474e3f3c9c368fdec153b06003d06863a182c77c0605c3e51002c1 \
+-    gomod://github.com/spf13/cobra;version=v1.10.1;sha256sum=00955783267c9ced54274df456377a15bc1b658362f93f85dfda0708b54f9a28 \
++    gomod://github.com/slack-go/slack;version=v0.29.0;sha256sum=2943c9b8b2ac15cc76824bf0fd2779b80d8d1984a3d14b0c01ae32bca004cee3 \
++    gomod://github.com/spf13/cast;version=v1.10.0;sha256sum=7c7ba27f9979ada980c2a69f6b2fdf7b4ce1f2b766e245c0a4716f546ad7ddce \
++    gomod://github.com/spf13/cobra;version=v1.10.2;sha256sum=a00aae6fcd631e0fde52c98604452ff70e1b73c3b8a560d68db15aff5e26872d \
+     gomod://github.com/spf13/cobra;version=v1.4.0;mod=1;sha256sum=575f3f520642009bac1fe464f2090d1c07298b4778f3c13ac1f00671790cdadb \
++    gomod://github.com/spf13/pflag;version=v1.0.10;sha256sum=a246b8c9d3daa87d6c634cdfee1bdf7fa53d5817eeef4fa0c6da43edd12de4ca \
+     gomod://github.com/spf13/pflag;version=v1.0.5;mod=1;sha256sum=16c6dfc0eb58eb3c9113ce197d460c6725c647e4688ac26d31c8ed69f1ebbc68 \
+-    gomod://github.com/spf13/pflag;version=v1.0.9;sha256sum=83910188d8735f84a48a80ab78351edac0b569896f2b3a244c696a07da9aa5ed \
++    gomod://github.com/spf13/pflag;version=v1.0.9;mod=1;sha256sum=16c6dfc0eb58eb3c9113ce197d460c6725c647e4688ac26d31c8ed69f1ebbc68 \
+     gomod://github.com/stretchr/objx;version=v0.1.0;mod=1;sha256sum=1350354d52d2287a62336ecc0d56232d4c47699af9bba49c67c2b48254da98f1 \
+     gomod://github.com/stretchr/objx;version=v0.1.1;mod=1;sha256sum=1350354d52d2287a62336ecc0d56232d4c47699af9bba49c67c2b48254da98f1 \
+     gomod://github.com/stretchr/objx;version=v0.2.0;mod=1;sha256sum=27e3901c232f819e8d6e0b322c166732b8140b3977c0665925b5566138e87fec \
+@@ -316,7 +320,7 @@ SRC_URI += "\
+     gomod://github.com/stretchr/objx;version=v0.5.2;mod=1;sha256sum=58eca54d26728427806f40908828e8762d352cc3b0a0b0b60dc60ce61767fff6 \
+     gomod://github.com/stretchr/testify;version=v0.0.0-20161117074351-18a02ba4a312;mod=1;sha256sum=4ab463f68c370041f950c10cab5104903d4598c50cf824f9aad1b7b7f69255af \
+     gomod://github.com/stretchr/testify;version=v1.10.0;mod=1;sha256sum=c0a648a037da54a6b02e8a811b1d3917d49dc4e1841cd756f28f0c4f1593933c \
+-    gomod://github.com/stretchr/testify;version=v1.11.1;mod=1;sha256sum=5846af204043f29df285026109bf32db6519c3d7e1d5c3a65fefb174f9d81d33 \
++    gomod://github.com/stretchr/testify;version=v1.12.1;mod=1;sha256sum=a6aa921ea6dedc1cbb384d3c1b79c58b6e5d6ce26d13b786ec60a99809ae1daa \
+     gomod://github.com/stretchr/testify;version=v1.2.2;mod=1;sha256sum=4ab463f68c370041f950c10cab5104903d4598c50cf824f9aad1b7b7f69255af \
+     gomod://github.com/stretchr/testify;version=v1.3.0;mod=1;sha256sum=ab063d5154a8e8730bced4c52698e5770eb50bfae347bebc35eca488b8e3f6e3 \
+     gomod://github.com/stretchr/testify;version=v1.4.0;mod=1;sha256sum=6b0c7b71030d4fc55d4e6e6e24c0bfc025621341f76141e3aec0044c4ce89950 \
+@@ -328,43 +332,42 @@ SRC_URI += "\
+     gomod://github.com/stretchr/testify;version=v1.8.0;mod=1;sha256sum=e076074c1560ad1dda98b8b00fea6308c4b6ccd06ddd088d22db4626ed68f738 \
+     gomod://github.com/stretchr/testify;version=v1.8.1;mod=1;sha256sum=af1a5dcb331ace7a3f9fc1b5d7eee9c0bc82b4a2a182fe4cec2add217e2853d6 \
+     gomod://github.com/stretchr/testify;version=v1.8.4;mod=1;sha256sum=05e26cd069285a33cf2af46fdacdef569d5ae185e7963a76c0178328f68e97f9 \
+-    gomod://github.com/tetratelabs/wazero;version=v1.9.0;sha256sum=caa5349be0eeac1d14b0faee72e5a9b2de198374e064fb9158e39d1d891217b7 \
++    gomod://github.com/tetratelabs/wazero;version=v1.12.0;sha256sum=dcee360162e809d1273c685d20f6faf6df7ae0d925a73bf8f1af1a4756bfe587 \
+     gomod://github.com/tidwall/gjson;version=v1.18.0;sha256sum=ab8092b3e42f83f003466757c63ec819a45d1e83caa63c6c131cebbe760f1df2 \
+-    gomod://github.com/tidwall/match;version=v1.1.1;sha256sum=2ba41f7f27330d49e0e432cbf96bf90720a33e4a97be58fe53f63a7e66f04d37 \
++    gomod://github.com/tidwall/match;version=v1.1.1;mod=1;sha256sum=02364e515327d9988d1f6bd37af9c584f8b98d3b4f43f9e1f18e26d76aec0f44 \
++    gomod://github.com/tidwall/match;version=v1.2.0;sha256sum=f35502f3dd450fa84ddc7b028310f7fecc86c8112f2397fe7ff7941c5afbcbc1 \
+     gomod://github.com/tidwall/pretty;version=v1.2.0;mod=1;sha256sum=6e5c5fa493d8f18e8974b38ed63e8c71863cce59e659d98d0ef8417bf81e3ecf \
+     gomod://github.com/tidwall/pretty;version=v1.2.1;sha256sum=9327579bf9e610de753eeb7c35c8cf1e3f56e6e5623cbf65e47bc8076023d1ab \
+-    gomod://github.com/tklauser/go-sysconf;version=v0.3.15;sha256sum=caa29c6df6c316969c9f2559186bd1ca8f8aceafbef236233e415c1d974f0383 \
+-    gomod://github.com/tklauser/numcpus;version=v0.10.0;sha256sum=b2526d47517ccff481cc7baad7f450bdde58ddb9b65d53e3eec7c3504f94e853 \
+-    gomod://github.com/toorop/go-dkim;version=v0.0.0-20201103131630-e1cd1a0a5208;sha256sum=45b3a61ab1eb8f80f48e3a28ea7981dd8931fa3f31375d815402f0ef8018e3ff \
++    gomod://github.com/tklauser/go-sysconf;version=v0.3.16;sha256sum=d4c896f77e5934f54d772b5f6a8f8043b8d34df189f6581bc2ba84d239a6b643 \
++    gomod://github.com/tklauser/numcpus;version=v0.11.0;sha256sum=7a7527e1f68059a77189ae875c294e5c310925fbb8ba5a6c794edd2b7e687267 \
++    gomod://github.com/toorop/go-dkim;version=v0.0.0-20201103131630-e1cd1a0a5208;mod=1;sha256sum=67fee1d99ef4244df63e083e7b5a2800d9ab0244982d9d45177bf6ec31cf3af8 \
++    gomod://github.com/toorop/go-dkim;version=v0.0.0-20250226130143-9025cce95817;sha256sum=2a1c5262ea26e4ded1aef5aa4fee2b562cd54d9e0609f18dffd8b11d9e719e80 \
+     gomod://github.com/twitchyliquid64/golang-asm;version=v0.15.1;mod=1;sha256sum=b198a096146daeff6177f0a11bdee5a2cbe0e6fec80714ccf1f2dd6b95a7dd6f \
+-    gomod://github.com/ugorji/go/codec;version=v1.2.12;sha256sum=ca38b5b9f58e33de24f88ac2505e2c67f2b454d09d929228a10b938bddda848d \
++    gomod://github.com/ugorji/go/codec;version=v1.3.1;sha256sum=a559951814404d1f955cd8a3d91689c31ea774dc9fc0c7e4a5fa45cc749324d0 \
+     gomod://github.com/umahmood/haversine;version=v0.0.0-20151105152445-808ab04add26;sha256sum=ffc82bcdb2bf7f1e64f1e940b9aeee8c6e81e84717cfad56170df9e298e28951 \
+     gomod://github.com/valllabh/ocsf-schema-golang;version=v1.0.3;sha256sum=ffb04c1651a4e08f1339cc0e308f9699026e23acee7dda1dbf9ffea4ae2a8208 \
+     gomod://github.com/vmihailenco/msgpack;version=v4.0.4+incompatible;sha256sum=918f7dd7883105b9c55728c704a3bc54c80568b2b09583890b51508c03391356 \
+-    gomod://github.com/wasilibs/go-re2;version=v1.10.0;sha256sum=dddcf95e30684f986ac328689d7bf1f529e31a0f49c2449c67d6ab209470494d \
+-    gomod://github.com/wasilibs/wazero-helpers;version=v0.0.0-20250123031827-cd30c44769bb;sha256sum=64f949dc77386e83881a6d5b60e49823e9c3446240c1476394db1a07bc5a762c \
+-    gomod://github.com/xdg-go/pbkdf2;version=v1.0.0;mod=1;sha256sum=b21709ce5da1fca99d98e4664b4a673f2620cf33d0fc57564b9a534eb1a6d798 \
+-    gomod://github.com/xdg-go/scram;version=v1.1.2;mod=1;sha256sum=b9d568c44018b33bddfcca5ebc51163b8de9bf64da60d8ea12fa88b88fe60cd8 \
+-    gomod://github.com/xdg-go/stringprep;version=v1.0.4;mod=1;sha256sum=9f9e4513f20d770b95c24952d390a5ed3a07889e2cea661127b56f3e404657d1 \
++    gomod://github.com/wasilibs/go-re2;version=v1.12.0;sha256sum=5176f4611a3a5466e575070c0c2e6ebdddd328a8c13eae121ab72471feab55a3 \
++    gomod://github.com/wasilibs/wazero-helpers;version=v0.0.0-20250123031827-cd30c44769bb;mod=1;sha256sum=49ca46dffde7100373e17172bfb5217cddbd98e9e24898e6367ebb764abf270f \
++    gomod://github.com/x448/float16;version=v0.8.4;sha256sum=73b24a41037ea999ab66851e3798a0973dbb1f214925915b01f0820f7b2f1500 \
++    gomod://github.com/xdg-go/scram;version=v1.2.0;mod=1;sha256sum=6f032e4589e3660c7438543f499166c4190de48dc486b15ac1dda0ae392f47fc \
+     gomod://github.com/xhit/go-simple-mail/v2;version=v2.16.0;sha256sum=dd5f49b91c868268619085df3330bb797ad423a2473dd4d8efc783fffb67d229 \
+     gomod://github.com/youmark/pkcs8;version=v0.0.0-20240726163527-a2c0da244d78;sha256sum=cdcf5e96850f9f60bc96ab512e4bd06ee19dd2dbe855260c3589c6c79a1bcfb5 \
+-    gomod://github.com/yuin/goldmark;version=v1.1.27;mod=1;sha256sum=e2c763f861ada05c6150c32f804bca31c96a18b944320e0ee9bbf0d6c6075ad7 \
+-    gomod://github.com/yuin/goldmark;version=v1.2.1;mod=1;sha256sum=e2c763f861ada05c6150c32f804bca31c96a18b944320e0ee9bbf0d6c6075ad7 \
+     gomod://github.com/yuin/goldmark;version=v1.4.13;mod=1;sha256sum=ee7fe4466203a01d3ac19adc134cdec99bc6de71992c28f3dd9a74480bff0603 \
+     gomod://github.com/yusufpapurcu/wmi;version=v1.2.4;mod=1;sha256sum=ff2a9c8c99aaed6bc6984eae094a9e8cdc36f6ab2ef2c56779dd98ecc583135b \
+-    gomod://github.com/zclconf/go-cty;version=v1.14.4;sha256sum=96325cc1e200dd6ea73535b2fdb2a8e9e143b597b23114c3cf7695e400cd78c9 \
+-    gomod://github.com/zclconf/go-cty-yaml;version=v1.1.0;sha256sum=1419385462f79bc2d20da574ffcec0d766ad33b6d6ca5bdcbcf67992103c273c \
++    gomod://github.com/zclconf/go-cty;version=v1.18.0;sha256sum=410a989752bce9d5192cb23a350eba27b42575e3df5512d8d208e9d539f9f638 \
++    gomod://github.com/zclconf/go-cty-yaml;version=v1.2.0;sha256sum=84cd48191428a94ab2fc4f7b06d9826538e970d0a3ac3ef62c54088b161cbf8f \
+     gomod://github.com/zenazn/goji;version=v0.9.0;mod=1;sha256sum=2e5435768eeb0ffb1593111093fbc436916d5c85b97cda404f77aa56643e79b7 \
+-    gomod://go.mongodb.org/mongo-driver;version=v1.14.0;sha256sum=26e169eb3bd7639b44cfc0cf8b4469d110d13e0dae1518d49558138cf5449ff4 \
+     gomod://go.opentelemetry.io/auto/sdk;version=v1.2.1;sha256sum=a08a16fc0a7041cdb875f47a260a56000632212c85f65a302a043c76380c8335 \
+-    gomod://go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp;version=v0.60.0;sha256sum=0192a852a8c6b4fccd55a0400bda162a83a4935102ebdec5fcf56ef1e7d94a51 \
+-    gomod://go.opentelemetry.io/otel;version=v1.39.0;sha256sum=bc050a9c5e07e09a8dba7dd70fdc31c821114bc87910e9d027218cf25ef62a72 \
+-    gomod://go.opentelemetry.io/otel/metric;version=v1.39.0;sha256sum=75c1ba2a79f0b556d16a818591d199d8c82804c7b78a4b4f675985470420000d \
+-    gomod://go.opentelemetry.io/otel/trace;version=v1.39.0;sha256sum=da9a3bda6281f72c041e00c76e794156cdb43228255650c2f323ee04ba9f632c \
++    gomod://go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp;version=v0.68.0;sha256sum=84a5f546bebf91ebebe431b04f13230e0bd189a0eefcc6652f523e4c29ae12ba \
++    gomod://go.opentelemetry.io/otel;version=v1.44.0;sha256sum=4b7ef50caaf3dc6fc1a058f9ce2ccda6aad2ab3e8657acc4c8bb3102f79c53bc \
++    gomod://go.opentelemetry.io/otel/metric;version=v1.44.0;sha256sum=4442ba5f269f81251f549acb14ac16176f23967f4a0706163440b0df91592f96 \
++    gomod://go.opentelemetry.io/otel/trace;version=v1.44.0;sha256sum=cd1abf8dcec62fe9788fae9105760db1711e6e994d2e31cdda57ccb467e7ceec \
+     gomod://go.uber.org/atomic;version=v1.3.2;mod=1;sha256sum=dcff3098f14452022e7a84a52624be8082b87728f8ccf0baad7e06a3a285f3b7 \
+     gomod://go.uber.org/atomic;version=v1.4.0;mod=1;sha256sum=dcff3098f14452022e7a84a52624be8082b87728f8ccf0baad7e06a3a285f3b7 \
+     gomod://go.uber.org/atomic;version=v1.5.0;mod=1;sha256sum=782efe5cb1f88f104ab69bb7b2c099dc5ea88e64dec62a6fbe03dba7f53f1733 \
+     gomod://go.uber.org/atomic;version=v1.6.0;mod=1;sha256sum=782efe5cb1f88f104ab69bb7b2c099dc5ea88e64dec62a6fbe03dba7f53f1733 \
++    gomod://go.uber.org/goleak;version=v1.3.0;mod=1;sha256sum=3f15dc6354aae8fe42d3cbd130230731d5c6aae6aa651ca6a73f4c646cda8fec \
+     gomod://go.uber.org/multierr;version=v1.1.0;mod=1;sha256sum=ff6c97e57138fc150113ae9431c1dbb64827186cb6af4a78dba70d369d081aac \
+     gomod://go.uber.org/multierr;version=v1.3.0;mod=1;sha256sum=1dc2cea1cb6094bcb35ad7770b6eac1d39dc4044ebaedbfa718a47e52b7dcee3 \
+     gomod://go.uber.org/multierr;version=v1.5.0;mod=1;sha256sum=be412e345592b4e0d4af1aa1ec017b45570eef2d58d7a89d1677e6f75281f34f \
+@@ -372,8 +375,10 @@ SRC_URI += "\
+     gomod://go.uber.org/zap;version=v1.10.0;mod=1;sha256sum=e28ef1b76ac60f1897f36c50e704fc28c1283d59ae39b0c7dde6878e5cd4bdd6 \
+     gomod://go.uber.org/zap;version=v1.13.0;mod=1;sha256sum=aff065f5dc3976d52c064fe0da7c535e10cb6378dc8a5c1ecbcad3fbb9523944 \
+     gomod://go.uber.org/zap;version=v1.9.1;mod=1;sha256sum=e28ef1b76ac60f1897f36c50e704fc28c1283d59ae39b0c7dde6878e5cd4bdd6 \
+-    gomod://go.yaml.in/yaml/v2;version=v2.4.2;sha256sum=ed63e181cbb5a991c104639b0e6d48d45fd951f22b47d4c5d1a36156d8ed06ee \
+-    gomod://golang.org/x/arch;version=v0.15.0;mod=1;sha256sum=96439769b0cde554790077a58b1c11e483592f8c52dc5d3778cde40a027afc5d \
++    gomod://go.yaml.in/yaml/v2;version=v2.4.4;sha256sum=1b98a6a498cf255c5f2982d32c74633bc7969770957e98103ac1e14345aa4576 \
++    gomod://go.yaml.in/yaml/v3;version=v3.0.4;mod=1;sha256sum=2989f8b800605890ad40cf49109b0b6a972bda79d92df236d40ddb798093127e \
++    gomod://go.yaml.in/yaml/v3;version=v3.0.5;sha256sum=f2d70caa35f66283aec58b889af8c5f07c374c5934be27a738c1215263e19205 \
++    gomod://golang.org/x/arch;version=v0.25.0;mod=1;sha256sum=395ebb3de2e12b6c0e9848a1071b46c27715970e09d45616a658f63a0a501a6f \
+     gomod://golang.org/x/crypto;version=v0.0.0-20190308221718-c2843e01d9a2;mod=1;sha256sum=33ed070a5a66e0960685ac5386440e1b59899e74d8a38a1180685e72a2195ded \
+     gomod://golang.org/x/crypto;version=v0.0.0-20190411191339-88737f569e3a;mod=1;sha256sum=b9489bf48de3551f57868f35d44753705bbb573942ee50075911d0147d94adf3 \
+     gomod://golang.org/x/crypto;version=v0.0.0-20190510104115-cbcb75029529;mod=1;sha256sum=3ab9f01f4610fe7b39bd85d68e8d97825351e7e282c39cda41457c2a276f3be3 \
+@@ -384,16 +389,13 @@ SRC_URI += "\
+     gomod://golang.org/x/crypto;version=v0.0.0-20210616213533-5ff15b29337e;mod=1;sha256sum=cd6311612a2aa4d0d7e03c41b3aa1fbc2d5f895ab3f61089fab80bfe9f8f5485 \
+     gomod://golang.org/x/crypto;version=v0.0.0-20210711020723-a769d52b0f97;mod=1;sha256sum=cd6311612a2aa4d0d7e03c41b3aa1fbc2d5f895ab3f61089fab80bfe9f8f5485 \
+     gomod://golang.org/x/crypto;version=v0.0.0-20210921155107-089bfa567519;mod=1;sha256sum=cd6311612a2aa4d0d7e03c41b3aa1fbc2d5f895ab3f61089fab80bfe9f8f5485 \
+-    gomod://golang.org/x/crypto;version=v0.14.0;mod=1;sha256sum=336a220466eb3ced51eb4489762a3264a5cfb6cb710358870096660099a9caa7 \
+-    gomod://golang.org/x/crypto;version=v0.3.0;mod=1;sha256sum=b795106f8b8deb7ed77523a81de01ab4601f0f0381353918457d2d78ad9e3ce9 \
+-    gomod://golang.org/x/crypto;version=v0.46.0;sha256sum=5f2921ccdf7252ffbe26046948c6044ab0917e500a34710e0ba6664260d6a460 \
+-    gomod://golang.org/x/exp;version=v0.0.0-20250620022241-b7579e27df2b;mod=1;sha256sum=210261af3b2b0d7bc9d913800ba9364e53fcec004fad4762505438360c3ed448 \
++    gomod://golang.org/x/crypto;version=v0.19.0;mod=1;sha256sum=f8b595e5c961093c6877b96af679f43322254a53087b11fd2645642e693befd5 \
++    gomod://golang.org/x/crypto;version=v0.20.0;mod=1;sha256sum=d8536991eb61062128778a081f729b52e279ed1eb4d76ce180bda420bf87a100 \
++    gomod://golang.org/x/crypto;version=v0.55.0;sha256sum=0660bba47b3643fe1beb1b97af93b6a4d2bf2ed069d9e52a2b1bdf6f17cf3e79 \
+     gomod://golang.org/x/lint;version=v0.0.0-20190930215403-16217165b5de;mod=1;sha256sum=79df4350b922a8d193782e5600f88280a2b9d41781bfb3760c09bf52ad3023bf \
+     gomod://golang.org/x/mod;version=v0.0.0-20190513183733-4bf6d317e70e;mod=1;sha256sum=ac221647647b0b59618b2e312ba252fc36d6e5cf33d0f2ca64f1fac65a1d6034 \
+     gomod://golang.org/x/mod;version=v0.1.1-0.20191105210325-c90efee705ee;mod=1;sha256sum=d76bbdea81d196d09858967a67ac805dacecdd1fb30c5001a187d24c129b1597 \
+-    gomod://golang.org/x/mod;version=v0.2.0;mod=1;sha256sum=b288f088fd851885a6d348339e2f588e58a94e6c76e5e634ae1d67c2749eb413 \
+-    gomod://golang.org/x/mod;version=v0.3.0;mod=1;sha256sum=b288f088fd851885a6d348339e2f588e58a94e6c76e5e634ae1d67c2749eb413 \
+-    gomod://golang.org/x/mod;version=v0.30.0;sha256sum=dffdae50c0a7903e522053e8e9880069ed1854446326f954cf903f713678c3a2 \
++    gomod://golang.org/x/mod;version=v0.40.0;sha256sum=a191080b1494c194059ae71aa1d300741a8e24dfb6e28cd32580dbdcc52a0598 \
+     gomod://golang.org/x/mod;version=v0.6.0-dev.0.20220419223038-86c51ed26bb4;mod=1;sha256sum=42d19023ff8f2eae700bc5495f371ecd998a22d19ba985d0af5f69900b254083 \
+     gomod://golang.org/x/mod;version=v0.8.0;mod=1;sha256sum=624567459c6e9947ac4abde0b7034ee61dcbb6a9373f5970094c0bb3e8121964 \
+     gomod://golang.org/x/net;version=v0.0.0-20190311183353-d8887717615a;mod=1;sha256sum=f7046769daac02beb57cbcc481280df59fb403c96fe8262282aba858c7f7fa4d \
+@@ -401,21 +403,17 @@ SRC_URI += "\
+     gomod://golang.org/x/net;version=v0.0.0-20190603091049-60506f45cf65;mod=1;sha256sum=6ebeb3fafb09612d3ef1ff0413dfaac05bbaf8f229abde0ae0e012298dfe6702 \
+     gomod://golang.org/x/net;version=v0.0.0-20190620200207-3b0461eec859;mod=1;sha256sum=e6efdaf78a29503f080cf6d2615e289cfb1d9e3ab7d570f53668eca2b4ab41da \
+     gomod://golang.org/x/net;version=v0.0.0-20190813141303-74dc4d7220e7;mod=1;sha256sum=e6efdaf78a29503f080cf6d2615e289cfb1d9e3ab7d570f53668eca2b4ab41da \
+-    gomod://golang.org/x/net;version=v0.0.0-20200226121028-0de0cce0169b;mod=1;sha256sum=e6efdaf78a29503f080cf6d2615e289cfb1d9e3ab7d570f53668eca2b4ab41da \
+-    gomod://golang.org/x/net;version=v0.0.0-20201021035429-f5854403a974;mod=1;sha256sum=66fc44a0644a506da780f7a22a5d73dd025d44a6e58740b62d27f74d7c3a4948 \
+     gomod://golang.org/x/net;version=v0.0.0-20210226172049-e18ecbb05110;mod=1;sha256sum=fef5896d103a0bce5055fdb5e96e830944334792437865347718edceb633348a \
+     gomod://golang.org/x/net;version=v0.0.0-20220722155237-a158d28d115b;mod=1;sha256sum=b315c52647d2da2f76e5cdb9d367e1d6727784236a9bffb612192b19b10a128d \
+     gomod://golang.org/x/net;version=v0.10.0;mod=1;sha256sum=d3b7e236ff09e6322be489170216e018d3221862f1a053dcb63e53eab8533c17 \
+-    gomod://golang.org/x/net;version=v0.17.0;mod=1;sha256sum=cba6184b8b8e0d54560bf5a65f136ccd76a734c49c066ed803eb70bd06c17696 \
+-    gomod://golang.org/x/net;version=v0.2.0;mod=1;sha256sum=07ec645e3353fc2673f2d8dee5c14eb928b9c13127a409fe3ec40eaba4dbdb30 \
+-    gomod://golang.org/x/net;version=v0.48.0;sha256sum=cf5206797e66bbe72fc13542d53a57d069a563cebb6d045c07a870eb4fd888c9 \
++    gomod://golang.org/x/net;version=v0.21.0;mod=1;sha256sum=0eef3e9fe7f668be5b4d24c8f1251c6c502d1168953c8081ac9dc3f399c64f06 \
++    gomod://golang.org/x/net;version=v0.58.0;sha256sum=aa78bbf8d55db3e6995630165e2bcd7dce6d0b8831c166fa03b80ac94fb650e7 \
+     gomod://golang.org/x/net;version=v0.6.0;mod=1;sha256sum=41ec76ea2172f3ee3031e38f9a535939a584d6bb35ef480854fdcb8c2026701b \
++    gomod://golang.org/x/oauth2;version=v0.36.0;sha256sum=15bf65ff103e5dafc809d78cd037a1d1e88ccb8451824e851156002a13304504 \
+     gomod://golang.org/x/sync;version=v0.0.0-20190423024810-112230192c58;mod=1;sha256sum=421f6139686d5891f3dc5a563d0995780d3279f65cad4d225cea52686794161c \
+-    gomod://golang.org/x/sync;version=v0.0.0-20190911185100-cd5d95a43a6e;mod=1;sha256sum=421f6139686d5891f3dc5a563d0995780d3279f65cad4d225cea52686794161c \
+-    gomod://golang.org/x/sync;version=v0.0.0-20201020160332-67f06af15bc9;mod=1;sha256sum=421f6139686d5891f3dc5a563d0995780d3279f65cad4d225cea52686794161c \
+     gomod://golang.org/x/sync;version=v0.0.0-20220722155255-886fb9371eb4;mod=1;sha256sum=421f6139686d5891f3dc5a563d0995780d3279f65cad4d225cea52686794161c \
+     gomod://golang.org/x/sync;version=v0.1.0;mod=1;sha256sum=421f6139686d5891f3dc5a563d0995780d3279f65cad4d225cea52686794161c \
+-    gomod://golang.org/x/sync;version=v0.19.0;sha256sum=25211fe2cffd8020bb405b9adb7a90f5e06760f2818b8fb2e74aaaa21a66ed9e \
++    gomod://golang.org/x/sync;version=v0.22.0;sha256sum=4bc67d258ce7867cfc1a43765c43d98b4c49b90c46dd0b86f896a5a4909fade0 \
+     gomod://golang.org/x/sys;version=v0.0.0-20180905080454-ebe1bf3edb33;mod=1;sha256sum=8969115e4a39108848324e79a1bd8a8445230e6e3aaccbe9f8057fb50fffc8c1 \
+     gomod://golang.org/x/sys;version=v0.0.0-20190215142949-d0b11bdaac8a;mod=1;sha256sum=8969115e4a39108848324e79a1bd8a8445230e6e3aaccbe9f8057fb50fffc8c1 \
+     gomod://golang.org/x/sys;version=v0.0.0-20190222072716-a9d3bda3a223;mod=1;sha256sum=8969115e4a39108848324e79a1bd8a8445230e6e3aaccbe9f8057fb50fffc8c1 \
+@@ -427,7 +425,6 @@ SRC_URI += "\
+     gomod://golang.org/x/sys;version=v0.0.0-20191026070338-33540a1f6037;mod=1;sha256sum=181979e8bd57d2d9e064182da86c9a6111aa69755e888f08431ece4742aec343 \
+     gomod://golang.org/x/sys;version=v0.0.0-20200116001909-b77594299b42;mod=1;sha256sum=181979e8bd57d2d9e064182da86c9a6111aa69755e888f08431ece4742aec343 \
+     gomod://golang.org/x/sys;version=v0.0.0-20200223170610-d5e6a3e2c0ae;mod=1;sha256sum=181979e8bd57d2d9e064182da86c9a6111aa69755e888f08431ece4742aec343 \
+-    gomod://golang.org/x/sys;version=v0.0.0-20200930185726-fdedc70b468f;mod=1;sha256sum=181979e8bd57d2d9e064182da86c9a6111aa69755e888f08431ece4742aec343 \
+     gomod://golang.org/x/sys;version=v0.0.0-20201119102817-f84b799fce68;mod=1;sha256sum=181979e8bd57d2d9e064182da86c9a6111aa69755e888f08431ece4742aec343 \
+     gomod://golang.org/x/sys;version=v0.0.0-20201204225414-ed752295db88;mod=1;sha256sum=181979e8bd57d2d9e064182da86c9a6111aa69755e888f08431ece4742aec343 \
+     gomod://golang.org/x/sys;version=v0.0.0-20210615035016-665e8c7367d1;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+@@ -437,23 +434,20 @@ SRC_URI += "\
+     gomod://golang.org/x/sys;version=v0.0.0-20220520151302-bc2c85ada10a;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+     gomod://golang.org/x/sys;version=v0.0.0-20220715151400-c0bba94af5f8;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+     gomod://golang.org/x/sys;version=v0.0.0-20220722155257-8c9f86f7a55f;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+-    gomod://golang.org/x/sys;version=v0.0.0-20220811171246-fbc7d0a398ab;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+     gomod://golang.org/x/sys;version=v0.0.0-20220908164124-27713097b956;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+-    gomod://golang.org/x/sys;version=v0.13.0;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+-    gomod://golang.org/x/sys;version=v0.2.0;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+-    gomod://golang.org/x/sys;version=v0.39.0;sha256sum=65444efd299ce78bc457588bc2061e69fb5ceadec70220eeda39657402ad4b1b \
++    gomod://golang.org/x/sys;version=v0.1.0;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
++    gomod://golang.org/x/sys;version=v0.17.0;mod=1;sha256sum=d227b325f621f4ebe28d39ba773ea99b870f393b7c09c34592c365b16dd560de \
++    gomod://golang.org/x/sys;version=v0.47.0;sha256sum=cdac013ddced0262926ec29ffcda645da39670e61c7e5b761e572b6b1809bb1b \
+     gomod://golang.org/x/sys;version=v0.5.0;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+-    gomod://golang.org/x/sys;version=v0.6.0;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+     gomod://golang.org/x/sys;version=v0.8.0;mod=1;sha256sum=f033333096fe198f3151deed93f2deba74e50bbfe7739134045bc3b7ce4a5024 \
+     gomod://golang.org/x/term;version=v0.0.0-20201117132131-f5c789dd3221;mod=1;sha256sum=be95e45a793860e61e60b5d4373946d73b25d6e1d42e4455a8acdef6c665ef84 \
+     gomod://golang.org/x/term;version=v0.0.0-20201126162022-7de9c90e9dd1;mod=1;sha256sum=4cbab14f7706771b271d995a1b3cc131fe5a246aadc7ee6d1ba6f0bd894781fa \
+     gomod://golang.org/x/term;version=v0.0.0-20210927222741-03fcf44c2211;mod=1;sha256sum=740794e2914f5cc87e25656c5843222b2c65665821205f45632a0477c8d3f79b \
+-    gomod://golang.org/x/term;version=v0.13.0;mod=1;sha256sum=26277b0b5bc33d0241f2337839e8a663d2a6c603058870f27ced9df1fee7e357 \
+-    gomod://golang.org/x/term;version=v0.2.0;mod=1;sha256sum=edf833da101900fe2ce8db23409e42448f441898d3d7d8ee451988e3b30c9302 \
+-    gomod://golang.org/x/term;version=v0.38.0;sha256sum=00cec8beae98bb5a15c9ee9e8e705b7cab9c50269e7858bff98df0533b317363 \
++    gomod://golang.org/x/term;version=v0.17.0;mod=1;sha256sum=dbea02254aac2cf3fd0f72c7c602e543c5fbad2d00dafc2f819c28a935258199 \
++    gomod://golang.org/x/term;version=v0.45.0;sha256sum=b3a3af689728b43012ae1b21482571a35c033c545e98e021606bd4fcf1f79108 \
+     gomod://golang.org/x/term;version=v0.5.0;mod=1;sha256sum=0d6f58228aadc1a6528e6755da018516566e3ae5c5201f7ade1773f56fa8d934 \
+     gomod://golang.org/x/term;version=v0.8.0;mod=1;sha256sum=5d362d6a83453f7024725e824c05c5949624ef8f4cb13f5d7e3d4b7f1ca0b327 \
+-    gomod://golang.org/x/text;version=v0.13.0;mod=1;sha256sum=151e6a1839491c4b50dfe9c33451f06328d5518bd8ee4a0061de02b7ad332fb2 \
++    gomod://golang.org/x/text;version=v0.14.0;mod=1;sha256sum=971579f17e9abc5926ab76214f533bd517cf4925c885243ac4755a1a0a7c69ef \
+     gomod://golang.org/x/text;version=v0.3.0;mod=1;sha256sum=36879d586fd8001e84da8787190a11e4f78749e2a81dfe8b9b6931899fff31cf \
+     gomod://golang.org/x/text;version=v0.3.2;mod=1;sha256sum=6c3c7adf2b0ad7143d913f4698d1908422369a5e6f198620f97f3e52f9a1b8dd \
+     gomod://golang.org/x/text;version=v0.3.3;mod=1;sha256sum=fbb7a88ed140515e790eca7a10ffd319c9786b11c6a6c7e59f80f7fb37bb4542 \
+@@ -461,8 +455,8 @@ SRC_URI += "\
+     gomod://golang.org/x/text;version=v0.3.6;mod=1;sha256sum=fbb7a88ed140515e790eca7a10ffd319c9786b11c6a6c7e59f80f7fb37bb4542 \
+     gomod://golang.org/x/text;version=v0.3.7;mod=1;sha256sum=c45d669089427bc4635d07b185f9b9680332d1c48c75b3c49cb715b81a04a5b0 \
+     gomod://golang.org/x/text;version=v0.3.8;mod=1;sha256sum=0c06e8d4bc0c4eddce0f9ca01ad87dd9ff74cad7fa8ba166fe97d97d1deb27ae \
+-    gomod://golang.org/x/text;version=v0.32.0;sha256sum=bc6c70d37c37bc625a83abd48ee32372b459a8c559a1cf5f25dfbf7c7941f81b \
+     gomod://golang.org/x/text;version=v0.4.0;mod=1;sha256sum=15929e76fce04aea4c92a354426bb43370684645a4ee03f2e75d0c2eb1466304 \
++    gomod://golang.org/x/text;version=v0.41.0;sha256sum=e63f35daaae749d0ffff97a295ad8f4837a662938a46b7a87f18a88e85a5cbf9 \
+     gomod://golang.org/x/text;version=v0.7.0;mod=1;sha256sum=15929e76fce04aea4c92a354426bb43370684645a4ee03f2e75d0c2eb1466304 \
+     gomod://golang.org/x/text;version=v0.9.0;mod=1;sha256sum=436f592e77b593b02fbea374e23ad3369c8623ff0d29c91de7de1e6672db9a41 \
+     gomod://golang.org/x/tools;version=v0.0.0-20180917221912-90fa682c2a6e;mod=1;sha256sum=a0e02f0678fe62dc3c4b4bc77fa912c9b70de10fa9f7cf2f7aad0337392b52af \
+@@ -474,9 +468,8 @@ SRC_URI += "\
+     gomod://golang.org/x/tools;version=v0.0.0-20191029190741-b9c20aec41a5;mod=1;sha256sum=88d479265f886f5e598d76c003d0f257b42dbf1b895d820a12b5ab0b3501aca1 \
+     gomod://golang.org/x/tools;version=v0.0.0-20191119224855-298f0cb1881e;mod=1;sha256sum=88d479265f886f5e598d76c003d0f257b42dbf1b895d820a12b5ab0b3501aca1 \
+     gomod://golang.org/x/tools;version=v0.0.0-20200103221440-774c71fcf114;mod=1;sha256sum=5ea469c803b6ef8d41d1561b9e301a003fdd93976468bda5574b26b056ea7f49 \
+-    gomod://golang.org/x/tools;version=v0.0.0-20200619180055-7c47624df98f;mod=1;sha256sum=ef6e2f94244214971780f9ba31d90806928ad410c82b04d8888f815341f7a667 \
+-    gomod://golang.org/x/tools;version=v0.0.0-20210106214847-113979e3529a;mod=1;sha256sum=25d72c03e7aa571136087ebafc9e83d004d0bd8cd3864d78c2f5813e122aba81 \
+     gomod://golang.org/x/tools;version=v0.1.12;mod=1;sha256sum=2a8b9365898f0822face65ba089a1353e68a65d342f300ca317cceccde6421f3 \
++    gomod://golang.org/x/tools;version=v0.49.0;mod=1;sha256sum=86e34efea35b8aa52aabff0ea18c0ef217f074dff67ef7b4c700ae833968cf62 \
+     gomod://golang.org/x/tools;version=v0.6.0;mod=1;sha256sum=830ed78dcd3e9927c412e2641230308447749d513d31024d276e2443b2016609 \
+     gomod://golang.org/x/xerrors;version=v0.0.0-20190410155217-1f06c39b4373;mod=1;sha256sum=aa5e3ec9bb7b9f681609efac019d9de1a7ba7719248ff1eaa27e78882db3d7f5 \
+     gomod://golang.org/x/xerrors;version=v0.0.0-20190513163551-3ee3066db522;mod=1;sha256sum=aa5e3ec9bb7b9f681609efac019d9de1a7ba7719248ff1eaa27e78882db3d7f5 \
+@@ -486,38 +479,39 @@ SRC_URI += "\
+     gomod://golang.org/x/xerrors;version=v0.0.0-20200804184101-5ec99f83aff1;mod=1;sha256sum=aa5e3ec9bb7b9f681609efac019d9de1a7ba7719248ff1eaa27e78882db3d7f5 \
+     gomod://google.golang.org/appengine;version=v1.6.6;mod=1;sha256sum=476fc776d2906c32b6d6f30691df098cd4a70ad57967b3818faa444319cd9294 \
+     gomod://google.golang.org/appengine;version=v1.6.8;mod=1;sha256sum=ef17709123a95906e09d1318b71489fd455bd6efbf6d404083b3137256df2423 \
+-    gomod://google.golang.org/genproto/googleapis/rpc;version=v0.0.0-20251202230838-ff82c1b0f217;sha256sum=29f02d8e0e2f6e9cc0ee24abc29989e5e44d168eec35c12046efee3fea201aef \
+-    gomod://google.golang.org/grpc;version=v1.79.3;sha256sum=91e4c27a4c29ed867049d1eadbb29fb7cc6cd58c364ca2004d22bbaaafcafb9f \
++    gomod://google.golang.org/genproto/googleapis/rpc;version=v0.0.0-20260526163538-3dc84a4a5aaa;sha256sum=55f932b106d6f4f8cb76ae869e44f5d6d8400965fa441ee3532d09c96d64aac1 \
++    gomod://google.golang.org/grpc;version=v1.83.0;sha256sum=74f959ac1f70dc56b80f39b8001abe5b4af5d325d72d38dd65d3b9a8d380011b \
+     gomod://google.golang.org/protobuf;version=v1.26.0;mod=1;sha256sum=08ec2e20f38efcb651462800069ece4891e252a261007fa9d5a1b157f516ee5f \
+     gomod://google.golang.org/protobuf;version=v1.26.0-rc.1;mod=1;sha256sum=b2c4fe1a66ff5be6eb7c0c5388f080d08821c327ac5cf975dee51d8b0fb49e9f \
+-    gomod://google.golang.org/protobuf;version=v1.36.10;sha256sum=9265fbe7d073ca8571f1a9c4b8e8f20b244c35ad913346892d688e58fe4b1f22 \
++    gomod://google.golang.org/protobuf;version=v1.36.12;sha256sum=68f8a3174aff42950fd9bd02c11b45c6986eb8060508d124d1c3dd6bf86b9be6 \
+     gomod://gopkg.in/check.v1;version=v0.0.0-20161208181325-20d25e280405;mod=1;sha256sum=5c306e0d633cd66a11b40e2e5fbbc6da42110db7d72ea3c1524ceb45ee40c33f \
+     gomod://gopkg.in/check.v1;version=v1.0.0-20180628173108-788fd7840127;mod=1;sha256sum=5c306e0d633cd66a11b40e2e5fbbc6da42110db7d72ea3c1524ceb45ee40c33f \
+-    gomod://gopkg.in/check.v1;version=v1.0.0-20190902080502-41f04d3bba15;mod=1;sha256sum=5c306e0d633cd66a11b40e2e5fbbc6da42110db7d72ea3c1524ceb45ee40c33f \
+     gomod://gopkg.in/errgo.v2;version=v2.1.0;mod=1;sha256sum=e305204248256627966ff85c7dc591cf2d0e7de2094d0f465849f1b62a102748 \
++    gomod://gopkg.in/evanphx/json-patch.v4;version=v4.13.0;sha256sum=de94747c5023a2c83909845c76acc6b4bfe28b44994207394b5e057f3085625a \
+     gomod://gopkg.in/inconshreveable/log15.v2;version=v2.0.0-20180818164646-67afb5ed74ec;mod=1;sha256sum=1d56fa48d098d7a6777880892ee6cf2176cbdc1e8645b4bfcbd6730ac93c3655 \
+     gomod://gopkg.in/inf.v0;version=v0.9.1;sha256sum=08abac18c95cc43b725d4925f63309398d618beab68b4669659b61255e5374a0 \
+     gomod://gopkg.in/natefinch/lumberjack.v2;version=v2.2.1;sha256sum=e28804b050e7debf4f5b2dd8d241d804f5d592d0519b6e7a3dc9d4cce6f075b3 \
+     gomod://gopkg.in/tomb.v1;version=v1.0.0-20141024135613-dd632973f1e7;sha256sum=34898dc0e38ba7a792ab74a3e0fa113116313fd9142ffb444b011fd392762186 \
+     gomod://gopkg.in/tomb.v2;version=v2.0.0-20161208151619-d5d1b5820637;sha256sum=15d93d96e1e8b2d8daf7b9e57a2a9193c0e676a2c6b63d9325bf34b53e93db00 \
+     gomod://gopkg.in/yaml.v2;version=v2.2.2;mod=1;sha256sum=88d979d2f093d2397f756bc86efa2ca03f73a60d668ceb391b3510029f3f7cfc \
+-    gomod://gopkg.in/yaml.v2;version=v2.2.8;mod=1;sha256sum=88d979d2f093d2397f756bc86efa2ca03f73a60d668ceb391b3510029f3f7cfc \
+-    gomod://gopkg.in/yaml.v2;version=v2.3.0;mod=1;sha256sum=88d979d2f093d2397f756bc86efa2ca03f73a60d668ceb391b3510029f3f7cfc \
+     gomod://gopkg.in/yaml.v2;version=v2.4.0;sha256sum=ede49e27c4cca6cdd2ec719aed8ea4d363710cceb3d411e7a786fbdec0d391fd \
+     gomod://gopkg.in/yaml.v3;version=v3.0.0-20200313102051-9f266ea9e77c;mod=1;sha256sum=21579860a20306fcf43b1bd234d1fba319499c77611b71c05f9bf3ba90dab939 \
+     gomod://gopkg.in/yaml.v3;version=v3.0.1;sha256sum=aab8fbc4e6300ea08e6afe1caea18a21c90c79f489f52c53e2f20431f1a9a015 \
+     gomod://honnef.co/go/tools;version=v0.0.1-2019.2.3;mod=1;sha256sum=592e9c55bb272525a46900c55469feb97adae507e7649beab4dc1350d735f64f \
+-    gomod://k8s.io/api;version=v0.28.4;sha256sum=eff8202063496b701784d305dc90c235c1b6df8b394a04161f1890f3ee8164e3 \
+-    gomod://k8s.io/apimachinery;version=v0.28.4;sha256sum=731a1f026cbb3cefcca91fc0a758d6249207f3b36cc004ac2e498b3828745b48 \
+-    gomod://k8s.io/apiserver;version=v0.28.4;sha256sum=bffa8bf91447c8327f5a1acb5296f45ce248048328c60b22f9046da2ed09f0a5 \
+-    gomod://k8s.io/klog/v2;version=v2.100.1;sha256sum=753a27de9f28b54d76937797e1a6c9a197c92ff97dd17330d2800b8de2a06241 \
+-    gomod://k8s.io/utils;version=v0.0.0-20230406110748-d93618cff8a2;sha256sum=548e140f5e720fae8058b3020ceb1c79299a0c2a2f7af0cd878d50345ba37503 \
+-    gomod://modernc.org/libc;version=v1.66.10;mod=1;sha256sum=63ce2408b0d247d899f24f90b9cfa7301ca7ae68f0663543fbb86ba3750f5592 \
++    gomod://k8s.io/api;version=v0.36.3;sha256sum=95f7a42e06dbd40d12aaf3e970bf14444a439e1d64b96dfad936070793bdff21 \
++    gomod://k8s.io/apimachinery;version=v0.36.3;sha256sum=23ab7303b43f39c7275a56b44b3f4e38ed9f77db0296a711ab2324ef3cf81297 \
++    gomod://k8s.io/apiserver;version=v0.36.3;sha256sum=0d227bfb8ee65a5ac90796b179180534bffd9581e5045debb9076836f910c07c \
++    gomod://k8s.io/client-go;version=v0.36.3;sha256sum=6747e6664289daae7f310b54e594b56e91edd252d607cfcd8cdccbb5a59f45b7 \
++    gomod://k8s.io/klog/v2;version=v2.140.0;sha256sum=46fab8686139b04c42f1b44e84c5a162667fbf22628216d5061d95206625a886 \
++    gomod://k8s.io/kube-openapi;version=v0.0.0-20260330154417-16be699c7b31;sha256sum=41eef64b5efc175ae1f174812e622fc1674f1f1848ee156e95a8ec40a5006a82 \
++    gomod://k8s.io/utils;version=v0.0.0-20260319190234-28399d86e0b5;sha256sum=5d87a7ffd5c0ba5381c1af420a421938a4bff87badf2d002c17013feee978a54 \
++    gomod://modernc.org/libc;version=v1.74.4;mod=1;sha256sum=2904d69c00aef038bbe75d81a30f01ae2891d5f6ebd814be6a8221255483dfff \
+     gomod://modernc.org/mathutil;version=v1.7.1;mod=1;sha256sum=68683385203fe0204d853bae60003c336716d2526e7149bf58f51815a2479fd8 \
+     gomod://modernc.org/memory;version=v1.11.0;mod=1;sha256sum=e9890d3b9794d40a3703aa9809edc4e131cbb55a2831b602314076e91c5ace97 \
+-    gomod://modernc.org/sqlite;version=v1.42.2;mod=1;sha256sum=01f57ba172ac6cdec9dc43f2fc78e609e84e65a66008025189efceb219e435e8 \
+-    gomod://nullprogram.com/x/optparse;version=v1.0.0;mod=1;sha256sum=b295dfc4e093132fbae98f3bb582e8a70d15d88c81e212bd15cad9bd837364fe \
++    gomod://modernc.org/sqlite;version=v1.56.0;mod=1;sha256sum=16d48f22c12f295bdb2b457473223bfa96c2b480d0bfb3243e8ecc577f49f10a \
+     gomod://rsc.io/binaryregexp;version=v0.2.0;sha256sum=b3e706aa278fa7f880d32fa1cc40ef8282d1fc7d6e00356579ed0db88f3b0047 \
+-    gomod://sigs.k8s.io/json;version=v0.0.0-20221116044647-bc3834ca7abd;sha256sum=ddcc6a7c6c22b9b370c270bfefb4b68f424bf740aa18cb766f104531de6e0e6e \
+-    gomod://sigs.k8s.io/structured-merge-diff/v4;version=v4.2.3;sha256sum=81c147c247afbc71fa135b2f4209c0641e141267be5c6a956a0f8bf851e74e31 \
++    gomod://sigs.k8s.io/json;version=v0.0.0-20250730193827-2d320260d730;sha256sum=7cec6eae3e4e4c9c1e0a009eef200740990fafbcb9cab081eb18ce32f6e7a7b9 \
++    gomod://sigs.k8s.io/randfill;version=v1.0.0;sha256sum=31dbbfc44ce12f78f1b68d6bbeed8526aa73c53243353d44d50b2532c828f5f1 \
++    gomod://sigs.k8s.io/structured-merge-diff/v6;version=v6.3.3;sha256sum=cc7604660434c50e1ca34529ea9b395af5333ba4521bfd463161d6db838e8966 \
++    gomod://sigs.k8s.io/yaml;version=v1.6.0;sha256sum=cf88648a471581817b00a42ee8d24fd73eb0e3503998cf46d8e63787e11e5052 \
  "
+diff --git a/recipes-ids/crowdsec/crowdsec-licenses.inc b/recipes-ids/crowdsec/crowdsec-licenses.inc
+index cb45b10..362f5c1 100644
+--- a/recipes-ids/crowdsec/crowdsec-licenses.inc
++++ b/recipes-ids/crowdsec/crowdsec-licenses.inc
+@@ -7,62 +7,60 @@
+ LICENSE += "& Apache-2.0 & BSD-2-Clause & BSD-3-Clause & ISC & MIT & MPL-2.0 & WTFPL"
  
--SRC_URI[addr2line-0.17.0.sha256sum] = "b9ecd88a8c8378ca913a680cd98f0f13ac67383d35993f86c90a70e3f137816b"
--SRC_URI[adler-1.0.2.sha256sum] = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
- SRC_URI[adler32-1.2.0.sha256sum] = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
--SRC_URI[aho-corasick-0.7.18.sha256sum] = "1e37cfd5e7657ada45f742d6e99ca5788580b5c529dc78faf11ece6dc702656f"
-+SRC_URI[aho-corasick-1.1.4.sha256sum] = "ddd31a130427c27518df266943a5308ed92d4b226cc639f5a8f1002816174301"
-+SRC_URI[allocator-api2-0.2.21.sha256sum] = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
- SRC_URI[android_system_properties-0.1.5.sha256sum] = "819e7219dbd41043ac279b19830f2efc897156490d7fd6ea916720117ee66311"
--SRC_URI[ansi_term-0.12.1.sha256sum] = "d52a9bb7ec0cf484c551830a7ce27bd20d67eac647e1befb56b0be4ee39a55d2"
--SRC_URI[ascii-1.0.0.sha256sum] = "bbf56136a5198c7b01a49e3afcbef6cf84597273d298f54432926024107b0109"
-+SRC_URI[anstream-0.6.21.sha256sum] = "43d5b281e737544384e969a5ccad3f1cdd24b48086a0fc1b2a5262a26b8f4f4a"
-+SRC_URI[anstyle-1.0.13.sha256sum] = "5192cca8006f1fd4f7237516f40fa183bb07f8fbdfedaa0036de5ea9b0b45e78"
-+SRC_URI[anstyle-parse-0.2.7.sha256sum] = "4e7644824f0aa2c7b9384579234ef10eb7efb6a0deb83f9630a49594dd9c15c2"
-+SRC_URI[anstyle-query-1.1.5.sha256sum] = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
-+SRC_URI[anstyle-wincon-3.0.11.sha256sum] = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
-+SRC_URI[anyhow-1.0.101.sha256sum] = "5f0e0fee31ef5ed1ba1316088939cea399010ed7731dba877ed44aeb407a75ea"
-+SRC_URI[arc-swap-1.8.2.sha256sum] = "f9f3647c145568cec02c42054e07bdf9a5a698e15b466fb2341bfc393cd24aa5"
- SRC_URI[ascii-canvas-3.0.0.sha256sum] = "8824ecca2e851cec16968d54a01dd372ef8f95b244fb84b84e70128be347c3c6"
--SRC_URI[atty-0.2.14.sha256sum] = "d9b39be18770d11421cdb1b9947a45dd3f37e93092cbf377614828a319d5fee8"
--SRC_URI[autocfg-1.1.0.sha256sum] = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
--SRC_URI[backoff-0.3.0.sha256sum] = "9fe17f59a06fe8b87a6fc8bf53bb70b3aba76d7685f432487a68cd5552853625"
--SRC_URI[backtrace-0.3.66.sha256sum] = "cab84319d616cfb654d03394f38ab7e6f0919e181b1b57e1fd15e7fb4077d9a7"
--SRC_URI[base64-0.13.0.sha256sum] = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
--SRC_URI[basic-cookies-0.1.4.sha256sum] = "cb53b6b315f924c7f113b162e53b3901c05fc9966baf84d201dfcc7432a4bb38"
--SRC_URI[bcder-0.7.0.sha256sum] = "f007d8acfb8ef7d219911c7164c025a6d3504735120fc5df59c3c479ab84ea51"
--SRC_URI[bit-set-0.5.2.sha256sum] = "6e11e16035ea35e4e5997b393eacbf6f63983188f7a2ad25bfb13465f5ad59de"
-+SRC_URI[atomic-waker-1.1.2.sha256sum] = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
-+SRC_URI[autocfg-1.5.0.sha256sum] = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
-+SRC_URI[aws-lc-rs-1.15.4.sha256sum] = "7b7b6141e96a8c160799cc2d5adecd5cbbe5054cb8c7c4af53da0f83bb7ad256"
-+SRC_URI[aws-lc-sys-0.37.1.sha256sum] = "b092fe214090261288111db7a2b2c2118e5a7f30dc2569f1732c4069a6840549"
-+SRC_URI[backoff-0.4.0.sha256sum] = "b62ddb9cb1ec0a098ad4bbf9344d0713fa193ae1a80af55febcff2627b6a00c1"
-+SRC_URI[base16ct-0.2.0.sha256sum] = "4c7f02d4ea65f2c1853089ffd8d2787bdbc63de2f0d29dedbcf8ccdfa0ccd4cf"
-+SRC_URI[base64-0.21.7.sha256sum] = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
-+SRC_URI[base64-0.22.1.sha256sum] = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
-+SRC_URI[base64ct-1.8.3.sha256sum] = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
-+SRC_URI[basic-cookies-0.1.5.sha256sum] = "67bd8fd42c16bdb08688243dc5f0cc117a3ca9efeeaba3a345a18a6159ad96f7"
-+SRC_URI[bcder-0.7.6.sha256sum] = "1f7c42c9913f68cf9390a225e81ad56a5c515347287eb98baa710090ca1de86d"
-+SRC_URI[bit-set-0.5.3.sha256sum] = "0700ddab506f33b20a03b13996eccd309a48e5ff77d0d95926aa0210fb4e95f1"
- SRC_URI[bit-vec-0.6.3.sha256sum] = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
--SRC_URI[bitflags-1.3.2.sha256sum] = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
--SRC_URI[block-buffer-0.9.0.sha256sum] = "4152116fd6e9dadb291ae18fc1ec3575ed6d84c29642d97890f4b4a3417297e4"
--SRC_URI[block-buffer-0.10.2.sha256sum] = "0bf7fe51849ea569fd452f37822f606a5cabb684dc918707a0193fd4664ff324"
--SRC_URI[bumpalo-3.10.0.sha256sum] = "37ccbd214614c6783386c1af30caf03192f17891059cecc394b4fb119e363de3"
--SRC_URI[bytes-1.1.0.sha256sum] = "c4872d67bab6358e59559027aa3b9157c53d9358c51423c17554809a8858e0f8"
--SRC_URI[cc-1.0.73.sha256sum] = "2fff2a6927b3bb87f9595d67196a70493f627687a71d87a0d692242c33f58c11"
--SRC_URI[cfg-if-1.0.0.sha256sum] = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
--SRC_URI[chrono-0.4.22.sha256sum] = "bfd4d1b31faaa3a89d7934dbded3111da0d2ef28e3ebccdb4f0179f5929d1ef1"
--SRC_URI[chunked_transfer-1.4.0.sha256sum] = "fff857943da45f546682664a79488be82e69e43c1a7a2307679ab9afb3a66d2e"
--SRC_URI[cipher-0.2.5.sha256sum] = "12f8e7987cbd042a63249497f41aed09f8e65add917ea6566effbc56578d6801"
--SRC_URI[clap-2.34.0.sha256sum] = "a0610544180c38b88101fecf2dd634b174a62eef6946f84dfc6a7127512b381c"
--SRC_URI[codespan-reporting-0.11.1.sha256sum] = "3538270d33cc669650c4b093848450d380def10c331d38c768e34cac80576e6e"
--SRC_URI[core-foundation-0.9.3.sha256sum] = "194a7a9e6de53fa55116934067c844d9d749312f75c6f6d0980e8c252f8c2146"
--SRC_URI[core-foundation-sys-0.8.3.sha256sum] = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
--SRC_URI[cpufeatures-0.2.2.sha256sum] = "59a6001667ab124aebae2a495118e11d30984c3a653e99d86d58971708cf5e4b"
--SRC_URI[crc32fast-1.3.2.sha256sum] = "b540bd8bc810d3885c6ea91e2018302f68baba2129ab3e88f32389ee9370880d"
--SRC_URI[crunchy-0.2.2.sha256sum] = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
--SRC_URI[crypto-common-0.1.6.sha256sum] = "1bfb12502f3fc46cca1bb51ac28df9d618d813cdc3d2f25b9fe775a34af26bb3"
--SRC_URI[crypto-mac-0.10.1.sha256sum] = "bff07008ec701e8028e2ceb8f83f0e4274ee62bd2dbdc4fefff2e9a91824081a"
--SRC_URI[cryptoki-0.3.0.sha256sum] = "503aa2bd88796da9bc6baf2c47696da40f135721b3d6680c7c6cee0b7d1f7a59"
--SRC_URI[cryptoki-sys-0.1.4.sha256sum] = "1e4895bb04269df9a14f2692c6499dc2769e9a93caa33ef37c4df134f76956d2"
--SRC_URI[ctrlc-3.2.2.sha256sum] = "b37feaa84e6861e00a1f5e5aa8da3ee56d605c9992d33e082786754828e20865"
--SRC_URI[cxx-1.0.79.sha256sum] = "3f83d0ebf42c6eafb8d7c52f7e5f2d3003b89c7aa4fd2b79229209459a849af8"
--SRC_URI[cxx-build-1.0.79.sha256sum] = "07d050484b55975889284352b0ffc2ecbda25c0c55978017c132b29ba0818a86"
--SRC_URI[cxxbridge-flags-1.0.79.sha256sum] = "99d2199b00553eda8012dfec8d3b1c75fce747cf27c169a270b3b99e3448ab78"
--SRC_URI[cxxbridge-macro-1.0.79.sha256sum] = "dcb67a6de1f602736dd7eaead0080cf3435df806c61b24b13328db128c58868f"
--SRC_URI[derivative-2.2.0.sha256sum] = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
--SRC_URI[deunicode-0.4.3.sha256sum] = "850878694b7933ca4c9569d30a34b55031b9b139ee1fc7b94a527c4ef960d690"
--SRC_URI[diff-0.1.13.sha256sum] = "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8"
--SRC_URI[digest-0.9.0.sha256sum] = "d3dd60d1080a57a05ab032377049e0591415d2b31afd7028356dbf3cc6dcb066"
--SRC_URI[digest-0.10.3.sha256sum] = "f2fb860ca6fafa5552fb6d0e816a69c8e49f0908bf524e30a90d97c85892d506"
-+SRC_URI[bitflags-2.11.0.sha256sum] = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
-+SRC_URI[block-buffer-0.10.4.sha256sum] = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
-+SRC_URI[bumpalo-3.19.1.sha256sum] = "5dd9dc738b7a8311c7ade152424974d8115f2cdad61e8dab8dac9f2362298510"
-+SRC_URI[bytes-1.11.1.sha256sum] = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
-+SRC_URI[cc-1.2.56.sha256sum] = "aebf35691d1bfb0ac386a69bac2fde4dd276fb618cf8bf4f5318fe285e821bb2"
-+SRC_URI[cesu8-1.1.0.sha256sum] = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
-+SRC_URI[cfg-if-1.0.4.sha256sum] = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
-+SRC_URI[cfg_aliases-0.2.1.sha256sum] = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
-+SRC_URI[chacha20-0.10.0.sha256sum] = "6f8d983286843e49675a4b7a2d174efe136dc93a18d69130dd18198a6c167601"
-+SRC_URI[chrono-0.4.43.sha256sum] = "fac4744fb15ae8337dc853fee7fb3f4e48c0fbaa23d0afe49c447b4fab126118"
-+SRC_URI[cipher-0.4.4.sha256sum] = "773f3b9af64447d2ce9850330c473515014aa235e6a783b02db81ff39e4a3dad"
-+SRC_URI[clap-4.5.59.sha256sum] = "c5caf74d17c3aec5495110c34cc3f78644bfa89af6c8993ed4de2790e49b6499"
-+SRC_URI[clap_builder-4.5.59.sha256sum] = "370daa45065b80218950227371916a1633217ae42b2715b2287b606dcd618e24"
-+SRC_URI[clap_derive-4.5.55.sha256sum] = "a92793da1a46a5f2a02a6f4c46c6496b28c43638adea8306fcb0caa1634f24e5"
-+SRC_URI[clap_lex-1.0.0.sha256sum] = "3a822ea5bc7590f9d40f1ba12c0dc3c2760f3482c6984db1573ad11031420831"
-+SRC_URI[cmake-0.1.57.sha256sum] = "75443c44cd6b379beb8c5b45d85d0773baf31cce901fe7bb252f4eff3008ef7d"
-+SRC_URI[colorchoice-1.0.4.sha256sum] = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
-+SRC_URI[combine-4.6.7.sha256sum] = "ba5a308b75df32fe02788e748662718f03fde005016435c444eea572398219fd"
-+SRC_URI[const-oid-0.9.6.sha256sum] = "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8"
-+SRC_URI[core-foundation-0.9.4.sha256sum] = "91e195e091a93c46f7102ec7818a2aa394e1e1771c3ab4825963fa03e45afb8f"
-+SRC_URI[core-foundation-0.10.1.sha256sum] = "b2a6cd9ae233e7f62ba4e9353e81a88df7fc8a5987b8d445b4d90c879bd156f6"
-+SRC_URI[core-foundation-sys-0.8.7.sha256sum] = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
-+SRC_URI[core2-0.4.0.sha256sum] = "b49ba7ef1ad6107f8824dbe97de947cbaac53c44e7f9756a1fba0d37c1eec505"
-+SRC_URI[cpufeatures-0.2.17.sha256sum] = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
-+SRC_URI[cpufeatures-0.3.0.sha256sum] = "8b2a41393f66f16b0823bb79094d54ac5fbd34ab292ddafb9a0456ac9f87d201"
-+SRC_URI[crc32fast-1.5.0.sha256sum] = "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511"
-+SRC_URI[crunchy-0.2.4.sha256sum] = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
-+SRC_URI[crypto-bigint-0.5.5.sha256sum] = "0dc92fb57ca44df6db8059111ab3af99a63d5d0f8375d9972e319a379c6bab76"
-+SRC_URI[crypto-common-0.1.7.sha256sum] = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
-+SRC_URI[cryptoki-0.12.0.sha256sum] = "ff765b99fc49f3116c9a908484486a2b92fd73c48da45c3a69716471c6cc56c6"
-+SRC_URI[cryptoki-sys-0.5.0.sha256sum] = "f1fd850498411e4057f1cba79e6e2bc7cbe960544c1046ab46d4685c403a1121"
-+SRC_URI[curve25519-dalek-4.1.3.sha256sum] = "97fb8b7c4503de7d6ae7b42ab72a5a59857b4c937ec27a3d4539dba95b5ab2be"
-+SRC_URI[curve25519-dalek-derive-0.1.1.sha256sum] = "f46882e17999c6cc590af592290432be3bce0428cb0d5f8b6715e4dc7b383eb3"
-+SRC_URI[darling-0.21.3.sha256sum] = "9cdf337090841a411e2a7f3deb9187445851f91b309c0c0a29e05f74a00a48c0"
-+SRC_URI[darling_core-0.21.3.sha256sum] = "1247195ecd7e3c85f83c8d2a366e4210d588e802133e1e355180a9870b517ea4"
-+SRC_URI[darling_macro-0.21.3.sha256sum] = "d38308df82d1080de0afee5d069fa14b0326a88c14f15c5ccda35b4a6c414c81"
-+SRC_URI[dary_heap-0.3.8.sha256sum] = "06d2e3287df1c007e74221c49ca10a95d557349e54b3a75dc2fb14712c751f04"
-+SRC_URI[der-0.7.10.sha256sum] = "e7c1832837b905bbfb5101e07cc24c8deddf52f93225eee6ead5f4d63d53ddcb"
-+SRC_URI[deranged-0.5.6.sha256sum] = "cc3dc5ad92c2e2d1c193bbbbdf2ea477cb81331de4f3103f267ca18368b988c4"
-+SRC_URI[digest-0.10.7.sha256sum] = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
- SRC_URI[dirs-next-2.0.0.sha256sum] = "b98cf8ebf19c3d1b223e151f99a4f9f0690dca41414773390fc824184ac833e1"
- SRC_URI[dirs-sys-next-0.1.2.sha256sum] = "4ebda144c4fe02d1f7ea1a7d9641b6fc6b580adcfa024ae48797ecdeb6825b4d"
--SRC_URI[either-1.7.0.sha256sum] = "3f107b87b6afc2a64fd13cac55fe06d6c8859f12d4b14cbcdd2c67d0976781be"
--SRC_URI[ena-0.14.0.sha256sum] = "d7402b94a93c24e742487327a7cd839dc9d36fec9de9fb25b09f2dae459f36c3"
--SRC_URI[encoding_rs-0.8.31.sha256sum] = "9852635589dc9f9ea1b6fe9f05b50ef208c85c834a562f0c6abb1c475736ec2b"
-+SRC_URI[displaydoc-0.2.5.sha256sum] = "97369cbbc041bc366949bc74d34658d6cda5621039731c6310521892a3a20ae0"
-+SRC_URI[dunce-1.0.5.sha256sum] = "92773504d58c093f6de2459af4af33faa518c13451eb8f2b5698ed3d36e7c813"
-+SRC_URI[dyn-clone-1.0.20.sha256sum] = "d0881ea181b1df73ff77ffaaf9c7544ecc11e82fba9b5f27b262a3c73a332555"
-+SRC_URI[ecdsa-0.16.9.sha256sum] = "ee27f32b5c5292967d2d4a9d7f1e0b0aed2c15daded5a60300e4abb9d8020bca"
-+SRC_URI[ed25519-2.2.3.sha256sum] = "115531babc129696a58c64a4fef0a8bf9e9698629fb97e9e40767d235cfbcd53"
-+SRC_URI[ed25519-dalek-2.2.0.sha256sum] = "70e796c081cee67dc755e1a36a0a172b897fab85fc3f6bc48307991f64e4eca9"
-+SRC_URI[either-1.15.0.sha256sum] = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
-+SRC_URI[elliptic-curve-0.13.8.sha256sum] = "b5e6043086bf7973472e0c7dff2142ea0b680d30e18d9cc40f267efbf222bd47"
-+SRC_URI[ena-0.14.4.sha256sum] = "eabffdaee24bd1bf95c5ef7cec31260444317e72ea56c4c91750e8b7ee58d5f1"
-+SRC_URI[encoding_rs-0.8.35.sha256sum] = "75030f3c4f45dafd7586dd6780965a8c7e8e285a5ecb86713e63a79c5b2766f3"
- SRC_URI[enum-display-derive-0.1.1.sha256sum] = "f16ef37b2a9b242295d61a154ee91ae884afff6b8b933b486b12481cc58310ca"
- SRC_URI[enum-flags-0.1.8.sha256sum] = "3682d2328e61f5529088a02cd20bb0a9aeaeeeb2f26597436dd7d75d1340f8f5"
--SRC_URI[error-chain-0.11.0.sha256sum] = "ff511d5dc435d703f4971bc399647c9bc38e20cb41452e3b9feb4765419ed3f3"
--SRC_URI[fastrand-1.7.0.sha256sum] = "c3fcf0cee53519c866c09b5de1f6c56ff9d647101f81c1964fa632e148896cdf"
--SRC_URI[fern-0.5.9.sha256sum] = "e69ab0d5aca163e388c3a49d284fed6c3d0810700e77c5ae2756a50ec1a4daaa"
-+SRC_URI[equivalent-1.0.2.sha256sum] = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
-+SRC_URI[errno-0.3.14.sha256sum] = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-+SRC_URI[fastrand-2.3.0.sha256sum] = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
-+SRC_URI[fd-lock-4.0.4.sha256sum] = "0ce92ff622d6dadf7349484f42c93271a0d49b7cc4d466a936405bacbe10aa78"
-+SRC_URI[fern-0.7.1.sha256sum] = "4316185f709b23713e41e3195f90edef7fb00c3ed4adc79769cf09cc762a3b29"
-+SRC_URI[ff-0.13.1.sha256sum] = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
-+SRC_URI[fiat-crypto-0.2.9.sha256sum] = "28dea519a9695b9977216879a3ebfddf92f1c08c05d984f8996aecd6ecdc811d"
-+SRC_URI[filetime-0.2.27.sha256sum] = "f98844151eee8917efc50bd9e8318cb963ae8b297431495d3f758616ea5c57db"
-+SRC_URI[find-msvc-tools-0.1.9.sha256sum] = "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
- SRC_URI[fixedbitset-0.4.2.sha256sum] = "0ce7134b9999ecaf8bcd65542e436736ef32ddca1b3e06094cb6ec5755203b80"
- SRC_URI[fnv-1.0.7.sha256sum] = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
-+SRC_URI[foldhash-0.1.5.sha256sum] = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
-+SRC_URI[foldhash-0.2.0.sha256sum] = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
- SRC_URI[foreign-types-0.3.2.sha256sum] = "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1"
- SRC_URI[foreign-types-shared-0.1.1.sha256sum] = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
--SRC_URI[form_urlencoded-1.0.1.sha256sum] = "5fc25a87fa4fd2094bffb06925852034d90a17f0d1e05197d4956d3555752191"
--SRC_URI[fslock-0.2.1.sha256sum] = "04412b8935272e3a9bae6f48c7bfff74c2911f60525404edfdd28e49884c3bfb"
--SRC_URI[futures-0.3.21.sha256sum] = "f73fe65f54d1e12b726f517d3e2135ca3125a437b6d998caf1962961f7172d9e"
--SRC_URI[futures-channel-0.3.21.sha256sum] = "c3083ce4b914124575708913bca19bfe887522d6e2e6d0952943f5eac4a74010"
--SRC_URI[futures-core-0.3.21.sha256sum] = "0c09fd04b7e4073ac7156a9539b57a484a8ea920f79c7c675d05d289ab6110d3"
--SRC_URI[futures-executor-0.3.21.sha256sum] = "9420b90cfa29e327d0429f19be13e7ddb68fa1cccb09d65e5706b8c7a749b8a6"
--SRC_URI[futures-io-0.3.21.sha256sum] = "fc4045962a5a5e935ee2fdedaa4e08284547402885ab326734432bed5d12966b"
--SRC_URI[futures-macro-0.3.21.sha256sum] = "33c1e13800337f4d4d7a316bf45a567dbcb6ffe087f16424852d97e97a91f512"
--SRC_URI[futures-sink-0.3.21.sha256sum] = "21163e139fa306126e6eedaf49ecdb4588f939600f0b1e770f4205ee4b7fa868"
--SRC_URI[futures-task-0.3.21.sha256sum] = "57c66a976bf5909d801bbef33416c41372779507e7a6b3a5e25e4749c58f776a"
--SRC_URI[futures-util-0.3.21.sha256sum] = "d8b7abd5d659d9b90c8cba917f6ec750a74e2dc23902ef9cd4cc8c8b22e6036a"
--SRC_URI[generic-array-0.14.5.sha256sum] = "fd48d33ec7f05fbfa152300fdad764757cbded343c1aa1cff2fbaf4134851803"
--SRC_URI[getrandom-0.2.7.sha256sum] = "4eb1a864a501629691edf6c15a593b7a51eebaa1e8468e9ddc623de7c9b58ec6"
--SRC_URI[gimli-0.26.2.sha256sum] = "22030e2c5a68ec659fde1e949a745124b48e6fa8b045b7ed5bd1fe4ccc5c4e5d"
--SRC_URI[h2-0.3.13.sha256sum] = "37a82c6d637fc9515a4694bbf1cb2457b79d81ce52b3108bdeea58b07dd34a57"
-+SRC_URI[form_urlencoded-1.2.2.sha256sum] = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+SRC_URI[fs_extra-1.3.0.sha256sum] = "42703706b716c37f96a77aea830392ad231f44c9e9a67872fa5548707e11b11c"
-+SRC_URI[futures-channel-0.3.32.sha256sum] = "07bbe89c50d7a535e539b8c17bc0b49bdb77747034daa8087407d655f3f7cc1d"
-+SRC_URI[futures-core-0.3.32.sha256sum] = "7e3450815272ef58cec6d564423f6e755e25379b217b0bc688e295ba24df6b1d"
-+SRC_URI[futures-macro-0.3.32.sha256sum] = "e835b70203e41293343137df5c0664546da5745f82ec9b84d40be8336958447b"
-+SRC_URI[futures-sink-0.3.32.sha256sum] = "c39754e157331b013978ec91992bde1ac089843443c49cbc7f46150b0fad0893"
-+SRC_URI[futures-task-0.3.32.sha256sum] = "037711b3d59c33004d3856fbdc83b99d4ff37a24768fa1be9ce3538a1cde4393"
-+SRC_URI[futures-util-0.3.32.sha256sum] = "389ca41296e6190b48053de0321d02a77f32f8a5d2461dd38762c0593805c6d6"
-+SRC_URI[generic-array-0.14.7.sha256sum] = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
-+SRC_URI[getrandom-0.2.17.sha256sum] = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
-+SRC_URI[getrandom-0.3.4.sha256sum] = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
-+SRC_URI[getrandom-0.4.1.sha256sum] = "139ef39800118c7683f2fd3c98c1b23c09ae076556b435f8e9064ae108aaeeec"
-+SRC_URI[group-0.13.0.sha256sum] = "f0f9ef7462f7c099f518d754361858f86d8a07af53ba9af0fe635bbccb151a63"
-+SRC_URI[h2-0.4.13.sha256sum] = "2f44da3a8150a6703ed5d34e164b875fd14c2cdab9af1252a9a1020bde2bdc54"
- SRC_URI[hashbrown-0.12.3.sha256sum] = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
--SRC_URI[hermit-abi-0.1.19.sha256sum] = "62b467343b94ba476dcb2500d242dadbb39557df889310ac77c5d99100aaac33"
-+SRC_URI[hashbrown-0.15.5.sha256sum] = "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1"
-+SRC_URI[hashbrown-0.16.1.sha256sum] = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
-+SRC_URI[heck-0.5.0.sha256sum] = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
-+SRC_URI[hermit-abi-0.5.2.sha256sum] = "fc0fef456e4baa96da950455cd02c081ca953b141298e41db3fc7e36b1da849c"
- SRC_URI[hex-0.4.3.sha256sum] = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
--SRC_URI[hmac-0.10.1.sha256sum] = "c1441c6b1e930e2817404b5046f1f989899143a12bf92de603b69f4e0aee1e15"
--SRC_URI[http-0.2.8.sha256sum] = "75f43d41e26995c17e71ee126451dd3941010b0514a81a9d11f3b341debc2399"
--SRC_URI[http-body-0.4.5.sha256sum] = "d5f38f16d184e36f2408a55281cd658ecbd3ca05cce6d6510a176eca393e26d1"
--SRC_URI[httparse-1.7.1.sha256sum] = "496ce29bb5a52785b44e0f7ca2847ae0bb839c9bd28f69acac9b99d461c0c04c"
--SRC_URI[httpdate-1.0.2.sha256sum] = "c4a1e36c821dbe04574f602848a19f742f4fb3c98d40449f11bcad18d6b17421"
--SRC_URI[hyper-0.14.20.sha256sum] = "02c929dc5c39e335a03c405292728118860721b10190d98c2a0f0efd5baafbac"
--SRC_URI[hyper-tls-0.5.0.sha256sum] = "d6183ddfa99b85da61a140bea0efc93fdf56ceaa041b37d553518030827f9905"
--SRC_URI[iana-time-zone-0.1.51.sha256sum] = "f5a6ef98976b22b3b7f2f3a806f858cb862044cfa66805aa3ad84cb3d3b785ed"
--SRC_URI[iana-time-zone-haiku-0.1.1.sha256sum] = "0703ae284fc167426161c2e3f1da3ea71d94b21bedbcc9494e92b28e334e3dca"
--SRC_URI[idna-0.2.3.sha256sum] = "418a0a6fab821475f634efe3ccc45c013f742efe03d853e8d3355d5cb850ecf8"
--SRC_URI[impl-trait-for-tuples-0.2.2.sha256sum] = "11d7a9f6330b71fea57921c9b61c47ee6e84f72d394754eff6163ae67e7395eb"
--SRC_URI[indexmap-1.9.1.sha256sum] = "10a35a97730320ffe8e2d410b5d3b69279b98d2c14bdb8b70ea89ecf7888d41e"
--SRC_URI[instant-0.1.12.sha256sum] = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
-+SRC_URI[hkdf-0.12.4.sha256sum] = "7b5f8eb2ad728638ea2c7d47a21db23b7b58a72ed6a38256b8a1849f15fbbdf7"
-+SRC_URI[hmac-0.12.1.sha256sum] = "6c49c37c09c17a53d937dfbb742eb3a961d65a994e6bcdcf37e7399d0cc8ab5e"
-+SRC_URI[hostname-0.4.2.sha256sum] = "617aaa3557aef3810a6369d0a99fac8a080891b68bd9f9812a1eeda0c0730cbd"
-+SRC_URI[http-1.4.0.sha256sum] = "e3ba2a386d7f85a81f119ad7498ebe444d2e22c2af0b86b069416ace48b3311a"
-+SRC_URI[http-body-1.0.1.sha256sum] = "1efedce1fb8e6913f23e0c92de8e62cd5b772a67e7b3946df930a62566c93184"
-+SRC_URI[http-body-util-0.1.3.sha256sum] = "b021d93e26becf5dc7e1b75b1bed1fd93124b374ceb73f43d4d4eafec896a64a"
-+SRC_URI[httparse-1.10.1.sha256sum] = "6dbf3de79e51f3d586ab4cb9d5c3e2c14aa28ed23d180cf89b4df0454a69cc87"
-+SRC_URI[httpdate-1.0.3.sha256sum] = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
-+SRC_URI[hyper-1.8.1.sha256sum] = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
-+SRC_URI[hyper-rustls-0.27.7.sha256sum] = "e3c93eb611681b207e1fe55d5a71ecf91572ec8a6705cdb6857f7d8d5242cf58"
-+SRC_URI[hyper-util-0.1.20.sha256sum] = "96547c2556ec9d12fb1578c4eaf448b04993e7fb79cbaad930a656880a6bdfa0"
-+SRC_URI[iana-time-zone-0.1.65.sha256sum] = "e31bc9ad994ba00e440a8aa5c9ef0ec67d5cb5e5cb0cc7f8b744a35b389cc470"
-+SRC_URI[iana-time-zone-haiku-0.1.2.sha256sum] = "f31827a206f56af32e590ba56d5d2d085f558508192593743f16b2306495269f"
-+SRC_URI[icu_collections-2.1.1.sha256sum] = "4c6b649701667bbe825c3b7e6388cb521c23d88644678e83c0c4d0a621a34b43"
-+SRC_URI[icu_locale_core-2.1.1.sha256sum] = "edba7861004dd3714265b4db54a3c390e880ab658fec5f7db895fae2046b5bb6"
-+SRC_URI[icu_normalizer-2.1.1.sha256sum] = "5f6c8828b67bf8908d82127b2054ea1b4427ff0230ee9141c54251934ab1b599"
-+SRC_URI[icu_normalizer_data-2.1.1.sha256sum] = "7aedcccd01fc5fe81e6b489c15b247b8b0690feb23304303a9e560f37efc560a"
-+SRC_URI[icu_properties-2.1.2.sha256sum] = "020bfc02fe870ec3a66d93e677ccca0562506e5872c650f893269e08615d74ec"
-+SRC_URI[icu_properties_data-2.1.2.sha256sum] = "616c294cf8d725c6afcd8f55abc17c56464ef6211f9ed59cccffe534129c77af"
-+SRC_URI[icu_provider-2.1.1.sha256sum] = "85962cf0ce02e1e0a629cc34e7ca3e373ce20dda4c4d7294bbd0bf1fdb59e614"
-+SRC_URI[id-arena-2.3.0.sha256sum] = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
-+SRC_URI[ident_case-1.0.1.sha256sum] = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
-+SRC_URI[idna-1.1.0.sha256sum] = "3b0875f23caa03898994f6ddc501886a45c7d3d62d04d2d90788d47be1b1e4de"
-+SRC_URI[idna_adapter-1.2.1.sha256sum] = "3acae9609540aa318d1bc588455225fb2085b9ed0c4f6bd0d9d5bcd86f1a0344"
-+SRC_URI[indexmap-1.9.3.sha256sum] = "bd070e393353796e801d209ad339e89596eb4c8d430d18ede6a1cced8fafbd99"
-+SRC_URI[indexmap-2.13.0.sha256sum] = "7714e70437a7dc3ac8eb7e6f8df75fd8eb422675fc7678aff7364301092b1017"
-+SRC_URI[inout-0.1.4.sha256sum] = "879f10e63c20629ecabbb64a8010319738c66a5cd0c29b02d63d272b03751d01"
-+SRC_URI[instant-0.1.13.sha256sum] = "e0242819d153cba4b4b05a5a8f2a7e9bbf97b6055b2a002b395c96b5ff3c0222"
- SRC_URI[intervaltree-0.2.7.sha256sum] = "270bc34e57047cab801a8c871c124d9dc7132f6473c6401f645524f4e6edd111"
--SRC_URI[ipnet-2.5.0.sha256sum] = "879d54834c8c76457ef4293a689b2a8c59b076067ad77b15efafbb05f92a592b"
--SRC_URI[itertools-0.10.3.sha256sum] = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
--SRC_URI[itoa-1.0.2.sha256sum] = "112c678d4050afce233f4f2852bb2eb519230b3cf12f33585275537d7e41578d"
--SRC_URI[jmespatch-0.3.0.sha256sum] = "7acf91a732ade34d8eda2dee9500a051833f14f0d3d10d77c149845d6ac6a5f0"
--SRC_URI[js-sys-0.3.58.sha256sum] = "c3fac17f7123a73ca62df411b1bf727ccc805daa070338fda671c86dac1bdc27"
--SRC_URI[kmip-protocol-0.4.2.sha256sum] = "396744d490b405f4ff293057bae5625e03dcf8be70fd4ba8c6346a54e78fd837"
--SRC_URI[kmip-ttlv-0.3.3.sha256sum] = "1aa943fd7166db2cc2deaea17bd5c2862ccf68eef9ce15576bcee9e4b494685c"
--SRC_URI[lalrpop-0.19.8.sha256sum] = "b30455341b0e18f276fa64540aff54deafb54c589de6aca68659c63dd2d5d823"
--SRC_URI[lalrpop-util-0.19.8.sha256sum] = "bcf796c978e9b4d983414f4caedc9273aa33ee214c5b887bd55fde84c85d2dc4"
--SRC_URI[lazy_static-1.4.0.sha256sum] = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
--SRC_URI[libc-0.2.126.sha256sum] = "349d5a591cd28b49e1d1037471617a32ddcda5731b99419008085f72d5a53836"
--SRC_URI[libflate-1.2.0.sha256sum] = "05605ab2bce11bcfc0e9c635ff29ef8b2ea83f29be257ee7d730cac3ee373093"
--SRC_URI[libflate_lz77-1.1.0.sha256sum] = "39a734c0493409afcd49deee13c006a04e3586b9761a03543c6272c9c51f2f5a"
--SRC_URI[libloading-0.7.3.sha256sum] = "efbc0f03f9a775e9f6aed295c6a1ba2253c5757a9e03d55c6caa46a681abcddd"
--SRC_URI[link-cplusplus-1.0.7.sha256sum] = "9272ab7b96c9046fbc5bc56c06c117cb639fe2d509df0c421cad82d2915cf369"
--SRC_URI[lock_api-0.4.7.sha256sum] = "327fa5b6a6940e4699ec49a9beae1ea4845c6bab9314e4f84ac68742139d8c53"
--SRC_URI[log-0.4.17.sha256sum] = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
--SRC_URI[maplit-1.0.2.sha256sum] = "3e2e65a1a2e43cfcb47a895c4c8b10d1f4a61097f9f254f183aee60cad9c651d"
--SRC_URI[matchers-0.0.1.sha256sum] = "f099785f7595cc4b4553a174ce30dd7589ef93391ff414dbb67f62392b9e0ce1"
--SRC_URI[matches-0.1.9.sha256sum] = "a3e378b66a060d48947b590737b30a1be76706c8dd7b8ba0f2fe3989c68a853f"
--SRC_URI[maybe-async-0.2.6.sha256sum] = "6007f9dad048e0a224f27ca599d669fca8cfa0dac804725aab542b2eb032bce6"
--SRC_URI[memchr-2.5.0.sha256sum] = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
--SRC_URI[mime-0.3.16.sha256sum] = "2a60c7ce501c71e03a9c9c0d35b861413ae925bd979cc7a4e30d060069aaac8d"
--SRC_URI[miniz_oxide-0.5.3.sha256sum] = "6f5c75688da582b8ffc1f1799e9db273f32133c49e048f614d22ec3256773ccc"
--SRC_URI[mio-0.8.4.sha256sum] = "57ee1c23c7c63b0c9250c339ffdc69255f110b298b901b9f6c82547b7b87caaf"
--SRC_URI[native-tls-0.2.10.sha256sum] = "fd7e2f3618557f980e0b17e8856252eee3c97fa12c54dff0ca290fb6266ca4a9"
--SRC_URI[new_debug_unreachable-1.0.4.sha256sum] = "e4a24736216ec316047a1fc4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
--SRC_URI[nix-0.24.2.sha256sum] = "195cdbc1741b8134346d515b3a56a1c94b0912758009cfd53f99ea0f57b065fc"
--SRC_URI[num-bigint-0.4.3.sha256sum] = "f93ab6289c7b344a8a9f60f88d80aa20032336fe78da341afc91c8a2341fc75f"
--SRC_URI[num-integer-0.1.45.sha256sum] = "225d3389fb3509a24c93f5c29eb6bde2586b98d9f016636dff58d7c6f7569cd9"
--SRC_URI[num-traits-0.2.15.sha256sum] = "578ede34cf02f8924ab9447f50c28075b4d3e5b269972345e7e0372b38c6cdcd"
--SRC_URI[num_cpus-1.13.1.sha256sum] = "19e64526ebdee182341572e50e9ad03965aa510cd94427a4549448f285e957a1"
--SRC_URI[oauth2-4.2.3.sha256sum] = "6d62c436394991641b970a92e23e8eeb4eb9bca74af4f5badc53bcd568daadbd"
--SRC_URI[object-0.29.0.sha256sum] = "21158b2c33aa6d4561f1c0a6ea283ca92bc54802a93b263e910746d679a7eb53"
--SRC_URI[once_cell-1.13.0.sha256sum] = "18a6dbe30758c9f83eb00cbea4ac95966305f5a7772f3f42ebfc7fc7eddbd8e1"
--SRC_URI[opaque-debug-0.3.0.sha256sum] = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
--SRC_URI[openidconnect-2.3.2.sha256sum] = "e26afc60b2bf11b9a039db1f3a3c0d5fe201eebdbe646a8ecb8342c8240e3271"
--SRC_URI[openssl-0.10.41.sha256sum] = "618febf65336490dfcf20b73f885f5651a0c89c64c2d4a8c3662585a70bf5bd0"
--SRC_URI[openssl-macros-0.1.0.sha256sum] = "b501e44f11665960c7e7fcf062c7d96a14ade4aa98116c004b2e37b5be7d736c"
--SRC_URI[openssl-probe-0.1.5.sha256sum] = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
--SRC_URI[openssl-src-111.25.0+1.1.1t.sha256sum] = "3173cd3626c43e3854b1b727422a276e568d9ec5fe8cec197822cf52cfb743d6"
--SRC_URI[openssl-sys-0.9.75.sha256sum] = "e5f9bd0c2710541a3cda73d6f9ac4f1b240de4ae261065d309dbe73d9dceb42f"
--SRC_URI[ordered-float-2.10.0.sha256sum] = "7940cf2ca942593318d07fcf2596cdca60a85c9e7fab408a5e21a4f9dcd40d87"
--SRC_URI[oso-0.12.4.sha256sum] = "aec41e2da1ce3a82eb807396f802c172f08aa03e1be31e5df49592a04e12c8c7"
--SRC_URI[parking_lot-0.12.1.sha256sum] = "3742b2c103b9f06bc9fff0a37ff4912935851bee6d36f3c02bcc755bcfec228f"
--SRC_URI[parking_lot_core-0.9.3.sha256sum] = "09a279cbf25cb0757810394fbc1e359949b59e348145c643a939a525692e6929"
--SRC_URI[pbkdf2-0.7.5.sha256sum] = "bf916dd32dd26297907890d99dc2740e33f6bd9073965af4ccff2967962f5508"
--SRC_URI[percent-encoding-2.1.0.sha256sum] = "d4fd5641d01c8f18a23da7b6fe29298ff4b55afcccdf78973b24cf3175fee32e"
--SRC_URI[petgraph-0.6.2.sha256sum] = "e6d5014253a1331579ce62aa67443b4a658c5e7dd03d4bc6d302b94474888143"
--SRC_URI[phf_shared-0.10.0.sha256sum] = "b6796ad771acdc0123d2a88dc428b5e38ef24456743ddb1744ed628f9815c096"
--SRC_URI[pico-args-0.4.2.sha256sum] = "db8bcd96cb740d03149cbad5518db9fd87126a10ab519c011893b1754134c468"
--SRC_URI[pin-project-lite-0.2.9.sha256sum] = "e0a7ae3ac2f1173085d398531c705756c94a4c56843785df85a60c1a0afac116"
-+SRC_URI[ipnet-2.11.0.sha256sum] = "469fb0b9cefa57e3ef31275ee7cacb78f2fdca44e4765491884a2b119d4eb130"
-+SRC_URI[iri-string-0.7.10.sha256sum] = "c91338f0783edbd6195decb37bae672fd3b165faffb89bf7b9e6942f8b1a731a"
-+SRC_URI[is-terminal-0.4.17.sha256sum] = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
-+SRC_URI[is_terminal_polyfill-1.70.2.sha256sum] = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
-+SRC_URI[itertools-0.10.5.sha256sum] = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
-+SRC_URI[itertools-0.11.0.sha256sum] = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57"
-+SRC_URI[itoa-1.0.17.sha256sum] = "92ecc6618181def0457392ccd0ee51198e065e016d1d527a7ac1b6dc7c1f09d2"
-+SRC_URI[jni-0.21.1.sha256sum] = "1a87aa2bb7d2af34197c04845522473242e1aa17c12f4935d5856491a7fb8c97"
-+SRC_URI[jni-sys-0.3.0.sha256sum] = "8eaf4bc02d17cbdd7ff4c7438cafcdf7fb9a4613313ad11b4f8fefe7d3fa0130"
-+SRC_URI[jobserver-0.1.34.sha256sum] = "9afb3de4395d6b3e67a780b6de64b51c978ecf11cb9a462c66be7d4ca9039d33"
-+SRC_URI[js-sys-0.3.85.sha256sum] = "8c942ebf8e95485ca0d52d97da7c5a2c387d0e7f0ba4c35e93bfcaee045955b3"
-+SRC_URI[kmip-protocol-0.4.3.sha256sum] = "aa5c6e91a4f36736ef47f650dc90d327b8be65f4acaf401bad389ce81c53ded5"
-+SRC_URI[kmip-ttlv-0.3.5.sha256sum] = "13cdaafff68ae98da73fd6dff927095849646c6eeee44bdd0a983d30192cdeb1"
-+SRC_URI[lalrpop-0.20.2.sha256sum] = "55cb077ad656299f160924eb2912aa147d7339ea7d69e1b5517326fdcec3c1ca"
-+SRC_URI[lalrpop-util-0.20.2.sha256sum] = "507460a910eb7b32ee961886ff48539633b788a36b65692b95f225b844c82553"
-+SRC_URI[lazy_static-1.5.0.sha256sum] = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
-+SRC_URI[leb128fmt-0.1.0.sha256sum] = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
-+SRC_URI[libc-0.2.180.sha256sum] = "bcc35a38544a891a5f7c865aca548a982ccb3b8650a5b06d0fd33a10283c56fc"
-+SRC_URI[libflate-2.2.1.sha256sum] = "e3248b8d211bd23a104a42d81b4fa8bb8ac4a3b75e7a43d85d2c9ccb6179cd74"
-+SRC_URI[libflate_lz77-2.2.0.sha256sum] = "a599cb10a9cd92b1300debcef28da8f70b935ec937f44fcd1b70a7c986a11c5c"
-+SRC_URI[libloading-0.8.9.sha256sum] = "d7c4b02199fee7c5d21a5ae7d8cfa79a6ef5bb2fc834d6e9058e89c825efdc55"
-+SRC_URI[libm-0.2.16.sha256sum] = "b6d2cec3eae94f9f509c767b45932f1ada8350c4bdb85af2fcab4a3c14807981"
-+SRC_URI[libredox-0.1.12.sha256sum] = "3d0b95e02c851351f877147b7deea7b1afb1df71b63aa5f8270716e0c5720616"
-+SRC_URI[linux-raw-sys-0.11.0.sha256sum] = "df1d3c3b53da64cf5760482273a98e575c651a67eec7f77df96b5b642de8f039"
-+SRC_URI[litemap-0.8.1.sha256sum] = "6373607a59f0be73a39b6fe456b8192fcc3585f602af20751600e974dd455e77"
-+SRC_URI[lock_api-0.4.14.sha256sum] = "224399e74b87b5f3557511d98dff8b14089b3dadafcab6bb93eab67d3aace965"
-+SRC_URI[log-0.4.29.sha256sum] = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
-+SRC_URI[lru-slab-0.1.2.sha256sum] = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
-+SRC_URI[maybe-async-0.2.10.sha256sum] = "5cf92c10c7e361d6b99666ec1c6f9805b0bea2c3bd8c78dc6fe98ac5bd78db11"
-+SRC_URI[memchr-2.8.0.sha256sum] = "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79"
-+SRC_URI[mime-0.3.17.sha256sum] = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
-+SRC_URI[mio-1.1.1.sha256sum] = "a69bcab0ad47271a0234d9422b131806bf3968021e5dc9328caf2d4cd58557fc"
-+SRC_URI[new_debug_unreachable-1.0.6.sha256sum] = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
-+SRC_URI[nix-0.31.1.sha256sum] = "225e7cfe711e0ba79a68baeddb2982723e4235247aefce1482f2f16c27865b66"
-+SRC_URI[num-bigint-dig-0.8.6.sha256sum] = "e661dda6640fad38e827a6d4a310ff4763082116fe217f279885c97f511bb0b7"
-+SRC_URI[num-conv-0.2.0.sha256sum] = "cf97ec579c3c42f953ef76dbf8d55ac91fb219dde70e49aa4a6b7d74e9919050"
-+SRC_URI[num-integer-0.1.46.sha256sum] = "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f"
-+SRC_URI[num-iter-0.1.45.sha256sum] = "1429034a0490724d0075ebb2bc9e875d6503c3cf69e235a8941aa757d83ef5bf"
-+SRC_URI[num-traits-0.2.19.sha256sum] = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
-+SRC_URI[num_threads-0.1.7.sha256sum] = "5c7398b9c8b70908f6371f47ed36737907c87c52af34c268fed0bf0ceb92ead9"
-+SRC_URI[oauth2-5.0.0.sha256sum] = "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d"
-+SRC_URI[once_cell-1.21.3.sha256sum] = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
-+SRC_URI[once_cell_polyfill-1.70.2.sha256sum] = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
-+SRC_URI[openidconnect-4.0.1.sha256sum] = "0d8c6709ba2ea764bbed26bce1adf3c10517113ddea6f2d4196e4851757ef2b2"
-+SRC_URI[openssl-0.10.75.sha256sum] = "08838db121398ad17ab8531ce9de97b244589089e290a384c900cb9ff7434328"
-+SRC_URI[openssl-macros-0.1.1.sha256sum] = "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c"
-+SRC_URI[openssl-probe-0.2.1.sha256sum] = "7c87def4c32ab89d880effc9e097653c8da5d6ef28e6b539d313baaacfbafcbe"
-+SRC_URI[openssl-sys-0.9.111.sha256sum] = "82cab2d520aa75e3c58898289429321eb788c3106963d0dc886ec7a5f4adc321"
-+SRC_URI[ordered-float-2.10.1.sha256sum] = "68f19d67e5a2795c94e73e0bb1cc1a7edeb2e28efd39e2e1c9b7a40c1108b11c"
-+SRC_URI[p256-0.13.2.sha256sum] = "c9863ad85fa8f4460f9c48cb909d38a0d689dba1f6f6988a5e3e0d31071bcd4b"
-+SRC_URI[p384-0.13.1.sha256sum] = "fe42f1670a52a47d448f14b6a5c61dd78fce51856e68edaa38f7ae3a46b8d6b6"
-+SRC_URI[parking_lot-0.12.5.sha256sum] = "93857453250e3077bd71ff98b6a65ea6621a19bb0f559a85248955ac12c45a1a"
-+SRC_URI[parking_lot_core-0.9.12.sha256sum] = "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1"
-+SRC_URI[pbkdf2-0.12.2.sha256sum] = "f8ed6a7761f76e3b9f92dfb0a60a6a6477c61024b775147ff0973a02653abaf2"
-+SRC_URI[pem-rfc7468-0.7.0.sha256sum] = "88b39c9bfcfc231068454382784bb460aae594343fb030d46e9f50a645418412"
-+SRC_URI[percent-encoding-2.3.2.sha256sum] = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
-+SRC_URI[petgraph-0.6.5.sha256sum] = "b4c5cc86750666a3ed20bdaf5ca2a0344f9c67674cae0515bec2da16fbaa47db"
-+SRC_URI[phf_shared-0.11.3.sha256sum] = "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5"
-+SRC_URI[pico-args-0.5.0.sha256sum] = "5be167a7af36ee22fe3115051bc51f6e6c7054c9348e28deb4f49bd6f705a315"
-+SRC_URI[pin-project-lite-0.2.16.sha256sum] = "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b"
- SRC_URI[pin-utils-0.1.0.sha256sum] = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
--SRC_URI[pkg-config-0.3.25.sha256sum] = "1df8c4ec4b0627e53bdf214615ad287367e482558cf84b109250b37464dc03ae"
--SRC_URI[polar-core-0.12.4.sha256sum] = "53d2b6ee5b5ff6312ca55e2ba75fbd438c72bc041c799055388d815726eca69b"
--SRC_URI[ppv-lite86-0.2.16.sha256sum] = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
-+SRC_URI[pkcs1-0.7.5.sha256sum] = "c8ffb9f10fa047879315e6625af03c164b16962a5368d724ed16323b68ace47f"
-+SRC_URI[pkcs8-0.10.2.sha256sum] = "f950b2377845cebe5cf8b5165cb3cc1a5e0fa5cfa3e1f7f55707d8fd82e0a7b7"
-+SRC_URI[pkg-config-0.3.32.sha256sum] = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
-+SRC_URI[potential_utf-0.1.4.sha256sum] = "b73949432f5e2a09657003c25bca5e19a0e9c84f8058ca374f49e0ebe605af77"
-+SRC_URI[powerfmt-0.2.0.sha256sum] = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
-+SRC_URI[ppv-lite86-0.2.21.sha256sum] = "85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9"
- SRC_URI[precomputed-hash-0.1.1.sha256sum] = "925383efa346730478fb4838dbe9137d2a47675ad789c546d150a6e1dd4ab31c"
--SRC_URI[priority-queue-1.2.2.sha256sum] = "de9cde7493f5f5d2d163b174be9f9a72d756b79b0f6ed85654128d238c347c1e"
--SRC_URI[proc-macro2-1.0.40.sha256sum] = "dd96a1e8ed2596c337f8eae5f24924ec83f5ad5ab21ea8e455d3566c69fbcaf7"
--SRC_URI[quick-xml-0.23.0.sha256sum] = "9279fbdacaad3baf559d8cabe0acc3d06e30ea14931af31af79578ac0946decc"
--SRC_URI[quote-1.0.20.sha256sum] = "3bcdf212e9776fbcb2d23ab029360416bb1706b1aea2d1a5ba002727cbcab804"
-+SRC_URI[prettyplease-0.2.37.sha256sum] = "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b"
-+SRC_URI[primeorder-0.13.6.sha256sum] = "353e1ca18966c16d9deb1c69278edbc5f194139612772bd9537af60ac231e1e6"
-+SRC_URI[proc-macro2-1.0.106.sha256sum] = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
-+SRC_URI[quick-xml-0.39.1.sha256sum] = "bd58c6a1fc307e1092aa0bb23d204ca4d1f021764142cd0424dccc84d2d5d106"
-+SRC_URI[quinn-0.11.9.sha256sum] = "b9e20a958963c291dc322d98411f541009df2ced7b5a4f2bd52337638cfccf20"
-+SRC_URI[quinn-proto-0.11.13.sha256sum] = "f1906b49b0c3bc04b5fe5d86a77925ae6524a19b816ae38ce1e426255f1d8a31"
-+SRC_URI[quinn-udp-0.5.14.sha256sum] = "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd"
-+SRC_URI[quote-1.0.44.sha256sum] = "21b2ebcf727b7760c461f091f9f0f539b77b8e87f2fd88131e7f1b433b3cece4"
-+SRC_URI[r-efi-5.3.0.sha256sum] = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
- SRC_URI[r2d2-0.8.10.sha256sum] = "51de85fb3fb6524929c8a2eb85e6b6d363de4e8c48f9e2c2eac4944abc181c93"
- SRC_URI[rand-0.8.5.sha256sum] = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
-+SRC_URI[rand-0.9.2.sha256sum] = "6db2770f06117d490610c7488547d543617b21bfa07796d7a12f6f1bd53850d1"
-+SRC_URI[rand-0.10.0.sha256sum] = "bc266eb313df6c5c09c1c7b1fbe2510961e5bcd3add930c1e31f7ed9da0feff8"
- SRC_URI[rand_chacha-0.3.1.sha256sum] = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
--SRC_URI[rand_core-0.6.3.sha256sum] = "d34f1408f55294453790c48b2f1ebbb1c5b4b7563eb1f418bcfcfdbb06ebb4e7"
--SRC_URI[redox_syscall-0.2.13.sha256sum] = "62f25bc4c7e55e0b0b7a1d43fb893f4fa1361d0abe38b9ce4f323c2adfe6ef42"
--SRC_URI[redox_users-0.4.3.sha256sum] = "b033d837a7cf162d7993aded9304e30a83213c648b6e389db233191f891e5c2b"
--SRC_URI[regex-1.6.0.sha256sum] = "4c4eb3267174b8c6c2f654116623910a0fef09c4753f8dd83db29c48a0df988b"
--SRC_URI[regex-automata-0.1.10.sha256sum] = "6c230d73fb8d8c1b9c0b3135c5142a8acee3a0558fb8db5cf1cb65f8d7862132"
--SRC_URI[regex-syntax-0.6.27.sha256sum] = "a3f87b73ce11b1619a3c6332f45341e0047173771e8b8b73f87bfeefb7b56244"
--SRC_URI[remove_dir_all-0.5.3.sha256sum] = "3acd125665422973a33ac9d3dd2df85edad0f4ae9b00dafb1a05e43a9f5ef8e7"
--SRC_URI[reqwest-0.11.11.sha256sum] = "b75aa69a3f06bbcc66ede33af2af253c6f7a86b1ca0033f60c580a27074fbf92"
--SRC_URI[ring-0.16.20.sha256sum] = "3053cf52e236a3ed746dfc745aa9cacf1b791d846bdaf412f60a8d7d6e17c8fc"
-+SRC_URI[rand_chacha-0.9.0.sha256sum] = "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb"
-+SRC_URI[rand_core-0.6.4.sha256sum] = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
-+SRC_URI[rand_core-0.9.5.sha256sum] = "76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c"
-+SRC_URI[rand_core-0.10.0.sha256sum] = "0c8d0fd677905edcbeedbf2edb6494d676f0e98d54d5cf9bda0b061cb8fb8aba"
-+SRC_URI[redox_syscall-0.5.18.sha256sum] = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
-+SRC_URI[redox_syscall-0.7.1.sha256sum] = "35985aa610addc02e24fc232012c86fd11f14111180f902b67e2d5331f8ebf2b"
-+SRC_URI[redox_users-0.4.6.sha256sum] = "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43"
-+SRC_URI[ref-cast-1.0.25.sha256sum] = "f354300ae66f76f1c85c5f84693f0ce81d747e2c3f21a45fef496d89c960bf7d"
-+SRC_URI[ref-cast-impl-1.0.25.sha256sum] = "b7186006dcb21920990093f30e3dea63b7d6e977bf1256be20c3563a5db070da"
-+SRC_URI[regex-1.12.3.sha256sum] = "e10754a14b9137dd7b1e3e5b0493cc9171fdd105e0ab477f51b72e7f3ac0e276"
-+SRC_URI[regex-automata-0.4.14.sha256sum] = "6e1dd4122fc1595e8162618945476892eefca7b88c52820e74af6262213cae8f"
-+SRC_URI[regex-syntax-0.8.9.sha256sum] = "a96887878f22d7bad8a3b6dc5b7440e0ada9a245242924394987b21cf2210a4c"
-+SRC_URI[reqwest-0.13.2.sha256sum] = "ab3f43e3283ab1488b624b44b0e988d0acea0b3214e694730a055cb6b2efa801"
-+SRC_URI[rfc6979-0.4.0.sha256sum] = "f8dd2a808d456c4a54e300a23e9f5a67e122c3024119acbfd73e3bf664491cb2"
-+SRC_URI[ring-0.17.14.sha256sum] = "a4689e6c2294d81e88dc6261c768b63bc4fcdb852be6d1352498b114f61383b7"
- SRC_URI[rle-decode-fast-1.0.3.sha256sum] = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
--SRC_URI[routecore-0.2.0.sha256sum] = "9afd872857e85411c0ba7d18dfe650fc4864b292c02cde997e86c511314fdfc3"
--SRC_URI[rpassword-5.0.1.sha256sum] = "ffc936cf8a7ea60c58f030fd36a612a48f440610214dc54bc36431f9ea0c3efb"
--SRC_URI[rpki-0.15.8.sha256sum] = "46970b82ec6bfec47c88addaaef3d345cec2a5cf9cb89039ef904123e65ba41a"
--SRC_URI[rustc-demangle-0.1.21.sha256sum] = "7ef03e0a2b150c7a90d01faf6254c9c48a41e95fb2a8c2ac1c6f0d2b9aefc342"
--SRC_URI[rustc_version-0.4.0.sha256sum] = "bfa0f585226d2e68097d4f95d113b15b83a82e819ab25717ec0590d9584ef366"
--SRC_URI[rustls-0.19.1.sha256sum] = "35edb675feee39aec9c99fa5ff985081995a06d594114ae14cbe797ad7b7a6d7"
--SRC_URI[rustversion-1.0.8.sha256sum] = "24c8ad4f0c00e1eb5bc7614d236a7f1300e3dbd76b68cac8e06fb00b015ad8d8"
--SRC_URI[ryu-1.0.10.sha256sum] = "f3f6f92acf49d1b98f7a81226834412ada05458b7364277387724a237f062695"
--SRC_URI[salsa20-0.7.2.sha256sum] = "399f290ffc409596022fce5ea5d4138184be4784f2b28c62c59f0d8389059a15"
--SRC_URI[schannel-0.1.20.sha256sum] = "88d6731146462ea25d9244b2ed5fd1d716d25c52e4d54aa4fb0f3c4e9854dbe2"
--SRC_URI[scheduled-thread-pool-0.2.6.sha256sum] = "977a7519bff143a44f842fd07e80ad1329295bd71686457f18e496736f4bf9bf"
--SRC_URI[scopeguard-1.1.0.sha256sum] = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
--SRC_URI[scratch-1.0.2.sha256sum] = "9c8132065adcfd6e02db789d9285a0deb2f3fcb04002865ab67d5fb103533898"
--SRC_URI[scrypt-0.6.5.sha256sum] = "19230d10daad7f163d8c1fc8edf84fbe52ac71c2ebe5adf3f763aa1557b843e3"
--SRC_URI[sct-0.6.1.sha256sum] = "b362b83898e0e69f38515b82ee15aa80636befe47c3b6d3d89a911e78fc228ce"
--SRC_URI[security-framework-2.6.1.sha256sum] = "2dc14f172faf8a0194a3aded622712b0de276821addc574fa54fc0a1167e10dc"
--SRC_URI[security-framework-sys-2.6.1.sha256sum] = "0160a13a177a45bfb43ce71c01580998474f556ad854dcbca936dd2841a5c556"
--SRC_URI[semver-1.0.12.sha256sum] = "a2333e6df6d6598f2b1974829f853c2b4c5f4a6e503c10af918081aa6f8564e1"
--SRC_URI[serde-1.0.139.sha256sum] = "0171ebb889e45aa68b44aee0859b3eede84c6f5f5c228e6f140c0b2a0a46cad6"
-+SRC_URI[rpassword-7.4.0.sha256sum] = "66d4c8b64f049c6721ec8ccec37ddfc3d641c4a7fca57e8f2a89de509c73df39"
-+SRC_URI[rpki-0.19.2.sha256sum] = "99010980abb0aee7a5c4b1c04d0f42f74f57ac168adb5d38a99b3517a4d72df9"
-+SRC_URI[rsa-0.9.10.sha256sum] = "b8573f03f5883dcaebdfcf4725caa1ecb9c15b2ef50c43a07b816e06799bb12d"
-+SRC_URI[rtoolbox-0.0.3.sha256sum] = "a7cc970b249fbe527d6e02e0a227762c9108b2f49d81094fe357ffc6d14d7f6f"
-+SRC_URI[rustc-hash-2.1.1.sha256sum] = "357703d41365b4b27c590e3ed91eabb1b663f07c4c084095e60cbed4362dff0d"
-+SRC_URI[rustc_version-0.4.1.sha256sum] = "cfcb3a22ef46e85b45de6ee7e79d063319ebb6594faafcf1c225ea92ab6e9b92"
-+SRC_URI[rustix-1.1.3.sha256sum] = "146c9e247ccc180c1f61615433868c99f3de3ae256a30a43b49f67c2d9171f34"
-+SRC_URI[rustls-0.23.36.sha256sum] = "c665f33d38cea657d9614f766881e4d510e0eda4239891eea56b4cadcf01801b"
-+SRC_URI[rustls-native-certs-0.8.3.sha256sum] = "612460d5f7bea540c490b2b6395d8e34a953e52b491accd6c86c8164c5932a63"
-+SRC_URI[rustls-pemfile-2.2.0.sha256sum] = "dce314e5fee3f39953d46bb63bb8a46d40c2f8fb7cc5a3b6cab2bde9721d6e50"
-+SRC_URI[rustls-pki-types-1.14.0.sha256sum] = "be040f8b0a225e40375822a563fa9524378b9d63112f53e19ffff34df5d33fdd"
-+SRC_URI[rustls-platform-verifier-0.6.2.sha256sum] = "1d99feebc72bae7ab76ba994bb5e121b8d83d910ca40b36e0921f53becc41784"
-+SRC_URI[rustls-platform-verifier-android-0.1.1.sha256sum] = "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f"
-+SRC_URI[rustls-webpki-0.103.9.sha256sum] = "d7df23109aa6c1567d1c575b9952556388da57401e4ace1d15f79eedad0d8f53"
-+SRC_URI[rustversion-1.0.22.sha256sum] = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
-+SRC_URI[salsa20-0.10.2.sha256sum] = "97a22f5af31f73a954c10289c93e8a50cc23d971e80ee446f1f6f7137a088213"
-+SRC_URI[same-file-1.0.6.sha256sum] = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
-+SRC_URI[schannel-0.1.28.sha256sum] = "891d81b926048e76efe18581bf793546b4c0eaf8448d72be8de2bbee5fd166e1"
-+SRC_URI[scheduled-thread-pool-0.2.7.sha256sum] = "3cbc66816425a074528352f5789333ecff06ca41b36b0b0efdfbb29edc391a19"
-+SRC_URI[schemars-0.9.0.sha256sum] = "4cd191f9397d57d581cddd31014772520aa448f65ef991055d7f61582c65165f"
-+SRC_URI[schemars-1.2.1.sha256sum] = "a2b42f36aa1cd011945615b92222f6bf73c599a102a300334cd7f8dbeec726cc"
-+SRC_URI[scopeguard-1.2.0.sha256sum] = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
-+SRC_URI[scrypt-0.11.0.sha256sum] = "0516a385866c09368f0b5bcd1caff3366aace790fcd46e2bb032697bb172fd1f"
-+SRC_URI[sec1-0.7.3.sha256sum] = "d3e97a565f76233a6003f9f5c54be1d9c5bdfa3eccfb189469f11ec4901c47dc"
-+SRC_URI[secrecy-0.10.3.sha256sum] = "e891af845473308773346dc847b2c23ee78fe442e0472ac50e22a18a93d3ae5a"
-+SRC_URI[security-framework-3.6.0.sha256sum] = "d17b898a6d6948c3a8ee4372c17cb384f90d2e6e912ef00895b14fd7ab54ec38"
-+SRC_URI[security-framework-sys-2.16.0.sha256sum] = "321c8673b092a9a42605034a9879d73cb79101ed5fd117bc9a597b89b4e9e61a"
-+SRC_URI[semver-1.0.27.sha256sum] = "d767eb0aabc880b29956c35734170f26ed551a859dbd361d140cdbeca61ab1e2"
-+SRC_URI[serde-1.0.228.sha256sum] = "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
- SRC_URI[serde-value-0.7.0.sha256sum] = "f3a1a3341211875ef120e117ea7fd5228530ae7e7036a779fdc9117be6b3282c"
--SRC_URI[serde_bytes-0.11.6.sha256sum] = "212e73464ebcde48d723aa02eb270ba62eff38a9b732df31f33f1b4e145f3a54"
--SRC_URI[serde_derive-1.0.139.sha256sum] = "dc1d3230c1de7932af58ad8ffbe1d784bd55efd5a9d84ac24f69c72d83543dfb"
--SRC_URI[serde_json-1.0.82.sha256sum] = "82c2c1fdcd807d1098552c5b9a36e425e42e9fbd7c6a37a8425f390f781f7fa7"
--SRC_URI[serde_path_to_error-0.1.7.sha256sum] = "d7868ad3b8196a8a0aea99a8220b124278ee5320a55e4fde97794b6f85b1a377"
--SRC_URI[serde_urlencoded-0.7.1.sha256sum] = "d3491c14715ca2294c4d6a88f15e84739788c1d030eed8c110436aafdaa2f3fd"
--SRC_URI[sha2-0.9.9.sha256sum] = "4d58a1e1bf39749807d89cf2d98ac2dfa0ff1cb3faa38fbb64dd88ac8013d800"
--SRC_URI[sha2-0.10.2.sha256sum] = "55deaec60f81eefe3cce0dc50bda92d6d8e88f2a27df7c5033b42afeb1ed2676"
--SRC_URI[sharded-slab-0.1.4.sha256sum] = "900fba806f70c630b0a382d0d825e17a0f19fcd059a2ade1ff237bcddf446b31"
--SRC_URI[signal-hook-registry-1.4.0.sha256sum] = "e51e73328dc4ac0c7ccbda3a494dfa03df1de2f46018127f60c693f2648455b0"
--SRC_URI[siphasher-0.3.10.sha256sum] = "7bd3e3206899af3f8b12af284fafc038cc1dc2b41d1b89dd17297221c5d225de"
--SRC_URI[slab-0.4.6.sha256sum] = "eb703cfe953bccee95685111adeedb76fabe4e97549a58d16f03ea7b9367bb32"
--SRC_URI[slug-0.1.4.sha256sum] = "b3bc762e6a4b6c6fcaade73e77f9ebc6991b676f88bb2358bddb56560f073373"
--SRC_URI[smallvec-1.9.0.sha256sum] = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
--SRC_URI[socket2-0.4.4.sha256sum] = "66d72b759436ae32898a2af0a14218dbf55efde3feeb170eb623637db85ee1e0"
--SRC_URI[spin-0.5.2.sha256sum] = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
--SRC_URI[string_cache-0.8.4.sha256sum] = "213494b7a2b503146286049378ce02b482200519accc31872ee8be91fa820a08"
--SRC_URI[strsim-0.8.0.sha256sum] = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
--SRC_URI[subtle-2.4.1.sha256sum] = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
--SRC_URI[syn-1.0.98.sha256sum] = "c50aef8a904de4c23c788f104b7dddc7d6f79c647c7c8ce4cc8f73eb0ca773dd"
--SRC_URI[syslog-4.0.1.sha256sum] = "a0641142b4081d3d44beffa4eefd7346a228cdf91ed70186db2ca2cef762d327"
--SRC_URI[target-lexicon-0.12.4.sha256sum] = "c02424087780c9b71cc96799eaeddff35af2bc513278cda5c99fc1f5d026d3c1"
--SRC_URI[tempfile-3.3.0.sha256sum] = "5cdb1ef4eaeeaddc8fbd371e5017057064af0911902ef36b39801f67cc6d79e4"
-+SRC_URI[serde_bytes-0.11.19.sha256sum] = "a5d440709e79d88e51ac01c4b72fc6cb7314017bb7da9eeff678aa94c10e3ea8"
-+SRC_URI[serde_core-1.0.228.sha256sum] = "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
-+SRC_URI[serde_derive-1.0.228.sha256sum] = "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
-+SRC_URI[serde_json-1.0.149.sha256sum] = "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86"
-+SRC_URI[serde_path_to_error-0.1.20.sha256sum] = "10a9ff822e371bb5403e391ecd83e182e0e77ba7f6fe0160b795797109d1b457"
-+SRC_URI[serde_plain-1.0.2.sha256sum] = "9ce1fc6db65a611022b23a0dec6975d63fb80a302cb3388835ff02c097258d50"
-+SRC_URI[serde_spanned-1.0.4.sha256sum] = "f8bbf91e5a4d6315eee45e704372590b30e260ee83af6639d64557f51b067776"
-+SRC_URI[serde_with-3.16.1.sha256sum] = "4fa237f2807440d238e0364a218270b98f767a00d3dada77b1c53ae88940e2e7"
-+SRC_URI[serde_with_macros-3.16.1.sha256sum] = "52a8e3ca0ca629121f70ab50f95249e5a6f925cc0f6ffe8256c45b728875706c"
-+SRC_URI[sha2-0.10.9.sha256sum] = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
-+SRC_URI[shlex-1.3.0.sha256sum] = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
-+SRC_URI[signal-hook-registry-1.4.8.sha256sum] = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
-+SRC_URI[signature-2.2.0.sha256sum] = "77549399552de45a898a580c1b41d445bf730df867cc44e6c0233bbc4b8329de"
-+SRC_URI[siphasher-1.0.2.sha256sum] = "b2aa850e253778c88a04c3d7323b043aeda9d3e30d5971937c1855769763678e"
-+SRC_URI[slab-0.4.12.sha256sum] = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
-+SRC_URI[smallvec-1.15.1.sha256sum] = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
-+SRC_URI[socket2-0.6.2.sha256sum] = "86f4aa3ad99f2088c990dfa82d367e19cb29268ed67c574d10d0a4bfe71f07e0"
-+SRC_URI[spin-0.9.8.sha256sum] = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
-+SRC_URI[spki-0.7.3.sha256sum] = "d91ed6c858b01f942cd56b37a94b3e0a1798290327d1236e4d9cf4eaca44d29d"
-+SRC_URI[stable_deref_trait-1.2.1.sha256sum] = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
-+SRC_URI[stderrlog-0.6.0.sha256sum] = "61c910772f992ab17d32d6760e167d2353f4130ed50e796752689556af07dc6b"
-+SRC_URI[string_cache-0.8.9.sha256sum] = "bf776ba3fa74f83bf4b63c3dcbbf82173db2632ed8452cb2d891d33f459de70f"
-+SRC_URI[strsim-0.11.1.sha256sum] = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
-+SRC_URI[subtle-2.6.1.sha256sum] = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
-+SRC_URI[syn-1.0.109.sha256sum] = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
-+SRC_URI[syn-2.0.116.sha256sum] = "3df424c70518695237746f84cede799c9c58fcb37450d7b23716568cc8bc69cb"
-+SRC_URI[sync_wrapper-1.0.2.sha256sum] = "0bf256ce5efdfa370213c1dabab5935a12e49f2c58d15e9eac2870d3b4f27263"
-+SRC_URI[synstructure-0.13.2.sha256sum] = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
-+SRC_URI[syslog-7.0.0.sha256sum] = "019f1500a13379b7d051455df397c75770de6311a7a188a699499502704d9f10"
-+SRC_URI[system-configuration-0.7.0.sha256sum] = "a13f3d0daba03132c0aa9767f98351b3488edc2c100cda2d2ec2b04f3d8d3c8b"
-+SRC_URI[system-configuration-sys-0.6.0.sha256sum] = "8e1d1b10ced5ca923a1fcb8d03e96b8d3268065d724548c0211415ff6ac6bac4"
-+SRC_URI[tar-0.4.44.sha256sum] = "1d863878d212c87a19c1a610eb53bb01fe12951c0501cf5a0d65f724914a667a"
-+SRC_URI[tempfile-3.25.0.sha256sum] = "0136791f7c95b1f6dd99f9cc786b91bb81c3800b639b3478e561ddb7be95e5f1"
- SRC_URI[term-0.7.0.sha256sum] = "c59df8ac95d96ff9bede18eb7300b0fda5e5d8d90960e76f8e14ae765eedbf1f"
- SRC_URI[termcolor-1.1.3.sha256sum] = "bab24d30b911b2376f3a13cc2cd443142f0c81dda04c118693e35b3835757755"
--SRC_URI[textwrap-0.11.0.sha256sum] = "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060"
--SRC_URI[thiserror-1.0.31.sha256sum] = "bd829fe32373d27f76265620b5309d0340cb8550f523c1dda251d6298069069a"
--SRC_URI[thiserror-impl-1.0.31.sha256sum] = "0396bc89e626244658bef819e22d0cc459e795a5ebe878e6ec336d1674a8d79a"
--SRC_URI[thread_local-1.1.4.sha256sum] = "5516c27b78311c50bf42c071425c560ac799b11c30b31f87e3081965fe5e0180"
--SRC_URI[time-0.1.44.sha256sum] = "6db9e6914ab8b1ae1c260a4ae7a49b6c5611b40328a735b21862567685e73255"
-+SRC_URI[terminal_size-0.4.3.sha256sum] = "60b8cb979cb11c32ce1603f8137b22262a9d131aaa5c37b5678025f22b8becd0"
-+SRC_URI[thiserror-1.0.69.sha256sum] = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
-+SRC_URI[thiserror-2.0.18.sha256sum] = "4288b5bcbc7920c07a1149a35cf9590a2aa808e0bc1eafaade0b80947865fbc4"
-+SRC_URI[thiserror-impl-1.0.69.sha256sum] = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
-+SRC_URI[thiserror-impl-2.0.18.sha256sum] = "ebc4ee7f67670e9b64d05fa4253e753e016c6c95ff35b89b7941d6b856dec1d5"
-+SRC_URI[thread_local-1.1.9.sha256sum] = "f60246a4944f24f6e018aa17cdeffb7818b76356965d03b07d6a9886e8962185"
-+SRC_URI[time-0.3.47.sha256sum] = "743bd48c283afc0388f9b8827b976905fb217ad9e647fae3a379a9283c4def2c"
-+SRC_URI[time-core-0.1.8.sha256sum] = "7694e1cfe791f8d31026952abf09c69ca6f6fa4e1a1229e18988f06a04a12dca"
-+SRC_URI[time-macros-0.2.27.sha256sum] = "2e70e4c5a0e0a8a4823ad65dfe1a6930e4f4d756dcd9dd7939022b5e8c501215"
- SRC_URI[tiny-keccak-2.0.2.sha256sum] = "2c9d3793400a45f954c52e73d068316d76b6f4e36977e3fcebb13a2721e80237"
--SRC_URI[tiny_http-0.8.2.sha256sum] = "9ce51b50006056f590c9b7c3808c3bd70f0d1101666629713866c227d6e58d39"
--SRC_URI[tinyvec-1.6.0.sha256sum] = "87cc5ceb3875bb20c2890005a4e226a4651264a5c75edb2421b52861a0a0cb50"
--SRC_URI[tinyvec_macros-0.1.0.sha256sum] = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
--SRC_URI[tokio-1.20.4.sha256sum] = "eb78f30e4b41e98ca4cce5acb51168a033839a7af9e42b380355808e14e98ee0"
--SRC_URI[tokio-macros-1.8.0.sha256sum] = "9724f9a975fb987ef7a3cd9be0350edcbe130698af5b8f7a631e23d42d052484"
--SRC_URI[tokio-native-tls-0.3.0.sha256sum] = "f7d995660bd2b7f8c1568414c1126076c13fbb725c40112dc0120b78eb9b717b"
--SRC_URI[tokio-rustls-0.22.0.sha256sum] = "bc6844de72e57df1980054b38be3a9f4702aba4858be64dd700181a8a6d0e1b6"
--SRC_URI[tokio-util-0.7.3.sha256sum] = "cc463cd8deddc3770d20f9852143d50bf6094e640b485cb2e189a2099085ff45"
--SRC_URI[toml-0.5.9.sha256sum] = "8d82e1a7758622a465f8cee077614c73484dac5b836c02ff6a40d5d1010324d7"
--SRC_URI[tower-service-0.3.2.sha256sum] = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
--SRC_URI[tracing-0.1.35.sha256sum] = "a400e31aa60b9d44a52a8ee0343b5b18566b03a8321e0d321f695cf56e940160"
--SRC_URI[tracing-attributes-0.1.22.sha256sum] = "11c75893af559bc8e10716548bdef5cb2b983f8e637db9d0e15126b61b484ee2"
--SRC_URI[tracing-core-0.1.28.sha256sum] = "7b7358be39f2f274f322d2aaed611acc57f382e8eb1e5b48cb9ae30933495ce7"
--SRC_URI[tracing-log-0.1.3.sha256sum] = "78ddad33d2d10b1ed7eb9d1f518a5674713876e97e5bb9b7345a7984fbb4f922"
--SRC_URI[tracing-serde-0.1.3.sha256sum] = "bc6b213177105856957181934e4920de57730fc69bf42c37ee5bb664d406d9e1"
--SRC_URI[tracing-subscriber-0.2.25.sha256sum] = "0e0d2eaa99c3c2e41547cfa109e910a68ea03823cccad4a0525dcbc9b01e8c71"
-+SRC_URI[tinystr-0.8.2.sha256sum] = "42d3e9c45c09de15d06dd8acf5f4e0e399e85927b7f00711024eb7ae10fa4869"
-+SRC_URI[tinyvec-1.10.0.sha256sum] = "bfa5fdc3bce6191a1dbc8c02d5c8bffcf557bafa17c124c5264a458f1b0613fa"
-+SRC_URI[tinyvec_macros-0.1.1.sha256sum] = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
-+SRC_URI[tokio-1.49.0.sha256sum] = "72a2903cd7736441aac9df9d7688bd0ce48edccaadf181c3b90be801e81d3d86"
-+SRC_URI[tokio-macros-2.6.0.sha256sum] = "af407857209536a95c8e56f8231ef2c2e2aff839b22e07a1ffcbc617e9db9fa5"
-+SRC_URI[tokio-rustls-0.26.4.sha256sum] = "1729aa945f29d91ba541258c8df89027d5792d85a8841fb65e8bf0f4ede4ef61"
-+SRC_URI[tokio-util-0.7.18.sha256sum] = "9ae9cec805b01e8fc3fd2fe289f89149a9b66dd16786abd8b19cfa7b48cb0098"
-+SRC_URI[toml-0.9.12+spec-1.1.0.sha256sum] = "cf92845e79fc2e2def6a5d828f0801e29a2f8acc037becc5ab08595c7d5e9863"
-+SRC_URI[toml_datetime-0.7.5+spec-1.1.0.sha256sum] = "92e1cfed4a3038bc5a127e35a2d360f145e1f4b971b551a2ba5fd7aedf7e1347"
-+SRC_URI[toml_parser-1.0.9+spec-1.1.0.sha256sum] = "702d4415e08923e7e1ef96cd5727c0dfed80b4d2fa25db9647fe5eb6f7c5a4c4"
-+SRC_URI[toml_writer-1.0.6+spec-1.1.0.sha256sum] = "ab16f14aed21ee8bfd8ec22513f7287cd4a91aa92e44edfe2c17ddd004e92607"
-+SRC_URI[tower-0.5.3.sha256sum] = "ebe5ef63511595f1344e2d5cfa636d973292adc0eec1f0ad45fae9f0851ab1d4"
-+SRC_URI[tower-http-0.6.8.sha256sum] = "d4e6559d53cc268e5031cd8429d05415bc4cb4aefc4aa5d6cc35fbf5b924a1f8"
-+SRC_URI[tower-layer-0.3.3.sha256sum] = "121c2a6cda46980bb0fcd1647ffaf6cd3fc79a013de288782836f6df9c48780e"
-+SRC_URI[tower-service-0.3.3.sha256sum] = "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3"
-+SRC_URI[tracing-0.1.44.sha256sum] = "63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100"
-+SRC_URI[tracing-core-0.1.36.sha256sum] = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
- SRC_URI[trait-set-0.2.0.sha256sum] = "875c4c873cc824e362fa9a9419ffa59807244824275a44ad06fec9684fff08f2"
--SRC_URI[try-lock-0.2.3.sha256sum] = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
--SRC_URI[typenum-1.15.0.sha256sum] = "dcf81ac59edc17cc8697ff311e8f5ef2d99fcbd9817b34cec66f90b6c3dfd987"
--SRC_URI[unicode-bidi-0.3.8.sha256sum] = "099b7128301d285f79ddd55b9a83d5e6b9e97c92e0ea0daebee7263e932de992"
--SRC_URI[unicode-ident-1.0.2.sha256sum] = "15c61ba63f9235225a22310255a29b806b907c9b8c964bcbd0a2c70f3f2deea7"
--SRC_URI[unicode-normalization-0.1.21.sha256sum] = "854cbdc4f7bc6ae19c820d44abdc3277ac3e1b2b93db20a636825d9322fb60e6"
--SRC_URI[unicode-width-0.1.9.sha256sum] = "3ed742d4ea2bd1176e236172c8429aaf54486e7ac098db29ffe6529e0ce50973"
--SRC_URI[unicode-xid-0.2.3.sha256sum] = "957e51f3646910546462e67d5f7599b9e4fb8acdd304b087a6494730f9eebf04"
--SRC_URI[untrusted-0.7.1.sha256sum] = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
--SRC_URI[url-2.2.2.sha256sum] = "a507c383b2d33b5fc35d1861e77e6b383d158b2da5e14fe51b83dfedf6fd578c"
-+SRC_URI[try-lock-0.2.5.sha256sum] = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
-+SRC_URI[typenum-1.19.0.sha256sum] = "562d481066bde0658276a35467c4af00bdc6ee726305698a55b86e61d7ad82bb"
-+SRC_URI[unicode-ident-1.0.24.sha256sum] = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
-+SRC_URI[unicode-normalization-0.1.25.sha256sum] = "5fd4f6878c9cb28d874b009da9e8d183b5abc80117c40bbd187a1fde336be6e8"
-+SRC_URI[unicode-xid-0.2.6.sha256sum] = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
-+SRC_URI[untrusted-0.9.0.sha256sum] = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
-+SRC_URI[url-2.5.8.sha256sum] = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
- SRC_URI[urlparse-0.7.3.sha256sum] = "110352d4e9076c67839003c7788d8604e24dcded13e0b375af3efaa8cf468517"
--SRC_URI[uuid-1.1.2.sha256sum] = "dd6469f4314d5f1ffec476e05f17cc9a78bc7a27a6a857842170bdf8d6f98d2f"
--SRC_URI[valuable-0.1.0.sha256sum] = "830b7e5d4d90034032940e4ace0d9a9a057e7a45cd94e6c007832e39edb82f6d"
-+SRC_URI[utf8_iter-1.0.4.sha256sum] = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
-+SRC_URI[utf8parse-0.2.2.sha256sum] = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
-+SRC_URI[uuid-1.21.0.sha256sum] = "b672338555252d43fd2240c714dc444b8c6fb0a5c5335e65a07bba7742735ddb"
- SRC_URI[vcpkg-0.2.15.sha256sum] = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
--SRC_URI[vec_map-0.8.2.sha256sum] = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
--SRC_URI[version_check-0.9.4.sha256sum] = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
--SRC_URI[want-0.3.0.sha256sum] = "1ce8a968cb1cd110d136ff8b819a556d6fb6d919363c61534f6860c7eb172ba0"
--SRC_URI[wasi-0.10.0+wasi-snapshot-preview1.sha256sum] = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
--SRC_URI[wasi-0.11.0+wasi-snapshot-preview1.sha256sum] = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
--SRC_URI[wasm-bindgen-0.2.81.sha256sum] = "7c53b543413a17a202f4be280a7e5c62a1c69345f5de525ee64f8cfdbc954994"
--SRC_URI[wasm-bindgen-backend-0.2.81.sha256sum] = "5491a68ab4500fa6b4d726bd67408630c3dbe9c4fe7bda16d5c82a1fd8c7340a"
--SRC_URI[wasm-bindgen-futures-0.4.31.sha256sum] = "de9a9cec1733468a8c657e57fa2413d2ae2c0129b95e87c5b72b8ace4d13f31f"
--SRC_URI[wasm-bindgen-macro-0.2.81.sha256sum] = "c441e177922bc58f1e12c022624b6216378e5febc2f0533e41ba443d505b80aa"
--SRC_URI[wasm-bindgen-macro-support-0.2.81.sha256sum] = "7d94ac45fcf608c1f45ef53e748d35660f168490c10b23704c7779ab8f5c3048"
--SRC_URI[wasm-bindgen-shared-0.2.81.sha256sum] = "6a89911bd99e5f3659ec4acf9c4d93b0a90fe4a2a11f15328472058edc5261be"
--SRC_URI[web-sys-0.3.58.sha256sum] = "2fed94beee57daf8dd7d51f2b15dc2bcde92d7a72304cdf662a4371008b71b90"
--SRC_URI[webpki-0.21.4.sha256sum] = "b8e38c0608262c46d4a56202ebabdeb094cef7e560ca7a226c6bf055188aa4ea"
-+SRC_URI[version_check-0.9.5.sha256sum] = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
-+SRC_URI[walkdir-2.5.0.sha256sum] = "29790946404f91d9c5d06f9874efddea1dc06c5efe94541a7d6863108e3a5e4b"
-+SRC_URI[want-0.3.1.sha256sum] = "bfa7760aed19e106de2c7c0b581b509f2f25d3dacaf737cb82ac61bc6d760b0e"
-+SRC_URI[wasi-0.11.1+wasi-snapshot-preview1.sha256sum] = "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b"
-+SRC_URI[wasip2-1.0.2+wasi-0.2.9.sha256sum] = "9517f9239f02c069db75e65f174b3da828fe5f5b945c4dd26bd25d89c03ebcf5"
-+SRC_URI[wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06.sha256sum] = "5428f8bf88ea5ddc08faddef2ac4a67e390b88186c703ce6dbd955e1c145aca5"
-+SRC_URI[wasm-bindgen-0.2.108.sha256sum] = "64024a30ec1e37399cf85a7ffefebdb72205ca1c972291c51512360d90bd8566"
-+SRC_URI[wasm-bindgen-futures-0.4.58.sha256sum] = "70a6e77fd0ae8029c9ea0063f87c46fde723e7d887703d74ad2616d792e51e6f"
-+SRC_URI[wasm-bindgen-macro-0.2.108.sha256sum] = "008b239d9c740232e71bd39e8ef6429d27097518b6b30bdf9086833bd5b6d608"
-+SRC_URI[wasm-bindgen-macro-support-0.2.108.sha256sum] = "5256bae2d58f54820e6490f9839c49780dff84c65aeab9e772f15d5f0e913a55"
-+SRC_URI[wasm-bindgen-shared-0.2.108.sha256sum] = "1f01b580c9ac74c8d8f0c0e4afb04eeef2acf145458e52c03845ee9cd23e3d12"
-+SRC_URI[wasm-encoder-0.244.0.sha256sum] = "990065f2fe63003fe337b932cfb5e3b80e0b4d0f5ff650e6985b1048f62c8319"
-+SRC_URI[wasm-metadata-0.244.0.sha256sum] = "bb0e353e6a2fbdc176932bbaab493762eb1255a7900fe0fea1a2f96c296cc909"
-+SRC_URI[wasmparser-0.244.0.sha256sum] = "47b807c72e1bac69382b3a6fb3dbe8ea4c0ed87ff5629b8685ae6b9a611028fe"
-+SRC_URI[web-sys-0.3.85.sha256sum] = "312e32e551d92129218ea9a2452120f4aabc03529ef03e4d0d82fb2780608598"
-+SRC_URI[web-time-1.1.0.sha256sum] = "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb"
-+SRC_URI[webpki-root-certs-1.0.6.sha256sum] = "804f18a4ac2676ffb4e8b5b5fa9ae38af06df08162314f96a68d2a363e21a8ca"
- SRC_URI[winapi-0.3.9.sha256sum] = "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419"
- SRC_URI[winapi-i686-pc-windows-gnu-0.4.0.sha256sum] = "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"
--SRC_URI[winapi-util-0.1.5.sha256sum] = "70ec6ce85bb158151cae5e5c87f95a8e97d2c0c4b001223f33a334e3ce5de178"
-+SRC_URI[winapi-util-0.1.11.sha256sum] = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- SRC_URI[winapi-x86_64-pc-windows-gnu-0.4.0.sha256sum] = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
--SRC_URI[windows-sys-0.36.1.sha256sum] = "ea04155a16a59f9eab786fe12a4a450e75cdb175f9e0d80da1e17db09f55b8d2"
--SRC_URI[windows_aarch64_msvc-0.36.1.sha256sum] = "9bb8c3fd39ade2d67e9874ac4f3db21f0d710bee00fe7cab16949ec184eeaa47"
--SRC_URI[windows_i686_gnu-0.36.1.sha256sum] = "180e6ccf01daf4c426b846dfc66db1fc518f074baa793aa7d9b9aaeffad6a3b6"
--SRC_URI[windows_i686_msvc-0.36.1.sha256sum] = "e2e7917148b2812d1eeafaeb22a97e4813dfa60a3f8f78ebe204bcc88f12f024"
--SRC_URI[windows_x86_64_gnu-0.36.1.sha256sum] = "4dcd171b8776c41b97521e5da127a2d86ad280114807d0b2ab1e462bc764d9e1"
--SRC_URI[windows_x86_64_msvc-0.36.1.sha256sum] = "c811ca4a8c853ef420abd8592ba53ddbbac90410fab6903b3e79972a631f7680"
--SRC_URI[winreg-0.10.1.sha256sum] = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
-+SRC_URI[windows-core-0.62.2.sha256sum] = "b8e83a14d34d0623b51dce9581199302a221863196a1dde71a7663a4c2be9deb"
-+SRC_URI[windows-implement-0.60.2.sha256sum] = "053e2e040ab57b9dc951b72c264860db7eb3b0200ba345b4e4c3b14f67855ddf"
-+SRC_URI[windows-interface-0.59.3.sha256sum] = "3f316c4a2570ba26bbec722032c4099d8c8bc095efccdc15688708623367e358"
-+SRC_URI[windows-link-0.2.1.sha256sum] = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
-+SRC_URI[windows-registry-0.6.1.sha256sum] = "02752bf7fbdcce7f2a27a742f798510f3e5ad88dbe84871e5168e2120c3d5720"
-+SRC_URI[windows-result-0.4.1.sha256sum] = "7781fa89eaf60850ac3d2da7af8e5242a5ea78d1a11c49bf2910bb5a73853eb5"
-+SRC_URI[windows-strings-0.5.1.sha256sum] = "7837d08f69c77cf6b07689544538e017c1bfcf57e34b4c0ff58e6c2cd3b37091"
-+SRC_URI[windows-sys-0.45.0.sha256sum] = "75283be5efb2831d37ea142365f009c02ec203cd29a3ebecbc093d52315b66d0"
-+SRC_URI[windows-sys-0.52.0.sha256sum] = "282be5f36a8ce781fad8c8ae18fa3f9beff57ec1b52cb3de0789201425d9a33d"
-+SRC_URI[windows-sys-0.59.0.sha256sum] = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
-+SRC_URI[windows-sys-0.60.2.sha256sum] = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
-+SRC_URI[windows-sys-0.61.2.sha256sum] = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
-+SRC_URI[windows-targets-0.42.2.sha256sum] = "8e5180c00cd44c9b1c88adb3693291f1cd93605ded80c250a75d472756b4d071"
-+SRC_URI[windows-targets-0.52.6.sha256sum] = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
-+SRC_URI[windows-targets-0.53.5.sha256sum] = "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3"
-+SRC_URI[windows_aarch64_gnullvm-0.42.2.sha256sum] = "597a5118570b68bc08d8d59125332c54f1ba9d9adeedeef5b99b02ba2b0698f8"
-+SRC_URI[windows_aarch64_gnullvm-0.52.6.sha256sum] = "32a4622180e7a0ec044bb555404c800bc9fd9ec262ec147edd5989ccd0c02cd3"
-+SRC_URI[windows_aarch64_gnullvm-0.53.1.sha256sum] = "a9d8416fa8b42f5c947f8482c43e7d89e73a173cead56d044f6a56104a6d1b53"
-+SRC_URI[windows_aarch64_msvc-0.42.2.sha256sum] = "e08e8864a60f06ef0d0ff4ba04124db8b0fb3be5776a5cd47641e942e58c4d43"
-+SRC_URI[windows_aarch64_msvc-0.52.6.sha256sum] = "09ec2a7bb152e2252b53fa7803150007879548bc709c039df7627cabbd05d469"
-+SRC_URI[windows_aarch64_msvc-0.53.1.sha256sum] = "b9d782e804c2f632e395708e99a94275910eb9100b2114651e04744e9b125006"
-+SRC_URI[windows_i686_gnu-0.42.2.sha256sum] = "c61d927d8da41da96a81f029489353e68739737d3beca43145c8afec9a31a84f"
-+SRC_URI[windows_i686_gnu-0.52.6.sha256sum] = "8e9b5ad5ab802e97eb8e295ac6720e509ee4c243f69d781394014ebfe8bbfa0b"
-+SRC_URI[windows_i686_gnu-0.53.1.sha256sum] = "960e6da069d81e09becb0ca57a65220ddff016ff2d6af6a223cf372a506593a3"
-+SRC_URI[windows_i686_gnullvm-0.52.6.sha256sum] = "0eee52d38c090b3caa76c563b86c3a4bd71ef1a819287c19d586d7334ae8ed66"
-+SRC_URI[windows_i686_gnullvm-0.53.1.sha256sum] = "fa7359d10048f68ab8b09fa71c3daccfb0e9b559aed648a8f95469c27057180c"
-+SRC_URI[windows_i686_msvc-0.42.2.sha256sum] = "44d840b6ec649f480a41c8d80f9c65108b92d89345dd94027bfe06ac444d1060"
-+SRC_URI[windows_i686_msvc-0.52.6.sha256sum] = "240948bc05c5e7c6dabba28bf89d89ffce3e303022809e73deaefe4f6ec56c66"
-+SRC_URI[windows_i686_msvc-0.53.1.sha256sum] = "1e7ac75179f18232fe9c285163565a57ef8d3c89254a30685b57d83a38d326c2"
-+SRC_URI[windows_x86_64_gnu-0.42.2.sha256sum] = "8de912b8b8feb55c064867cf047dda097f92d51efad5b491dfb98f6bbb70cb36"
-+SRC_URI[windows_x86_64_gnu-0.52.6.sha256sum] = "147a5c80aabfbf0c7d901cb5895d1de30ef2907eb21fbbab29ca94c5b08b1a78"
-+SRC_URI[windows_x86_64_gnu-0.53.1.sha256sum] = "9c3842cdd74a865a8066ab39c8a7a473c0778a3f29370b5fd6b4b9aa7df4a499"
-+SRC_URI[windows_x86_64_gnullvm-0.42.2.sha256sum] = "26d41b46a36d453748aedef1486d5c7a85db22e56aff34643984ea85514e94a3"
-+SRC_URI[windows_x86_64_gnullvm-0.52.6.sha256sum] = "24d5b23dc417412679681396f2b49f3de8c1473deb516bd34410872eff51ed0d"
-+SRC_URI[windows_x86_64_gnullvm-0.53.1.sha256sum] = "0ffa179e2d07eee8ad8f57493436566c7cc30ac536a3379fdf008f47f6bb7ae1"
-+SRC_URI[windows_x86_64_msvc-0.42.2.sha256sum] = "9aec5da331524158c6d1a4ac0ab1541149c0b9505fde06423b02f5ef0106b9f0"
-+SRC_URI[windows_x86_64_msvc-0.52.6.sha256sum] = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
-+SRC_URI[windows_x86_64_msvc-0.53.1.sha256sum] = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
-+SRC_URI[winnow-0.7.14.sha256sum] = "5a5364e9d77fcdeeaa6062ced926ee3381faa2ee02d3eb83a5c27a8825540829"
-+SRC_URI[wit-bindgen-0.51.0.sha256sum] = "d7249219f66ced02969388cf2bb044a09756a083d0fab1e566056b04d9fbcaa5"
-+SRC_URI[wit-bindgen-core-0.51.0.sha256sum] = "ea61de684c3ea68cb082b7a88508a8b27fcc8b797d738bfc99a82facf1d752dc"
-+SRC_URI[wit-bindgen-rust-0.51.0.sha256sum] = "b7c566e0f4b284dd6561c786d9cb0142da491f46a9fbed79ea69cdad5db17f21"
-+SRC_URI[wit-bindgen-rust-macro-0.51.0.sha256sum] = "0c0f9bfd77e6a48eccf51359e3ae77140a7f50b1e2ebfe62422d8afdaffab17a"
-+SRC_URI[wit-component-0.244.0.sha256sum] = "9d66ea20e9553b30172b5e831994e35fbde2d165325bec84fc43dbf6f4eb9cb2"
-+SRC_URI[wit-parser-0.244.0.sha256sum] = "ecc8ac4bc1dc3381b7f59c34f00b67e18f910c2c0f50015669dde7def656a736"
-+SRC_URI[writeable-0.6.2.sha256sum] = "9edde0db4769d2dc68579893f2306b26c6ecfbe0ef499b013d731b7b9247e0b9"
-+SRC_URI[xattr-1.6.1.sha256sum] = "32e45ad4206f6d2479085147f02bc2ef834ac85886624a23575ae137c8aa8156"
-+SRC_URI[yoke-0.8.1.sha256sum] = "72d6e5c6afb84d73944e5cedb052c4680d5657337201555f9f2a16b7406d4954"
-+SRC_URI[yoke-derive-0.8.1.sha256sum] = "b659052874eb698efe5b9e8cf382204678a0086ebf46982b79d6ca3182927e5d"
-+SRC_URI[zerocopy-0.8.39.sha256sum] = "db6d35d663eadb6c932438e763b262fe1a70987f9ae936e60158176d710cae4a"
-+SRC_URI[zerocopy-derive-0.8.39.sha256sum] = "4122cd3169e94605190e77839c9a40d40ed048d305bfdc146e7df40ab0f3e517"
-+SRC_URI[zerofrom-0.1.6.sha256sum] = "50cc42e0333e05660c3587f3bf9d0478688e15d870fab3346451ce7f8c9fbea5"
-+SRC_URI[zerofrom-derive-0.1.6.sha256sum] = "d71e5d6e06ab090c67b5e44993ec16b72dcbaabc526db883a360057678b48502"
-+SRC_URI[zeroize-1.8.2.sha256sum] = "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0"
-+SRC_URI[zerotrie-0.2.3.sha256sum] = "2a59c17a5562d507e4b54960e8569ebee33bee890c70aa3fe7b97e85a9fd7851"
-+SRC_URI[zerovec-0.11.5.sha256sum] = "6c28719294829477f525be0186d13efa9a3c602f7ec202ca9e353d310fb9a002"
-+SRC_URI[zerovec-derive-0.11.2.sha256sum] = "eadce39539ca5cb3985590102671f2567e659fca9666581ad3411d59207951f3"
-+SRC_URI[zmij-1.0.21.sha256sum] = "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
-diff --git a/recipes-security/krill/krill_0.12.3.bb b/recipes-security/krill/krill_0.16.0.bb
-similarity index 89%
-rename from recipes-security/krill/krill_0.12.3.bb
-rename to recipes-security/krill/krill_0.16.0.bb
-index 2a10584..1a82dc1 100644
---- a/recipes-security/krill/krill_0.12.3.bb
-+++ b/recipes-security/krill/krill_0.16.0.bb
-@@ -5,10 +5,10 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
+ LIC_FILES_CHKSUM += "\
+-    file://pkg/mod/ariga.io/atlas@v0.31.1-0.20250212144724-069be8033e83/LICENSE;md5=175792518e4ac015ab6696d16c4f607e;spdx=Apache-2.0 \
+-    file://pkg/mod/entgo.io/ent@v0.14.2/LICENSE;md5=175792518e4ac015ab6696d16c4f607e;spdx=Apache-2.0 \
+-    file://pkg/mod/filippo.io/edwards25519@v1.1.1/LICENSE;md5=5d4950ecb7b26d2c5e4e7b4e0dd74707;spdx=BSD-3-Clause \
++    file://pkg/mod/ariga.io/atlas@v1.1.0/LICENSE;md5=175792518e4ac015ab6696d16c4f607e;spdx=Apache-2.0 \
++    file://pkg/mod/dario.cat/mergo@v1.0.2/LICENSE;md5=ff13e03bb57bf9c52645f2f942afa28b;spdx=BSD-3-Clause \
++    file://pkg/mod/entgo.io/ent@v0.14.6/LICENSE;md5=175792518e4ac015ab6696d16c4f607e;spdx=Apache-2.0 \
++    file://pkg/mod/filippo.io/edwards25519@v1.2.0/LICENSE;md5=5d4950ecb7b26d2c5e4e7b4e0dd74707;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/!alec!aivazis/survey/v2@v2.3.7/LICENSE;md5=615828847c7140c5e6bac90e11888eb5;spdx=MIT \
+     file://pkg/mod/github.com/!alec!aivazis/survey/v2@v2.3.7/terminal/LICENSE.txt;md5=5cdf1025c7ad0102cd31c5d517307e8d;spdx=MIT \
+     file://pkg/mod/github.com/!masterminds/goutils@v1.1.1/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/!masterminds/semver/v3@v3.2.1/LICENSE.txt;md5=4c1ffeeb02e3f8f4af042205e189b3f7;spdx=MIT \
+-    file://pkg/mod/github.com/!masterminds/sprig/v3@v3.2.3/LICENSE.txt;md5=4ed8d725bea5f035fcea1ab05a767f78;spdx=MIT \
++    file://pkg/mod/github.com/!masterminds/semver/v3@v3.5.0/LICENSE.txt;md5=4c1ffeeb02e3f8f4af042205e189b3f7;spdx=MIT \
++    file://pkg/mod/github.com/!masterminds/sprig/v3@v3.3.0/LICENSE.txt;md5=4ed8d725bea5f035fcea1ab05a767f78;spdx=MIT \
+     file://pkg/mod/github.com/agext/levenshtein@v1.2.3/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/alexliesenfeld/health@v0.8.1/LICENSE;md5=77aecb31b0bf38e6c2c292463604c338;spdx=MIT \
+-    file://pkg/mod/github.com/apparentlymart/go-textseg/v13@v13.0.0/LICENSE;beginline=1;endline=19;md5=d57e691f661895b6e63c173405869a37;spdx=MIT \
+-    file://pkg/mod/github.com/apparentlymart/go-textseg/v13@v13.0.0/LICENSE;beginline=25;endline=34;md5=c37d99507ac95d0eace7ccc51bf683f2;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/apparentlymart/go-textseg/v13@v13.0.0/LICENSE;beginline=65;md5=aed6f1c844d036b1ec630879c0856cf0;spdx=MIT \
+     file://pkg/mod/github.com/apparentlymart/go-textseg/v15@v15.0.0/LICENSE;beginline=1;endline=19;md5=d57e691f661895b6e63c173405869a37;spdx=MIT \
+     file://pkg/mod/github.com/apparentlymart/go-textseg/v15@v15.0.0/LICENSE;beginline=25;endline=34;md5=c37d99507ac95d0eace7ccc51bf683f2;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/apparentlymart/go-textseg/v15@v15.0.0/LICENSE;beginline=65;md5=aed6f1c844d036b1ec630879c0856cf0;spdx=MIT \
+     file://pkg/mod/github.com/appleboy/gin-jwt/v2@v2.10.3/LICENSE;md5=c4620316ae1fb3b746e5cee94986dfd2;spdx=MIT \
+-    file://pkg/mod/github.com/asaskevich/govalidator@v0.0.0-20230301143203-a9d515a09cc2/LICENSE;md5=44f42f71b1145516f11eb20da85d7344;spdx=MIT \
+-    file://pkg/mod/github.com/aws/aws-lambda-go@v1.47.0/LICENSE;md5=b1e01b26bacfc2232046c90a330332b3;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream@v1.7.1/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/config@v1.31.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/credentials@v1.18.10/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/feature/ec2/imds@v1.18.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/feature/s3/manager@v1.19.4/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/internal/configsources@v1.4.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2@v2.7.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/internal/ini@v1.8.3/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/internal/v4a@v1.4.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs@v1.57.2/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding@v1.13.1/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/checksum@v1.8.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url@v1.13.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/s3shared@v1.19.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/kinesis@v1.40.1/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/s3@v1.87.3/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/sqs@v1.42.3/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/sso@v1.29.1/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/ssooidc@v1.34.2/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/sts@v1.38.2/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2@v1.38.3/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/aws-sdk-go-v2@v1.38.3/internal/sync/singleflight/LICENSE;md5=bdc234595bc2fe370918f5de5077c8e9;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/aws/smithy-go@v1.23.0/LICENSE;md5=34400b68072d710fecd0a2940a0d1658;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/aws/smithy-go@v1.23.0/internal/sync/singleflight/LICENSE;md5=bdc234595bc2fe370918f5de5077c8e9;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/beevik/etree@v1.4.1/LICENSE;md5=5220faf6133cbaef3cb62eee4bc0e09e;spdx=BSD-2-Clause \
++    file://pkg/mod/github.com/aws/aws-lambda-go@v1.54.0/LICENSE;md5=b1e01b26bacfc2232046c90a330332b3;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream@v1.7.18/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/config@v1.32.37/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/credentials@v1.19.36/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/feature/ec2/imds@v1.18.37/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/feature/s3/manager@v1.22.43/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/internal/configsources@v1.4.37/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2@v2.7.37/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/internal/v4a@v1.4.38/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs@v1.82.2/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding@v1.13.17/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/checksum@v1.9.30/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url@v1.13.37/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/internal/s3shared@v1.19.38/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/kinesis@v1.46.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/s3@v1.107.2/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/signin@v1.5.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/sqs@v1.46.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/sso@v1.33.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/ssooidc@v1.38.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2/service/sts@v1.45.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2@v1.43.6/LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/aws-sdk-go-v2@v1.43.6/internal/sync/singleflight/LICENSE;md5=bdc234595bc2fe370918f5de5077c8e9;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/aws/smithy-go@v1.27.8/LICENSE;md5=34400b68072d710fecd0a2940a0d1658;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/aws/smithy-go@v1.27.8/internal/sync/singleflight/LICENSE;md5=bdc234595bc2fe370918f5de5077c8e9;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/beevik/etree@v1.7.1/LICENSE;md5=5220faf6133cbaef3cb62eee4bc0e09e;spdx=BSD-2-Clause \
+     file://pkg/mod/github.com/beorn7/perks@v1.0.1/LICENSE;md5=0d0738f37ee8dc0b5f88a32e83c60198;spdx=MIT \
+     file://pkg/mod/github.com/bluele/gcache@v0.0.2/LICENSE;md5=f16f1a674492e15d2ad50ab1acc0ba7a;spdx=MIT \
+     file://pkg/mod/github.com/bmatcuk/doublestar@v1.3.4/LICENSE;md5=2a0ed06d3f9d0a3be066dc72088ae2ed;spdx=MIT \
+-    file://pkg/mod/github.com/buger/jsonparser@v1.1.2/LICENSE;md5=b60ae568cc483bde7743064a52388501;spdx=MIT \
++    file://pkg/mod/github.com/buger/jsonparser@v1.6.1/LICENSE;md5=b60ae568cc483bde7743064a52388501;spdx=MIT \
+     file://pkg/mod/github.com/cenkalti/backoff/v5@v5.0.3/LICENSE;md5=1571d94433e3f3aa05267efd4dbea68b;spdx=MIT \
+     file://pkg/mod/github.com/cespare/xxhash/v2@v2.3.0/LICENSE.txt;md5=802da049c92a99b4387d3f3d91b00fa9;spdx=MIT \
++    file://pkg/mod/github.com/clipperhouse/uax29/v2@v2.7.0/LICENSE;md5=39b00daa69674119df37aadf8ab34aeb;spdx=MIT \
+     file://pkg/mod/github.com/containerd/errdefs/pkg@v0.3.0/LICENSE;md5=1269f40c0d099c21a871163984590d89;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/containerd/errdefs@v1.0.0/LICENSE;md5=1269f40c0d099c21a871163984590d89;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/corazawaf/libinjection-go@v0.2.2/LICENSE;md5=8d2cfb1b0d35fea175f7d3f201dec57e;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/coreos/go-systemd/v22@v22.5.0/LICENSE;md5=19cbd64715b51267a47bf3750cc6a8a5;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/cpuguy83/go-md2man/v2@v2.0.6/LICENSE.md;md5=80794f9009df723bbc6fe19234c9f517;spdx=MIT \
+-    file://pkg/mod/github.com/crowdsecurity/coraza/v3@v3.3.3-crowdsec.20251113/LICENSE;md5=c7d40d02b84931ff4d1b0d0242868943;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/corazawaf/libinjection-go@v0.3.2/LICENSE;md5=8d2cfb1b0d35fea175f7d3f201dec57e;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/coreos/go-systemd/v22@v22.7.0/LICENSE;md5=19cbd64715b51267a47bf3750cc6a8a5;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/cpuguy83/go-md2man/v2@v2.0.7/LICENSE.md;md5=80794f9009df723bbc6fe19234c9f517;spdx=MIT \
++    file://pkg/mod/github.com/crowdsecurity/coraza/v3@v3.7.0-crowdsec.20260730/LICENSE;md5=c7d40d02b84931ff4d1b0d0242868943;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/crowdsecurity/dlog@v0.0.2/LICENSE;md5=5371b61f7962ad1b1222e74e7f06c138;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/crowdsecurity/go-cs-lib@v0.0.25/LICENSE;md5=1e58fe4126ce0b50677f3aa6ba8e13c2;spdx=MIT \
+     file://pkg/mod/github.com/crowdsecurity/grokky@v0.2.2/LICENSE;md5=6c80118ac2c1c95b011c5040454d0af9;spdx=WTFPL \
+@@ -70,170 +68,195 @@ LIC_FILES_CHKSUM += "\
+     file://pkg/mod/github.com/crowdsecurity/time@v0.13.0-crowdsec.20250912/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/davecgh/go-spew@v1.1.2-0.20180830191138-d8f796af33cc/LICENSE;md5=c06795ed54b2a35ebeeb543cd3a73e56;spdx=ISC \
+     file://pkg/mod/github.com/distribution/reference@v0.6.0/LICENSE;md5=d2794c0df5b907fdace235a619d80314;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/docker/go-connections@v0.6.0/LICENSE;md5=04424bc6f5a5be60691b9824d65c2ad8;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/docker/go-connections@v0.7.0/LICENSE;md5=04424bc6f5a5be60691b9824d65c2ad8;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/docker/go-units@v0.5.0/LICENSE;md5=04424bc6f5a5be60691b9824d65c2ad8;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/expr-lang/expr@v1.17.7/LICENSE;md5=1cad8446548a7b361129ccfca629db1a;spdx=MIT \
+-    file://pkg/mod/github.com/fatih/color@v1.18.0/LICENSE.md;md5=316e6d590bdcde7993fb175662c0dd5a;spdx=MIT \
++    file://pkg/mod/github.com/emicklei/go-restful/v3@v3.13.0/LICENSE;md5=2ebc1c12a0f4eae5394522e31961e1de;spdx=MIT \
++    file://pkg/mod/github.com/evanw/esbuild@v0.28.2/LICENSE.md;md5=46b907b175628fe6d2a5258b252970fa;spdx=MIT \
++    file://pkg/mod/github.com/evanw/esbuild@v0.28.2/internal/xxhash/LICENSE.txt;md5=802da049c92a99b4387d3f3d91b00fa9;spdx=MIT \
++    file://pkg/mod/github.com/expr-lang/expr@v1.17.8/LICENSE;md5=1cad8446548a7b361129ccfca629db1a;spdx=MIT \
++    file://pkg/mod/github.com/fatih/color@v1.19.0/LICENSE.md;md5=316e6d590bdcde7993fb175662c0dd5a;spdx=MIT \
+     file://pkg/mod/github.com/felixge/httpsnoop@v1.0.4/LICENSE.txt;md5=684da2bf3eed8fc8860e75ad84638225;spdx=MIT \
+-    file://pkg/mod/github.com/fsnotify/fsnotify@v1.9.0/LICENSE;md5=8bae8b116e2cfd723492b02d9a212fe2;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/gabriel-vasile/mimetype@v1.4.8/LICENSE;md5=df3ca1fbe5632f81387306d9558a61c4;spdx=MIT \
++    file://pkg/mod/github.com/fsnotify/fsnotify@v1.10.1/LICENSE;md5=8bae8b116e2cfd723492b02d9a212fe2;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/fxamacker/cbor/v2@v2.9.1/LICENSE;md5=827f5a2fa861382d35a3943adf9ebb86;spdx=MIT \
++    file://pkg/mod/github.com/gabriel-vasile/mimetype@v1.4.13/LICENSE;md5=df3ca1fbe5632f81387306d9558a61c4;spdx=MIT \
++    file://pkg/mod/github.com/getkin/kin-openapi@v0.147.0/LICENSE;md5=cc9b47b0408dc7dc785675c4e1566da6;spdx=MIT \
+     file://pkg/mod/github.com/gin-contrib/gzip@v1.2.3/LICENSE;md5=b4a9ad063c97e6fe4a23e1b81f761e60;spdx=MIT \
+-    file://pkg/mod/github.com/gin-contrib/sse@v1.0.0/LICENSE;md5=2e674b99ec94fcbd735f85c03ab8d74f;spdx=MIT \
+-    file://pkg/mod/github.com/gin-gonic/gin@v1.10.0/LICENSE;md5=2e674b99ec94fcbd735f85c03ab8d74f;spdx=MIT \
+-    file://pkg/mod/github.com/go-co-op/gocron/v2@v2.19.1/LICENSE;md5=90ff3cc9ad9aa451d5b5a4e470cec69d;spdx=MIT \
++    file://pkg/mod/github.com/gin-contrib/sse@v1.1.1/LICENSE;md5=2e674b99ec94fcbd735f85c03ab8d74f;spdx=MIT \
++    file://pkg/mod/github.com/gin-gonic/gin@v1.11.0/LICENSE;md5=2e674b99ec94fcbd735f85c03ab8d74f;spdx=MIT \
++    file://pkg/mod/github.com/go-co-op/gocron/v2@v2.22.0/LICENSE;md5=90ff3cc9ad9aa451d5b5a4e470cec69d;spdx=MIT \
++    file://pkg/mod/github.com/go-json-experiment/json@v0.0.0-20260214004413-d219187c3433/LICENSE;md5=9d210c7471ce08e3db5261f33bf8fce6;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/go-logr/logr@v1.4.3/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/go-logr/stdr@v1.2.2/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/analysis@v0.23.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/errors@v0.22.2/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/inflect@v0.19.0/LICENCE;md5=c522af998c3755d0e857ca6e57d85cdc;spdx=MIT \
+-    file://pkg/mod/github.com/go-openapi/jsonpointer@v0.21.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/jsonreference@v0.21.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/loads@v0.22.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/spec@v0.21.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/strfmt@v0.23.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/swag@v0.23.1/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/go-openapi/validate@v0.24.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/analysis@v0.26.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/errors@v0.22.8/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/inflect@v0.21.5/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/jsonpointer@v1.0.0/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/jsonreference@v1.0.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/loads@v0.25.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/spec@v0.22.9/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/strfmt@v0.27.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/cmdutils@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/conv@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/fileutils@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/jsonutils@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/loading@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/mangling@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/netutils@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/pools@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/stringutils@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/typeutils@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag/yamlutils@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/swag@v0.28.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/go-openapi/validate@v0.26.3/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/go-playground/locales@v0.14.1/LICENSE;md5=3ccbda375ee345400ad1da85ba522301;spdx=MIT \
+     file://pkg/mod/github.com/go-playground/universal-translator@v0.18.1/LICENSE;md5=2e2b21ef8f61057977d27c727c84bef1;spdx=MIT \
+-    file://pkg/mod/github.com/go-playground/validator/v10@v10.26.0/LICENSE;md5=a718a0f318d76f7c5d510cbae84f0b60;spdx=MIT \
+-    file://pkg/mod/github.com/go-sql-driver/mysql@v1.9.3/LICENSE;md5=815ca599c9df247a0c7f619bab123dad;spdx=MPL-2.0 \
+-    file://pkg/mod/github.com/goccy/go-json@v0.10.5/LICENSE;md5=33a07164132d795872805bfc53f6097d;spdx=MIT \
+-    file://pkg/mod/github.com/goccy/go-yaml@v1.18.0/LICENSE;md5=346470d8ac0a6ffe1eb8635a452cec2b;spdx=MIT \
+-    file://pkg/mod/github.com/gogo/protobuf@v1.3.2/LICENSE;md5=38be95f95200434dc208e2ee3dab5081;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/go-playground/validator/v10@v10.30.2/LICENSE;md5=a718a0f318d76f7c5d510cbae84f0b60;spdx=MIT \
++    file://pkg/mod/github.com/go-sql-driver/mysql@v1.10.0/LICENSE;md5=815ca599c9df247a0c7f619bab123dad;spdx=MPL-2.0 \
++    file://pkg/mod/github.com/go-viper/mapstructure/v2@v2.5.0/LICENSE;md5=3f7765c3d4f58e1f84c4313cecf0f5bd;spdx=MIT \
++    file://pkg/mod/github.com/goccy/go-yaml@v1.19.2/LICENSE;md5=346470d8ac0a6ffe1eb8635a452cec2b;spdx=MIT \
+     file://pkg/mod/github.com/golang/protobuf@v1.5.4/LICENSE;md5=939cce1ec101726fa754e698ac871622;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/golang-jwt/jwt/v4@v4.5.2/LICENSE;md5=a21b708d8b320c68979c44ac9dba9b0d;spdx=MIT \
++    file://pkg/mod/github.com/google/gnostic-models@v0.7.0/LICENSE;md5=b1e01b26bacfc2232046c90a330332b3;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/google/go-cmp@v0.7.0/LICENSE;md5=4ac66f7dea41d8d116cb7fb28aeff2ab;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/google/go-querystring@v1.1.0/LICENSE;md5=29f156828ca5f2df0d1c12543a75f12a;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/google/gofuzz@v1.2.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/google/go-querystring@v1.2.0/LICENSE;md5=29f156828ca5f2df0d1c12543a75f12a;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/google/uuid@v1.6.0/LICENSE;md5=88073b6dd8ec00fe09da59e0b6dfded1;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/goombaio/namegenerator@v0.0.0-20181006234301-989e774b106e/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/gorilla/websocket@v1.5.0/LICENSE;md5=c007b54a1743d596f46b2748d9f8c044;spdx=BSD-2-Clause \
+-    file://pkg/mod/github.com/gotnospirit/makeplural@v0.0.0-20180622080156-a5f48d94d976/LICENSE;md5=600ac2feda8347557a72c59b52ff302b;spdx=BSD-2-Clause \
+-    file://pkg/mod/github.com/gotnospirit/messageformat@v0.0.0-20221001023931-dfe49f1eb092/LICENSE;md5=600ac2feda8347557a72c59b52ff302b;spdx=BSD-2-Clause \
+-    file://pkg/mod/github.com/hashicorp/go-hclog@v1.5.0/LICENSE;md5=08d72ffda4fb40269260bfa13423c5be;spdx=MIT \
+-    file://pkg/mod/github.com/hashicorp/go-plugin@v1.6.3/LICENSE;md5=385ead67d9cf89227f52640ad36b20a6;spdx=MPL-2.0 \
+-    file://pkg/mod/github.com/hashicorp/go-version@v1.7.0/LICENSE;md5=81eb103d8076ec72ebe52e3ee40176db;spdx=MPL-2.0 \
+-    file://pkg/mod/github.com/hashicorp/hcl/v2@v2.13.0/LICENSE;md5=d44fdeb607e2d2614db9464dbedd4094;spdx=MPL-2.0 \
+-    file://pkg/mod/github.com/hashicorp/yamux@v0.1.1/LICENSE;md5=2dd1a9ecf92cd5617f128808f9b85b44;spdx=MPL-2.0 \
++    file://pkg/mod/github.com/gorilla/websocket@v1.5.4-0.20250319132907-e064f32e3674/LICENSE;md5=c007b54a1743d596f46b2748d9f8c044;spdx=BSD-2-Clause \
++    file://pkg/mod/github.com/hashicorp/go-hclog@v1.6.3/LICENSE;md5=08d72ffda4fb40269260bfa13423c5be;spdx=MIT \
++    file://pkg/mod/github.com/hashicorp/go-plugin@v1.8.0/LICENSE;md5=8e52337969808a9f2285f3ba453f5225;spdx=MPL-2.0 \
++    file://pkg/mod/github.com/hashicorp/go-version@v1.9.0/LICENSE;md5=cad2f12165769bbebe1d9235ea7dfbd6;spdx=MPL-2.0 \
++    file://pkg/mod/github.com/hashicorp/hcl/v2@v2.24.0/LICENSE;md5=b1c7d811d58ca6da0bffe95cffc4d43f;spdx=MPL-2.0 \
++    file://pkg/mod/github.com/hashicorp/yamux@v0.1.2/LICENSE;md5=4fb1de3449662e9252530414c87ed011;spdx=MPL-2.0 \
+     file://pkg/mod/github.com/hexops/gotextdiff@v1.0.3/LICENSE;md5=5d4950ecb7b26d2c5e4e7b4e0dd74707;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/huandu/xstrings@v1.5.0/LICENSE;md5=0a9edd7ffc0f2c020fe849875cb6810d;spdx=MIT \
+-    file://pkg/mod/github.com/imdario/mergo@v0.3.11/LICENSE;md5=ff13e03bb57bf9c52645f2f942afa28b;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/ivanpirog/coloredcobra@v1.0.1/LICENSE;md5=536471af1aa0a9e6b6b80f8d0734024e;spdx=MIT \
+     file://pkg/mod/github.com/jackc/chunkreader/v2@v2.0.1/LICENSE;md5=ea2961e52eec5b1203f8147a49ef985f;spdx=MIT \
+     file://pkg/mod/github.com/jackc/pgconn@v1.14.3/LICENSE;md5=d554a30973e07a28d3c1eabfaf7d2a2a;spdx=MIT \
+     file://pkg/mod/github.com/jackc/pgio@v1.0.0/LICENSE;md5=ea2961e52eec5b1203f8147a49ef985f;spdx=MIT \
+     file://pkg/mod/github.com/jackc/pgpassfile@v1.0.0/LICENSE;md5=ea2961e52eec5b1203f8147a49ef985f;spdx=MIT \
+     file://pkg/mod/github.com/jackc/pgproto3/v2@v2.3.3/LICENSE;md5=ea2961e52eec5b1203f8147a49ef985f;spdx=MIT \
+-    file://pkg/mod/github.com/jackc/pgservicefile@v0.0.0-20221227161230-091c0ba34f0a/LICENSE;md5=209ee38a480b3726bf58105857868aa4;spdx=MIT \
+-    file://pkg/mod/github.com/jackc/pgtype@v1.14.0/LICENSE;md5=6d996fb721b0bbe83ef9c55fee3f0c97;spdx=MIT \
+-    file://pkg/mod/github.com/jackc/pgx/v4@v4.18.2/LICENSE;md5=6d996fb721b0bbe83ef9c55fee3f0c97;spdx=MIT \
+-    file://pkg/mod/github.com/jedib0t/go-pretty/v6@v6.6.7/LICENSE;md5=dfa583903393a7d3fef6168e278a58ba;spdx=MIT \
++    file://pkg/mod/github.com/jackc/pgservicefile@v0.0.0-20240606120523-5a60cdf6a761/LICENSE;md5=209ee38a480b3726bf58105857868aa4;spdx=MIT \
++    file://pkg/mod/github.com/jackc/pgtype@v1.14.4/LICENSE;md5=6d996fb721b0bbe83ef9c55fee3f0c97;spdx=MIT \
++    file://pkg/mod/github.com/jackc/pgx/v4@v4.18.3/LICENSE;md5=6d996fb721b0bbe83ef9c55fee3f0c97;spdx=MIT \
++    file://pkg/mod/github.com/jedib0t/go-pretty/v6@v6.8.3/LICENSE;md5=dfa583903393a7d3fef6168e278a58ba;spdx=MIT \
+     file://pkg/mod/github.com/jonboulle/clockwork@v0.5.0/LICENSE;md5=136e4f49dbf29942c572a3a8f6e88a77;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/josharian/intern@v1.0.0/license.md;md5=6bc75378a26e0addbcdfa118e4d54574;spdx=MIT \
+     file://pkg/mod/github.com/json-iterator/go@v1.1.12/LICENSE;md5=0b69744b481d72d30dbf69f84a451cfd;spdx=MIT \
+-    file://pkg/mod/github.com/jszwec/csvutil@v1.5.1/LICENSE;md5=404c6dd3f100debdaaf2bdd343cbd034;spdx=MIT \
+-    file://pkg/mod/github.com/kaptinlin/go-i18n@v0.1.4/LICENSE;md5=9f19607b8eeb65eab2627e488215d4bd;spdx=MIT \
+-    file://pkg/mod/github.com/kaptinlin/jsonschema@v0.4.6/LICENSE;md5=35f406ad10530cf65e9f367edf5b1b88;spdx=MIT \
++    file://pkg/mod/github.com/jszwec/csvutil@v1.10.0/LICENSE;md5=404c6dd3f100debdaaf2bdd343cbd034;spdx=MIT \
++    file://pkg/mod/github.com/kaptinlin/go-i18n@v0.3.1/LICENSE;md5=ac29f424978421d3e8f6144db1d741dc;spdx=MIT \
++    file://pkg/mod/github.com/kaptinlin/jsonpointer@v0.4.17/LICENSE;md5=e3b2d8cc7672cf690c51b9d067795763;spdx=MIT \
++    file://pkg/mod/github.com/kaptinlin/jsonschema@v0.7.7/LICENSE;md5=e3b2d8cc7672cf690c51b9d067795763;spdx=MIT \
++    file://pkg/mod/github.com/kaptinlin/messageformat-go@v0.4.19/LICENSE;md5=3261cc78e02c58c0eed7ae2ed7a8bdc9;spdx=MIT \
+     file://pkg/mod/github.com/kballard/go-shellquote@v0.0.0-20180428030007-95032a82bc51/LICENSE;md5=9d95d1ad917c814c23909addb8692eeb;spdx=MIT \
+-    file://pkg/mod/github.com/klauspost/compress@v1.18.0/LICENSE;md5=d0fd9ebda39468b51ff4539c9fbb13a8;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/klauspost/compress@v1.18.0/internal/snapref/LICENSE;md5=b8b79c7d4cda128290b98c6a21f9aac6;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/klauspost/compress@v1.18.0/s2/LICENSE;md5=2460814a2b25a7277556c2d89de915d1;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/klauspost/compress@v1.18.0/snappy/LICENSE;md5=b8b79c7d4cda128290b98c6a21f9aac6;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/klauspost/compress@v1.18.0/zstd/internal/xxhash/LICENSE.txt;md5=802da049c92a99b4387d3f3d91b00fa9;spdx=MIT \
++    file://pkg/mod/github.com/klauspost/compress@v1.19.1/LICENSE;md5=d0fd9ebda39468b51ff4539c9fbb13a8;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/klauspost/compress@v1.19.1/internal/snapref/LICENSE;md5=b8b79c7d4cda128290b98c6a21f9aac6;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/klauspost/compress@v1.19.1/s2/LICENSE;md5=2460814a2b25a7277556c2d89de915d1;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/klauspost/compress@v1.19.1/snappy/LICENSE;md5=b8b79c7d4cda128290b98c6a21f9aac6;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/klauspost/compress@v1.19.1/zstd/internal/xxhash/LICENSE.txt;md5=802da049c92a99b4387d3f3d91b00fa9;spdx=MIT \
+     file://pkg/mod/github.com/leodido/go-urn@v1.4.0/LICENSE;md5=8f50db5538ec1148a9b3d14ed96c3418;spdx=MIT \
+-    file://pkg/mod/github.com/mailru/easyjson@v0.9.0/LICENSE;md5=819e81c2ec13e1bbc47dc5e90bb4d88b;spdx=MIT \
+-    file://pkg/mod/github.com/mattn/go-colorable@v0.1.13/LICENSE;md5=24ce168f90aec2456a73de1839037245;spdx=MIT \
+-    file://pkg/mod/github.com/mattn/go-isatty@v0.0.20/LICENSE;md5=f509beadd5a11227c27b5d2ad6c9f2c6;spdx=MIT \
+-    file://pkg/mod/github.com/mattn/go-runewidth@v0.0.16/LICENSE;md5=24ce168f90aec2456a73de1839037245;spdx=MIT \
+-    file://pkg/mod/github.com/mattn/go-sqlite3@v1.14.24/LICENSE;md5=2b7590a6661bc1940f50329c495898c6;spdx=MIT \
++    file://pkg/mod/github.com/mattn/go-colorable@v0.1.14/LICENSE;md5=24ce168f90aec2456a73de1839037245;spdx=MIT \
++    file://pkg/mod/github.com/mattn/go-isatty@v0.0.24/LICENSE;md5=f509beadd5a11227c27b5d2ad6c9f2c6;spdx=MIT \
++    file://pkg/mod/github.com/mattn/go-runewidth@v0.0.22/LICENSE;md5=24ce168f90aec2456a73de1839037245;spdx=MIT \
++    file://pkg/mod/github.com/mattn/go-sqlite3@v1.14.32/LICENSE;md5=2b7590a6661bc1940f50329c495898c6;spdx=MIT \
+     file://pkg/mod/github.com/mgutz/ansi@v0.0.0-20200706080929-d51e80ef957d/LICENSE;md5=69548df4465c22180e0382cdb58c9379;spdx=MIT \
+     file://pkg/mod/github.com/mitchellh/copystructure@v1.2.0/LICENSE;md5=56da355a12d4821cda57b8f23ec34bc4;spdx=MIT \
+     file://pkg/mod/github.com/mitchellh/go-wordwrap@v1.0.1/LICENSE.md;md5=56da355a12d4821cda57b8f23ec34bc4;spdx=MIT \
+-    file://pkg/mod/github.com/mitchellh/mapstructure@v1.5.0/LICENSE;md5=3f7765c3d4f58e1f84c4313cecf0f5bd;spdx=MIT \
+     file://pkg/mod/github.com/mitchellh/reflectwalk@v1.0.2/LICENSE;md5=3f7765c3d4f58e1f84c4313cecf0f5bd;spdx=MIT \
+     file://pkg/mod/github.com/moby/docker-image-spec@v1.3.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/moby/moby/api@v1.52.1-0.20251116162601-e9ff10bf365a/LICENSE;md5=4859e97a9c7780e77972d989f0823f28;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/moby/moby/client@v0.1.1-0.20251116162601-e9ff10bf365a/LICENSE;md5=4859e97a9c7780e77972d989f0823f28;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/moby/moby/api@v1.55.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/moby/moby/client@v0.5.1/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/modern-go/concurrent@v0.0.0-20180306012644-bacd9c7ef1dd/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/modern-go/reflect2@v1.0.2/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/modern-go/reflect2@v1.0.3-0.20250322232337-35a7c28c31ee/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/mohae/deepcopy@v0.0.0-20170929034955-c48cc78d4826/LICENSE;md5=268dc9c546e3de67a93c1d12a039d702;spdx=MIT \
+     file://pkg/mod/github.com/munnerz/goautoneg@v0.0.0-20191010083416-a7dc8b61c822/LICENSE;md5=0c241922fc69330e2e5590de114f3bf5;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/nxadm/tail@v1.4.11/LICENSE;md5=0bdce43b16cd5c587124d6f274632c87;spdx=MIT \
+-    file://pkg/mod/github.com/oklog/run@v1.0.0/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/oklog/ulid@v1.3.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/oasdiff/yaml3@v0.0.14/LICENSE;md5=3c91c17266710e16afdbb2b6d15c761c;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/oasdiff/yaml@v0.1.1/LICENSE;md5=0ceb9ff3b27d3a8cf451ca3785d73c71;spdx=MIT \
++    file://pkg/mod/github.com/oklog/run@v1.2.0/LICENSE;md5=c19dbea2f4885137f8d45fede9891755;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/oklog/ulid/v2@v2.1.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/opencontainers/go-digest@v1.0.0/LICENSE;md5=2d6fc0e85c3f118af64c85a78d56d3cf;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/opencontainers/image-spec@v1.1.1/LICENSE;md5=27ef03aa2da6e424307f102e8b42621d;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/oschwald/geoip2-golang@v1.9.0/LICENSE;md5=7ff10cf9f9802aa6a69c6a73d03742c4;spdx=ISC \
+-    file://pkg/mod/github.com/oschwald/maxminddb-golang@v1.12.0/LICENSE;md5=7ff10cf9f9802aa6a69c6a73d03742c4;spdx=ISC \
+-    file://pkg/mod/github.com/pelletier/go-toml/v2@v2.2.4/LICENSE;md5=390892c6562af0d807e527b06d635f94;spdx=MIT \
++    file://pkg/mod/github.com/oschwald/geoip2-golang@v1.13.0/LICENSE;md5=7ff10cf9f9802aa6a69c6a73d03742c4;spdx=ISC \
++    file://pkg/mod/github.com/oschwald/maxminddb-golang@v1.13.1/LICENSE;md5=7ff10cf9f9802aa6a69c6a73d03742c4;spdx=ISC \
++    file://pkg/mod/github.com/pelletier/go-toml/v2@v2.3.0/LICENSE;md5=390892c6562af0d807e527b06d635f94;spdx=MIT \
+     file://pkg/mod/github.com/petar-dambovaliev/aho-corasick@v0.0.0-20250424160509-463d218d4745/LICENSE;md5=79da2eab36bdb4ea5e3b7ef4e5d19825;spdx=MIT \
+-    file://pkg/mod/github.com/pierrec/lz4/v4@v4.1.18/LICENSE;md5=09ece85f3c312a63b522bfc6ebd44943;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/prometheus/client_golang@v1.23.2/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/prometheus/client_golang@v1.23.2/internal/github.com/golang/gddo/LICENSE;md5=4c728948788b1a02f33ae4e906546eef;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/pierrec/lz4/v4@v4.1.26/LICENSE;md5=09ece85f3c312a63b522bfc6ebd44943;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2/LICENSE;md5=e9a2ebb8de779a07500ddecca806145e;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/prometheus/client_golang@v1.24.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/prometheus/client_golang@v1.24.1/internal/github.com/golang/gddo/LICENSE;md5=4c728948788b1a02f33ae4e906546eef;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/prometheus/client_model@v0.6.2/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/prometheus/common@v0.66.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/prometheus/procfs@v0.16.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/prometheus/common@v0.70.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/prometheus/procfs@v0.21.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/quic-go/qpack@v0.6.0/LICENSE.md;md5=d670bcd1510d5f6c013032947d36132b;spdx=MIT \
++    file://pkg/mod/github.com/quic-go/quic-go@v0.59.1/LICENSE;md5=357080a3c7c0a7c4e23100893c301235;spdx=MIT \
+     file://pkg/mod/github.com/r3labs/diff/v2@v2.15.1/LICENSE;md5=9741c346eef56131163e13b9db1241b3;spdx=MPL-2.0 \
+-    file://pkg/mod/github.com/rivo/uniseg@v0.4.7/LICENSE.txt;md5=4393c339bf180cf6e188b6ea32d8b93c;spdx=MIT \
+     file://pkg/mod/github.com/robfig/cron/v3@v3.0.1/LICENSE;md5=d924a63cb54a2a6c4bd28c50b2b0af59;spdx=MIT \
+     file://pkg/mod/github.com/russross/blackfriday/v2@v2.1.0/LICENSE.txt;md5=ecf8a8a60560c35a862a4a545f2db1b3;spdx=BSD-2-Clause \
+     file://pkg/mod/github.com/sanity-io/litter@v1.5.8/LICENSE;md5=a1cb9e8d77e4fbf4cf17a15a53cfb72b;spdx=MIT \
+-    file://pkg/mod/github.com/segmentio/kafka-go@v0.4.48/LICENSE;md5=245177e51c68aa2071d537392357ab87;spdx=MIT \
+-    file://pkg/mod/github.com/shirou/gopsutil/v4@v4.25.8/LICENSE;md5=ae6de3dee02712a1e55b280671be53bf;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/santhosh-tekuri/jsonschema/v6@v6.0.3/LICENSE;md5=3eb31626add6ada64ff9ac772bd3c653;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/segmentio/kafka-go@v0.4.51/LICENSE;md5=245177e51c68aa2071d537392357ab87;spdx=MIT \
++    file://pkg/mod/github.com/shirou/gopsutil/v4@v4.26.7/LICENSE;md5=ae6de3dee02712a1e55b280671be53bf;spdx=BSD-3-Clause \
+     file://pkg/mod/github.com/shopspring/decimal@v1.4.0/LICENSE;md5=d21d25475326cf7f1b36eef8c9789801;spdx=MIT \
+-    file://pkg/mod/github.com/sirupsen/logrus@v1.9.3/LICENSE;md5=8dadfef729c08ec4e631c4f6fc5d43a0;spdx=MIT \
+-    file://pkg/mod/github.com/slack-go/slack@v0.16.0/LICENSE;md5=5be3e17d84b16d39bb01b55af9d8a913;spdx=BSD-2-Clause \
+-    file://pkg/mod/github.com/spf13/cast@v1.7.0/LICENSE;md5=67fac7567cbf6ba946e5576d590b1ed4;spdx=MIT \
+-    file://pkg/mod/github.com/spf13/cobra@v1.10.1/LICENSE.txt;md5=920d76114a32b0fb75b3f2718c5a91be;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/spf13/pflag@v1.0.9/LICENSE;md5=1e8b7dc8b906737639131047a590f21d;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/tetratelabs/wazero@v1.9.0/LICENSE;md5=a80aae5626b7e957ac00f5d22276ac9e;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/sirupsen/logrus@v1.10.0/LICENSE;md5=8dadfef729c08ec4e631c4f6fc5d43a0;spdx=MIT \
++    file://pkg/mod/github.com/slack-go/slack@v0.29.0/LICENSE;md5=5be3e17d84b16d39bb01b55af9d8a913;spdx=BSD-2-Clause \
++    file://pkg/mod/github.com/spf13/cast@v1.10.0/LICENSE;md5=67fac7567cbf6ba946e5576d590b1ed4;spdx=MIT \
++    file://pkg/mod/github.com/spf13/cobra@v1.10.2/LICENSE.txt;md5=920d76114a32b0fb75b3f2718c5a91be;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/spf13/pflag@v1.0.10/LICENSE;md5=1e8b7dc8b906737639131047a590f21d;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/tetratelabs/wazero@v1.12.0/LICENSE;md5=a80aae5626b7e957ac00f5d22276ac9e;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/tidwall/gjson@v1.18.0/LICENSE;md5=f1ccda76a282fada49760e27335f1c28;spdx=MIT \
+-    file://pkg/mod/github.com/tidwall/match@v1.1.1/LICENSE;md5=f1ccda76a282fada49760e27335f1c28;spdx=MIT \
++    file://pkg/mod/github.com/tidwall/match@v1.2.0/LICENSE;md5=f1ccda76a282fada49760e27335f1c28;spdx=MIT \
+     file://pkg/mod/github.com/tidwall/pretty@v1.2.1/LICENSE;md5=898bc94f87439245e8cf1c5797098e90;spdx=MIT \
+-    file://pkg/mod/github.com/tklauser/go-sysconf@v0.3.15/LICENSE;md5=d4eb2084b3083d2c275ec52ef4ba9ac1;spdx=BSD-3-Clause \
+-    file://pkg/mod/github.com/tklauser/numcpus@v0.10.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/toorop/go-dkim@v0.0.0-20201103131630-e1cd1a0a5208/LICENSE;md5=c1f71ecc29f9b25806e07f9f45ce9089;spdx=MIT \
+-    file://pkg/mod/github.com/ugorji/go/codec@v1.2.12/LICENSE;md5=f39cb00aceeac4bc5f861dc07456d5d5;spdx=MIT \
++    file://pkg/mod/github.com/tklauser/go-sysconf@v0.3.16/LICENSE;md5=d4eb2084b3083d2c275ec52ef4ba9ac1;spdx=BSD-3-Clause \
++    file://pkg/mod/github.com/tklauser/numcpus@v0.11.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/toorop/go-dkim@v0.0.0-20250226130143-9025cce95817/LICENSE;md5=c1f71ecc29f9b25806e07f9f45ce9089;spdx=MIT \
++    file://pkg/mod/github.com/ugorji/go/codec@v1.3.1/LICENSE;md5=f39cb00aceeac4bc5f861dc07456d5d5;spdx=MIT \
+     file://pkg/mod/github.com/umahmood/haversine@v0.0.0-20151105152445-808ab04add26/LICENSE.md;md5=878ae7dec555c1bf7626a69eaa5eeed1;spdx=MIT \
+     file://pkg/mod/github.com/valllabh/ocsf-schema-golang@v1.0.3/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+     file://pkg/mod/github.com/vmihailenco/msgpack@v4.0.4+incompatible/LICENSE;md5=5de50b60705d666cd9542dd48d5e4b56;spdx=BSD-2-Clause \
+-    file://pkg/mod/github.com/wasilibs/go-re2@v1.10.0/LICENSE;md5=7cce3e5a10534670a924d9206dd18716;spdx=MIT \
+-    file://pkg/mod/github.com/wasilibs/wazero-helpers@v0.0.0-20250123031827-cd30c44769bb/LICENSE;md5=1408c2b96cd0e1bbe2c223ae9f71a6db;spdx=MIT \
++    file://pkg/mod/github.com/wasilibs/go-re2@v1.12.0/LICENSE;md5=7cce3e5a10534670a924d9206dd18716;spdx=MIT \
++    file://pkg/mod/github.com/x448/float16@v0.8.4/LICENSE;md5=de8f8e025d57fe7ee0b67f30d571323b;spdx=MIT \
+     file://pkg/mod/github.com/xhit/go-simple-mail/v2@v2.16.0/LICENSE;md5=2f9ea4621bcff112a477b70f86730128;spdx=MIT \
+     file://pkg/mod/github.com/youmark/pkcs8@v0.0.0-20240726163527-a2c0da244d78/LICENSE;md5=7e949f736d1222f15e83233702459f41;spdx=MIT \
+-    file://pkg/mod/github.com/zclconf/go-cty-yaml@v1.1.0/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
+-    file://pkg/mod/github.com/zclconf/go-cty@v1.14.4/LICENSE;md5=ab8202e057bc8a5fba04f82e264bf14d;spdx=MIT \
+-    file://pkg/mod/go.mongodb.org/mongo-driver@v1.14.0/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/zclconf/go-cty-yaml@v1.2.0/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
++    file://pkg/mod/github.com/zclconf/go-cty@v1.18.0/LICENSE;md5=5fa044db97ab139f0b76ceeca0e5a3d5;spdx=MIT \
+     file://pkg/mod/go.opentelemetry.io/auto/sdk@v1.2.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp@v0.60.0/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327;spdx=Apache-2.0 \
+-    file://pkg/mod/go.opentelemetry.io/otel/metric@v1.39.0/LICENSE;md5=24dad3abbe7a8f390afc8ab967bfefa7;spdx=Apache-2.0 \
+-    file://pkg/mod/go.opentelemetry.io/otel/trace@v1.39.0/LICENSE;md5=24dad3abbe7a8f390afc8ab967bfefa7;spdx=Apache-2.0 \
+-    file://pkg/mod/go.opentelemetry.io/otel@v1.39.0/LICENSE;md5=24dad3abbe7a8f390afc8ab967bfefa7;spdx=Apache-2.0 \
+-    file://pkg/mod/go.yaml.in/yaml/v2@v2.4.2/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
+-    file://pkg/mod/golang.org/x/crypto@v0.46.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+-    file://pkg/mod/golang.org/x/mod@v0.30.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+-    file://pkg/mod/golang.org/x/net@v0.48.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+-    file://pkg/mod/golang.org/x/sync@v0.19.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+-    file://pkg/mod/golang.org/x/sys@v0.39.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+-    file://pkg/mod/golang.org/x/term@v0.38.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+-    file://pkg/mod/golang.org/x/text@v0.32.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
+-    file://pkg/mod/google.golang.org/genproto/googleapis/rpc@v0.0.0-20251202230838-ff82c1b0f217/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/google.golang.org/grpc@v1.79.3/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/google.golang.org/protobuf@v1.36.10/LICENSE;md5=02d4002e9171d41a8fad93aa7faf3956;spdx=BSD-3-Clause \
++    file://pkg/mod/go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp@v0.68.0/LICENSE;md5=24dad3abbe7a8f390afc8ab967bfefa7;spdx=Apache-2.0 \
++    file://pkg/mod/go.opentelemetry.io/otel/metric@v1.44.0/LICENSE;md5=24dad3abbe7a8f390afc8ab967bfefa7;spdx=Apache-2.0 \
++    file://pkg/mod/go.opentelemetry.io/otel/trace@v1.44.0/LICENSE;md5=24dad3abbe7a8f390afc8ab967bfefa7;spdx=Apache-2.0 \
++    file://pkg/mod/go.opentelemetry.io/otel@v1.44.0/LICENSE;md5=24dad3abbe7a8f390afc8ab967bfefa7;spdx=Apache-2.0 \
++    file://pkg/mod/go.yaml.in/yaml/v2@v2.4.4/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
++    file://pkg/mod/go.yaml.in/yaml/v3@v3.0.5/LICENSE;md5=3c91c17266710e16afdbb2b6d15c761c;spdx=Apache-2.0 \
++    file://pkg/mod/golang.org/x/crypto@v0.55.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/golang.org/x/mod@v0.40.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/golang.org/x/net@v0.58.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/golang.org/x/oauth2@v0.36.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/golang.org/x/sync@v0.22.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/golang.org/x/sys@v0.47.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/golang.org/x/term@v0.45.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/golang.org/x/text@v0.41.0/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a;spdx=BSD-3-Clause \
++    file://pkg/mod/google.golang.org/genproto/googleapis/rpc@v0.0.0-20260526163538-3dc84a4a5aaa/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/google.golang.org/grpc@v1.83.0/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/google.golang.org/protobuf@v1.36.12/LICENSE;md5=02d4002e9171d41a8fad93aa7faf3956;spdx=BSD-3-Clause \
++    file://pkg/mod/gopkg.in/evanphx/json-patch.v4@v4.13.0/LICENSE;md5=96ae735ca1b4dcdb6b26f4ca4b8ba645;spdx=BSD-3-Clause \
+     file://pkg/mod/gopkg.in/inf.v0@v0.9.1/LICENSE;md5=13cea479df204c85485b5db6eb1bc9d5;spdx=BSD-3-Clause \
+     file://pkg/mod/gopkg.in/natefinch/lumberjack.v2@v2.2.1/LICENSE;md5=574cdb55b81249478f5af5f789e9e29f;spdx=MIT \
+     file://pkg/mod/gopkg.in/tomb.v1@v1.0.0-20141024135613-dd632973f1e7/LICENSE;md5=95d4102f39f26da9b66fee5d05ac597b;spdx=BSD-3-Clause \
+     file://pkg/mod/gopkg.in/tomb.v2@v2.0.0-20161208151619-d5d1b5820637/LICENSE;md5=95d4102f39f26da9b66fee5d05ac597b;spdx=BSD-3-Clause \
+     file://pkg/mod/gopkg.in/yaml.v2@v2.4.0/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
+     file://pkg/mod/gopkg.in/yaml.v3@v3.0.1/LICENSE;md5=3c91c17266710e16afdbb2b6d15c761c;spdx=Apache-2.0 \
+-    file://pkg/mod/k8s.io/api@v0.28.4/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/k8s.io/apimachinery@v0.28.4/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/k8s.io/apimachinery@v0.28.4/third_party/forked/golang/LICENSE;md5=5d4950ecb7b26d2c5e4e7b4e0dd74707;spdx=BSD-3-Clause \
+-    file://pkg/mod/k8s.io/apiserver@v0.28.4/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/k8s.io/klog/v2@v2.100.1/LICENSE;md5=19cbd64715b51267a47bf3750cc6a8a5;spdx=Apache-2.0 \
+-    file://pkg/mod/k8s.io/utils@v0.0.0-20230406110748-d93618cff8a2/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
+-    file://pkg/mod/k8s.io/utils@v0.0.0-20230406110748-d93618cff8a2/internal/third_party/forked/golang/LICENSE;md5=591778525c869cdde0ab5a1bf283cd81;spdx=BSD-3-Clause \
++    file://pkg/mod/k8s.io/api@v0.36.3/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/apimachinery@v0.36.3/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/apimachinery@v0.36.3/third_party/forked/golang/LICENSE;md5=5d4950ecb7b26d2c5e4e7b4e0dd74707;spdx=BSD-3-Clause \
++    file://pkg/mod/k8s.io/apiserver@v0.36.3/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/client-go@v0.36.3/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/klog/v2@v2.140.0/LICENSE;md5=19cbd64715b51267a47bf3750cc6a8a5;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/kube-openapi@v0.0.0-20260330154417-16be699c7b31/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/kube-openapi@v0.0.0-20260330154417-16be699c7b31/pkg/internal/third_party/go-json-experiment/json/LICENSE;md5=9d210c7471ce08e3db5261f33bf8fce6;spdx=BSD-3-Clause \
++    file://pkg/mod/k8s.io/kube-openapi@v0.0.0-20260330154417-16be699c7b31/pkg/validation/spec/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/utils@v0.0.0-20260319190234-28399d86e0b5/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57;spdx=Apache-2.0 \
++    file://pkg/mod/k8s.io/utils@v0.0.0-20260319190234-28399d86e0b5/internal/third_party/forked/golang/LICENSE;md5=591778525c869cdde0ab5a1bf283cd81;spdx=BSD-3-Clause \
+     file://pkg/mod/rsc.io/binaryregexp@v0.2.0/LICENSE;md5=5d4950ecb7b26d2c5e4e7b4e0dd74707;spdx=BSD-3-Clause \
+-    file://pkg/mod/sigs.k8s.io/json@v0.0.0-20221116044647-bc3834ca7abd/LICENSE;md5=545d3f23616dee7495323aeb0b098df3;spdx=Apache-2.0 \
+-    file://pkg/mod/sigs.k8s.io/structured-merge-diff/v4@v4.2.3/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
++    file://pkg/mod/sigs.k8s.io/json@v0.0.0-20250730193827-2d320260d730/LICENSE;md5=545d3f23616dee7495323aeb0b098df3;spdx=Apache-2.0 \
++    file://pkg/mod/sigs.k8s.io/randfill@v1.0.0/LICENSE;md5=8f245a894b7d4f5880176fafd88faad8;spdx=Apache-2.0 \
++    file://pkg/mod/sigs.k8s.io/structured-merge-diff/v6@v6.3.3/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e;spdx=Apache-2.0 \
++    file://pkg/mod/sigs.k8s.io/yaml@v1.6.0/LICENSE;md5=b5d30dd5bc47d1b56b678ac06dead1c7;spdx=MIT \
+ "
+diff --git a/recipes-ids/crowdsec/crowdsec_1.7.7.bb b/recipes-ids/crowdsec/crowdsec_1.8.1.bb
+similarity index 96%
+rename from recipes-ids/crowdsec/crowdsec_1.7.7.bb
+rename to recipes-ids/crowdsec/crowdsec_1.8.1.bb
+index 0697022..10be348 100644
+--- a/recipes-ids/crowdsec/crowdsec_1.7.7.bb
++++ b/recipes-ids/crowdsec/crowdsec_1.8.1.bb
+@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=1e58fe4126ce0b50677f3aa6
+ CROWDSEC_BRANCH_VERSION = "${@'.'.join(d.getVar('PV').split('.')[0:2])}"
+ SRC_URI = "gitsm://${GO_IMPORT};protocol=https;branch=releases/${CROWDSEC_BRANCH_VERSION}.x;tag=v${PV};destsuffix=${GO_SRCURI_DESTSUFFIX}"
  
- DEPENDS = "openssl"
+-SRCREV = "027974f20cf422bbe1406cf4297fbff37417bd03"
++SRCREV = "909b5157986a2b2c2163300fdaef5ed01289f7d2"
  
--# SRC_URI += "crate://crates.io/krill/0.9.1"
--SRC_URI = "git://github.com/NLnetLabs/krill.git;protocol=https;branch=main"
--SRCREV = "e92098419c7ad82939e0483bc76df21eff705b80"
--SRC_URI += "file://panic_workaround.patch"
-+SRC_URI = "git://github.com/NLnetLabs/krill.git;protocol=https;branch=main \
-+           file://0001-Disable-abort-on-panic.patch \
-+"
-+SRCREV = "b2a26cd9f44a385d8a62a0199b082f44e5062039"
- 
- include krill-crates.inc
- 
+ require ${BPN}-licenses.inc
+ require ${BPN}-go-mods.inc
 -- 
 2.55.0
 
