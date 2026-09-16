@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FD9C982DA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEC8C982D8
 	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 21:58:51 +0000 (UTC)
-Received: from mail-qv2-f12.google.com (mail-qv2-f12.google.com [74.125.230.140])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.26468.1789595922345108095
+Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.26469.1789595924748322855
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 14:58:42 -0700
+ Wed, 16 Sep 2026 14:58:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=AklVIQqB;
- spf=pass (domain: konsulko.com, ip: 74.125.230.140, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv2-f12.google.com with SMTP id 6a1803df08f44-912355b1bf6so317516d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:42 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=mHOIbQys;
+ spf=pass (domain: konsulko.com, ip: 74.125.230.204, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-939109fafddso11129785a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789595921; x=1790200721; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1789595924; x=1790200724; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=ipdhUoUSU2XPMnGZ842JXgBb4NK8diCRbZlXMLf7OsM=;
-        b=AklVIQqBtEEyD12B6Vdqa0QbDoTya9BxO9h309N10aSBgsNdM5fayJxwBlfQJO1XoL
-         pkT9FY8MRrjQtrkNJqdG4/bhSlBEFjiawdtHZi89bBB3THMWXUv+sm62dSMCOySANGJU
-         Uo5MnKIcKSZ1hQlzI97QezDPd9HMf6lrO8Z+Y=
+        bh=m6KHqiH7H3m6mHC0k8P48P1yPxwknFV3eHAQ6P7Id0I=;
+        b=mHOIbQysHKLFYqJvjMgTyjj/jkH7+rvl16QBJ8ojFGn7XHjzX6GU/H+8c70KLy0qb2
+         DhpcI0JW6EMaP5THVNnNDKxumFxD5q6I2mpzrHVkN/c3gx1RnIgkC3j/gl62pPozG4Ha
+         exqR3xXSOwomj1+uY/5DNkyB5d1M1PonPj3KI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789595921; x=1790200721;
+        d=1e100.net; s=20260707; t=1789595924; x=1790200724;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=ipdhUoUSU2XPMnGZ842JXgBb4NK8diCRbZlXMLf7OsM=;
-        b=ip8Hiq4TQzi2xniMCVZ0BWQCu/jovM1/GDu4VYQLsrQEOEDSOGWYh39MZcqFbK5l/E
-         Walf7a72T7RUOapP23WyYw+QOwhyFyYEOoJmPBdf7c6TSD0auvy7nHmdwlyC1olLd99G
-         ZSH88eRXgLrC6kCk1nBHJLRnIU0QEIUPBvzjd0VALjY5ePMkTTt8sFj1Q4w63qGR/P4a
-         Dps5aT3XBIdphgAdjucDAOp9z1jV0TXi+9YGTuvD1KIl8KawOYpyV1viBkQKf2AT5oO3
-         g2/pI+dTtRBrSN2s+UawtEJdq7QMmcMLRhqe9y1FEm28zpIxMd6wDKdbspRmgskWsY1h
-         l3Pw==
-X-Gm-Message-State: AFuF++kkUfYUw7QWlWOjzqVqDK6vE8Ph1MkC3hw3NcPtrx4AivKeuoed
-	A7svBqMI10kQzpZwnJuunNWMOVjjZCpK2j+C3RPBr9Z8IwIaAvEZT/QaiRhuzk0Lr2YTpcuf5U7
-	rrfAW
-X-Gm-Gg: AYBFou1IserWyv4KeuGA4Q96SZ1w2UgHamnn00LactYjo1ImyvDCGHx1SERWBuNOiXb
-	aJd4h3/yCxjNzCb8vBvwqplEn9j7292yKGWCsOJ9OZnGJNaYLVdOb2ut9VZf+dAG4I0N+5vNguY
-	Thls7AK4DOVnH9c2IB8QMWDrj0vTx/T+8dT0FFbsiAFXz6SZM4Tu6fjrHh0Nd+jVsTtMY3eorzM
-	zZwjHnmQsQr7SQNk39L+7MSalH1VhiPyhUvL4a1oeL7jQdbImCoatZmqyw4FkST/qrca40I6cZG
-	hIpJvr9rXMqlScVqJIl/xrVPtMHrmgXAHJLS05iqoqgNKGevqIyL4mverZxvvH9k+RK81Ygd9wc
-	3WNPXF0QGcgGvn57ph3q4Dvy1NF7Xzo5sGcjXl6a/A7eti6RDkuemV6nrfNRA/P3qOhIePENdt3
-	LmBjKp8tHYXzhOaKxrfW4kS/0sUUk7Xj8hELKJqNFmV4+iXVDZ5L7RWY9MIm26Fq2Lxn960Q3OT
-	w70g0EG2NDbdNr+zJkPLsDfp5Id5KQbuwqXna2cVF4YqCp0nVJuA770ODF70EphmX1DUf/33v/J
-	eSvrstrm9oKny8mi9kwXDl/EgIJ0StVruPOPUPaJowYsQA==
-X-Received: by 2002:a05:620a:710f:b0:939:4baf:5b99 with SMTP id af79cd13be357-93bc63741eemr194727085a.18.1789595920873;
-        Wed, 16 Sep 2026 14:58:40 -0700 (PDT)
+        bh=m6KHqiH7H3m6mHC0k8P48P1yPxwknFV3eHAQ6P7Id0I=;
+        b=v6m5EM+ZRMmv1amHE+DaS8uQYADLrfTieKbolCSNz8RKRGg8jvoUb/cILMWXOxppxm
+         ChOFhj/v1EqoLY2/vU+hNR946tQ8+w+jNZvN83sLb01jjp9cVytJGUWaz/sb1A4me2Yv
+         ybJUkZCWhy7OfBWiFJiID/PAUJU2yM+rbQToYUosH2Eb1MO4vdYP/MtOaOq4EO5IgQnK
+         Pn83nxDC1qeu3WpHlI7W5xA1CBLTbDgeREGKDP4u1NjHHohCZXumuAg2RMoolDVFNuOq
+         MBeF7DcIkYkrw7M1kqBxWe4sRpQnQ686DmP1ACLLXMR+0rnqOnt/wuyYrseXVGiVNA4A
+         KA4Q==
+X-Gm-Message-State: AFuF++nGD8470YvAfkQB1wkywxVsnz8i4vIG+OMZWtYqLB9o9/2lFy6k
+	FZ0WiZqHtqgAdRoVE0AXfN4f1J08HrLWqr35eIgALMUN3MrHrVrTM7CwJfT/PgoypFjRmWh9kdz
+	6c0F0
+X-Gm-Gg: AYBFou0fSdqjdmVM5Q1xxb3yWaC2oC7Jbf4PnUcEP0m1wdZB0vCx5DfVXcLyXjIueYm
+	B2UvJA+O4DTDTYFn7tRonyI9p1wlBbyDGXU+p0SXDEDAG94PmABx2mJlqz/vGjdbfbojFByQMwE
+	HFcslD7tWGYr66HN9uvk4DZiydjHXiAimACAfCFQnqA5LhrkQj0OAMa6p+2mEXtH2J7N8WRxNoe
+	n6JZ4dYvTHg2567Hm7d1OIzoG82OLf+nNLMdELENzyY++24JUgsf4j9JGRnBTkYbvD3AlXGn3Wi
+	jfrxpjV23w7LP43Gt7/ybzCeKtuIjfv3hA125ugCX0Zux7A2M+4sM7TAz2Dbf5uHZr8gqonThcV
+	iseNjV29QHZ5DzbOBmczRjBAdX8W2BcVg/0GXAncIL951dvSqLB8nBwHW669FVvABaQxSN4bBRO
+	qMQPpySaw9NrSElS1uLQ+W8K3mRAiQ8NiVtjATvDtpXqKHfBUhhdUxEmZBx6AZgzFJoJVnJlNH0
+	7MD6VFXUilS/xtJzW6b6aq9wcJvvJXMYvwsIC0m60z4iX4cJvoPqs7ROwzaNh6hrnvAxNz/rEU2
+	ea0WZZLaJsFMkPcCqk0qay93Ss/j4WK6rbw=
+X-Received: by 2002:a05:620a:4495:b0:939:191c:cac7 with SMTP id af79cd13be357-93bb7739b43mr744595785a.13.1789595923329;
+        Wed, 16 Sep 2026 14:58:43 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.40
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.42
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 14:58:40 -0700 (PDT)
+        Wed, 16 Sep 2026 14:58:42 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 04/19] sssd: upgrade 2.10.2 -> 2.13.1
-Date: Wed, 16 Sep 2026 17:58:04 -0400
-Message-ID: <dddf6f4781a5e6c3ef56e3e8af169e5d0bb23c54.1789595456.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 06/19] ossec-hids: upgrade 3.7.0 -> 4.3.0
+Date: Wed, 16 Sep 2026 17:58:06 -0400
+Message-ID: <2b8124189c5e73fab06a6f5c0f820a9950ae2922.1789595456.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1789595456.git.scott.murray@konsulko.com>
 References: <cover.1789595456.git.scott.murray@konsulko.com>
@@ -67,248 +67,262 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 21:58:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4860
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4861
 
-Upgrade sssd to latest release, in part to fix OpenSSL 4.0 related build
-failures.  Add _GNU_SOURCE to CFLAGS when building with musl to pick up
-strchrnul definition.
+Upgrade to 4.3.0 and add a patch to fix building with OpenSSL 4.0.
 
 Release notes:
-https://sssd.io/release-notes/sssd-2.11.0.html
-https://sssd.io/release-notes/sssd-2.11.1.html
-https://sssd.io/release-notes/sssd-2.12.0.html
-https://sssd.io/release-notes/sssd-2.13.0.html
-https://sssd.io/release-notes/sssd-2.13.1.html
+https://github.com/ossec/ossec-hids/releases/tag/3.8.0
+https://github.com/ossec/ossec-hids/releases/tag/4.0.0
+https://github.com/ossec/ossec-hids/releases/tag/4.1.0
+https://github.com/ossec/ossec-hids/releases/tag/4.2.0
+https://github.com/ossec/ossec-hids/releases/tag/4.3.0
 
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../sssd/files/drop_ntpdate_chk.patch         | 17 ++++++---
- .../sssd/files/fix-ldblibdir.patch            |  9 ++++-
- .../recipes-security/sssd/files/fix_gid.patch | 18 ++++++---
- .../sssd/files/musl_fixup.patch               | 38 +++++++++++--------
- .../recipes-security/sssd/files/no_gen.patch  | 18 ++++++---
- .../sssd/{sssd_2.10.2.bb => sssd_2.13.1.bb}   |  4 +-
- 6 files changed, 69 insertions(+), 35 deletions(-)
- rename dynamic-layers/networking-layer/recipes-security/sssd/{sssd_2.10.2.bb => sssd_2.13.1.bb} (98%)
+ ...Makefile-drop-running-scrips-install.patch |   7 +-
+ .../0002-Makefile-don-t-set-uid-gid.patch     |   7 +-
+ .../files/0003-Add-OpenSSL-4.0-support.patch  | 167 ++++++++++++++++++
+ ...ssec-hids_3.7.0.bb => ossec-hids_4.3.0.bb} |   5 +-
+ 4 files changed, 174 insertions(+), 12 deletions(-)
+ create mode 100644 recipes-ids/ossec/files/0003-Add-OpenSSL-4.0-support.patch
+ rename recipes-ids/ossec/{ossec-hids_3.7.0.bb => ossec-hids_4.3.0.bb} (98%)
 
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/drop_ntpdate_chk.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/drop_ntpdate_chk.patch
-index 338af5d..732f4d8 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/files/drop_ntpdate_chk.patch
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/drop_ntpdate_chk.patch
-@@ -1,14 +1,21 @@
-+From 106a4283f450d9cf6caab9e63d45aeb5a6c9718b Mon Sep 17 00:00:00 2001
-+From: Armin Kuster <akuster808@gmail.com>
-+Date: Tue, 18 May 2021 15:10:53 +0000
-+Subject: [PATCH] sssd: update to 2.5.0
-+
- nsupdate path is needed for various exec call
- but don't run natvie tests on it.
+diff --git a/recipes-ids/ossec/files/0001-Makefile-drop-running-scrips-install.patch b/recipes-ids/ossec/files/0001-Makefile-drop-running-scrips-install.patch
+index 08e018f..7b1600c 100644
+--- a/recipes-ids/ossec/files/0001-Makefile-drop-running-scrips-install.patch
++++ b/recipes-ids/ossec/files/0001-Makefile-drop-running-scrips-install.patch
+@@ -1,7 +1,7 @@
+-From b948d36a8ca8e04794381f0f6eba29daf7e3fd01 Mon Sep 17 00:00:00 2001
++From 1035c4363148a831d2659bd88ac9d299cd6bd38e Mon Sep 17 00:00:00 2001
+ From: Armin Kuster <akuster808@gmail.com>
+ Date: Wed, 21 Apr 2021 00:56:53 +0000
+-Subject: [PATCH 1/2] Makefile: drop running scrips @ install
++Subject: [PATCH] Makefile: drop running scrips @ install
  
+ Upstream-Status: Inappropriate [embedded specific]
+ 
+@@ -32,6 +32,3 @@ index 06a7094c..dfb8cb58 100644
+  
+  install-server-generic: install-common
+  	$(call INSTALL_CMD,0660,${OSSEC_USER},${OSSEC_GROUP}) /dev/null ${PREFIX}/logs/active-responses.log
+--- 
+-2.25.1
 -
- Upstream-Status: Inappropriate [OE specific]
- Signed-off-by: Armin Kuster <akuster808@gmail.com>
-+---
-+ src/external/nsupdate.m4 | 12 ------------
-+ 1 file changed, 12 deletions(-)
+diff --git a/recipes-ids/ossec/files/0002-Makefile-don-t-set-uid-gid.patch b/recipes-ids/ossec/files/0002-Makefile-don-t-set-uid-gid.patch
+index d5e3403..fdbe49f 100644
+--- a/recipes-ids/ossec/files/0002-Makefile-don-t-set-uid-gid.patch
++++ b/recipes-ids/ossec/files/0002-Makefile-don-t-set-uid-gid.patch
+@@ -1,7 +1,7 @@
+-From d9ec907881b72d42b4918f7cfb46516ce8e77772 Mon Sep 17 00:00:00 2001
++From 9572062689514907fb613e0bad2cab2489141f92 Mon Sep 17 00:00:00 2001
+ From: Armin Kuster <akuster808@gmail.com>
+ Date: Sat, 24 Apr 2021 23:07:29 +0000
+-Subject: [PATCH 2/2] Makefile: don't set uid/gid
++Subject: [PATCH] Makefile: don't set uid/gid
  
--Index: sssd-2.5.0/src/external/nsupdate.m4
--===================================================================
----- sssd-2.5.0.orig/src/external/nsupdate.m4
--+++ sssd-2.5.0/src/external/nsupdate.m4
-+diff --git a/src/external/nsupdate.m4 b/src/external/nsupdate.m4
-+index a137f38..ab08f57 100644
-+--- a/src/external/nsupdate.m4
-++++ b/src/external/nsupdate.m4
- @@ -3,16 +3,4 @@ AC_MSG_CHECKING(for executable nsupdate)
-  if test -x "$NSUPDATE"; then
-    AC_DEFINE_UNQUOTED([NSUPDATE_PATH], ["$NSUPDATE"], [The path to nsupdate])
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/fix-ldblibdir.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/fix-ldblibdir.patch
-index e350baf..ab4f98d 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/files/fix-ldblibdir.patch
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/fix-ldblibdir.patch
-@@ -1,3 +1,8 @@
-+From 937a58aaa95036529e03926ab79d407438777981 Mon Sep 17 00:00:00 2001
-+From: Kai Kang <kai.kang@windriver.com>
-+Date: Wed, 16 Jun 2021 14:42:33 +0800
-+Subject: [PATCH] sssd: fix for ldblibdir and systemd etc
-+
- When calculate value of ldblibdir, it checks whether the directory of
- $ldblibdir exists. If not, it assigns ldblibdir with ${libdir}/ldb. It is not
- suitable for cross compile. Fix it that only re-assign ldblibdir when its value
-@@ -11,10 +16,10 @@ Signed-off-by: Kai Kang <kai.kang@windriver.com>
-  1 file changed, 1 insertion(+), 1 deletion(-)
+ Upstream-Status: Inappropriate [embedded specific]
  
- diff --git a/src/external/libldb.m4 b/src/external/libldb.m4
--index c400add..5e5f06d 100644
-+index e8285a9..e98913c 100644
- --- a/src/external/libldb.m4
- +++ b/src/external/libldb.m4
--@@ -19,7 +19,7 @@ if test x"$with_ldb_lib_dir" != x; then
-+@@ -22,7 +22,7 @@ if test x"$with_ldb_lib_dir" != x; then
-      ldblibdir=$with_ldb_lib_dir
-  else
-      ldblibdir="`$PKG_CONFIG --variable=modulesdir ldb`"
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/fix_gid.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/fix_gid.patch
-index 419b83f..ce62a1d 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/files/fix_gid.patch
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/fix_gid.patch
-@@ -1,3 +1,8 @@
-+From 394e022694d03dc456f00df656c8a0c5e59a1d49 Mon Sep 17 00:00:00 2001
-+From: Armin Kuster <akuster808@gmail.com>
-+Date: Tue, 18 May 2021 15:10:53 +0000
-+Subject: [PATCH] sssd: update to 2.5.0
-+
- from ../sssd-2.5.0/src/util/sss_pam_data.c:27:
- | ../sssd-2.5.0/src/util/debug.h:88:44: error: unknown type name 'uid_t'; did you mean 'uint_t'?
- |    88 | int chown_debug_file(const char *filename, uid_t uid, gid_t gid);
-@@ -11,11 +16,14 @@ from ../sssd-2.5.0/src/util/sss_pam_data.c:27:
- 
- Upstream-Status: Pending
- Signed-off-by: Armin Kuster <akuster808@gmail.com>
-+---
-+ src/util/debug.h | 2 ++
-+ 1 file changed, 2 insertions(+)
- 
--Index: sssd-2.7.1/src/util/debug.h
--===================================================================
----- sssd-2.7.1.orig/src/util/debug.h
--+++ sssd-2.7.1/src/util/debug.h
-+diff --git a/src/util/debug.h b/src/util/debug.h
-+index 22c8ebd..5736d3d 100644
-+--- a/src/util/debug.h
-++++ b/src/util/debug.h
- @@ -24,6 +24,8 @@
-  #include "config.h"
+@@ -246,6 +246,3 @@ index dfb8cb58..a4d69ef6 100644
   
-@@ -24,4 +32,4 @@ Index: sssd-2.7.1/src/util/debug.h
- +#include <sys/types.h>
-  #include <stdbool.h>
-  #include <sys/types.h>
-- 
-+ #include <libintl.h>
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/musl_fixup.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/musl_fixup.patch
-index 68f267c..51d0b25 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/files/musl_fixup.patch
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/musl_fixup.patch
-@@ -1,4 +1,7 @@
--fix musl build failures
-+From 05abd666016db971d8738685a31277771d16b29d Mon Sep 17 00:00:00 2001
-+From: Armin Kuster <akuster808@gmail.com>
-+Date: Sun, 4 Jul 2021 08:50:06 -0700
-+Subject: [PATCH] fix musl build failures
- 
- Missing _PATH_HOSTS and some NETDB defines when musl is enabled.
- 
-@@ -8,22 +11,25 @@ These are work arounds for now while we figure out where the real fix should res
- |  1199 |                   _PATH_HOSTS);
- |       |                   ^~~~~~~~~~~
- 
--and 
-+and
- 
- i./sssd-2.5.1/src/sss_client/nss_ipnetworks.c:415:21: error: 'NETDB_INTERNAL' undeclared (first use in this function)
- |   415 |         *h_errnop = NETDB_INTERNAL;
- 
+  	rm -f ${PREFIX}/etc/shared/merged.mg
+  
+--- 
+-2.25.1
 -
- Upstream-Status: Pending
- Signed-off-by: Armin Kuster <akuster808@gmail.com>
--
--Index: sssd-2.5.1/src/providers/fail_over.c
--===================================================================
----- sssd-2.5.1.orig/src/providers/fail_over.c
--+++ sssd-2.5.1/src/providers/fail_over.c
--@@ -31,6 +31,10 @@
-- #include <talloc.h>
-+---
-+ src/providers/fail_over.c | 4 ++++
-+ src/sss_client/sss_cli.h  | 8 ++++++++
-+ 2 files changed, 12 insertions(+)
+diff --git a/recipes-ids/ossec/files/0003-Add-OpenSSL-4.0-support.patch b/recipes-ids/ossec/files/0003-Add-OpenSSL-4.0-support.patch
+new file mode 100644
+index 0000000..e1f0d98
+--- /dev/null
++++ b/recipes-ids/ossec/files/0003-Add-OpenSSL-4.0-support.patch
+@@ -0,0 +1,167 @@
++From 7e1e68047ef990fbf85d769088479439e2538073 Mon Sep 17 00:00:00 2001
++From: Scott Murray <scott.murray@konsulko.com>
++Date: Sun, 13 Sep 2026 22:14:10 +0300
++Subject: [PATCH] Add OpenSSL 4.0 support
 +
-+diff --git a/src/providers/fail_over.c b/src/providers/fail_over.c
-+index d56c20f..2c6ceb6 100644
-+--- a/src/providers/fail_over.c
-++++ b/src/providers/fail_over.c
-+@@ -33,6 +33,10 @@
-  #include <netdb.h>
-+ #include <arpa/inet.h>
-  
- +#if !defined(_PATH_HOSTS)
- +#define _PATH_HOSTS     "/etc/hosts"
-@@ -32,12 +38,12 @@ Index: sssd-2.5.1/src/providers/fail_over.c
-  #include "util/dlinklist.h"
-  #include "util/refcount.h"
-  #include "util/util.h"
--Index: sssd-2.5.1/src/sss_client/sss_cli.h
--===================================================================
----- sssd-2.5.1.orig/src/sss_client/sss_cli.h
--+++ sssd-2.5.1/src/sss_client/sss_cli.h
--@@ -44,6 +44,14 @@ typedef int errno_t;
-- #define EOK 0
-+diff --git a/src/sss_client/sss_cli.h b/src/sss_client/sss_cli.h
-+index 57e1ead..f58510f 100644
-+--- a/src/sss_client/sss_cli.h
-++++ b/src/sss_client/sss_cli.h
-+@@ -52,6 +52,14 @@ typedef int errno_t;
-+ #define NETDB_INTERNAL (-1)
-  #endif
-  
- +#ifndef NETDB_INTERNAL
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/no_gen.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/no_gen.patch
-index 7d8e80b..9e3e4b0 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/files/no_gen.patch
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/no_gen.patch
-@@ -1,14 +1,20 @@
--don't run generate-sbus-code
-+From e9d42559b03a9543f3db91202917c76184617a4f Mon Sep 17 00:00:00 2001
-+From: Armin Kuster <akuster808@gmail.com>
-+Date: Tue, 18 May 2021 15:10:53 +0000
-+Subject: [PATCH] don't run generate-sbus-code
- 
- Upstream-Status: Inappropriate [OE Specific]
- 
- Signed-off-by: Armin Kuster <akuster808@gmail.com>
++Rework TLS setup and X509 certificate checking code to handle OpenSSL
++4.0 API changes.
++
++Upstream-Status: Pending
++Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 +---
-+ Makefile.am | 2 --
-+ 1 file changed, 2 deletions(-)
- 
--Index: sssd-2.7.1/Makefile.am
--===================================================================
----- sssd-2.7.1.orig/Makefile.am
--+++ sssd-2.7.1/Makefile.am
--@@ -1023,8 +1023,6 @@ generate-sbus-code:
-+diff --git a/Makefile.am b/Makefile.am
-+index 0ca40d9..75fdf72 100644
-+--- a/Makefile.am
-++++ b/Makefile.am
-+@@ -1048,8 +1048,6 @@ generate-sbus-code:
-  
-  .PHONY: generate-sbus-code
-  
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.10.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.1.bb
++ src/os_auth/check_cert.c | 42 +++++++++++++++-------------------------
++ src/os_auth/check_cert.h |  4 ++--
++ src/os_auth/ssl.c        |  9 +++++++++
++ 3 files changed, 27 insertions(+), 28 deletions(-)
++
++diff --git a/src/os_auth/check_cert.c b/src/os_auth/check_cert.c
++index 365eecee..94fc7660 100644
++--- a/src/os_auth/check_cert.c
+++++ b/src/os_auth/check_cert.c
++@@ -106,13 +106,13 @@ int check_subject_alt_names(X509 *cert, const char *manager)
++  */
++ int check_subject_cn(X509 *cert, const char *manager)
++ {
++-    X509_NAME *name = NULL;
+++    const X509_NAME *name = NULL;
++     int result = VERIFY_FALSE;
++     int i = 0;
++ 
++     if ((name = X509_get_subject_name(cert))) {
++         while ((i = X509_NAME_get_index_by_NID(name, NID_commonName, i)) >= 0 && result == VERIFY_FALSE) {
++-            X509_NAME_ENTRY *ne = X509_NAME_get_entry(name, i);
+++            const X509_NAME_ENTRY *ne = X509_NAME_get_entry(name, i);
++             result = check_hostname(X509_NAME_ENTRY_get_data(ne), manager);
++         }
++     }
++@@ -127,7 +127,7 @@ int check_subject_cn(X509 *cert, const char *manager)
++  * and compared. Matching is case insensitive and basic wildcard matching
++  * is supported.
++  */
++-int check_hostname(ASN1_STRING *cert_astr, const char *manager)
+++int check_hostname(const ASN1_STRING *cert_astr, const char *manager)
++ {
++     label c_labels[DNS_MAX_LABELS];
++     label m_labels[DNS_MAX_LABELS];
++@@ -135,7 +135,7 @@ int check_hostname(ASN1_STRING *cert_astr, const char *manager)
++     int m_label_num = 0;
++     int wildcard_cert = 0;
++     int i = 0;
++-    char *cert_cstr = NULL;
+++    unsigned char *cert_cstr = NULL;
++ 
++     if (!(cert_cstr = asn1_to_cstr(cert_astr))) {
++         return VERIFY_FALSE;
++@@ -143,9 +143,9 @@ int check_hostname(ASN1_STRING *cert_astr, const char *manager)
++ 
++     /* Convert domain names to arrays of labels separated by '.'
++      */
++-    c_label_num = label_array(cert_cstr, c_labels);
+++    c_label_num = label_array((char*) cert_cstr, c_labels);
++     m_label_num = label_array(manager, m_labels);
++-    free(cert_cstr);
+++    OPENSSL_free(cert_cstr);
++ 
++     /* Check that we have an appropriate number of labels and that the name
++      * from the certificate and the name given on the command line have
++@@ -193,11 +193,11 @@ int check_ipaddr(const ASN1_STRING *cert_astr, const char *manager)
++     memset(&iptest6, 0, sizeof(iptest6));
++ 
++     if (inet_pton(AF_INET, manager, &iptest.sin_addr) == 1) {
++-        if (cert_astr->length == 4 && !memcmp(cert_astr->data, (const void *)&iptest.sin_addr, 4)) {
+++        if (ASN1_STRING_length(cert_astr) == 4 && !memcmp(ASN1_STRING_get0_data(cert_astr), (const void *)&iptest.sin_addr, 4)) {
++             return VERIFY_TRUE;
++         }
++     } else if (inet_pton(AF_INET6, manager, &iptest6.sin6_addr) == 1) {
++-        if (cert_astr->length == 16 && !memcmp(cert_astr->data, (const void *)&iptest6.sin6_addr, 16)) {
+++        if (ASN1_STRING_length(cert_astr) == 16 && !memcmp(ASN1_STRING_get0_data(cert_astr), (const void *)&iptest6.sin6_addr, 16)) {
++             return VERIFY_TRUE;
++         }
++     }
++@@ -291,35 +291,25 @@ int label_match(const label *label1, const label *label2)
++ 
++ /* Convert an ASN1 string which may not be null terminated into a
++  * standard null terminated string. Also check for embedded null
++- * characters.
+++ * characters.  The returned string should be freed with
+++ * OPENSSL_free.
++  */
++-char *asn1_to_cstr(ASN1_STRING *astr)
+++unsigned char *asn1_to_cstr(const ASN1_STRING *astr)
++ {
++-    unsigned int astr_len = 0;
++-    char *tmp = NULL;
++-    char *cstr = NULL;
+++    size_t astr_len = 0;
+++    unsigned char *cstr = NULL;
++ 
++-    if (!(astr_len = (unsigned int) ASN1_STRING_length(astr))) {
++-        return NULL;
++-    }
++-
++-    if (!(tmp = (char *)ASN1_STRING_data(astr))) {
+++    if ((astr_len = ASN1_STRING_to_UTF8(&cstr, astr)) <= 0) {
++         return NULL;
++     }
++ 
++     /* Verify that the string does not contain embedded null characters.
++      */
++-    if (memchr(tmp, '\0', astr_len)) {
+++    if (memchr(cstr, '\0', astr_len)) {
+++        OPENSSL_free(cstr);
++         return NULL;
++     }
++ 
++-    if ((cstr = (char *) malloc(astr_len + 1)) == NULL) {
++-        return NULL;
++-    }
++-
++-    memcpy(cstr, tmp, astr_len);
++-    cstr[astr_len] = '\0';
++-
++     return cstr;
++ }
++ 
++diff --git a/src/os_auth/check_cert.h b/src/os_auth/check_cert.h
++index ff244dd9..fc804653 100644
++--- a/src/os_auth/check_cert.h
+++++ b/src/os_auth/check_cert.h
++@@ -46,12 +46,12 @@ label;
++ int check_x509_cert(const SSL *ssl, const char *manager);
++ int check_subject_alt_names(X509 *cert, const char *manager);
++ int check_subject_cn(X509 *cert, const char *manager);
++-int check_hostname(ASN1_STRING *cert_astr, const char *manager);
+++int check_hostname(const ASN1_STRING *cert_astr, const char *manager);
++ int check_ipaddr(const ASN1_STRING *cert_astr, const char *manager);
++ int label_array(const char *domain_name, label result[DNS_MAX_LABELS]);
++ int label_valid(const label *label);
++ int label_match(const label *label1, const label *label2);
++-char *asn1_to_cstr(ASN1_STRING *astr);
+++unsigned char *asn1_to_cstr(const ASN1_STRING *astr);
++ 
++ #endif /* LIBOPENSSL_ENABLED */
++ #endif /* _CHECK_CERT_H */
++diff --git a/src/os_auth/ssl.c b/src/os_auth/ssl.c
++index c9b017cc..ec579ef1 100644
++--- a/src/os_auth/ssl.c
+++++ b/src/os_auth/ssl.c
++@@ -104,10 +104,19 @@ SSL_CTX *get_ssl_context(const char *ciphers)
++     OpenSSL_add_all_algorithms();
++ 
++     /* Create our context */
+++#if(OPENSSL_VERSION_NUMBER < 0x40000000L)
++     sslmeth = TLSv1_2_method();
+++#else
+++    sslmeth = TLS_method();
+++#endif
++     if (!(ctx = SSL_CTX_new(sslmeth))) {
++         goto CONTEXT_ERR;
++     }
+++#if(OPENSSL_VERSION_NUMBER >= 0x40000000L)
+++    if (!(SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION))) {
+++        goto CONTEXT_ERR;
+++    }
+++#endif
++ 
++     /* Explicitly set options and cipher list */
++     SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2);
+diff --git a/recipes-ids/ossec/ossec-hids_3.7.0.bb b/recipes-ids/ossec/ossec-hids_4.3.0.bb
 similarity index 98%
-rename from dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.10.2.bb
-rename to dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.1.bb
-index 8ee61ce..1e71300 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.10.2.bb
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.1.bb
-@@ -24,7 +24,7 @@ SRC_URI = "https://github.com/SSSD/sssd/releases/download/${PV}/${BP}.tar.gz \
-            file://fix-ldblibdir.patch \
-            file://musl_fixup.patch \
-            "
--SRC_URI[sha256sum] = "e8aa5e6b48ae465bea7064048715ce7e9c53b50ec6a9c69304f59e0d35be40ff"
-+SRC_URI[sha256sum] = "05ea79e89f0be399983925b8874ac196d6dc5fd4416f83609557b9fc8ef798b5"
+rename from recipes-ids/ossec/ossec-hids_3.7.0.bb
+rename to recipes-ids/ossec/ossec-hids_4.3.0.bb
+index f8ee993..2ec7174 100644
+--- a/recipes-ids/ossec/ossec-hids_3.7.0.bb
++++ b/recipes-ids/ossec/ossec-hids_4.3.0.bb
+@@ -5,9 +5,10 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=d625d1520b5e38faefb81cf9772badc9"
  
- inherit autotools pkgconfig gettext python3native features_check systemd useradd github-releases
+ DEPENDS = "openssl libpcre2 zlib libevent"
+ SRC_URI = "git://github.com/ossec/ossec-hids;branch=master;protocol=https \
+-           file://0001-Makefile-drop-running-scrips-install.patch  \
++           file://0001-Makefile-drop-running-scrips-install.patch \
+            file://0002-Makefile-don-t-set-uid-gid.patch \
+-           "
++           file://0003-Add-OpenSSL-4.0-support.patch \
++"
  
-@@ -71,6 +71,8 @@ EXTRA_OECONF += " \
-     --with-sssd-user=sssd \
- "
+ SRCREV = "bf797c759994015274f3bc31fe2bed278cce67ee"
  
-+CFLAGS:append:libc-musl = " -D_GNU_SOURCE"
-+
- do_configure:prepend () {
-     mkdir -p ${AUTOTOOLS_AUXDIR}/build
-     cp ${STAGING_DATADIR_NATIVE}/gettext/config.rpath ${AUTOTOOLS_AUXDIR}/build/
 -- 
 2.55.0
 
