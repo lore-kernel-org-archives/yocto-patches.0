@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 784B6C982D0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E48C982D3
 	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 21:58:50 +0000 (UTC)
-Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.26507.1789595920081348772
+Received: from mail-qk2-f28.google.com (mail-qk2-f28.google.com [74.125.230.220])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.26513.1789595929270027908
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 14:58:40 -0700
+ Wed, 16 Sep 2026 14:58:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=UiM593K0;
- spf=pass (domain: konsulko.com, ip: 74.125.230.204, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-939109f067eso14881185a.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:39 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=JrH1chw/;
+ spf=pass (domain: konsulko.com, ip: 74.125.230.220, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk2-f28.google.com with SMTP id af79cd13be357-93910a0cb7aso13264085a.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789595919; x=1790200719; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1789595928; x=1790200728; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=/KynRcpp+JDjr540yKqjL5AqMCR7AnmsSTuTw658Yi4=;
-        b=UiM593K0bFzH5ZpUbuRfnGGdg1oYkoGk31pDlUDZxhEWoTMTgh+FEqm8raWVJb/6bg
-         PdzxICJbAMBb9XLzskNKJrbRzHZDNqUCh9A4T51hplsRWovH36GjQqmCqcavm73+6XK5
-         l60PbF2U7eI9nlAEYnS03bktlYzxVZhC8WxZ0=
+        bh=BXS3o1AtM+HQBKnh0PS5RWvOvPs66qNLbF4lJ/YWNrU=;
+        b=JrH1chw/gcFPMYra06RzsJa9uk0MDcP9m7ZvaB+RkMcz5OPi58Q/bDNHxxDKbU8b3C
+         7DbAQojT5AS0NeEOQpPGfLi+a6Ji2dp1dISwvZVucINIq/PDXVqOLIU1k8VxsIZ+RimZ
+         UYkYhXuVRva41MUPs02TAxjw+VWNVCP0rpfFc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789595919; x=1790200719;
+        d=1e100.net; s=20260707; t=1789595928; x=1790200728;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=/KynRcpp+JDjr540yKqjL5AqMCR7AnmsSTuTw658Yi4=;
-        b=MhKtQIoSgStErpSUKwqHerczz650dzRldYJKmhQBDotY1zqXydLDrXT4GZ0d6m8Ygt
-         Ewtn7g9XGyEjuLBYkvQ6dktcOHQQRcCuAoPR3dz9lYkAfsrRwsXOl/Gp31O5m91tnysL
-         HfSxOqnqPS2f+NgBxPoLJ7XG2Ch1xlAIfIf9N1YVzsn+tXaSLnlmc0+q40p11tJATZcb
-         jcu6BL+gTkxlOObseXx9ijhxLHqQDUIqifVZzwUObw28/sArcurCm4mllhGr0LxWyLoK
-         o8iwlA62dzr/x3ERs0f4QQ2lqO7N4ZS3YO/fx01VCq9+RlQKq75ylAujbujqDqrH7fcN
-         ukqQ==
-X-Gm-Message-State: AFuF++l2LWikU68pNY7/SyVWZN8k4MqwdO2QZ4oxvRnD9wlhN5YCjl63
-	1wfx+TL8lqNLDD1RWbTX13KFmw284B8l0QlbRssEc3JNiTrApYAde1vaboPRqojAJl3rtkzjWKW
-	j6twD
-X-Gm-Gg: AYBFou2Zyi8/HdRPStlLfwzVlxkcVu+IHatX6BPcLKVV7+ZpuPDbcWRehzIgSiofmmi
-	i8J0m8K2UMfGnYH3J+la6bGWWtlt1jLkKG2D2eUgf8ALSl08AJUTQ3cPe8xJ/NHqIb4AS9jvfaj
-	Tc3CgfQ3DauEypyPgz9Z+ID2WVcpPpaZJLSAFgyqHywL/C5RdlbsgkdzoCVAOvzyFwi9IC6LdEB
-	gco1ScXnQMK0xWfdnCnv6I71uX1c9bvwy25G/hK32nKau0eAOF03FWfZ4U4figrXPrZbFxAhqqs
-	qN5iCjW5QPsvQC3Z50YlmvLgmob45QDWhzixjEDba9lUmaVUExGtLM56Ws4UbC8vihhrVbFrNJp
-	FYbK3T4j0Rscw5/wNhC8Z0K+xNHeNDpps/nIL5RzrqCoZRBbHQs/G3Yata0Ebjkyqxy+V/MHWCW
-	/rfc0jqSNQORQnrIrB6ew27pg49mXSUCCCfxviN5dVaZtsBOABPdaPaoD1L3zP0jnE9RQVY1Hcz
-	KPolmXqnlDdJg4VL9qg2ADXA/JXod2+CYppqkM6gsQ/CcFOq49QgXgTEMe74z/IfVqugrwfl9ae
-	DCaLXIym76sFt46SrHwFICo2jbPaUV0LjEvXB6vPo86ruQ==
-X-Received: by 2002:a05:620a:6085:b0:939:c9e9:81a1 with SMTP id af79cd13be357-93bb785d086mr717697185a.42.1789595918833;
-        Wed, 16 Sep 2026 14:58:38 -0700 (PDT)
+        bh=BXS3o1AtM+HQBKnh0PS5RWvOvPs66qNLbF4lJ/YWNrU=;
+        b=LBH2qCmSvQnK0DPCyUlFOMPT0l/L1ntU67W1VDk7/jkD/HuHXMu0shq3D5Po+yvNGc
+         cAau47OSPR1Ufi5fIkSRlXqYT8uK08ox8SsEV83BPebJnrVtZcIWkgrB/d4akaR9QojL
+         23Q7YM1hEnG8XmEOiVtRSjh+CaXcxZKnjn2k2QgQjd2uX4sQO7hLSXd9Im9nQK1B9x8y
+         r7A3oJS+JgdNVMfCbyqBs+R9Cs3XHHk5brhteQA4qJ1VTQgVLsfXQJz2dxD+ay2JMva3
+         MsVMoVhYo4Z0FmmtGIZ2a7yytslEYw99dW33l1HigO5zKPjGNu5fANG8WKUUmxbvepRP
+         A8Pw==
+X-Gm-Message-State: AFuF++l2d0hi8yZDAXohVN0y/dl/508LTiskk/kXd6iRh/uy5WyZ4Yrt
+	sWZbFZKPBnVd/p6CuXIs0mZVTphgQDx3k8RQv6RNsDIO4QASN+nkg0oMFVFPbfzTJiS9mZmZ53v
+	gCEIA
+X-Gm-Gg: AYBFou2y6GGnHB8I1CwUWmkuwvY8Pep0T5WT2uguAPXMdhk0cXmIJdeEDlZSdk3vUOf
+	0zaUBVa27jr+zSK8Qm4Ue+1PMxl6HGaSF1CZg3SgIg0xeW/6ZA40xb92lQhbtevTZ9pC8x04jRm
+	GlkQ3UC4tD58IDeXEl3n/V4i20cnTHM9ODuVet8CaeHUkCivmok7Y+UxW3w5eShgigkOnRFTHP9
+	lQD6RAK7Zwp7pRcOp+Ojblqss67+to18RRyfUXsU9K+cfF9h2/okwzmqcsDoq1l73xrBz29GVO1
+	42SvQHO88uLrZNdDvtb9cZIY3kowIEquib9CxqFiAdDbOATxp9CemKHLQqwPAXGo0R/rkzS5FVP
+	jsfKjBsHQEgKNtWyvW/1l76BmqQTE9GQNtUAjuTKKzb71jlYtCYigJ9c35kELxM+Qp8Se/0xQL0
+	J0UqzjWP4q3kbqkjt6XaEubpU0Z3s6P1YHanwRdWQP2XEUQdJmWdJbdpZkcJqSefzM5ItkmzGjY
+	od5/Sq+1tETq6fparL2hW3ZYh8D66YodhD10ZFvXsppEYB6Red+RCI5ADpNs/GUWwPUBwqvELGy
+	DQRwuW/t3jVHWQKshNu1OBiRsmvpHsw7B+/o
+X-Received: by 2002:a05:620a:2805:b0:93a:2afd:19c7 with SMTP id af79cd13be357-93bb7950040mr742260985a.37.1789595927985;
+        Wed, 16 Sep 2026 14:58:47 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.37
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.47
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 14:58:37 -0700 (PDT)
+        Wed, 16 Sep 2026 14:58:47 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 02/19] openscap: upgrade 1.4.3 -> 1.4.4
-Date: Wed, 16 Sep 2026 17:58:02 -0400
-Message-ID: <54deebf9dd04387b29360030a7ae872832cfc96b.1789595456.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 11/19] trousers: Fix build with OpenSSL 4.x
+Date: Wed, 16 Sep 2026 17:58:11 -0400
+Message-ID: <f3d7d2e6d4367b270152745be9b9396c0a5dde63.1789595456.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1789595456.git.scott.murray@konsulko.com>
 References: <cover.1789595456.git.scott.murray@konsulko.com>
@@ -67,135 +67,95 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 21:58:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4858
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4867
 
-Upgrade to 1.4.4 and backport an unreleased change to fix building
-with SWIG 4.5.x.
+From: Khem Raj <raj.khem@gmail.com>
 
-Release notes:
-https://github.com/OpenSCAP/openscap/releases/tag/1.4.4
+OpenSSL 4.0 completes the opaquing of struct asn1_string_st, so
+src/tspi/tspi_asn1.c no longer builds:
 
+  src/tspi/tspi_asn1.c:240:33: error: incomplete definition of type
+      'ASN1_OCTET_STRING' (aka 'struct asn1_string_st')
+    240 |    memcpy(rawBlob, tssBlob->blob->data, decBlobSize);
+        |                    ~~~~~~~~~~~~~^
+
+Add a patch using the ASN1_STRING_get0_data() accessor, which has been
+available since OpenSSL 1.1.0 and is the documented replacement for
+reaching into ->data. The rest of the file already goes through
+accessors (ASN1_INTEGER_get(), ASN1_OCTET_STRING_set()), so this keeps
+it consistent. No functional change.
+
+Signed-off-by: Khem Raj <khem.raj@oss.qualcomm.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- ...Python-2-C-API-macros-for-SWIG-4.5.0.patch | 87 +++++++++++++++++++
- .../{openscap_1.4.3.bb => openscap_1.4.4.bb}  |  5 +-
- 2 files changed, 90 insertions(+), 2 deletions(-)
- create mode 100644 recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch
- rename recipes-compliance/openscap/{openscap_1.4.3.bb => openscap_1.4.4.bb} (96%)
+ ...1-use-ASN1_STRING_get0_data-accessor.patch | 45 +++++++++++++++++++
+ .../recipes-tpm1/trousers/trousers_git.bb     |  1 +
+ 2 files changed, 46 insertions(+)
+ create mode 100644 meta-tpm/recipes-tpm1/trousers/files/0001-tspi_asn1-use-ASN1_STRING_get0_data-accessor.patch
 
-diff --git a/recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch b/recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch
+diff --git a/meta-tpm/recipes-tpm1/trousers/files/0001-tspi_asn1-use-ASN1_STRING_get0_data-accessor.patch b/meta-tpm/recipes-tpm1/trousers/files/0001-tspi_asn1-use-ASN1_STRING_get0_data-accessor.patch
 new file mode 100644
-index 0000000..8711dec
+index 0000000..9287450
 --- /dev/null
-+++ b/recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch
-@@ -0,0 +1,87 @@
-+From 26b6cb16a1450d10eb5e14fa4f0ff62d48ff62fd Mon Sep 17 00:00:00 2001
-+From: Matthew Burket <mburket@redhat.com>
-+Date: Tue, 1 Sep 2026 11:02:05 -0500
-+Subject: [PATCH] Replace removed Python 2 C API macros for SWIG 4.5.0
-+ compatibility
++++ b/meta-tpm/recipes-tpm1/trousers/files/0001-tspi_asn1-use-ASN1_STRING_get0_data-accessor.patch
+@@ -0,0 +1,45 @@
++From: Khem Raj <khem.raj@oss.qualcomm.com>
++Date: Sun, 6 Sep 2026 20:05:00 -0700
++Subject: [PATCH] tspi_asn1: use ASN1_STRING_get0_data() accessor
 +
-+Back ported from https://src.fedoraproject.org/rpms/openscap/pull-request/35
++OpenSSL 4.0 completes the opaquing of struct asn1_string_st, so reaching
++into ASN1_OCTET_STRING directly no longer compiles:
 +
-+Co-authored-by: Jitka Plesnikova <jplesnik@redhat.com>
-+Upstream-Status: Backport [https://github.com/OpenSCAP/openscap/commit/26b6cb16]
-+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
++  src/tspi/tspi_asn1.c:240:33: error: incomplete definition of type
++      'ASN1_OCTET_STRING' (aka 'struct asn1_string_st')
++    240 |    memcpy(rawBlob, tssBlob->blob->data, decBlobSize);
++        |                    ~~~~~~~~~~~~~^
++
++Use the ASN1_STRING_get0_data() accessor instead. It has been available
++since OpenSSL 1.1.0 and is the documented replacement for touching the
++->data member; the rest of this file already goes through accessors
++(ASN1_INTEGER_get(), ASN1_OCTET_STRING_set()).
++
++No functional change.
++
++Upstream-Status: Inappropriate [upstream is dormant; git.code.sf.net
++master is still at 94144b0 "Bumped version to 0.3.15" from 2020-11-03,
++which is the SRCREV this recipe already pins]
++
++Signed-off-by: Khem Raj <khem.raj@oss.qualcomm.com>
 +---
-+ swig/openscap.i | 16 +++++++---------
-+ 1 file changed, 7 insertions(+), 9 deletions(-)
++ src/tspi/tspi_asn1.c | 3 ++-
++ 1 file changed, 2 insertions(+), 1 deletion(-)
 +
-+diff --git a/swig/openscap.i b/swig/openscap.i
-+index 7970481f0..1d23b0a32 100644
-+--- a/swig/openscap.i
-++++ b/swig/openscap.i
-+@@ -48,8 +48,6 @@
-+ {
-+     if (PyLong_Check($input))
-+         $1 = (time_t) PyLong_AsLong($input);
-+-    else if (PyInt_Check($input))
-+-        $1 = (time_t) PyInt_AsLong($input);
-+     else if (PyFloat_Check($input))
-+         $1 = (time_t) PyFloat_AsDouble($input);
-+     else {
-+@@ -80,8 +78,8 @@
-+     $1 = (char **) malloc((size+1)*sizeof(char *));
-+     for (i = 0; i < size; i++) {
-+       PyObject *o = PyList_GetItem($input,i);
-+-      /*if (PyString_Check(o))*/
-+-        $1[i] = PyString_AsString(PyList_GetItem($input,i));
-++      /*if (PyBytes_Check(o))*/
-++        $1[i] = PyBytes_AsString(PyList_GetItem($input,i));
-+       /*else {
-+         PyErr_SetString(PyExc_TypeError,"list must contain strings");
-+         free($1);
-+@@ -329,7 +327,7 @@ int rule_result_output_callback_wrapper(struct xccdf_rule_result* rule_result, v
-+         return -1;
-+     }
-+     Py_DECREF(arglist);
-+-    dres = PyInt_AsLong(result);
-++    dres = PyLong_AsLong(result);
-+     Py_XDECREF(result);
-+     PyGILState_Release(state);
-+     return dres;
-+@@ -366,7 +364,7 @@ int rule_start_callback_wrapper(struct xccdf_rule* rule, void *arg)
-+         return -1;
-+     }
-+     Py_DECREF(arglist);
-+-    dres = PyInt_AsLong(result);
-++    dres = PyLong_AsLong(result);
-+     Py_XDECREF(result);
-+     PyGILState_Release(state);
-+     return dres;
-+@@ -403,7 +401,7 @@ int agent_reporter_callback_wrapper(const struct oval_result_definition* res_def
-+         return -1;
-+     }
-+     Py_DECREF(arglist);
-+-    dres = PyInt_AsLong(result);
-++    dres = PyLong_AsLong(result);
-+     Py_XDECREF(result);
-+     PyGILState_Release(state);
-+     return dres;
-+@@ -438,7 +436,7 @@ int validate_callback_wrapper(const char* file, int line, const char* msg, void
-+         return -1;
-+     }
-+     Py_DECREF(arglist);
-+-    dres = PyInt_AsLong(result);
-++    dres = PyLong_AsLong(result);
-+     Py_XDECREF(result);
-+     PyGILState_Release(state);
-+     return dres;
-+@@ -474,7 +472,7 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
-+         return NULL;
-+     }
-+     Py_DECREF(arglist);
-+-    dres = PyString_AsString(result);
-++    dres = PyBytes_AsString(result);
-+     if (dres == NULL) {
-+         if (PyErr_Occurred() != NULL)
-+             PyErr_PrintEx(0);
-+-- 
-+2.47.3
++diff --git a/src/tspi/tspi_asn1.c b/src/tspi/tspi_asn1.c
++index f17ce41..14d216b 100644
++--- a/src/tspi/tspi_asn1.c
+++++ b/src/tspi/tspi_asn1.c
++@@ -237,7 +237,8 @@ Tspi_DecodeBER_TssBlob(UINT32 berBlobSize,		/* in */
++ 
++ 	if (*rawBlobSize != 0) {
++ 		if (decBlobSize <= *rawBlobSize) {
++-			memcpy(rawBlob, tssBlob->blob->data, decBlobSize);
+++			memcpy(rawBlob, ASN1_STRING_get0_data(tssBlob->blob),
+++			       decBlobSize);
++ 		}
++ 		else {
++ 			TSS_BLOB_free(tssBlob);
++--
++2.51.0
 +
-diff --git a/recipes-compliance/openscap/openscap_1.4.3.bb b/recipes-compliance/openscap/openscap_1.4.4.bb
-similarity index 96%
-rename from recipes-compliance/openscap/openscap_1.4.3.bb
-rename to recipes-compliance/openscap/openscap_1.4.4.bb
-index 1b6d9af..8f498df 100644
---- a/recipes-compliance/openscap/openscap_1.4.3.bb
-+++ b/recipes-compliance/openscap/openscap_1.4.4.bb
-@@ -11,9 +11,10 @@ DEPENDS:class-native = "pkgconfig-native swig-native curl-native libxml2-native
+diff --git a/meta-tpm/recipes-tpm1/trousers/trousers_git.bb b/meta-tpm/recipes-tpm1/trousers/trousers_git.bb
+index abbb436..ff3335f 100644
+--- a/meta-tpm/recipes-tpm1/trousers/trousers_git.bb
++++ b/meta-tpm/recipes-tpm1/trousers/trousers_git.bb
+@@ -16,6 +16,7 @@ SRC_URI = " \
+     	file://tcsd.service \
+         file://get-user-ps-path-use-POSIX-getpwent-instead-of-getpwe.patch \
+         file://0001-build-don-t-override-localstatedir-mandir-sysconfdir.patch \
++        file://0001-tspi_asn1-use-ASN1_STRING_get0_data-accessor.patch \
+     	"
  
- SRC_URI = "git://github.com/OpenSCAP/openscap.git;branch=main;protocol=https \
-            file://0001-CMakeLists.txt-fix-installation-directory-for-system.patch \
--          "
-+           file://0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch \
-+"
- 
--SRCREV = "24986066961363e24fcff83294995b3cfe4058ba"
-+SRCREV = "4ac56ce0e6dfdea7215b5ad202b3db20855d2507"
- 
- COMPATIBLE_HOST:libc-musl = "null"
- 
+ inherit autotools pkgconfig useradd update-rc.d ${@bb.utils.contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','', d)}
 -- 
 2.55.0
 
