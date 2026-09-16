@@ -2,200 +2,200 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1CBC982C1
-	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 21:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 784B6C982D0
+	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 21:58:50 +0000 (UTC)
 Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.26506.1789595917815571910
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.26507.1789595920081348772
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 14:58:38 -0700
+ Wed, 16 Sep 2026 14:58:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=YFdLPV96;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=UiM593K0;
  spf=pass (domain: konsulko.com, ip: 74.125.230.204, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-93a135ffb08so17751685a.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:37 -0700 (PDT)
+Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-939109f067eso14881185a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789595917; x=1790200717; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+6ZfTojWkhCXLmPExEcPZQrhAFRi2I2cYAjtKDkoEPI=;
-        b=YFdLPV963nLuZZ7jR5ryDOmq286vfOZ9CU/Y6HPCE2qskd4KlR2tXibE426efF841P
-         /ycoE6+wGTw1nh+bJ9owawBKhpADfX3tIA4+LO2C7CIpb5d3m7FP3rRdR0eqrBQii2m0
-         dP6BrDA2E8X6cxRxq2cybDE4aTkC6p8BQsYMs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789595917; x=1790200717;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=konsulko.com; s=google; t=1789595919; x=1790200719; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=+6ZfTojWkhCXLmPExEcPZQrhAFRi2I2cYAjtKDkoEPI=;
-        b=Tf6WBY2pkHm3rbxYsjtkSCZrYzcmtMVN/2JO2+NapE4FJJjIls1pyjOzTlic7L5a0E
-         ktW0u5cc9rbXEjvu8ZRFvAob3ujaTZ4kG18p5DAX+yOEQlho29QdrKHEno7nUqt47rCT
-         NUj5rI+B4x00kX8iN/m/77VHnyg3gLz0aTsE2pX85a0L2ZgdtdkKRQ3gQgWB6Wyfl4D8
-         rbUU8IhHcnfIkXl/iC1EXoi6A0WWdePSvGy7+sib4wRu3IVo4qwPNQLm51zwDYUCRYHV
-         P/lMgJWF+hIdNXt3fHN/9bqRcIraAEMhAFt1RBmdoiMGXMkwz9tyxunj1N4nJpN0DphZ
-         PRRg==
-X-Gm-Message-State: AFuF++l0HNlcmJ084+sw8oZDOxrMg7C+KrLvD9h6S8gHYyep4g6rp4jC
-	pQWeP0kZF1R2pc5q6gM+jXYuIXEji8ZzBjxx7gHvssTCYE3JRmXyuq6b45bpbR9l6kIa2gnsW4f
-	nlUkG
-X-Gm-Gg: AYBFou0kt7ZoMxBfg4legYV9JtAL1wj1epqUmrGwonIe2yr+NW7+qQO4rl3wYQU8AdQ
-	mckff4mwcttRyTEC6Tf4beeQu1GvCRab8p1Z5itT715jbf1i/E823ntNPpxD0nUi5lfIb79QBWT
-	zFE4uEbnUshXecn+1ytRouEINKnYhnFYUpoKCO+URWuX33P9oPCCk9xFs6NXT6LjoZCDdV9+vAE
-	nmFuVvIT2QYK7Uz0JK5Fh6tCtF+iNXIt45r7nbF43TgTsFP4UbN0TtI27iZCWrusqkRkmG7aIg6
-	EHJQ7V6SXo3zTJSa+os1BJMvVFETUXxzEo0AGzyKktyMsw4HPJ29gpFeCopAGzQY7Isnf1xrY7j
-	LtXrHUOebkFccx+YYYn5RS+iz1APm+brIEQ5Ezj1YyukbhkQ/UNo5Fbla3VUMykcIXZ5dAc6u1m
-	1zAMqArH5zZoQDl7MPyJSGt7Ff9w7Uu+TMB3w6W77UwxtzLBUgoizIgSa8hlaeaTiRp1/I4eBgo
-	G19dc7rEMJHCcmqXtFZw7C4Idni6aFapv1Ux1J9eS6jHk1tY9ll4w4LsUtsvOhWzgvIW8B+Mk/z
-	R5Cu/DaoF0p2nRu8iZtfhWRTQ57njzQmDE8=
-X-Received: by 2002:a05:620a:2551:b0:939:d5f4:ab5d with SMTP id af79cd13be357-93bb785be6emr757896185a.33.1789595916333;
-        Wed, 16 Sep 2026 14:58:36 -0700 (PDT)
+        bh=/KynRcpp+JDjr540yKqjL5AqMCR7AnmsSTuTw658Yi4=;
+        b=UiM593K0bFzH5ZpUbuRfnGGdg1oYkoGk31pDlUDZxhEWoTMTgh+FEqm8raWVJb/6bg
+         PdzxICJbAMBb9XLzskNKJrbRzHZDNqUCh9A4T51hplsRWovH36GjQqmCqcavm73+6XK5
+         l60PbF2U7eI9nlAEYnS03bktlYzxVZhC8WxZ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789595919; x=1790200719;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=/KynRcpp+JDjr540yKqjL5AqMCR7AnmsSTuTw658Yi4=;
+        b=MhKtQIoSgStErpSUKwqHerczz650dzRldYJKmhQBDotY1zqXydLDrXT4GZ0d6m8Ygt
+         Ewtn7g9XGyEjuLBYkvQ6dktcOHQQRcCuAoPR3dz9lYkAfsrRwsXOl/Gp31O5m91tnysL
+         HfSxOqnqPS2f+NgBxPoLJ7XG2Ch1xlAIfIf9N1YVzsn+tXaSLnlmc0+q40p11tJATZcb
+         jcu6BL+gTkxlOObseXx9ijhxLHqQDUIqifVZzwUObw28/sArcurCm4mllhGr0LxWyLoK
+         o8iwlA62dzr/x3ERs0f4QQ2lqO7N4ZS3YO/fx01VCq9+RlQKq75ylAujbujqDqrH7fcN
+         ukqQ==
+X-Gm-Message-State: AFuF++l2LWikU68pNY7/SyVWZN8k4MqwdO2QZ4oxvRnD9wlhN5YCjl63
+	1wfx+TL8lqNLDD1RWbTX13KFmw284B8l0QlbRssEc3JNiTrApYAde1vaboPRqojAJl3rtkzjWKW
+	j6twD
+X-Gm-Gg: AYBFou2Zyi8/HdRPStlLfwzVlxkcVu+IHatX6BPcLKVV7+ZpuPDbcWRehzIgSiofmmi
+	i8J0m8K2UMfGnYH3J+la6bGWWtlt1jLkKG2D2eUgf8ALSl08AJUTQ3cPe8xJ/NHqIb4AS9jvfaj
+	Tc3CgfQ3DauEypyPgz9Z+ID2WVcpPpaZJLSAFgyqHywL/C5RdlbsgkdzoCVAOvzyFwi9IC6LdEB
+	gco1ScXnQMK0xWfdnCnv6I71uX1c9bvwy25G/hK32nKau0eAOF03FWfZ4U4figrXPrZbFxAhqqs
+	qN5iCjW5QPsvQC3Z50YlmvLgmob45QDWhzixjEDba9lUmaVUExGtLM56Ws4UbC8vihhrVbFrNJp
+	FYbK3T4j0Rscw5/wNhC8Z0K+xNHeNDpps/nIL5RzrqCoZRBbHQs/G3Yata0Ebjkyqxy+V/MHWCW
+	/rfc0jqSNQORQnrIrB6ew27pg49mXSUCCCfxviN5dVaZtsBOABPdaPaoD1L3zP0jnE9RQVY1Hcz
+	KPolmXqnlDdJg4VL9qg2ADXA/JXod2+CYppqkM6gsQ/CcFOq49QgXgTEMe74z/IfVqugrwfl9ae
+	DCaLXIym76sFt46SrHwFICo2jbPaUV0LjEvXB6vPo86ruQ==
+X-Received: by 2002:a05:620a:6085:b0:939:c9e9:81a1 with SMTP id af79cd13be357-93bb785d086mr717697185a.42.1789595918833;
+        Wed, 16 Sep 2026 14:58:38 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.34
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.37
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 14:58:35 -0700 (PDT)
+        Wed, 16 Sep 2026 14:58:37 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 00/19] Assorted updates 09/16
-Date: Wed, 16 Sep 2026 17:58:00 -0400
-Message-ID: <cover.1789595456.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 02/19] openscap: upgrade 1.4.3 -> 1.4.4
+Date: Wed, 16 Sep 2026 17:58:02 -0400
+Message-ID: <54deebf9dd04387b29360030a7ae872832cfc96b.1789595456.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <cover.1789595456.git.scott.murray@konsulko.com>
+References: <cover.1789595456.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 21:58:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4856
+ <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 21:58:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4858
 
-This patch series rolls up the contributed patches from the past few
-weeks along with a bunch more OpenSSL 4.0 fixes and package updates
-from myself.  These changes are queued on the master-next branch if
-you would like to check them out to test yourself.  I intend to merge
-these to master branch Friday evening (EDT, September 18) unless
-there are objections.
+Upgrade to 1.4.4 and backport an unreleased change to fix building
+with SWIG 4.5.x.
 
-If you happen to use ossec-hids, or have experience with fixing up
-OpenSSL 4.0 API breakage, I would appreciate some eyes on the patch
-I've cooked up to get it building.  I do intend to submit it upstream,
-but need to find some cycles to do some build testing with older
-versions of OpenSSL.
+Release notes:
+https://github.com/OpenSCAP/openscap/releases/tag/1.4.4
 
-Scott
-
-
-Changes:
-
-Khem Raj (5):
-  tpm2-tools: Upgrade 5.7 -> 5.8
-  trousers: Fix build with OpenSSL 4.x
-  tpm2-openssl: Fix build with OpenSSL 4.x
-  tpm2-pkcs11: Upgrade 1.9.2 -> 1.10.1
-  meta-tpm: Remove tpm2-tss-engine
-
-Scott Murray (13):
-  ncrack: fix OpenSSL 4.0 breakage
-  openscap: upgrade 1.4.3 -> 1.4.4
-  scap-security-guide: upgrade 0.1.80 -> 0.1.81
-  sssd: upgrade 2.10.2 -> 2.13.1
-  krill: upgrade 0.12.3 -> 0.16.0
-  ossec-hids: upgrade 3.7.0 -> 4.3.0
-  clamav: upgrade 1.4.4 -> 1.4.6
-  clamav: upgrade 1.4.6 -> 1.5.4
-  meta-tpm: Remove openssl-tpm-engine
-  aide: upgrade 0.19.3 -> 0.19.4
-  crowdsec: upgrade 1.7.7 -> 1.8.1
-  suricata: upgrade 8.0.4 -> 8.0.6
-  lynis: upgrade 3.1.6 -> 3.1.7
-
-Wang Mingyu (1):
-  ccs-tools: upgrade 1.8.9 -> 1.8.14
-
- .../sssd/files/drop_ntpdate_chk.patch         |   17 +-
- .../sssd/files/fix-ldblibdir.patch            |    9 +-
- .../recipes-security/sssd/files/fix_gid.patch |   18 +-
- .../sssd/files/musl_fixup.patch               |   38 +-
- .../recipes-security/sssd/files/no_gen.patch  |   18 +-
- .../sssd/{sssd_2.10.2.bb => sssd_2.13.1.bb}   |    4 +-
- .../distro/include/maintainers-meta-tpm.inc   |    2 -
- .../packagegroup/packagegroup-security-tpm.bb |    1 -
- .../packagegroup-security-tpm2.bb             |    2 -
- ...pm-key-support-well-known-key-option.patch |  101 -
- .../0002-libtpm-support-env-TPM_SRK_PW.patch  |   82 -
- ...engine-parse-an-encrypted-tpm-SRK-pa.patch |  253 --
- ...engine-change-variable-c-type-from-c.patch |   33 -
- .../files/openssl11_build_fix.patch           |   34 -
- .../openssl-tpm-engine_0.5.0.bb               |   63 -
- ...1-use-ASN1_STRING_get0_data-accessor.patch |   45 +
- .../recipes-tpm1/trousers/trousers_git.bb     |    1 +
- ...TRING-and-X509_NAME-access-for-OpenS.patch |   95 +
- .../tpm2-openssl/tpm2-openssl_1.3.0.bb        |    4 +-
- ...eturn-NULL-for-twist-on-auth-failure.patch |   28 -
- ...-pkcs11_1.9.2.bb => tpm2-pkcs11_1.10.1.bb} |    3 +-
- .../{tpm2-tools_5.7.bb => tpm2-tools_5.8.bb}  |    4 +-
- ...-disabling-of-digest-sign-operations.patch |   48 -
- ...OpenSSL-function-signatures-that-cau.patch |   78 -
- .../tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb  |   40 -
- .../lynis/{lynis_3.1.6.bb => lynis_3.1.7.bb}  |    2 +-
- ...Python-2-C-API-macros-for-SWIG-4.5.0.patch |   87 +
- .../{openscap_1.4.3.bb => openscap_1.4.4.bb}  |    5 +-
- ....1.80.bb => scap-security-guide_0.1.81.bb} |    0
- .../0002-Support-build-with-nettle-4.patch    |   53 -
- .../aide/{aide_0.19.3.bb => aide_0.19.4.bb}   |    3 +-
- recipes-ids/crowdsec/crowdsec-go-mods.inc     |  408 ++-
- recipes-ids/crowdsec/crowdsec-licenses.inc    |  321 +-
- .../{crowdsec_1.7.7.bb => crowdsec_1.8.1.bb}  |    2 +-
- ...Makefile-drop-running-scrips-install.patch |    7 +-
- .../0002-Makefile-don-t-set-uid-gid.patch     |    7 +-
- .../files/0003-Add-OpenSSL-4.0-support.patch  |  167 +
- ...ssec-hids_3.7.0.bb => ossec-hids_4.3.0.bb} |    5 +-
- recipes-ids/suricata/suricata-crates.inc      | 2995 ++++++++--------
- .../{suricata_8.0.4.bb => suricata_8.0.6.bb}  |    2 +-
- ...ccs-tools_1.8.9.bb => ccs-tools_1.8.14.bb} |    6 +-
- recipes-scanners/clamav/clamav-crates.inc     |  556 ++-
- recipes-scanners/clamav/clamav-git-crates.inc |    7 +-
- .../{clamav_1.4.4.bb => clamav_1.5.4.bb}      |    7 +-
- ...ed-OpenSSL-accessors-for-ASN1_STRING.patch |  122 +
- .../files/0001-Disable-abort-on-panic.patch   |   24 +
- .../0002-Update-crate-dependencies.patch      | 3177 +++++++++++++++++
- .../krill/files/panic_workaround.patch        |   16 -
- recipes-security/krill/krill-crates.inc       | 1298 ++++---
- .../{krill_0.12.3.bb => krill_0.16.0.bb}      |    9 +-
- .../0001-fix-ftbfs-with-OpenSSL-4.patch       |   53 +
- recipes-security/ncrack/ncrack_0.7.bb         |    4 +-
- 52 files changed, 6905 insertions(+), 3459 deletions(-)
- rename dynamic-layers/networking-layer/recipes-security/sssd/{sssd_2.10.2.bb => sssd_2.13.1.bb} (98%)
- delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0001-create-tpm-key-support-well-known-key-option.patch
- delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0002-libtpm-support-env-TPM_SRK_PW.patch
- delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0003-tpm-openssl-tpm-engine-parse-an-encrypted-tpm-SRK-pa.patch
- delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0004-tpm-openssl-tpm-engine-change-variable-c-type-from-c.patch
- delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/openssl11_build_fix.patch
- delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/openssl-tpm-engine_0.5.0.bb
- create mode 100644 meta-tpm/recipes-tpm1/trousers/files/0001-tspi_asn1-use-ASN1_STRING_get0_data-accessor.patch
- create mode 100644 meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch
- delete mode 100644 meta-tpm/recipes-tpm2/tpm2-pkcs11/files/0001-src-lib-tpm-return-NULL-for-twist-on-auth-failure.patch
- rename meta-tpm/recipes-tpm2/tpm2-pkcs11/{tpm2-pkcs11_1.9.2.bb => tpm2-pkcs11_1.10.1.bb} (91%)
- rename meta-tpm/recipes-tpm2/tpm2-tools/{tpm2-tools_5.7.bb => tpm2-tools_5.8.bb} (83%)
- delete mode 100644 meta-tpm/recipes-tpm2/tpm2-tss-engine/files/0001-Configure-Allow-disabling-of-digest-sign-operations.patch
- delete mode 100644 meta-tpm/recipes-tpm2/tpm2-tss-engine/files/0002-Fix-mismatch-of-OpenSSL-function-signatures-that-cau.patch
- delete mode 100644 meta-tpm/recipes-tpm2/tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb
- rename recipes-compliance/lynis/{lynis_3.1.6.bb => lynis_3.1.7.bb} (96%)
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ ...Python-2-C-API-macros-for-SWIG-4.5.0.patch | 87 +++++++++++++++++++
+ .../{openscap_1.4.3.bb => openscap_1.4.4.bb}  |  5 +-
+ 2 files changed, 90 insertions(+), 2 deletions(-)
  create mode 100644 recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch
  rename recipes-compliance/openscap/{openscap_1.4.3.bb => openscap_1.4.4.bb} (96%)
- rename recipes-compliance/scap-security-guide/{scap-security-guide_0.1.80.bb => scap-security-guide_0.1.81.bb} (100%)
- delete mode 100644 recipes-ids/aide/aide/0002-Support-build-with-nettle-4.patch
- rename recipes-ids/aide/{aide_0.19.3.bb => aide_0.19.4.bb} (94%)
- rename recipes-ids/crowdsec/{crowdsec_1.7.7.bb => crowdsec_1.8.1.bb} (96%)
- create mode 100644 recipes-ids/ossec/files/0003-Add-OpenSSL-4.0-support.patch
- rename recipes-ids/ossec/{ossec-hids_3.7.0.bb => ossec-hids_4.3.0.bb} (98%)
- rename recipes-ids/suricata/{suricata_8.0.4.bb => suricata_8.0.6.bb} (98%)
- rename recipes-mac/ccs-tools/{ccs-tools_1.8.9.bb => ccs-tools_1.8.14.bb} (84%)
- rename recipes-scanners/clamav/{clamav_1.4.4.bb => clamav_1.5.4.bb} (97%)
- create mode 100644 recipes-scanners/clamav/files/0001-Use-non-deprecated-OpenSSL-accessors-for-ASN1_STRING.patch
- create mode 100644 recipes-security/krill/files/0001-Disable-abort-on-panic.patch
- create mode 100644 recipes-security/krill/files/0002-Update-crate-dependencies.patch
- delete mode 100644 recipes-security/krill/files/panic_workaround.patch
- rename recipes-security/krill/{krill_0.12.3.bb => krill_0.16.0.bb} (87%)
- create mode 100644 recipes-security/ncrack/ncrack/0001-fix-ftbfs-with-OpenSSL-4.patch
 
+diff --git a/recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch b/recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch
+new file mode 100644
+index 0000000..8711dec
+--- /dev/null
++++ b/recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch
+@@ -0,0 +1,87 @@
++From 26b6cb16a1450d10eb5e14fa4f0ff62d48ff62fd Mon Sep 17 00:00:00 2001
++From: Matthew Burket <mburket@redhat.com>
++Date: Tue, 1 Sep 2026 11:02:05 -0500
++Subject: [PATCH] Replace removed Python 2 C API macros for SWIG 4.5.0
++ compatibility
++
++Back ported from https://src.fedoraproject.org/rpms/openscap/pull-request/35
++
++Co-authored-by: Jitka Plesnikova <jplesnik@redhat.com>
++Upstream-Status: Backport [https://github.com/OpenSCAP/openscap/commit/26b6cb16]
++Signed-off-by: Scott Murray <scott.murray@konsulko.com>
++---
++ swig/openscap.i | 16 +++++++---------
++ 1 file changed, 7 insertions(+), 9 deletions(-)
++
++diff --git a/swig/openscap.i b/swig/openscap.i
++index 7970481f0..1d23b0a32 100644
++--- a/swig/openscap.i
+++++ b/swig/openscap.i
++@@ -48,8 +48,6 @@
++ {
++     if (PyLong_Check($input))
++         $1 = (time_t) PyLong_AsLong($input);
++-    else if (PyInt_Check($input))
++-        $1 = (time_t) PyInt_AsLong($input);
++     else if (PyFloat_Check($input))
++         $1 = (time_t) PyFloat_AsDouble($input);
++     else {
++@@ -80,8 +78,8 @@
++     $1 = (char **) malloc((size+1)*sizeof(char *));
++     for (i = 0; i < size; i++) {
++       PyObject *o = PyList_GetItem($input,i);
++-      /*if (PyString_Check(o))*/
++-        $1[i] = PyString_AsString(PyList_GetItem($input,i));
+++      /*if (PyBytes_Check(o))*/
+++        $1[i] = PyBytes_AsString(PyList_GetItem($input,i));
++       /*else {
++         PyErr_SetString(PyExc_TypeError,"list must contain strings");
++         free($1);
++@@ -329,7 +327,7 @@ int rule_result_output_callback_wrapper(struct xccdf_rule_result* rule_result, v
++         return -1;
++     }
++     Py_DECREF(arglist);
++-    dres = PyInt_AsLong(result);
+++    dres = PyLong_AsLong(result);
++     Py_XDECREF(result);
++     PyGILState_Release(state);
++     return dres;
++@@ -366,7 +364,7 @@ int rule_start_callback_wrapper(struct xccdf_rule* rule, void *arg)
++         return -1;
++     }
++     Py_DECREF(arglist);
++-    dres = PyInt_AsLong(result);
+++    dres = PyLong_AsLong(result);
++     Py_XDECREF(result);
++     PyGILState_Release(state);
++     return dres;
++@@ -403,7 +401,7 @@ int agent_reporter_callback_wrapper(const struct oval_result_definition* res_def
++         return -1;
++     }
++     Py_DECREF(arglist);
++-    dres = PyInt_AsLong(result);
+++    dres = PyLong_AsLong(result);
++     Py_XDECREF(result);
++     PyGILState_Release(state);
++     return dres;
++@@ -438,7 +436,7 @@ int validate_callback_wrapper(const char* file, int line, const char* msg, void
++         return -1;
++     }
++     Py_DECREF(arglist);
++-    dres = PyInt_AsLong(result);
+++    dres = PyLong_AsLong(result);
++     Py_XDECREF(result);
++     PyGILState_Release(state);
++     return dres;
++@@ -474,7 +472,7 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
++         return NULL;
++     }
++     Py_DECREF(arglist);
++-    dres = PyString_AsString(result);
+++    dres = PyBytes_AsString(result);
++     if (dres == NULL) {
++         if (PyErr_Occurred() != NULL)
++             PyErr_PrintEx(0);
++-- 
++2.47.3
++
+diff --git a/recipes-compliance/openscap/openscap_1.4.3.bb b/recipes-compliance/openscap/openscap_1.4.4.bb
+similarity index 96%
+rename from recipes-compliance/openscap/openscap_1.4.3.bb
+rename to recipes-compliance/openscap/openscap_1.4.4.bb
+index 1b6d9af..8f498df 100644
+--- a/recipes-compliance/openscap/openscap_1.4.3.bb
++++ b/recipes-compliance/openscap/openscap_1.4.4.bb
+@@ -11,9 +11,10 @@ DEPENDS:class-native = "pkgconfig-native swig-native curl-native libxml2-native
+ 
+ SRC_URI = "git://github.com/OpenSCAP/openscap.git;branch=main;protocol=https \
+            file://0001-CMakeLists.txt-fix-installation-directory-for-system.patch \
+-          "
++           file://0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch \
++"
+ 
+-SRCREV = "24986066961363e24fcff83294995b3cfe4058ba"
++SRCREV = "4ac56ce0e6dfdea7215b5ad202b3db20855d2507"
+ 
+ COMPATIBLE_HOST:libc-musl = "null"
+ 
 -- 
 2.55.0
 
