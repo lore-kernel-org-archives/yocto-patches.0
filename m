@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 359CDC982DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21671C982D9
 	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 21:58:51 +0000 (UTC)
 Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.26470.1789595925526293400
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.26475.1789595929954372831
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 14:58:45 -0700
+ Wed, 16 Sep 2026 14:58:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=WL2Tu1+c;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=kUGeqNyn;
  spf=pass (domain: konsulko.com, ip: 74.125.230.204, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-93a2a8c29c4so13721085a.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:45 -0700 (PDT)
+Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-93910a0cefaso11565785a.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789595924; x=1790200724; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1789595929; x=1790200729; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=CTTQ7TrsZUL/H94AgBRMU669AsoxJXSN11AidVtvlMo=;
-        b=WL2Tu1+c6tFz89s23ct6NmeokKBLrzE74mYosWE7WIH53F61KN8bLm56OvJTTDMN+c
-         5DPIvfYjRff32xhZA+HH5SndAowbf1ZTsffr4LUU3b5uOn0Km5orwHAFnQdWk3ZZR4Dy
-         e+D4UtLfnnLYeRXluM5Y52Dh8k6ymZgc7Abds=
+        bh=us28+U6Eowt764eQCNtKd059yKJrOzP+to7c1jLpBKQ=;
+        b=kUGeqNyni6HkU1sRH3u1oUfTa3V7CXY3gMWdxjO0GwtA+/k6sH+gWPumB2OyzWNVMz
+         +CbCleHEztF926o0ocXaeAvDW4iC1tDSvvXOV6C9O1JUD94KSCz47HpeO5omZxgO2RBh
+         giYLH3uAk1472VzVlzWYUyYsOrcZU2oH7/xU8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789595924; x=1790200724;
+        d=1e100.net; s=20260707; t=1789595929; x=1790200729;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=CTTQ7TrsZUL/H94AgBRMU669AsoxJXSN11AidVtvlMo=;
-        b=R58gDzT1VCGQmubZMbPSWICReFSwwbCeZUdBYaXyb3o7e8kf8knjM+fD7v0mzcOTzS
-         KUDItoozn5mRk56NG1q+CchfRlXIvB/WZEbyRwYrjeGxozkQM/Qj9ZQQl6+MCqzxU47S
-         1/6gfIjWJIWHiDd2rViqEV9m79wVaNypAEcVd7wVt6r9eIuOYSlVYXcrGCxeAO5yJ6QO
-         d8r04igQahisFk03hn8CUOoELP6Vj6dx/Mq370g0ti6qya87pU5/6BcPKlAEOvJfq030
-         7aWf6YLFRQ8+X7e3JxxYPos7qzcT0lP3eDfCAQ87EEKy33EWn/9n9BS/doo5xwu66qlg
-         uvkQ==
-X-Gm-Message-State: AFuF++nB0eTnOM+ADqix4ENCpM39y8o+9B9rrRvCU7koC9hjIlTirUuR
-	5McNnmN+tU0moRCmFvgDRAkev4tpTI52iIJe91unV0wgkzQ726zzCTJNVz3SzKJ5hoTolaoC4N2
-	husbV
-X-Gm-Gg: AYBFou08oKcEyYWCBQ0sZFh6edOu7diAWJUtb/TstSf9WxTcDbG4tEH5JsV3zeMyCJ4
-	v7F9x4+tazqJiPwS+BPiTAxpadGW68rNrAyeb8KoRLbmva4gOPTozTN+SJxCOt6pIsS3lTClA+w
-	09lS6dxWSU6mHp1ewNCx1ZadGf7z988Ab4Yg7XmlZZWvOhoLoHKbBs8doAW2T71JRoFR1biBSQU
-	nSG1M5C72lQ4rDDG012rcvYH5DMxLjf1DP2gHXhjhubsDE1zKTXR9fe6YQbD/VeyOxGCZtzIyqF
-	lD2+ShwzbSjFu3go8C0o71ayI2GU88XIFHaWjIFoBhYQswIbcv+FyVuWAWeZ7JUKUNNG+lOUvDM
-	0xenrqL3Dro3+5aU1PbwwCldjiteVyi5F0U30schMrf3fUcxZ3fxN0Xh/XCT3sEdZmEGxvRGRnO
-	QSnotIjjD16FMVyq6FeXoLR1opCWBCornhxA+K3AyxpuDwlRvJVJt4MTPaNnVeTis0zJXmDNlTw
-	5AeUUeFhevRFLxys/K+8mJdRkbBN/Hz8Xp0aw/y/a5/cxEf0cG9MJkZNGo3brzpMKzoHhvpq3eJ
-	Csci189ADYVZ2W+PosZXCRD7aLx/7ADPlKQ=
-X-Received: by 2002:a05:620a:2846:b0:939:72ae:e536 with SMTP id af79cd13be357-93bb7771730mr750682685a.13.1789595924337;
-        Wed, 16 Sep 2026 14:58:44 -0700 (PDT)
+        bh=us28+U6Eowt764eQCNtKd059yKJrOzP+to7c1jLpBKQ=;
+        b=VbMP5mVeZ8xnyx3BmQoCM5myTCDI1n3R0pTS3xBaLeIn9XdcKbq+fBT3DhtAxmwEF5
+         xRXcjcsLZiYRl/2hbmtfn9Nbr7ODP5HkgrvW63ZBw6350ZQuOddILuD2e5eLQ7NYCdnk
+         3fgB7QbXWyrtPZks+rMw/DzfIQ+wkmhvECXStrKoLJZOTk+Gd+KlADC8zsbwL61+V3kc
+         qX9tkluxq7MXRFjH6KCIxSthNai5uz9rKz2cBq6a41WuDvLVHDV49lhvR31TW4cr7RTv
+         opyWPf4fCHFySoV6f5ru/GvlaB1JeUMONo20zmJgt1PTVVJOQmNQiytFcuGJ2CLD307e
+         ypUA==
+X-Gm-Message-State: AFuF++m1ekyrd/Kl6YJlV44Q8vCULmj/u12jkJnbjZHdDKywV7MlyM25
+	xtwkqG4VZrszt6TPrmtldXTDZid7rYAch3EbFDoECtuHYRTll2kFRExP9eoK8g6O2iRs0DhGo4u
+	7G5C6
+X-Gm-Gg: AYBFou2DB0B43SNLKd2YLtU+693Ke0NovCNHv3ul9cNJT9bLLPgUos4N2Pv124ww4Ko
+	5LHf0jvR6rtIhgUFPYMa2YcxgsAGSS6E7hj/1bnqFda+xw09v+V8zDmNfU1DQvDsdUQYU50IHh5
+	YfJT165mtaWIqd1M+I2Y8XGUlwCVmrCvvjtWYMoI+s+IkJuXGCWSQQg17HRuQxGUeAi6Agrn7JO
+	JyPz+A7ivc+L4svyuJl7a/ka+4EcMSOy4xlUjOO/Aml6vK3GTGrPRmApvsEhKIjU8sEUqmpMviL
+	EWK8tSmmKBKF25Sy2Fxxu5ptG6FxDWSzkdBLnXrYL3KhR8ctZDkIFv5MWAUhwLq9bbS+aFQ3vlI
+	6gXUbVyHs70OGjpLRAscl3eD4gHxgXGV45LBBEwFg2BubmTzd4ZtpmonEAEZfRxDh/24tEDwENo
+	yyjn73EfFrPUupeuK5kZuyPm7WHc29WqZWXf734fJUjbDZdgZgo/aP+bwYMocZVE0cBhQIOh/Wl
+	GI0Epa46iulI/5bar1FoRxoyh1SyK1w24/pNpp3gLlnu3+wNdw+/3TdqHMUHYYoszexcRJC0763
+	qslRhH87X8/WEf1IgwlYhuOCZ/w2o+mR8h8=
+X-Received: by 2002:a05:620a:438b:b0:93a:1b82:4962 with SMTP id af79cd13be357-93bb79b5b59mr795556885a.47.1789595928734;
+        Wed, 16 Sep 2026 14:58:48 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.43
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.48
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 14:58:43 -0700 (PDT)
+        Wed, 16 Sep 2026 14:58:48 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 07/19] clamav: upgrade 1.4.4 -> 1.4.6
-Date: Wed, 16 Sep 2026 17:58:07 -0400
-Message-ID: <3a2fcde2c57c5eb0b876971543ae3e3d71f0f24d.1789595456.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 12/19] tpm2-openssl: Fix build with OpenSSL 4.x
+Date: Wed, 16 Sep 2026 17:58:12 -0400
+Message-ID: <91c22ab48e54a3267a5ed30dcf96296421c3b8e3.1789595456.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1789595456.git.scott.murray@konsulko.com>
 References: <cover.1789595456.git.scott.murray@konsulko.com>
@@ -67,174 +67,146 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 21:58:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4862
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4868
 
-Upgrade to 1.4.6 and apply an outstanding upstream PR that adds
-OpenSSL 4.0 support.
+From: Khem Raj <raj.khem@gmail.com>
 
-Release notes:
-https://github.com/Cisco-Talos/clamav/releases/tag/clamav-1.4.5
-https://github.com/Cisco-Talos/clamav/releases/tag/clamav-1.4.6
+OpenSSL 4.0 completes the opaquing of struct asn1_string_st, so reaching
+into ASN1_OCTET_STRING directly no longer compiles:
 
+  src/tpm2-provider-pkey.c:152:53: error: incomplete definition of type
+      'ASN1_OCTET_STRING' (aka 'struct asn1_string_st')
+    152 |     if (Tss2_MU_TPM2B_PRIVATE_Unmarshal(tpk->privkey->data,
+        |                                         ~~~~~~~~~~~~~^
+
+Backport upstream commit 6dcc3b2 which switches tpm2_keydata_read() to
+the ASN1_STRING_get0_data()/ASN1_STRING_length() accessors. 1.3.0 is
+still the newest release, so there is no upgrade to take instead.
+
+Signed-off-by: Khem Raj <khem.raj@oss.qualcomm.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../{clamav_1.4.4.bb => clamav_1.4.6.bb}      |   3 +-
- ...ed-OpenSSL-accessors-for-ASN1_STRING.patch | 122 ++++++++++++++++++
- 2 files changed, 124 insertions(+), 1 deletion(-)
- rename recipes-scanners/clamav/{clamav_1.4.4.bb => clamav_1.4.6.bb} (98%)
- create mode 100644 recipes-scanners/clamav/files/0001-Use-non-deprecated-OpenSSL-accessors-for-ASN1_STRING.patch
+ ...TRING-and-X509_NAME-access-for-OpenS.patch | 95 +++++++++++++++++++
+ .../tpm2-openssl/tpm2-openssl_1.3.0.bb        |  4 +-
+ 2 files changed, 98 insertions(+), 1 deletion(-)
+ create mode 100644 meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch
 
-diff --git a/recipes-scanners/clamav/clamav_1.4.4.bb b/recipes-scanners/clamav/clamav_1.4.6.bb
-similarity index 98%
-rename from recipes-scanners/clamav/clamav_1.4.4.bb
-rename to recipes-scanners/clamav/clamav_1.4.6.bb
-index b3f14cd..01eaf2b 100644
---- a/recipes-scanners/clamav/clamav_1.4.4.bb
-+++ b/recipes-scanners/clamav/clamav_1.4.6.bb
-@@ -16,13 +16,14 @@ LIC_FILES_CHKSUM = "file://COPYING.txt;md5=2c0b5770a62017a3121c69bb9f680b0c \
- DEPENDS = "glibc llvm libtool db openssl zlib curl libxml2 bison pcre2 json-c libcheck rust-native cargo-native"
- 
- SRC_URI = "git://github.com/Cisco-Talos/clamav;branch=rel/1.4;protocol=https \
-+           file://0001-Use-non-deprecated-OpenSSL-accessors-for-ASN1_STRING.patch \
-            file://clamd.conf \
-            file://freshclam.conf \
-            file://volatiles.03_clamav \
-            file://tmpfiles.clamav \
-            "
- 
--# ClamAV version 1.4.4
-+# ClamAV version 1.4.6
- SRCREV = "f6d84be3c0048deb15c54d67e140dae062e5b82b"
- 
- COMPATIBLE_HOST:libc-musl:class-target = "null"
-diff --git a/recipes-scanners/clamav/files/0001-Use-non-deprecated-OpenSSL-accessors-for-ASN1_STRING.patch b/recipes-scanners/clamav/files/0001-Use-non-deprecated-OpenSSL-accessors-for-ASN1_STRING.patch
+diff --git a/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch
 new file mode 100644
-index 0000000..ca17e2c
+index 0000000..ad6d9d9
 --- /dev/null
-+++ b/recipes-scanners/clamav/files/0001-Use-non-deprecated-OpenSSL-accessors-for-ASN1_STRING.patch
-@@ -0,0 +1,122 @@
-+From 13ff91836da6f85e16a6db0aa0517dccab76aa82 Mon Sep 17 00:00:00 2001
-+From: Bob Beck <beck@openssl.org>
-+Date: Fri, 5 Dec 2025 15:50:23 -0700
-+Subject: [PATCH] Use non deprecated OpenSSL accessors for ASN1_STRING values.
++++ b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch
+@@ -0,0 +1,95 @@
++From 6dcc3b2984e3f4dc1849c79d89c6ce736a8435b3 Mon Sep 17 00:00:00 2001
++From: Petr Gotthard <petr.gotthard@advantech.cz>
++Date: Sat, 7 Mar 2026 15:51:12 +0100
++Subject: [PATCH] Fix ASN1_OCTET_STRING and X509_NAME access for OpenSSL 4.0
++ compatibility
 +
-+This changes your time conversion routine to use
-+ASN1_STRING_get0_data() and ASN1_STRING_length() rather than
-+directly using the values from the object.
++Fixes: #166
 +
-+OpenSSL plans to make ASN1_STRING opaque soon:
-+https://github.com/openssl/openssl/issues/29117
++OpenSSL 4.0 completes the opaquing of struct asn1_string_st, so reaching
++into ASN1_OCTET_STRING directly no longer compiles:
 +
-+The accessor in question is in OpenSSL 1.1 as well as
-+BoringSSL and LibreSSL so should be widely available.
++  src/tpm2-provider-pkey.c:152:53: error: incomplete definition of type
++      'ASN1_OCTET_STRING' (aka 'struct asn1_string_st')
++    152 |     if (Tss2_MU_TPM2B_PRIVATE_Unmarshal(tpk->privkey->data,
++        |                                         ~~~~~~~~~~~~~^
 +
-+As the returned value is const, and you are changing it
-+to pass to strptime, I've made it make a copy to work with.
++Upstream-Status: Backport [https://github.com/tpm2-software/tpm2-openssl/commit/6dcc3b2984e3f4dc1849c79d89c6ce736a8435b3]
 +
-+Since I added another allocation I converted it to single
-+return to ensure everything gets freed appropriately.
-+
-+Upstream-Status: Pending [https://github.com/Cisco-Talos/clamav/pull/1642]
-+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
++Signed-off-by: Khem Raj <khem.raj@oss.qualcomm.com>
 +---
-+ libclamav/crypto.c | 46 +++++++++++++++++++++++++++-------------------
-+ 1 file changed, 27 insertions(+), 19 deletions(-)
++ src/tpm2-provider-pkey.c    |  8 ++++----
++ test/ec_genpkey_x509_csr.c  | 10 ++++++----
++ test/rsa_pki/etc/email.conf |  2 +-
++ 3 files changed, 11 insertions(+), 9 deletions(-)
 +
-+diff --git a/libclamav/crypto.c b/libclamav/crypto.c
-+index 8b398e402..61c6d5434 100644
-+--- a/libclamav/crypto.c
-++++ b/libclamav/crypto.c
-+@@ -1748,9 +1748,10 @@ X509 *cl_load_cert(const char *certpath)
-+ 
-+ struct tm *cl_ASN1_GetTimeT(ASN1_TIME *timeobj)
-+ {
-+-    struct tm *t;
-+-    char *str;
-+-    const char *fmt = NULL;
-++    struct tm *ret = NULL;
-++    struct tm *t   = NULL;
-++    char *str      = NULL;
-++    const char *data, *fmt = NULL;
-+     time_t localt;
-+ #ifdef _WIN32
-+     struct tm localtm, *ltm;
-+@@ -1758,18 +1759,21 @@ struct tm *cl_ASN1_GetTimeT(ASN1_TIME *timeobj)
-+     struct tm localtm;
-+ #endif
-+ 
-+-    if (!(timeobj) || !(timeobj->data))
-+-        return NULL;
-++    if (timeobj == NULL || (data = ASN1_STRING_get0_data(timeobj)) == NULL)
-++        goto done;
-++
-++    str = CLI_STRNDUP(data, ASN1_STRING_length(timeobj));
-++    if (NULL == str)
-++        goto done;
-+ 
-+-    str = (char *)(timeobj->data);
-+     if (strlen(str) < 12)
-+-        return NULL;
-++        goto done;
-+ 
-+     t = (struct tm *)calloc(1, sizeof(struct tm));
-+     if (!(t))
-+-        return NULL;
-++        goto done;
-+ 
-+-    if (timeobj->type == V_ASN1_UTCTIME) {
-++    if (ASN1_STRING_type(timeobj) == V_ASN1_UTCTIME) {
-+         /* two digit year */
-+         fmt = "%y%m%d%H%M%S";
-+         if (str[3] == '0') {
-+@@ -1778,7 +1782,7 @@ struct tm *cl_ASN1_GetTimeT(ASN1_TIME *timeobj)
-+         } else {
-+             str[3]--;
-+         }
-+-    } else if (timeobj->type == V_ASN1_GENERALIZEDTIME) {
-++    } else if (ASN1_STRING_type(timeobj) == V_ASN1_GENERALIZEDTIME) {
-+         /* four digit year */
-+         fmt = "%Y%m%d%H%M%S";
-+         if (str[5] == '0') {
-+@@ -1789,15 +1793,11 @@ struct tm *cl_ASN1_GetTimeT(ASN1_TIME *timeobj)
-+         }
-+     }
-+ 
-+-    if (!(fmt)) {
-+-        free(t);
-+-        return NULL;
-+-    }
-++    if (!(fmt))
-++        goto done;
-+ 
-+-    if (!strptime(str, fmt, t)) {
-+-        free(t);
-+-        return NULL;
-+-    }
-++    if (!strptime(str, fmt, t))
-++        goto done;
-+ 
-+     /* Convert to local time */
-+     localt = time(NULL);
-+@@ -1808,7 +1808,15 @@ struct tm *cl_ASN1_GetTimeT(ASN1_TIME *timeobj)
-+     localtime_r(&localt, &localtm);
-+ #endif
-+     t->tm_isdst = localtm.tm_isdst;
-+-    return t;
-++
-++    ret = t;
-++    t   = NULL;
-++
-++done:
-++    free(t);
-++    free(str);
-++
-++    return ret;
-+ }
-+ 
-+ X509_CRL *cl_load_crl(const char *file)
-+-- 
-+2.47.3
++diff --git a/src/tpm2-provider-pkey.c b/src/tpm2-provider-pkey.c
++index 38f748e..80213af 100644
++--- a/src/tpm2-provider-pkey.c
+++++ b/src/tpm2-provider-pkey.c
++@@ -149,13 +149,13 @@ tpm2_keydata_read(BIO *bin, TPM2_KEYDATA *keydata, TPM2_PKEY_FORMAT format)
++             strcmp(type_oid, OID_loadableKey))
++         goto error;
 +
++-    if (Tss2_MU_TPM2B_PRIVATE_Unmarshal(tpk->privkey->data,
++-                                        tpk->privkey->length, NULL,
+++    if (Tss2_MU_TPM2B_PRIVATE_Unmarshal(ASN1_STRING_get0_data(tpk->privkey),
+++                                        ASN1_STRING_length(tpk->privkey), NULL,
++                                         &keydata->priv))
++         goto error;
++
++-    if (Tss2_MU_TPM2B_PUBLIC_Unmarshal(tpk->pubkey->data,
++-                                       tpk->pubkey->length, NULL,
+++    if (Tss2_MU_TPM2B_PUBLIC_Unmarshal(ASN1_STRING_get0_data(tpk->pubkey),
+++                                       ASN1_STRING_length(tpk->pubkey), NULL,
++                                        &keydata->pub))
++         goto error;
++
++diff --git a/test/ec_genpkey_x509_csr.c b/test/ec_genpkey_x509_csr.c
++index e3523ec..5c9790a 100644
++--- a/test/ec_genpkey_x509_csr.c
+++++ b/test/ec_genpkey_x509_csr.c
++@@ -15,7 +15,7 @@ int generate_csr(const char *password, const char *filename)
++     EVP_PKEY_CTX *pctx = NULL;
++     EVP_PKEY *pkey = NULL;
++     X509_REQ *x509 = NULL;
++-    X509_NAME *name;
+++    X509_NAME *name = NULL;
++     STACK_OF(X509_EXTENSION) *exts = NULL;
++     X509_EXTENSION *ex;
++     FILE *csr_file = NULL;
++@@ -40,9 +40,10 @@ int generate_csr(const char *password, const char *filename)
++             || X509_REQ_set_pubkey(x509, pkey) != 1)
++         goto error1;
++
++-    name = X509_REQ_get_subject_name(x509);
++-    if (!X509_NAME_add_entry_by_NID(name, NID_countryName, MBSTRING_ASC, (unsigned char *)"CZ", -1, -1, 0)
++-            || !X509_NAME_add_entry_by_NID(name, NID_commonName, MBSTRING_ASC, (const unsigned char *)"www.example.com", -1, -1, 0))
+++    if (!(name = X509_NAME_new())
+++            || !X509_NAME_add_entry_by_NID(name, NID_countryName, MBSTRING_ASC, (unsigned char *)"CZ", -1, -1, 0)
+++            || !X509_NAME_add_entry_by_NID(name, NID_commonName, MBSTRING_ASC, (const unsigned char *)"www.example.com", -1, -1, 0)
+++            || X509_REQ_set_subject_name(x509, name) != 1)
++         goto error1;
++
++     // set requested extensions
++@@ -75,6 +76,7 @@ int generate_csr(const char *password, const char *filename)
++     fclose(csr_file);
++ error1:
++     sk_X509_EXTENSION_pop_free(exts, X509_EXTENSION_free);
+++    X509_NAME_free(name);
++     X509_REQ_free(x509);
++     EVP_PKEY_free(pkey);
++     EVP_PKEY_CTX_free(pctx);
++diff --git a/test/rsa_pki/etc/email.conf b/test/rsa_pki/etc/email.conf
++index 7606c38..73c06d2 100644
++--- a/test/rsa_pki/etc/email.conf
+++++ b/test/rsa_pki/etc/email.conf
++@@ -24,4 +24,4 @@ emailAddress            = "fred@simple.org"
++ keyUsage                = critical,digitalSignature,keyEncipherment
++ extendedKeyUsage        = emailProtection,clientAuth
++ subjectKeyIdentifier    = hash
++-subjectAltName          = email:move
+++subjectAltName          = email:copy
++--
++2.51.0
++
+diff --git a/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb
+index e97a208..07feb00 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb
+@@ -5,7 +5,9 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3f4b4cb00f4d0d6807a0dc79759a57ac"
+ 
+ DEPENDS = "autoconf-archive-native tpm2-tss openssl"
+ 
+-SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz"
++SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz \
++           file://0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch \
++           "
+ 
+ SRC_URI[sha256sum] = "9a9aca55d4265ec501bcf9c56d21d6ca18dba902553f21c888fe725b42ea9964"
+ 
 -- 
 2.55.0
 
