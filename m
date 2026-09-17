@@ -1,133 +1,102 @@
-Return-Path: <chenqi_hycx@cetc.com.cn>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03CAC88E72
-	for <webhook@archiver.kernel.org>; Thu, 17 Sep 2026 04:25:55 +0000 (UTC)
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.32207.1789619151583301670
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C337C982D0
+	for <webhook@archiver.kernel.org>; Thu, 17 Sep 2026 10:28:36 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.35959.1789640911183192471
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 21:25:52 -0700
+ Thu, 17 Sep 2026 03:28:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [101.95.142.114])
-	by mtasvr (Coremail) with SMTP id _____wAX8iqba6tqdbYCAA--.3337S3;
-	Thu, 17 Sep 2026 12:24:59 +0800 (CST)
-Received: from server-7r32.. (unknown [101.95.142.114])
-	by front01 (Coremail) with SMTP id C6CowAB3+WlKa6tq8iQ0AA--.49314S3;
-	Thu, 17 Sep 2026 12:23:40 +0800 (CST)
-From: chenqi_hycx@cetc.com.cn
-To: yocto-patches@lists.yoctoproject.org
-Cc: joe.macdonald@siemens.com
-Subject: [meta-selinux][PATCH 2/2] selinux/refpolicy: introduce POLICY_VERSION variable
-Date: Thu, 17 Sep 2026 12:25:44 +0800
-Message-ID: <20260917042544.3894019-2-chenqi_hycx@cetc.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260917042544.3894019-1-chenqi_hycx@cetc.com.cn>
-References: <20260917042544.3894019-1-chenqi_hycx@cetc.com.cn>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=rmZ/zhdM;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 56A75C5CD6F
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 17 Sep 2026 10:29:13 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 047475FAA3
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 17 Sep 2026 10:28:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A6D3211C7B074;
+	Thu, 17 Sep 2026 12:28:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1789640904; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=SkpUR16GM2TDynk1lJe6rufOoWPOGDm4Ble+7YevfmI=;
+	b=rmZ/zhdMq3jOBit6ffE0Q4XLJAZUdgWSK44uHDnqKHtcZcizvXWWoDuhqtKNGkbSoDQofC
+	kgrFS7pE8jMqYSF7CxwaJnnhcwrkM36/L4cvURYbaDGWUjGRTeSytnx+cIyppywAZpPqIV
+	tNBKkAoQtj7DXrX2n3n44i3qgKs1w4AshBT+vJ7a4HoA9oMebDSrZtJCUsMoS6qHs2NDVX
+	LjtUTa67+0lXXh0K1ZQYG7NXG3J1/dMSNgf3BB3l8MHVV6I2etWjZh3zfm89u+9wsmnR3O
+	xD1X6xWQaxIXpSTnVHwwtzV+yt+mdHRvLgqZyIIvJ9P91OMz8KNGAYQIz7kNvw==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Thu, 17 Sep 2026 12:28:03 +0200
+Subject: [yocto-autobuilder-helper][PATCH] scripts/release-parser.py: fix
+ bitbake dev branch 2.19 -> 2.20
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C6CowAB3+WlKa6tq8iQ0AA--.49314S3
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYNCmqqnLARQwACs8
-X-CM-DELIVERINFO: =?B?GLGWqJMTIGijefgSB8euu+6OLk7VHJpweJu2O0jc6H0leTZ35Rt/fA/pqtc40DVWE/
-	da9JlFras1e3sHCggBahZpux+1b0Nev5+nX7ufohTfnsYNOPPKigC0fm12/QmoFp4W1d/D
-	iYjKSrxBvbulSWvU8wsyVOAVPAvUdQolaI7DcOkViukbPNaKFaI1+7IwKsexVw==
-X-Coremail-Antispam: 1Uk129KBj93XoWxXw4DKry5Zr18WrWxAw1kJFc_yoW5AryDpF
-	WjyF98AF1UXF18Wrn7CF1j93ZIqas8Ca1xu3yUGw4qkryDZF4kZw4jy3sxWFs3XryxXFWk
-	Ar4aywsxGayUA3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GrDv73VFW2AG
-	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYT7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
-	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
-	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7
-	IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2
-	z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_
-	JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-	xGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6r45MxAIw28IcxkI7VAKI48JMxC20s026xCa
-	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
-	Wlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j
-	6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr
-	0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIY
-	CTnIWIevJa73UjIFyTuYvjxUcsjjDUUUU
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260917-fix-bitbake-dev-version-v1-1-f3b9f6c737bc@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMSQqDQBAAvyJ9ToM6YjBfEQ+zdGIn4kjPQoL49
+ 4zJsaCqdggkTAFu1Q5CmQP7tUBzqcDOen0QsisMbd329dBc8c5vNByNfhE6yphJzgZVrwfXKds
+ a1UGpN6Gi/s7j9OeQzJNsPHfjx9voUafoTeLFkeBMy0YywXF8AUcOVPCVAAAA
+X-Change-ID: 20260917-fix-bitbake-dev-version-36a9d43c2b34
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1302;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=VRE3947wIrNs6vTYFTbMhzrY3f+MOx0kZ4ax5cQjEBU=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBqq8DGT/TrowilGL/ppih1qRhKX0yiO69WLUI2y
+ G+6WYkGL9OJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaqvAxgAKCRDRgEFAKaOo
+ NqXhD/sHYQRIpXWRQwhQTE6WA1rbX3VgFLgzXJNUD3H1DHw0k+xEPv7K27NwimXpYcnG1Z/fthc
+ dxOC3G0gFcq883Q4PCv5EuQz+4uFxPEMsEjmhafcHR+qHnSF98J/i9RczGV5IOY5phEaEH/SoLd
+ TPR6x5Fw254qe+6f8fSTJpIteU3/zBi9U+f2atQs+r31miEgy3vY+O+XufDyxuTxm3okTx6lvhe
+ JR9Jr8PVVPGPWaUOa4/7Dc0CABn4z2P6E/mf3/40x0Z2Y1xYqHmpRYiz3kJhyEsCPdX3RzJ/TVD
+ kls5xsF72YAwP+stDN4PlXF7aiRUCyXV56NfIhnjFL+Lb5woakOkEEIBw27REEqgOT2Bv1PzQFR
+ wta8fkv45vY/EaO4rwuYf6rq666JnTlspuXHS+QYLrAgmJkX2G1b15xWgYF58HqWD7Rk1DOaU4N
+ enPhOQ2blQbzayTP8DqYpljnj3Xe6wvyxKTbOQ3Td3fmq4sl60XvgoI0pZm3z6efzmGp85vYBHf
+ 10xDB17BudxrJTPrTKLbaDdj8l7qByZsp294FAEOQHPuOh1Fsnyo5rrZKth/bHMM+zC4lJ56YXb
+ 3j3dOrs2ylEec0B2smTdXtaThLVGxkFLjlpXmesr3G5M0+SM2SAf3lOxlJOP0meTvHyYqD0xMG2
+ l+kh2+57+8CH8lg==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 17 Sep 2026 04:25:55 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4902
+ <yocto-patches@lists.yoctoproject.org>; Thu, 17 Sep 2026 10:28:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4903
 
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
+The next version of BitBake will be 2.20, not 2.19, we always hop two
+by two. Fix the version, which also fixes the following yocto-docs build
+error:
 
-Introduce POLICY_VERSION which is used by refpolicy and semanage.
-Previously, the recipes are just hardcoding '35'. Let's introduce
-a new variable to put things in a common place and allow for user
-configuration.
+  intersphinx inventory
+  'https://docs.yoctoproject.org/bitbake/2.19/objects.inv' not fetchable
+  due to <class 'requests.exceptions.HTTPError'>: 404 Client Error: Not
+  Found for url: https://docs.yoctoproject.org/bitbake/2.19/objects.inv
 
-Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- conf/selinux_refpolicy_common.inc               | 2 ++
- recipes-security/refpolicy/refpolicy_common.inc | 4 +++-
- recipes-security/selinux/libsemanage_3.10.bb    | 2 +-
- recipes-security/selinux/selinux_common.inc     | 2 ++
- 4 files changed, 8 insertions(+), 2 deletions(-)
- create mode 100644 conf/selinux_refpolicy_common.inc
+ scripts/release-parser.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/conf/selinux_refpolicy_common.inc b/conf/selinux_refpolicy_common.inc
-new file mode 100644
-index 0000000..2b0226a
---- /dev/null
-+++ b/conf/selinux_refpolicy_common.inc
-@@ -0,0 +1,2 @@
-+# policy version used by refpolicy and semanage
-+POLICY_VERSION ?= "35"
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 8787797..544769c 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -77,6 +77,8 @@ SRC_URI += " \
- 
- S = "${UNPACKDIR}/refpolicy"
- 
-+require conf/selinux_refpolicy_common.inc
-+
- CONFFILES:${PN} = "${sysconfdir}/selinux/config"
- 
- POLICY_STORE_ROOT ?= "${localstatedir}/lib/selinux"
-@@ -208,7 +210,7 @@ path = ${STAGING_DIR_NATIVE}${sbindir_native}/sefcontext_compile
- args = \$@
- [end]
- 
--policy-version = 35
-+policy-version = ${POLICY_VERSION}
- store-root = "${POLICY_STORE_ROOT}"
- EOF
- 
-diff --git a/recipes-security/selinux/libsemanage_3.10.bb b/recipes-security/selinux/libsemanage_3.10.bb
-index 4a18fae..d499b19 100644
---- a/recipes-security/selinux/libsemanage_3.10.bb
-+++ b/recipes-security/selinux/libsemanage_3.10.bb
-@@ -52,7 +52,7 @@ do_install:append() {
- 
-     if [ -f "${conf_file}" ]; then
-         # Update "policy-version" for semanage.conf
--        sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 35/' \
-+        sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 ${POLICY_VERSION}/' \
-             ${D}/etc/selinux/semanage.conf
- 
-         # Update "store-root" for semanage.conf
-diff --git a/recipes-security/selinux/selinux_common.inc b/recipes-security/selinux/selinux_common.inc
-index aaf0b90..6932fea 100644
---- a/recipes-security/selinux/selinux_common.inc
-+++ b/recipes-security/selinux/selinux_common.inc
-@@ -3,6 +3,8 @@ HOMEPAGE = "https://github.com/SELinuxProject"
- SRC_URI = "git://github.com/SELinuxProject/selinux.git;branch=main;protocol=https"
- SRCREV = "ca10fc4204ed60540d41d2499127c18ad0643f9e"
- 
-+require conf/selinux_refpolicy_common.inc
-+
- S = "${UNPACKDIR}/${BP}/${BPN}"
- 
- UPSTREAM_CHECK_GITTAGREGEX = "(?P<pver>\d+(\.\d+)+)"
--- 
-2.43.0
+diff --git a/scripts/release-parser.py b/scripts/release-parser.py
+index 4f928b3..c147d1d 100755
+--- a/scripts/release-parser.py
++++ b/scripts/release-parser.py
+@@ -29,7 +29,7 @@ CURRENT_ACTIVE_DEV_CODENAME = "Blacksail"
+ CURRENT_ACTIVE_DEV_VERSION = "6.1"
+ CURRENT_ACTIVE_DEV_MAINTAINER_NAME = "Richard Purdie"
+ CURRENT_ACTIVE_DEV_MAINTAINER_EMAIL = "richard.purdie@linuxfoundation.org"
+-CURRENT_ACTIVE_DEV_BITBAKE_MAPPING = "2.19"
++CURRENT_ACTIVE_DEV_BITBAKE_MAPPING = "2.20"
+ CURRENT_STABLE_BRANCH = "6.0"
+ CURRENT_STABLE_MAINTAINER_NAME = "Yoann Congal"
+ CURRENT_STABLE_MAINTAINER_EMAIL = "yoann.congal@smile.fr"
+
+---
+base-commit: e5226a56cab986ce0a6940a35aa30ddf1dadd07a
+change-id: 20260917-fix-bitbake-dev-version-36a9d43c2b34
 
 
