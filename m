@@ -1,207 +1,184 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97892C982D8
-	for <webhook@archiver.kernel.org>; Sat, 19 Sep 2026 16:15:19 +0000 (UTC)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15034.1789834511940273164
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78DEC982CC
+	for <webhook@archiver.kernel.org>; Sun, 20 Sep 2026 09:08:17 +0000 (UTC)
+Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.17])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.27009.1789895296146224165
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 19 Sep 2026 09:15:12 -0700
+ Sun, 20 Sep 2026 02:08:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=hruwGx8q;
- spf=pass (domain: konsulko.com, ip: 209.85.219.48, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-912431d946cso14126176d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 19 Sep 2026 09:15:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789834511; x=1790439311; darn=lists.yoctoproject.org;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4OaAqDSui/5CVTwHY2Oh4l+flQ5zRBc4hiLGGPW6f1o=;
-        b=hruwGx8qWb14ytjNjYGfkJ66y9iEfuy7bf4d2/wluJ0n7HYNnp30cIonyL01+Sn/Q2
-         X+Uw1xPDInkssfOtEGnulF6iOwm92STk8GGeacwfa6Z+mJBUCpWXBHh7c9wF/gWk5d8s
-         JvOJiY2L5l7HNTNt5n1rF6hmv2Sp76ujzuSjg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789834511; x=1790439311;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4OaAqDSui/5CVTwHY2Oh4l+flQ5zRBc4hiLGGPW6f1o=;
-        b=N/caSZ0JCm1JqP99Y7qUnwx3rgoLqGHqqqGOxDBzalNvihln3g6Zk5MrTnxPmC75wS
-         4zscUrJZQ0dY6/PbftEFviDMeUBYb/kVxpOAmUm7IQ2t7mVRxfA3q1mPrmkdXrULShpy
-         zbXk4lKpzOtx3wMv7tbX6e042kIElfWaQ84357BcQIqXLz1qZPcY8DmjVgtzi3CiIJ/j
-         UG1TMJLpFs4mt0IBSRoNbgnV6rQErHK6wvJ4MTDgrWrrnbofzEahVS78NwUyY0vunXa6
-         HmV/v87krTKHaWOJ4yjk105UfoUpOZPH5fwwfoWAlH5Mdpq4e4pvd3qmNGvQGII6b50A
-         XtsQ==
-X-Gm-Message-State: AFuF++knNt2ut8hVK4QQsH8Mfb8exs8G+mJUPl/+JPizmIdzhO+Qo+R4
-	2opzZw21WS8fPBWHaRk5tdoinCU6l+rHZb5w6QkQXzjvcGumGKjvOpjCY78jCHyFkY9nAFLLmlA
-	2yp9yg5k=
-X-Gm-Gg: AYBFou0Lp8ehB6TZAKHSc2OKHJU9UWWHK/Sb0yVVxmluvfco9BZeG8ZW+UqWmVoGovC
-	cGmifEb5GqGNIxBK7o0jXVHVnf9147V/yMooJqdB9JpVF5QOkb2oMGJjVFCTZfECa6FPL3lP6/i
-	6CfEF6Eq5hJc5CmzZHPenJklqfgsf0WfUEloECyFGrAGuIOKwlTB7TjLHpTzQnRQh0jxBqnXpmO
-	HDXIegMnUo3BsmQAoqWS+3G7/QyijD7K0oTbIQfPI5J0DQs2JtIUJpLuPazjv/cpSOEFJG9mxFT
-	BCmKqZpIvONTHKXu5kmlGsHvPtJsC2W65mjIY06aXHAqJWzajFzdcoNKh7OTIJyUN0v3aIO6LRW
-	TVOMZpEB8CS0W3eyN2Gwhj3SIqwA+7v3nUdJOtOum4HfDoMWA5C7Y1wK7l2Wy7WgHTSFyMZKCML
-	0Ha4a+aoCI/EmvkBhvIdK7otFWQdXUYHew6aTsHjgqXtLwPaLZogGe/vPz8pxsiNrb+eQchCLp5
-	brewVhuwgnsxggnNQ0Q52V2z8ShTHQET/X43PIxKlw/bGWSFFQnlNbcb7cfFp/hdQ7WWg4m3jv3
-	ERX8+LpO6gSj3c+tspnh1Q3ha72Q
-X-Received: by 2002:a05:6214:1256:b0:90c:de0e:d741 with SMTP id 6a1803df08f44-912a80087f7mr24551336d6.15.1789834510480;
-        Sat, 19 Sep 2026 09:15:10 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91260a85d40sm23470826d6.34.2026.09.19.09.15.09
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Sep 2026 09:15:10 -0700 (PDT)
-Date: Sat, 19 Sep 2026 12:15:09 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-security][PATCH 00/19] Assorted updates
- 09/16
-In-Reply-To: <18D5EC017C7C6127.668921@lists.yoctoproject.org>
-Message-ID: <95ba863c-8322-ffe5-60e8-d2bf2a7a12e6@konsulko.com>
-References: <18D5EC017C7C6127.668921@lists.yoctoproject.org>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=zMozl04c;
+ spf=pass (domain: siemens.com, ip: 40.107.159.17, mailfrom: peter.marko@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ALOvA3AuQSuilGbiSou/FdkJUw6JL5t/fs6UIvecqltoJw9kCUb5L/S6DeVugQENS5hd8IfuJTVSRBWylQU535yQ/sau1fK0ksdtKUt315Kj1dX9u9FQshYr7TPdgU68M5Sk5uHFeDH3RHK3SG1mHdcAtFBL3Cxs1Gk/v9XpZeVwJ1Z0Ru3gEGn9JwjKQvYR3FWd1SlIjKHRBxY8UHryuk6UXGz3IEzZnmvqrwzNKVPNERrt0aCwM8oVKhomGKPeeeJVnXZaWGl3gDo6cfgWs31OYFzMQW8s+4/b46SZiLUSc/7wAcJ/vnvxgv7GRCc+r8V1bZhlqeBQwJ+H7BqakA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+hj6AS47jHbfkNGUgsaCO5e5FgMhsRkxpPOE/FTB/wc=;
+ b=XEBhYowtQGSr5yzI7/8XwQa5SblUM7efyvBX/8c0J113ZLdqODXp1I0/ClM3RQCAF5PlA0JHUTW2ENQfpE4vLPSzbBnedf+/XGAM5G8NLWZoisDsWnr+QEKZljjGG9p68fyWP5mH70PvX2Pn0jmFRcxQM5f7qefc4rC7tZ62BVUjkoIBR0sEwKtJ+lfzvSS9B9nyoqvgKWX8jFsse+ZLyOkmmSy/+Kgl5A60KdtOqgp05ji7Ep0M9IVa8hFZxnWrprvwCe7Fy3gRQXshSsJZnSEfqtQ/MRlNSb58mIRSAzmg+xQraSe839DYoCvkCGwQXegcdVIJIwvy4S1vGCJbaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+hj6AS47jHbfkNGUgsaCO5e5FgMhsRkxpPOE/FTB/wc=;
+ b=zMozl04cm3so1khOb2zpOjmWCqI7CJ7d7OYjNRuq2P8BHUGI6edhfIoLHdoOKYxwfK9dRWbd0QWot6jX4imO3XSCfhKkP/U3LVU0KIdV9yK70CzG9NTXAMvGT3zKt7qQJ+WaATimV+4tbk73JXK81q18chdU/7AgGZ4XKl0JS7wHiqUn5qE1lG1NI+Ae/hRICsFLWZzTci/1HnA0CVOSiH7k0gITuotNbGY9Ae/Rf0BxL79ExShHFumDlLTaVFo7HWGzgN/stZecgKaVddGkw9m/dUcy7ghz6IojaGIbPF5QfNEhOkcCBQ7/Q5rVlfnz0sxAPd/Z+uNVkUASLZgPQg==
+Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:420::16)
+ by DB8PR10MB3657.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:13c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Sun, 20 Sep
+ 2026 09:08:11 +0000
+Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a905:57e5:8858:d008]) by AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a905:57e5:8858:d008%4]) with mapi id 15.21.0406.007; Sun, 20 Sep 2026
+ 09:08:11 +0000
+From: "Marko, Peter" <Peter.Marko@siemens.com>
+To: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>
+Subject: RE: [meta-lts-mixins][scarthgap/go][PATCH] golang: fix homepage
+Thread-Topic: [meta-lts-mixins][scarthgap/go][PATCH] golang: fix homepage
+Thread-Index: AQHdQ5exzvb6InHbzEKKL3p+x7aIebbXN9zQ
+Date: Sun, 20 Sep 2026 09:08:11 +0000
+Message-ID: 
+ <AS8PR10MB5073EB48D35EDD5F5ECA5EF7FD852@AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM>
+References: <20260913154916.3207747-1-peter.marko@siemens.com>
+In-Reply-To: <20260913154916.3207747-1-peter.marko@siemens.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=99b20a5c-80b9-4128-9741-e8d81c6ae179;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-09-20T09:07:55Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR10MB5073:EE_|DB8PR10MB3657:EE_
+x-ms-office365-filtering-correlation-id: 7037c70a-1395-48a4-6091-08df16f6b1f6
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|13003099007|38070700021|56012099006|6133799003|3023799007|10067099003|11063799006|18002099003|55112099003|22082099003;
+x-microsoft-antispam-message-info: 
+ 89e7jJfp+a2d/GqreJEWnpmSDQSsTjPCQwQTCr1WRq/R5C2NPqeSbpMhNSYjnpfVVJRcjn+Y5D9yn3lc3YA7XsICX33S2kklRigvV/elCGvVSI5u5meLV7H+1vI095zza6IISLGnU276gzSfvUHWyv1gKgt2L/cpElV9+sxumjCXun39Wirs+j4iU7sPDY9cbANTJ8VC0f2xrZXCIS0HV5lfCa4lRkGrl72XCOvz3kEd9+uo08x1X5OXxUXImj74cCtGNZtc4vCsWFvX1bY1cCoN6cL5bpFvwoCXuQNV+xaGUAbaPQ71LrIRmkTDzU+En4Tm9rWwNV4DT2G79N7ZH1Jq/WjKx3BUquTn85XNMrta84DNsBhykkiqTg8671mePHe+jcoDuRG+fuL1WQGn1LUrrLKjE4a8FafH9wfeoHtpKJHA1ytDtfrs3IkHTTr3cktBA317DUDVyC9KZdSeB/R7Oo3a5P1L7LCzJkN+0+osNltrIuBkAcyAHqxuY8cXmfMm3Vn9woggevkOxY3Bth6fAp6Q2n7sVKaKuAKOkkWH2ffrKuYVNCjQQthEg/RdskhsXInjvj25nHPTR542WfRAXlubX3fPsV4wt8uj0y8OUcJKPck0VL7lJG+2ogJzsI6GZAazaA8+tUP8qtSsvcDUMucZNJ+z6fE4E5rza7U=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(13003099007)(38070700021)(56012099006)(6133799003)(3023799007)(10067099003)(11063799006)(18002099003)(55112099003)(22082099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?SZ9sjcsMLGmkWQS+fWTX494DTVZ9rEJAnwixZlSI1Ewm2L0mIvRintKUWtPW?=
+ =?us-ascii?Q?enMcDL9iPiiarfrZYufQj4wEB33l9BRdnSbbtsdRXdAFjb2jeWjWC0wshlAg?=
+ =?us-ascii?Q?8iHV2b0TADG9bJ3DBuI3RdkA7mqGK3UU9kQ2UJq2uvXuQClSHrfpcHvYnDCU?=
+ =?us-ascii?Q?9or3ul+Sqjl7i1UC7QpwKQjhbseeEA//n+VikHLQtBYXIiPcNw/2l869EF6R?=
+ =?us-ascii?Q?miRtRgTKYI3nZn0naaHP19i9WXbgw5624k/PVFV8rabwb5K2EjIl0f84ROmL?=
+ =?us-ascii?Q?c9jppVeDyTPdksh7f1vNqxHWMSNm4hGnNOobzU4dfEYaauwarEMZ7PjAEiH8?=
+ =?us-ascii?Q?cwQJTVKbTBbbA4hnqpIjvjaJXguPGHP564HnjPJVybT8qpMqKQIDJZPpTt7Q?=
+ =?us-ascii?Q?CPr98cuZY5OnxEFQzL0ks+lJvmM8UlBxULdnVJODCV4mXiyFLiyPdr6QIt7N?=
+ =?us-ascii?Q?O4esTmd90NlnN36LUKu/w2a6IBpBQEiraJjTB9y7KZDgW3RZkK7D03UI5uk8?=
+ =?us-ascii?Q?XiBtQK1n5jHflbsBOxjqJAYXTasgctE5yR7djjLYDlepvZlF4uRDWu4f3QTv?=
+ =?us-ascii?Q?xmvl1M20UDPeAfRnIccombFWRWodZzisKmllpzQeK+wc4kz35a6TbGT7qOnn?=
+ =?us-ascii?Q?156HXcKj3qmXCFgRQHzNhN574xk5wrK9Xa+H7ZvLsIWKT3ekH+YBDQ+RzhQD?=
+ =?us-ascii?Q?7HpKNzpiN62yCAUzbis7DUuv5EtqfAi3PY3EMLqnoKQLJJOjMHuA5/cbiNrt?=
+ =?us-ascii?Q?xhS6W1u+RK0Ex7YJ/eAq1ae0iGe54UAA/mfUih1y/cshwhdEnxSbq7Ba8mbO?=
+ =?us-ascii?Q?6NkmLgt5o2VJoOgqRGFtr8fYK0lcUZKl4FKN5Kf53hVwjutZgNP3rgChV8M6?=
+ =?us-ascii?Q?syyApdODT2+i9uDD+kieektb0I3DiHaDcsx4iLBEXCwj1qX7iuNQ90E1UgoZ?=
+ =?us-ascii?Q?NyCOkMjXN2EXWHhrzXfPD7GYnFtXtnA0bgRsbdbYPFF7tLMnuACOY6dIjT6J?=
+ =?us-ascii?Q?zMGvMEx5qJXCA58KxkGHV6DC4I+z5e0Ypy5STgjcZATwmDt2ft5K8b1ZL7x9?=
+ =?us-ascii?Q?e8m/EE0/7NUOqXH54QacKxF5Zt9CrbQ+MFgoulMwdpLTtCPgqiLeCRrt1shD?=
+ =?us-ascii?Q?6KIs5DRijBBgAMwZ2xn81ajYrf7U88lqVmUj4T6zqUBXMiAyP7KNx6CgzFoa?=
+ =?us-ascii?Q?dYsle8sVn/zD0ERY1SuYOrAoKRQVSjGci7rFYpB11AXD0113OhbwZymkOtMg?=
+ =?us-ascii?Q?W+lC+u+YqB7DbZAUUxNLoIhD7SIm6iv5cD1hc7m2W+r1DRoMylkarusJycIG?=
+ =?us-ascii?Q?q47w7lZ3/S3iQH84UgbHEFiI7a6VC1NJBctMJaO7E/Ml8n9FRkTBz3lLR0+2?=
+ =?us-ascii?Q?exQqLEeoDef9bV3iAezEZTe0CJOW7KC+Lg5VDKtfxtN7Gg4p20R3XfSRpEa1?=
+ =?us-ascii?Q?hoZfYFazWD80lfZd4zQ/OIaKfZlXKiqZkyjwoktodHObAfkdzN9jcpNSMJV8?=
+ =?us-ascii?Q?FL+vpdPxJRcoIOj+vIuFBCjiLhx3dKsJ2SMVBbG+390aBESfZ0IzGW1yWcEN?=
+ =?us-ascii?Q?RuN1d3qd+7CTublPXPTVCuF1MK9XGyVOYRyvgp0Aonnl4db2NUlUPfF/TQVy?=
+ =?us-ascii?Q?oFl1u3NFmpd1qkGb65RgkcQy3oNedxC7uqzKDUby3o/1FmUrlxgtmLYtojBO?=
+ =?us-ascii?Q?UBM+xI3IbnyB+Lj6qtHecmke86HS8c112mmKxVPlW1ALJCDP4XPRRLDyjhZO?=
+ =?us-ascii?Q?n56Hb6vNEw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7037c70a-1395-48a4-6091-08df16f6b1f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2026 09:08:11.3316
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fKmTbY0a8saDTnnUssRpxJGAClyFxf8UmwXIcLd/nAKgpDYo7wcLOo2KNnHWfjEaihUXP2er5OGx8O/0D6nPdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3657
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 19 Sep 2026 16:15:19 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4909
+ <yocto-patches@lists.yoctoproject.org>; Sun, 20 Sep 2026 09:08:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4910
 
-On Wed, 16 Sep 2026, Scott Murray via lists.yoctoproject.org wrote:
+This is now merged.
 
-> This patch series rolls up the contributed patches from the past few
-> weeks along with a bunch more OpenSSL 4.0 fixes and package updates
-> from myself.  These changes are queued on the master-next branch if
-> you would like to check them out to test yourself.  I intend to merge
-> these to master branch Friday evening (EDT, September 18) unless
-> there are objections.
->
-> If you happen to use ossec-hids, or have experience with fixing up
-> OpenSSL 4.0 API breakage, I would appreciate some eyes on the patch
-> I've cooked up to get it building.  I do intend to submit it upstream,
-> but need to find some cycles to do some build testing with older
-> versions of OpenSSL.
-
-These changes have now been merged to master branch.
-
-Scott
-
-
-> Changes:
->
-> Khem Raj (5):
->   tpm2-tools: Upgrade 5.7 -> 5.8
->   trousers: Fix build with OpenSSL 4.x
->   tpm2-openssl: Fix build with OpenSSL 4.x
->   tpm2-pkcs11: Upgrade 1.9.2 -> 1.10.1
->   meta-tpm: Remove tpm2-tss-engine
->
-> Scott Murray (13):
->   ncrack: fix OpenSSL 4.0 breakage
->   openscap: upgrade 1.4.3 -> 1.4.4
->   scap-security-guide: upgrade 0.1.80 -> 0.1.81
->   sssd: upgrade 2.10.2 -> 2.13.1
->   krill: upgrade 0.12.3 -> 0.16.0
->   ossec-hids: upgrade 3.7.0 -> 4.3.0
->   clamav: upgrade 1.4.4 -> 1.4.6
->   clamav: upgrade 1.4.6 -> 1.5.4
->   meta-tpm: Remove openssl-tpm-engine
->   aide: upgrade 0.19.3 -> 0.19.4
->   crowdsec: upgrade 1.7.7 -> 1.8.1
->   suricata: upgrade 8.0.4 -> 8.0.6
->   lynis: upgrade 3.1.6 -> 3.1.7
->
-> Wang Mingyu (1):
->   ccs-tools: upgrade 1.8.9 -> 1.8.14
->
->  .../sssd/files/drop_ntpdate_chk.patch         |   17 +-
->  .../sssd/files/fix-ldblibdir.patch            |    9 +-
->  .../recipes-security/sssd/files/fix_gid.patch |   18 +-
->  .../sssd/files/musl_fixup.patch               |   38 +-
->  .../recipes-security/sssd/files/no_gen.patch  |   18 +-
->  .../sssd/{sssd_2.10.2.bb => sssd_2.13.1.bb}   |    4 +-
->  .../distro/include/maintainers-meta-tpm.inc   |    2 -
->  .../packagegroup/packagegroup-security-tpm.bb |    1 -
->  .../packagegroup-security-tpm2.bb             |    2 -
->  ...pm-key-support-well-known-key-option.patch |  101 -
->  .../0002-libtpm-support-env-TPM_SRK_PW.patch  |   82 -
->  ...engine-parse-an-encrypted-tpm-SRK-pa.patch |  253 --
->  ...engine-change-variable-c-type-from-c.patch |   33 -
->  .../files/openssl11_build_fix.patch           |   34 -
->  .../openssl-tpm-engine_0.5.0.bb               |   63 -
->  ...1-use-ASN1_STRING_get0_data-accessor.patch |   45 +
->  .../recipes-tpm1/trousers/trousers_git.bb     |    1 +
->  ...TRING-and-X509_NAME-access-for-OpenS.patch |   95 +
->  .../tpm2-openssl/tpm2-openssl_1.3.0.bb        |    4 +-
->  ...eturn-NULL-for-twist-on-auth-failure.patch |   28 -
->  ...-pkcs11_1.9.2.bb => tpm2-pkcs11_1.10.1.bb} |    3 +-
->  .../{tpm2-tools_5.7.bb => tpm2-tools_5.8.bb}  |    4 +-
->  ...-disabling-of-digest-sign-operations.patch |   48 -
->  ...OpenSSL-function-signatures-that-cau.patch |   78 -
->  .../tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb  |   40 -
->  .../lynis/{lynis_3.1.6.bb => lynis_3.1.7.bb}  |    2 +-
->  ...Python-2-C-API-macros-for-SWIG-4.5.0.patch |   87 +
->  .../{openscap_1.4.3.bb => openscap_1.4.4.bb}  |    5 +-
->  ....1.80.bb => scap-security-guide_0.1.81.bb} |    0
->  .../0002-Support-build-with-nettle-4.patch    |   53 -
->  .../aide/{aide_0.19.3.bb => aide_0.19.4.bb}   |    3 +-
->  recipes-ids/crowdsec/crowdsec-go-mods.inc     |  408 ++-
->  recipes-ids/crowdsec/crowdsec-licenses.inc    |  321 +-
->  .../{crowdsec_1.7.7.bb => crowdsec_1.8.1.bb}  |    2 +-
->  ...Makefile-drop-running-scrips-install.patch |    7 +-
->  .../0002-Makefile-don-t-set-uid-gid.patch     |    7 +-
->  .../files/0003-Add-OpenSSL-4.0-support.patch  |  167 +
->  ...ssec-hids_3.7.0.bb => ossec-hids_4.3.0.bb} |    5 +-
->  recipes-ids/suricata/suricata-crates.inc      | 2995 ++++++++--------
->  .../{suricata_8.0.4.bb => suricata_8.0.6.bb}  |    2 +-
->  ...ccs-tools_1.8.9.bb => ccs-tools_1.8.14.bb} |    6 +-
->  recipes-scanners/clamav/clamav-crates.inc     |  556 ++-
->  recipes-scanners/clamav/clamav-git-crates.inc |    7 +-
->  .../{clamav_1.4.4.bb => clamav_1.5.4.bb}      |    7 +-
->  ...ed-OpenSSL-accessors-for-ASN1_STRING.patch |  122 +
->  .../files/0001-Disable-abort-on-panic.patch   |   24 +
->  .../0002-Update-crate-dependencies.patch      | 3177 +++++++++++++++++
->  .../krill/files/panic_workaround.patch        |   16 -
->  recipes-security/krill/krill-crates.inc       | 1298 ++++---
->  .../{krill_0.12.3.bb => krill_0.16.0.bb}      |    9 +-
->  .../0001-fix-ftbfs-with-OpenSSL-4.patch       |   53 +
->  recipes-security/ncrack/ncrack_0.7.bb         |    4 +-
->  52 files changed, 6905 insertions(+), 3459 deletions(-)
->  rename dynamic-layers/networking-layer/recipes-security/sssd/{sssd_2.10.2.bb => sssd_2.13.1.bb} (98%)
->  delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0001-create-tpm-key-support-well-known-key-option.patch
->  delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0002-libtpm-support-env-TPM_SRK_PW.patch
->  delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0003-tpm-openssl-tpm-engine-parse-an-encrypted-tpm-SRK-pa.patch
->  delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/0004-tpm-openssl-tpm-engine-change-variable-c-type-from-c.patch
->  delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/files/openssl11_build_fix.patch
->  delete mode 100644 meta-tpm/recipes-tpm1/openssl-tpm-engine/openssl-tpm-engine_0.5.0.bb
->  create mode 100644 meta-tpm/recipes-tpm1/trousers/files/0001-tspi_asn1-use-ASN1_STRING_get0_data-accessor.patch
->  create mode 100644 meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch
->  delete mode 100644 meta-tpm/recipes-tpm2/tpm2-pkcs11/files/0001-src-lib-tpm-return-NULL-for-twist-on-auth-failure.patch
->  rename meta-tpm/recipes-tpm2/tpm2-pkcs11/{tpm2-pkcs11_1.9.2.bb => tpm2-pkcs11_1.10.1.bb} (91%)
->  rename meta-tpm/recipes-tpm2/tpm2-tools/{tpm2-tools_5.7.bb => tpm2-tools_5.8.bb} (83%)
->  delete mode 100644 meta-tpm/recipes-tpm2/tpm2-tss-engine/files/0001-Configure-Allow-disabling-of-digest-sign-operations.patch
->  delete mode 100644 meta-tpm/recipes-tpm2/tpm2-tss-engine/files/0002-Fix-mismatch-of-OpenSSL-function-signatures-that-cau.patch
->  delete mode 100644 meta-tpm/recipes-tpm2/tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb
->  rename recipes-compliance/lynis/{lynis_3.1.6.bb => lynis_3.1.7.bb} (96%)
->  create mode 100644 recipes-compliance/openscap/files/0002-Replace-removed-Python-2-C-API-macros-for-SWIG-4.5.0.patch
->  rename recipes-compliance/openscap/{openscap_1.4.3.bb => openscap_1.4.4.bb} (96%)
->  rename recipes-compliance/scap-security-guide/{scap-security-guide_0.1.80.bb => scap-security-guide_0.1.81.bb} (100%)
->  delete mode 100644 recipes-ids/aide/aide/0002-Support-build-with-nettle-4.patch
->  rename recipes-ids/aide/{aide_0.19.3.bb => aide_0.19.4.bb} (94%)
->  rename recipes-ids/crowdsec/{crowdsec_1.7.7.bb => crowdsec_1.8.1.bb} (96%)
->  create mode 100644 recipes-ids/ossec/files/0003-Add-OpenSSL-4.0-support.patch
->  rename recipes-ids/ossec/{ossec-hids_3.7.0.bb => ossec-hids_4.3.0.bb} (98%)
->  rename recipes-ids/suricata/{suricata_8.0.4.bb => suricata_8.0.6.bb} (98%)
->  rename recipes-mac/ccs-tools/{ccs-tools_1.8.9.bb => ccs-tools_1.8.14.bb} (84%)
->  rename recipes-scanners/clamav/{clamav_1.4.4.bb => clamav_1.5.4.bb} (97%)
->  create mode 100644 recipes-scanners/clamav/files/0001-Use-non-deprecated-OpenSSL-accessors-for-ASN1_STRING.patch
->  create mode 100644 recipes-security/krill/files/0001-Disable-abort-on-panic.patch
->  create mode 100644 recipes-security/krill/files/0002-Update-crate-dependencies.patch
->  delete mode 100644 recipes-security/krill/files/panic_workaround.patch
->  rename recipes-security/krill/{krill_0.12.3.bb => krill_0.16.0.bb} (87%)
->  create mode 100644 recipes-security/ncrack/ncrack/0001-fix-ftbfs-with-OpenSSL-4.patch
->
->
+> -----Original Message-----
+> From: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>
+> Sent: Sunday, September 13, 2026 5:49 PM
+> To: yocto-patches@lists.yoctoproject.org
+> Cc: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>;
+> jose.quaresma@foundries.io
+> Subject: [meta-lts-mixins][scarthgap/go][PATCH] golang: fix homepage
+>=20
+> From: Peter Marko <peter.marko@siemens.com>
+>=20
+> Leading space leads to SPDX document validation errors in some tools.
+>=20
+> Example:
+> SchemaError: \" http://golang.org/\" is not valid under any of the
+> schemas listed in the 'anyOf' keyword
+> (components -> ... -> externalReferences -> 0 -> url)
+>=20
+> Signed-off-by: Peter Marko <peter.marko@siemens.com>
+> Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+> (From OE-Core rev: cbf36f436b477d81b58ff605846a2482308aefa4)
+> Signed-off-by: Peter Marko <peter.marko@siemens.com>
+> ---
+>  recipes-devtools/go/go-binary-native_1.26.7.bb | 2 +-
+>  recipes-devtools/go/go-common.inc              | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/recipes-devtools/go/go-binary-native_1.26.7.bb b/recipes-dev=
+tools/go/go-
+> binary-native_1.26.7.bb
+> index 380b446..b2c4927 100644
+> --- a/recipes-devtools/go/go-binary-native_1.26.7.bb
+> +++ b/recipes-devtools/go/go-binary-native_1.26.7.bb
+> @@ -1,7 +1,7 @@
+>  # This recipe is for bootstrapping our go-cross from a prebuilt binary o=
+f Go from
+> golang.org.
+>=20
+>  SUMMARY =3D "Go programming language compiler (upstream binary for boots=
+trap)"
+> -HOMEPAGE =3D " http://golang.org/"
+> +HOMEPAGE =3D "http://golang.org/"
+>  LICENSE =3D "BSD-3-Clause"
+>  LIC_FILES_CHKSUM =3D "file://LICENSE;md5=3D7998cb338f82d15c0eff93b7004d2=
+72a"
+>=20
+> diff --git a/recipes-devtools/go/go-common.inc b/recipes-devtools/go/go-c=
+ommon.inc
+> index 2d617bd..df98f15 100644
+> --- a/recipes-devtools/go/go-common.inc
+> +++ b/recipes-devtools/go/go-common.inc
+> @@ -9,7 +9,7 @@ DESCRIPTION =3D " The Go programming language is an open
+> source project to make \
+>   fast, statically typed, compiled language that feels like a\
+>   dynamically typed, interpreted language."
+>=20
+> -HOMEPAGE =3D " http://golang.org/"
+> +HOMEPAGE =3D "http://golang.org/"
+>  LICENSE =3D "BSD-3-Clause"
+>=20
+>  inherit goarch
 
