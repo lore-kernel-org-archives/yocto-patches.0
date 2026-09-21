@@ -2,105 +2,191 @@ Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB2FC982DA
-	for <webhook@archiver.kernel.org>; Mon, 21 Sep 2026 00:24:00 +0000 (UTC)
-Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com [74.125.228.43])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.39714.1789950231846926151
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6998C982DA
+	for <webhook@archiver.kernel.org>; Mon, 21 Sep 2026 00:46:00 +0000 (UTC)
+Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com [74.125.227.170])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.39803.1789951559853327545
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 20 Sep 2026 17:23:51 -0700
+ Sun, 20 Sep 2026 17:45:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=M98rXaXP;
- spf=pass (domain: konsulko.com, ip: 74.125.228.43, mailfrom: tim.orling@konsulko.com)
-Received: by mail-pz2-f43.google.com with SMTP id 41be03b00d2f7-cc4c08393dfso1966873a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 20 Sep 2026 17:23:51 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=kw9hpMHF;
+ spf=pass (domain: konsulko.com, ip: 74.125.227.170, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pj2-f42.google.com with SMTP id d9443c01a7336-2df4c9d14b8so432775ad.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 20 Sep 2026 17:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789950231; x=1790555031; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=dWd3bSpJGaZ6cJtUc2kBEw8eHBEHBmnni1ZVjSJG8Nc=;
-        b=M98rXaXPraNK8/McD/JAXHPV3d9qGif0/CJjS9G2tSicSDksZMNfkgQKcOOan72YHX
-         vbZQgkfSo9ZvcjQBFmRbJ5MWq5BWXbHzZLRb3h62SBixs4PCK8tp/JztD/KRWRa93/7N
-         KZWWl1GiKv3BS4aoa2kIVDD2NNcaMEBZDMweU=
+        d=konsulko.com; s=google; t=1789951559; x=1790556359; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=RmAxzzCY1yLb1VROhCPO4RSJ+hZHk7Vyp0imBoE9Yzs=;
+        b=kw9hpMHFGOue85BOkriqWzLh1JXqByDZFqbkfXflLnAc0d40iTP9K0ZnvADaFPhSTm
+         +HQG2aDJxiizqnYpeDBmqWGCNIXD9TR3GN3wDTTTtmKSvcscnT45QJeW9DDDlBngtd70
+         NI87zynQ3RMT3mNMb433oxErP2QcUlhyPYti4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789950231; x=1790555031;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dWd3bSpJGaZ6cJtUc2kBEw8eHBEHBmnni1ZVjSJG8Nc=;
-        b=n2L0xMzL/ioLIiQOH8X1cHgVHIio22AEzm0kQg1Sg3wtfLaicwO1BrsGgVqfv4mdJO
-         5X1vmdVw9ax5qtmgDBgI0Q6tsVsV4JTIcv6S7ZWOJT3Zk3lZHt9jwKKf0OVr5ZcAedm5
-         MU0NtxUOghl9/Di/3zQy0Ry2lD8x7dmkLZLSPsnWeJgifALBQekhLTqDcaagCvN18Kh9
-         vB6OoxlRTLVum7YJPglfg4523K75zF1INrG4x0DPLQ14qKIM3Gs/UmCtTT8VnODxoKgG
-         sSHY58ssjs6Y0WMV/+AFuapASj/MpNQfqMy3Jky5/K0jo4RRZrue6xkcwASFv6Yc/BMW
-         dJIw==
-X-Gm-Message-State: AFuF++ncH8DRTW5qSoXMTuoKoPM9yp9HhaCiWC3g2YrJYG8lWHb8DFLa
-	PbiDJFn6GROM4lxf76qyjJFemMMvPnLoZJjSnhu12QlcKTVa8Hg/nn/y7x6TypTaud2r8hIHvrr
-	90VfV
-X-Gm-Gg: AYBFou1GjzsKiPPH84Gf0dBK7vAmDDq6Xk2YR7T23bc2GghTJqIWc38LXjYPOo97y1P
-	F5gvYWfq8MAtkC6m+hNd+O2Jr9mZ3PV/m0mQW8L49dc0PzlP5DJ+N1M8h1qSD9NseNVPaqJb+jU
-	b+G3pA6LrytEvaYRWHLIb0RL8zecN39wBO07uG74jVRjLR8Cm+aJOm+UAI8Q+2AtKfV/ZTOnwKu
-	VLPOXUQv3inr3Et/V4wwOMorYG7SG+zZRM3ZITAw/RwRLakSNuFf2wLbfM0bsQxd/jTwy46H6iu
-	YdLMTtR7xdJHL9vDiYjFcgbAly81zKtkjpEjAZJe81a/Z6tTE6FD25kUHBO8relAWDcP3GrHGva
-	boBv6B4eknypXa+olIH0V/TxnRhgl/NIDTNZZ2mctxG6FY7Hc0RPsiTUjCSozwG3Nsgp9ashNJJ
-	VRQKpozX2tKbkQnM28XnJrrBJQ6J0hwf9lr773VIc7hSKCHDb80ZNffuCa0bV1WPWDa5Zb/kyhG
-	u8roFHYnCoJbFFfRGaqqrDB4paVq1qmb+ZfypE2WGPwce6Raw==
-X-Received: by 2002:a05:6a20:cd95:b0:3dd:a196:69dd with SMTP id adf61e73a8af0-3dda196779emr8086464637.56.1789950231084;
-        Sun, 20 Sep 2026 17:23:51 -0700 (PDT)
-Received: from localhost (c-24-20-171-118.hsd1.or.comcast.net. [24.20.171.118])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cc72ae8bf29sm2555551a12.12.2026.09.20.17.23.50
+        d=1e100.net; s=20260707; t=1789951559; x=1790556359;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RmAxzzCY1yLb1VROhCPO4RSJ+hZHk7Vyp0imBoE9Yzs=;
+        b=gAGMpFefXlOroLEzwU3My7vjI3ifY1y1/94GCnvjCUbON6MmW2oLT5LuTnz06cH32m
+         L0r5m5HXbTHmisTU149eg7G6lFuhDNuUtanDPf8qNzEHxQoPxo+olgDbCRJDgNPw78aC
+         Xc22k2ZEnGS9ROOYZ7F+Msm6IB+MyphHfaiTduHKMJYzNI+22TaCUsvvPUtCdwiC8Qe6
+         0S5COcJT+tKBfRK9zYsgRjTygnxj5VdRXi3ANrw7Q4YpHcO0g4O0OwMjWDQExzXp5Z20
+         7uUP/6KYPc2+HfpvPHJVk1LHObmiMkIRFvtwXDyTa4hJQl3vQcDDuB37l9vas69QCSM7
+         QCcQ==
+X-Gm-Message-State: AFuF++mmWNv0wELZdC8WFLyQEXV6FhFpLUCYWpPKMFqA5+H2ir4kuabN
+	S7er0ixNFz8xOYRFxJxbzIFX+xAfYbyorbNu2b+3Hngm+eySyShL8RNC+mKLzzL99y62aqGMSIQ
+	SAk+w
+X-Gm-Gg: AYBFou31ELjJFAJrECdm5Ny7QUWG8pxS4ZOGjiTQp9Ea+x1o17qx/S8enVeWJvWI+4R
+	eK/Ja4pC3QfDaa0vmxygJbynigmb0HzwWWUfc6zn6klsmFE9mEUysXvih/1rs9qtsUi2zD/pXrp
+	BPmgN9teJumEDT+lhuWJsSII0m3JfUMouN0u/hZeuA7U/PZ9Quz8frLkycVsKaTkl9unD9IUa6M
+	rqgccrReWZ8lDJutMxLTdKVvFCcQZt5WgA1YAsT+UYamvsrdMTeIkjxA6RUF8illHAbQ9isn7Kz
+	C6KLMnm8X6OzqTKjpGOoyQVrbxMOe18wLR7DlppkR5FOP1PFContdi07GQ5RAKhyPtiGB1OtC52
+	pqHUMYWa1+6B7ZCACLLqYD8JvegazYJ1g22SYh04Wqo7n7IGG6T+sMJzNo6Yv4m/YssDXA597Xe
+	wIqWHMkC9zeQmeT1Hx6Ijs8MUzyyUR3dYmB23lMQdBuFkeao9MTnJOh/sqqnhYeuqac2Gu17Wzw
+	CauyCTC8HLt5A==
+X-Received: by 2002:a17:903:1b6c:b0:2dd:c053:b9c7 with SMTP id d9443c01a7336-2ddc053ba17mr58692465ad.24.1789951559191;
+        Sun, 20 Sep 2026 17:45:59 -0700 (PDT)
+Received: from thetis.home.local ([2606:c800:6024:2000:7821:4c5:938a:e12])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ddc1803813sm24512385ad.82.2026.09.20.17.45.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Sep 2026 17:23:50 -0700 (PDT)
+        Sun, 20 Sep 2026 17:45:58 -0700 (PDT)
 From: tim.orling@konsulko.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [yocto-autobuilder2][PATCH] schedulers: add Sunday/Wednesday container jobs
-Date: Sun, 20 Sep 2026 17:23:13 -0700
-Message-ID: <20260921002312.547973-2-tim.orling@konsulko.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [yocto-autobuilder-helper][PATCH 3/4] run-push-containers: Cache native sysroots to cut bitbake startups
+Date: Sun, 20 Sep 2026 17:41:17 -0700
+Message-ID: <20260921004540.3718904-4-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260921004540.3718904-1-tim.orling@konsulko.com>
+References: <20260921004540.3718904-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 21 Sep 2026 00:24:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4912
+ <yocto-patches@lists.yoctoproject.org>; Mon, 21 Sep 2026 00:46:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4916
 
 From: Tim Orling <tim.orling@konsulko.com>
 
-Schedule vcontainer-tarball, vcontainer-tests, and containers-library to
-run in that order on Wednesday and Sunday, inside the 00:00-07:00 quiet
-window when most contributors are offline.
+Every oe-run-native invocation re-runs bitbake-getvar to locate the
+native sysroot, paying a full cooker startup and metadata parse each
+time. Resolve it once per tool in prepare_skopeo()/prepare_cosign() and
+pass OECORE_NATIVE_SYSROOT through the _skopeo()/_cosign() wrappers.
 
-Use fixed time slots, with no completion-tracking between the jobs:
- - vcontainer-tarball at 1:15
- - vcontainer-tests at 3:15 (2 hours after vcontainer-tarball)
- - containers-library at 4:15 (1 hour after vcontainer-tests)
+For one multiarch container with 4 tags, 1 registry and 2 platforms this
+drops bitbake startups from 19 to 11.
 
+AI-Generated: Claude Opus 5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- schedulers.py | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ scripts/run-push-containers | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/schedulers.py b/schedulers.py
-index d606b85..5413676 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -750,3 +750,14 @@ schedulers.append(sched.Nightly(name='nightly-meta-webosose', branch='kirkstone'
- schedulers.append(sched.Nightly(name='nightly-meta-webosose-scarthgap', branch='scarthgap', properties=parent_default_props('meta-webosose', 'scarthgap'),
-                                 codebases = {'' : {'branch' : 'scarthgap'}},
-                                 builderNames=['meta-webosose'], hour=2, minute=0, dayOfWeek=4))
-+
-+# Run container jobs on Wednesday and Sunday
-+# - vcontainer-tarball at 1:15
-+# - vcontainer-tests at 3:15 (2 hours after vcontainer-tarball)
-+# - containers-library at 4:15 (1 hour after vcontainer-tests)
-+schedulers.append(sched.Nightly(name='nightly-vcontainer-tarball', branch='master', properties=parent_default_props('vcontainer-tarball'),
-+                  builderNames=['vcontainer-tarball'], dayOfWeek=[2, 6], hour=1, minute=15))
-+schedulers.append(sched.Nightly(name='nightly-vcontainer-tests', branch='master', properties=parent_default_props('vcontainer-tests'),
-+                  builderNames=['vcontainer-tests'], dayOfWeek=[2, 6], hour=3, minute=15))
-+schedulers.append(sched.Nightly(name='nightly-containers-library', branch='master', properties=parent_default_props('containers-library'),
-+                  builderNames=['containers-library'], dayOfWeek=[2, 6], hour=4, minute=15))
+diff --git a/scripts/run-push-containers b/scripts/run-push-containers
+index fd606c0..702335b 100755
+--- a/scripts/run-push-containers
++++ b/scripts/run-push-containers
+@@ -138,10 +138,16 @@ script = [
+     "    %s-$(arch) --config %s memres restart </dev/null" % (runtime, auth_config),
+     "    _VM_STARTED=1",
+     "}",
++    # oe-run-native re-runs 'bitbake-getvar STAGING_DIR_NATIVE' (a full parse)
++    # on every call unless OECORE_NATIVE_SYSROOT is set, so prepare_*() resolves
++    # it once and these wrappers pass it in. Empty falls back to the query.
++    "_SKOPEO_SYSROOT=",
++    "_skopeo() { OECORE_NATIVE_SYSROOT=\"$_SKOPEO_SYSROOT\" oe-run-native skopeo-native skopeo \"$@\"; }",
+     "_SKOPEO_READY=0",
+     "prepare_skopeo() {",
+     "    if [ \"$_SKOPEO_READY\" = 1 ]; then return 0; fi",
+     "    bitbake skopeo-native -c addto_recipe_sysroot",
++    "    _SKOPEO_SYSROOT=$(bitbake-getvar -q -r skopeo-native --value STAGING_DIR_NATIVE)",
+     "    _SKOPEO_READY=1",
+     "}",
+ ]
+@@ -201,24 +207,27 @@ sys.stdout.write(base64.b64decode(t).decode() if t else "")' "%s" "$_host")
+         fi
+         _cuser=${_creds%%%%:*}
+         _cpass=${_creds#*:}
+-        printf '%%s' "$_cpass" | oe-run-native cosign-native cosign login "$_host" -u "$_cuser" --password-stdin
++        printf '%%s' "$_cpass" | _cosign login "$_host" -u "$_cuser" --password-stdin
+     done""" % (" ".join(registries), auth_config)
+     script += [
+         "export COSIGN_PASSWORD=\"${COSIGN_PASSWORD:-}\"",
+         "export COSIGN_YES=true",
++        "_COSIGN_SYSROOT=",
++        "_cosign() { OECORE_NATIVE_SYSROOT=\"$_COSIGN_SYSROOT\" oe-run-native cosign-native cosign \"$@\"; }",
+         "_COSIGN_READY=0",
+         "prepare_cosign() {",
+         "    if [ \"$_COSIGN_READY\" = 1 ]; then return 0; fi",
+         "    bitbake cosign-native -c addto_recipe_sysroot",
++        "    _COSIGN_SYSROOT=$(bitbake-getvar -q -r cosign-native --value STAGING_DIR_NATIVE)",
+         login_block,
+         "    _COSIGN_READY=1",
+         "}",
+         # Resolve the lone manifest digest of a single-arch reference. Correct
+         # only when there is no manifest list (single-arch / child manifest);
+-        # the multi-arch path passes explicit digests instead. oe-run-native
+-        # prints 'Getting sysroot...' to stdout, so grep the digest out.
++        # the multi-arch path passes explicit digests instead. oe-run-native can
++        # still print 'Getting sysroot...', so grep the digest out.
+         "resolve_digest() {",
+-        "    oe-run-native skopeo-native skopeo inspect --authfile %s --format '{{.Digest}}' docker://$1 | grep -oE 'sha256:[0-9a-f]{64}' | tail -n1" % auth_config,
++        "    _skopeo inspect --authfile %s --format '{{.Digest}}' docker://$1 | grep -oE 'sha256:[0-9a-f]{64}' | tail -n1" % auth_config,
+         "}",
+         # Track digests already signed in this run so the same artefact is
+         # signed only once (see sign_image).
+@@ -226,8 +235,8 @@ sys.stdout.write(base64.b64decode(t).decode() if t else "")' "%s" "$_host")
+         # $1 = <registry>/<image>:<tag> just pushed; $2 = its digest (the index
+         # digest from 'skopeo copy --digestfile' on the multi-arch path). When
+         # $2 is empty (single-arch), resolve the lone manifest digest with
+-        # 'skopeo inspect' — correct there since there is no list. oe-run-native
+-        # prints 'Getting sysroot...' to stdout, so grep the digest out.
++        # 'skopeo inspect' — correct there since there is no list. The digest
++        # is grepped out of resolve_digest's output (see there).
+         "sign_image() {",
+         "    prepare_skopeo",
+         "    prepare_cosign",
+@@ -241,7 +250,7 @@ sys.stdout.write(base64.b64decode(t).decode() if t else "")' "%s" "$_host")
+         # transparency-log conflict ('already exists' / HTTP 409, which also
+         # recurs on rebuilds that reproduce the same digest) as success so
+         # signing stays idempotent instead of aborting the step.
+-        "    _sign_out=$(oe-run-native cosign-native cosign sign --recursive --key %s \"$_SIG_REF\" 2>&1) || {" % cosign_key,
++        "    _sign_out=$(_cosign sign --recursive --key %s \"$_SIG_REF\" 2>&1) || {" % cosign_key,
+         "        case \"$_sign_out\" in",
+         "            *\"already exists\"*|*createLogEntryConflict*) echo \"cosign: $_SIG_REF already in transparency log, treating as signed\" ;;",
+         "            *) echo \"$_sign_out\" >&2; return 1 ;;",
+@@ -279,7 +288,7 @@ sys.stdout.write(base64.b64decode(t).decode() if t else "")' "%s" "$_host")
+         # pass the v3 URI explicitly. For an unknown (non-alias) type cosign
+         # parses the predicate as JSON and embeds it verbatim, which is what
+         # we want for the SPDX 3 JSON-LD document.
+-        "    _att_out=$(oe-run-native cosign-native cosign attest --key %s --type %s --predicate \"$2\" \"$1\" 2>&1) || {" % (cosign_key, SPDX_PREDICATE_TYPE),
++        "    _att_out=$(_cosign attest --key %s --type %s --predicate \"$2\" \"$1\" 2>&1) || {" % (cosign_key, SPDX_PREDICATE_TYPE),
+         "        case \"$_att_out\" in",
+         "            *\"already exists\"*|*createLogEntryConflict*) echo \"cosign: attestation for $1 already in transparency log\" ;;",
+         "            *) echo \"$_att_out\" >&2; return 1 ;;",
+@@ -289,7 +298,7 @@ sys.stdout.write(base64.b64decode(t).decode() if t else "")' "%s" "$_host")
+     ]
+     if cosign_pub:
+         script += [
+-            "    oe-run-native cosign-native cosign verify-attestation --key %s --type %s \"$1\" >/dev/null \\" % (cosign_pub, SPDX_PREDICATE_TYPE),
++            "    _cosign verify-attestation --key %s --type %s \"$1\" >/dev/null \\" % (cosign_pub, SPDX_PREDICATE_TYPE),
+             "        && echo \"cosign: verified attestation for $1\" \\",
+             "        || { echo \"ERROR: attestation verification failed for $1\" >&2; return 1; }",
+         ]
+@@ -419,7 +428,7 @@ for recipe, image in container_images.items():
+     for registry in registries:
+         script += [
+             "        for _tag in $_TAGS; do",
+-            "            oe-run-native skopeo-native skopeo copy --all%s --dest-authfile %s oci:${_OCI_MULTIARCH_OUTPUT} docker://%s/%s:${_tag}" % (digestfile, auth_config, registry, image),
++            "            _skopeo copy --all%s --dest-authfile %s oci:${_OCI_MULTIARCH_OUTPUT} docker://%s/%s:${_tag}" % (digestfile, auth_config, registry, image),
+         ]
+         if cosign_key:
+             script.append("            sign_image %s/%s:${_tag} \"$(cat \"$_DGSTFILE\")\"" % (registry, image))
 -- 
-2.43.0
+2.47.3
 
 
