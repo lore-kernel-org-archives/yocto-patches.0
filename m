@@ -2,78 +2,135 @@ Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0980C982D8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC6CC982EF
 	for <webhook@archiver.kernel.org>; Mon, 21 Sep 2026 00:46:02 +0000 (UTC)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.39801.1789951550501034264
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com [74.125.228.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.40007.1789951557567213434
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 20 Sep 2026 17:45:50 -0700
+ Sun, 20 Sep 2026 17:45:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=iL1F3O2b;
- spf=pass (domain: konsulko.com, ip: 74.125.227.140, mailfrom: tim.orling@konsulko.com)
-Received: by mail-pj2-f12.google.com with SMTP id d9443c01a7336-2db1ca069c8so24284625ad.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 20 Sep 2026 17:45:50 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=eZr8DXoz;
+ spf=pass (domain: konsulko.com, ip: 74.125.228.42, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pz2-f42.google.com with SMTP id 41be03b00d2f7-cc4c3304784so2105479a12.3
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 20 Sep 2026 17:45:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789951550; x=1790556350; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7jxz3Q9S3nd2XTknXZyZZKNEF4mSuB54KADQad6lMVY=;
-        b=iL1F3O2bS9XBytzB4brRzgZjALR7zpyOO9l28x869gVmcYK6SBqwR5HzFRimT0lw7P
-         nH0ZNeNwAq6npeDvJnXXacAdPrgK6ucVTHJG8sxN1BGtOchy6YeFbXuO04h7hISTK5MO
-         rhhhJlth40WS+GLOW4N/e+ICaLlln5vU8WeVU=
+        d=konsulko.com; s=google; t=1789951557; x=1790556357; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=DOfRFZ1pAeOGLZ2vuY2FyCFNOV7rdnmpSwtHL8/EtTw=;
+        b=eZr8DXoznJL8DSe3NE4yI9uHFzVl6FW/X/ehP2heFkYSQwhtWsvMeA70YrptYoUDi5
+         Jjlv8iUbrnS++nmr30U2GWYVYnxssRZBsAqFWF6OLhsXJTJA5dy0rGmCcN/wOL6rEyn9
+         vqpw4aroyIujt+kiKwcID275MAjJKP4CNGm7s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789951550; x=1790556350;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=7jxz3Q9S3nd2XTknXZyZZKNEF4mSuB54KADQad6lMVY=;
-        b=JTSwFna7yUZQc3h2A5AjqNBffYUrdTLh7HP/3/qd5dcAu0sSUQUtbqLLDLDvkMnU6Z
-         i8zL75NpPGgqFpM2xaLQmVYR1KSlG5zPqgEUQddXzgSOh3uzmA36YQlfarvfJ8+t7pJ2
-         25IJIXR7gQYuxjInYu3X+yj3EHhZ50pOcBlwOke1CNBADvPprzlUXx/Gzaay+IYkLh3d
-         eE8bkwgjrmBlPK3U9Q3QRA9z6cB6Um5Bj5mNvH7q6WfczKLPpX2tU3Hww+Ur6OLBmr7v
-         lk60gXKTUP10PB8Dktug2QsderHbujm229Iv+NHTc8cnMGKY6xgfi/ygsJZMXYUKcez/
-         Dbew==
-X-Gm-Message-State: AFuF++mZHgBZ6VPzRdwElIXbaouFnMrmDJYtuj+2R+mmb0tv07SzwB5V
-	YnzMOJtWXYlOMw+QWrCy10BPgSVThdy7ZTS7TngNYoExT+tIQ/4Fz+VfIzInaHaI45/0qGEqsHV
-	6Bq13
-X-Gm-Gg: AYBFou093cOi/Q757LQrodTrlscZHvjvg/wIUABE6qqQ7eLxV8c/jRICtcdHzWxRFiq
-	GCR3kosiweOcBn96+GfqZ4bzk/O1FZezn2oQbC4fAlmmB9ZSmIxpuQe5OeST7DJRHJpKjor5Jl6
-	dsi9KEfvww4/vPmIYOuxNmusVZWnRRxObEFkmk7J3X0Gizmd192vh+E2lkstAUrPw0nlx3/TFjy
-	g1l1UAcVqCcRDuJAbASB/qtM5z9/oRn0i/u3Oqhx50lHE1r7smO5okXxNPM4xo5tpivEI/LqyF2
-	zTkNuFEHOeo3khyE1uVmU0ZFAil/KsEOYuXrTvubXVn00Ks9UOXXnlGsXWhRzb56mFM3zR96Kfs
-	m2+YdJRfZaSBkrBLjIcdNVLtIKubTop9BhLJ7VuEEOTQQRamhxtPAD6Af3LelsQXocBO0A76u+A
-	85L/9qb4PSQ1vl2Fw9RiGxyAjDmckFZ34+z9mIUKuXOCglHo4QUWEKPnUZ07jNos5lbbnBpWvWo
-	7BsC/74re0h6g==
-X-Received: by 2002:a17:903:94c:b0:2db:2427:97d5 with SMTP id d9443c01a7336-2ddb1ab3c03mr146268825ad.4.1789951549734;
-        Sun, 20 Sep 2026 17:45:49 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1789951557; x=1790556357;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=DOfRFZ1pAeOGLZ2vuY2FyCFNOV7rdnmpSwtHL8/EtTw=;
+        b=LL/1bQv0XpP/NoG6aqdgg5YCwOAUZxrfpZKLYHkqvtU0kJN3w9JLZOaNAyNADqUPoq
+         eRq7D3o/osX/LSP/2ZxzRfoDkq9hGvt1ufls0mWhJzYZzYcaCtf4Z+xluednc8n60K2B
+         +IgsIaKelceYwlGRKKm8/NBEptnUPdrPi255TtkLfbUPD8AtgYH135sEhCN4v7lPdgqq
+         3f5ahxUvUpzYJowVM8/o4TZsRt1orp90pgye1t9XT32TANAZtCU4/FxlhvWb7yShdVJv
+         ll3n7LOp7JxqYhAn2SVm+fxDZ6hribeVnJbfkP+gaxbG9sDVm54D1Cx/fQ8waLeulZ6/
+         x8SQ==
+X-Gm-Message-State: AFuF++ng44lUhwMsjHKRBS8ma9AL1lB2ZI6igi1dSdxjydXzwiIvFdiS
+	XuYYX4EYgMUTgcioiIEVqoEfpGNZZGRBU2+Qy391POEqqU2o93gn2QnDHFHPWCegrTDhROiyoZh
+	LM2r1
+X-Gm-Gg: AYBFou2L2LDnAL25YC98Twt730VYrHT99KWZSiaFSRaLM2lp0OYUReHcg2H8rPrVZY6
+	s1DhvOykx8fuBk3RqTRCWveIEGv4rNeXL/YVYqaawIAEJegj1Pfm1z+VFnIwwnpFk6dC+NOAYYq
+	n633MAhpvdE5azcPR2XsMYW//aPeYc+Dhc5uuyWyWZZi8id2LRoxDr1tMpL6gDYWCentMGufyXn
+	lafjPXl/6u//YGGpW+QvbSy+nxGlCRYnzypgeqarhkt4xppanhAmI1Yrl+y9hRH6XWm9P8A8fUS
+	1zaNHph/JCp8v8SON12WGz4PT1ZrT+Wdgic3mlHyzK3KxY+BYTkUfwmvZCBevfPNnEDGiaiKYnf
+	BS0TOEFkQ/h3bI6A/8Z8dffrWif60mhytmqklnf5aYEcHsHrrtE2FFhXKukzfpr8mMVr11V0R8l
+	HklvHSOuwDTg3tXR8nkU6k+XIHmzHwgtfKUlYDxYIgdkpaZPUbKwZfVPoIzehVWfz6e2cl87uKo
+	QNuTzYRVj+TIz/zcIEESnQiog==
+X-Received: by 2002:a17:902:a9cb:b0:2dd:c053:e668 with SMTP id d9443c01a7336-2ddc053e68amr51933105ad.46.1789951556763;
+        Sun, 20 Sep 2026 17:45:56 -0700 (PDT)
 Received: from thetis.home.local ([2606:c800:6024:2000:7821:4c5:938a:e12])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ddc1803813sm24512385ad.82.2026.09.20.17.45.48
-        for <yocto-patches@lists.yoctoproject.org>
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ddc1803813sm24512385ad.82.2026.09.20.17.45.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Sep 2026 17:45:48 -0700 (PDT)
+        Sun, 20 Sep 2026 17:45:56 -0700 (PDT)
 From: tim.orling@konsulko.com
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper][PATCH 0/4] container improvements
-Date: Sun, 20 Sep 2026 17:41:14 -0700
-Message-ID: <20260921004540.3718904-1-tim.orling@konsulko.com>
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [yocto-autobuilder-helper][PATCH 2/4] run-push-containers: Declare SPDX 3 predicate type for attestations
+Date: Sun, 20 Sep 2026 17:41:16 -0700
+Message-ID: <20260921004540.3718904-3-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260921004540.3718904-1-tim.orling@konsulko.com>
+References: <20260921004540.3718904-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 21 Sep 2026 00:46:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4913
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4915
 
-A recent change in 'cosign' now requires agreeing to a prompt, or
-setting COSIGN_YES for CI builds.
+From: Tim Orling <tim.orling@konsulko.com>
 
-We were previously declaring --type spdxjson for cosign, which is
-an SPDX 2.x declaration. Use the more explicit SPDX 3.0 declaration
-instead.
+cosign's 'spdxjson' alias hardcodes the SPDX 2.x predicate type
+https://spdx.dev/Document, but create_image_sbom_spdx emits SPDX 3.0.1.
+Pass the in-toto SPDX 3 URI https://spdx.dev/Document/v3 explicitly on
+both attest and verify-attestation; for a non-alias type cosign embeds
+the JSON predicate verbatim, which is what the JSON-LD document needs.
 
-Add some improvements to the time taken for the "push-containers" step
-in the container-library job. It shaves a few minutes off of each
-container run.
+AI-Generated: Claude Opus 5
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+---
+ scripts/run-push-containers | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/run-push-containers b/scripts/run-push-containers
+index 3ed43ae..fd606c0 100755
+--- a/scripts/run-push-containers
++++ b/scripts/run-push-containers
+@@ -19,7 +19,7 @@
+ #                              successfully pushed image is signed with
+ #                              cosign (otherwise signing is skipped). Also
+ #                              gates SPDX SBOM attestation: each pushed image
+-#                              gets a 'cosign attest --type spdxjson'
++#                              gets an in-toto SPDX 3.x ('cosign attest')
+ #                              attestation of its SPDX SBOM (per-arch on the
+ #                              multi-arch path, top manifest on single-arch).
+ #   CONTAINER_COSIGN_PUB     - cosign public key path; when set, each
+@@ -69,6 +69,10 @@ cosign_key = utils.getconfigvar("CONTAINER_COSIGN_KEY", ourconfig, args.target,
+ # Public key for verifying attestations; when unset, attestations are made but
+ # not verified.
+ cosign_pub = utils.getconfigvar("CONTAINER_COSIGN_PUB", ourconfig, args.target, args.stepnum)
++# in-toto predicate type URI for SPDX 3.x documents. Must be identical on
++# 'attest' and 'verify-attestation', or verification finds no matching
++# attestation.
++SPDX_PREDICATE_TYPE = "https://spdx.dev/Document/v3"
+ 
+ utils.printheader("Pushing container images %s" % list(container_images.keys()))
+ 
+@@ -269,7 +273,13 @@ sys.stdout.write(base64.b64decode(t).decode() if t else "")' "%s" "$_host")
+         "    prepare_cosign",
+         "    case \" $_ATTESTED_REFS \" in *\" $1 \"*) return 0 ;; esac",
+         "    _ATTESTED_REFS=\"$_ATTESTED_REFS $1\"",
+-        "    _att_out=$(oe-run-native cosign-native cosign attest --key %s --type spdxjson --predicate \"$2\" \"$1\" 2>&1) || {" % cosign_key,
++        # --type is the in-toto predicate type URI, not cosign's 'spdxjson'
++        # alias: that alias hardcodes https://spdx.dev/Document, which is the
++        # SPDX 2.x predicate. create_image_sbom_spdx emits SPDX 3.0.1, so we
++        # pass the v3 URI explicitly. For an unknown (non-alias) type cosign
++        # parses the predicate as JSON and embeds it verbatim, which is what
++        # we want for the SPDX 3 JSON-LD document.
++        "    _att_out=$(oe-run-native cosign-native cosign attest --key %s --type %s --predicate \"$2\" \"$1\" 2>&1) || {" % (cosign_key, SPDX_PREDICATE_TYPE),
+         "        case \"$_att_out\" in",
+         "            *\"already exists\"*|*createLogEntryConflict*) echo \"cosign: attestation for $1 already in transparency log\" ;;",
+         "            *) echo \"$_att_out\" >&2; return 1 ;;",
+@@ -279,7 +289,7 @@ sys.stdout.write(base64.b64decode(t).decode() if t else "")' "%s" "$_host")
+     ]
+     if cosign_pub:
+         script += [
+-            "    oe-run-native cosign-native cosign verify-attestation --key %s --type spdxjson \"$1\" >/dev/null \\" % cosign_pub,
++            "    oe-run-native cosign-native cosign verify-attestation --key %s --type %s \"$1\" >/dev/null \\" % (cosign_pub, SPDX_PREDICATE_TYPE),
+             "        && echo \"cosign: verified attestation for $1\" \\",
+             "        || { echo \"ERROR: attestation verification failed for $1\" >&2; return 1; }",
+         ]
+-- 
+2.47.3
 
 
