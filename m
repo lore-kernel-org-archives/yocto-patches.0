@@ -1,141 +1,142 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF37C9830E
-	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 15:26:55 +0000 (UTC)
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1107.1790263611818844938
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BD1C98318
+	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 16:17:38 +0000 (UTC)
+Received: from mail-ed2-f40.google.com (mail-ed2-f40.google.com [74.125.228.104])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2201.1790266655961536211
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 24 Sep 2026 08:26:52 -0700
+ Thu, 24 Sep 2026 09:17:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=KGoOBv6O;
- spf=pass (domain: linuxfoundation.org, ip: 74.125.225.140, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49d1ca5b0d6so15028185e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 24 Sep 2026 08:26:51 -0700 (PDT)
+ dkim=pass header.i=@smile.fr header.s=google header.b=qSAKti9a;
+ spf=pass (domain: smile.fr, ip: 74.125.228.104, mailfrom: yoann.congal@smile.fr)
+Received: by mail-ed2-f40.google.com with SMTP id 4fb4d7f45d1cf-6a60590a85cso71097a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 24 Sep 2026 09:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1790263610; x=1790868410; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8sBcgSDj9Kl+jtRiHC70vIeOIX6vzE5UJ4BpgRQjuBI=;
-        b=KGoOBv6O0yDxlesIthWHydycdTi+BQ0gmAQRH4bMSQLJd7DA228T10YTZP87A8CssL
-         JcPoIjCjRw9eDNtSguQ6wBONgvGWdyb6N4i7IhVav8oeaN3q6EWEobJT9CbgO7fMU7f0
-         UKvZPoIw7fgb2RTyJP27M5YHbG67LPMO3II4Q=
+        d=smile.fr; s=google; t=1790266654; x=1790871454; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id
+         :references:in-reply-to:user-agent:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=AUyCEucMHzyocjeVljbwSEzE79z6GdVYdC87wG7QbNM=;
+        b=qSAKti9aljG+EyOZ96O6+QHKGZdQuxACzrmkkhdlBc2T/IoNtWHz4IbhNZJ1M1ysji
+         xNT4i+ZZyd8lJ2I7yRjBliXCX44jEJrxtxD0jODsmd75vEI5k3qY74QdSCfHXAAwyQ+k
+         FfuqS5V/l2kIe1vPOfwYVUse0J5yGrWv/Q+6c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790263610; x=1790868410;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=8sBcgSDj9Kl+jtRiHC70vIeOIX6vzE5UJ4BpgRQjuBI=;
-        b=yA4tVuy2evvv5ZfymJDUSjRE6lXfiYkSCks+PzhCsB8GtV7TSyvvj0vMbrWkH9K/fN
-         UPYZOFYieLY2fPfHbbKOfJQsUVY+5s6qh9d9lRbtl7c03guVw9Yy/FKXDpBmoW/vty17
-         7AKOJRE+Qbsvb+AE9sJYcVX1Kj1FQcTC93K2/rx49Z8p+BzpZEy4Z/gLHeTc5LCUMIUD
-         d6XWOsOEPytKyjbfZMs/shcXp0jzFjR7lZqaO2EhylZvaVQHz03GcWNMVc0KfhfCWk1/
-         6Z+S0LNddnhGQSbwOO6ehVEwytofnPyUa3yiCOtlyJ27aEO3kbMD9xxzpDqFtEyPRlSs
-         M4TQ==
-X-Gm-Message-State: AFuF++np/nmDI2pWg734d7wiUpUpKW7Na2UIKwDhs6L6XfBc0CTge5QN
-	rDhwW6j4dVDARu0Qf7uW5XDiA7PUcFHJvW08qhc22fT8KzthGHMe9+zuErmDnZGh79pdmDvcPVP
-	XKDT2ejM=
-X-Gm-Gg: AYBFou0Dx1JeYSoa/IWvNiq4Th9SqiGQugXpH0y4vZJcyxIP/ZWxWIx72xaPExdMScg
-	nKKTPzf5IUsdYKTETomE+96cqc+4CVry3c2+8ykO4SkWIovLaSTdrVdC6AVBs4AR9rR6C5Plep/
-	2WfzJh4EFl6t/xqr9RXnp0grxM6I0GtWPbm5pBnVSKTuHWH3aZALcFx4diWNG8YxmXzbWl3Dnxu
-	Wu+OP08zkcpBu6r8RBk9lkqRDdVYhp0JBhlLt8wSl/h1Uw9mJ/6ns5zHpJAMP4fPY5JKZLZRQ+N
-	nlifHumrG5AjWbNZx1UFls8GWAHW8nxA/YzbQWxY3mNeZSPacJMMGfjI7yl0G/bJN1SVbI8YRXm
-	4QKgKU/QAH9RyuBI0Hhbdn45D3egI2qQ4MHkiEayWjBmAV4PXSPRve3RqYveTBXpDkE2m3nYUlx
-	b5iCLp3w61DtWAOvmBEWmQAMzDmhXp3uUZUmpNaVdZK3MyGloGIhpfjAayYCeUU82c+As4eLju8
-	2n6dKHCVOuiXHBgBFio9bBwXQ==
-X-Received: by 2002:a05:600c:a47:b0:49b:9202:6f80 with SMTP id 5b1f17b1804b1-49fe66abc9cmr47596975e9.6.1790263609531;
-        Thu, 24 Sep 2026 08:26:49 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:d896:f63e:1133:71e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fe0c3731fsm141501975e9.2.2026.09.24.08.26.47
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 08:26:48 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder2] [PATCH] config/schedlers: Add blacksail release entries
-Date: Thu, 24 Sep 2026 16:26:42 +0100
-Message-ID: <20260924152642.1090161-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.53.0
+        d=1e100.net; s=20260707; t=1790266654; x=1790871454;
+        h=content-transfer-encoding:content-type:mime-version:message-id
+         :references:in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=AUyCEucMHzyocjeVljbwSEzE79z6GdVYdC87wG7QbNM=;
+        b=L5DEAZVrW6K9i/7NnrMs9ebxjqkqc8NlnTs4RG05gNoTk5zLLx2FIWF60Dw2kMRG14
+         yWnNZCrg/ToUJBju2SRNElCzAhW/DIqw7uwt/KV17pH2yGQF0ySCj+c5oyC/GSmXnjFM
+         4bbroRdXWV0AzG7Z2Kz416fv71NP0igDUVNtFTz8CbyzQF+dN4QduhazPLhv9Mm+KZYn
+         A055ifoJTMDUssEb4fOJ4WoSa3gxJ21nyXvjxHQywKIShdfepPE5YLU7WqbKN2wTyBpZ
+         WKBDCiKrPUrP+GxKCgVdSG47gb0so74MLMGHA6z9hVwfVZVw5N0neotqCD75ERr5FDil
+         qQJQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzABzXAdrmksfPX7Q+tfJcxTMN0LhmoAtEe0wtjvY6f1A8Ed1GK8uPcwKDjCxk/kDeFGS8AcZTB2oykIKHW@lists.yoctoproject.org
+X-Gm-Message-State: AFuF++kklL/2/4FUPze8nZECPoR1DqsIa61I4eHw3v7UG21KO05NXRfb
+	joU9e6yW+9Bg1ypc+yj19Iug9wvnZn0BEJJDZjb5xFjlk4uG7x2xcLnmFs0DcY00XFE=
+X-Gm-Gg: AYBFou2TPs2Pepe7pEINFtOWjS9uP11VMv7l7y7UMP9sUOA5YNUTSc61tgZnpU4MSGo
+	TaFC4TRlE3R0ksjRmVHSa7nM+wm2AD2UwL4KismWvaYe0lPgshItoWomiKfGpbhKta3PzOYeLuT
+	c3hbd1aklxdwLxcgThJgh6Wkyf23jLA7Y0bhNWZcVlS11hcd+lHsFCf1zXM9HW2Q82Pvg4Uxbt6
+	+iioS2LesI002s1FvXIws0PKibJBS+Uo13Z68twWDbg5XqTVZPhos9r9CNkFyJy5NSybqjpOuL8
+	HWweYMpFqie/d/BwTI1qSiayqB0pOQ/2oemtidookWUbXRep2yo/qRChMlBdSstyXt8/5gmE2S4
+	5aIXerBOH+KG96sdhOVi8ajMjr1h3HkTkxGb7L0CRYnAJBzU2xvdKMYzElNe5QJ6Tg3sRPz9S4h
+	08FwnUFDna/UCQrAJAemfh/Um3fXMyrchbCF7MfRNnLxxPewMABrP5SEoHXHHrSbZvLPGE4K3Tq
+	eKlFaEMHPNrzEeHBqiVCI8jq90vLoaZvu1uApRdKec12GZdjceTDvnG/9aG/Y0=
+X-Received: by 2002:a05:6402:a209:20b0:6aa:e107:612e with SMTP id 4fb4d7f45d1cf-6aae10766d1mr324493a12.20.1790266654081;
+        Thu, 24 Sep 2026 09:17:34 -0700 (PDT)
+Received: from ehlo.thunderbird.net (2a02-8440-2502-20fe-0000-0000-1d41-5af9.rev.sfr.net. [2a02:8440:2502:20fe::1d41:5af9])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6aab37eadd4sm3852068a12.1.2026.09.24.09.17.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Sep 2026 09:17:33 -0700 (PDT)
+Date: Thu, 24 Sep 2026 18:17:30 +0200
+From: Yoann Congal <yoann.congal@smile.fr>
+To: Antonin Godard <antonin.godard@bootlin.com>,
+ yocto-patches@lists.yoctoproject.org
+CC: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: =?US-ASCII?Q?Re=3A_=5Byocto-patches=5D_=5Byocto?=
+ =?US-ASCII?Q?-autobuilder-helper=5D=5Bdunfe?=
+ =?US-ASCII?Q?ll=5D=5BPATCH=5D_config=2Ejson=3A_fi?=
+ =?US-ASCII?Q?x_cvecheck_iputils_warning?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <DLNDIFQAG08K.2N6SOR4IPT7Z6@bootlin.com>
+References: <20260923-fix-cvecheck-warning-fdunfell-v1-1-bd0c0b400f84@bootlin.com> <DLNCINQHU830.27H37P8U5X2QT@smile.fr> <DLNDIFQAG08K.2N6SOR4IPT7Z6@bootlin.com>
+Message-ID: <B60F8B94-8E5C-47FC-A7F0-BCD5930EB70B@smile.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 24 Sep 2026 15:26:55 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4954
+ <yocto-patches@lists.yoctoproject.org>; Thu, 24 Sep 2026 16:17:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4955
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
----
- config.py     |  1 +
- schedulers.py | 20 ++++++++++++++++++--
- 2 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/config.py b/config.py
-index 4cd8cb1a..09736b8f 100644
---- a/config.py
-+++ b/config.py
-@@ -204,6 +204,7 @@ all_workers = workers + workers_bringup + workers_buildperf + workers_arm
- 
- # Worker filtering for older releases
- workers_prev_releases = {
-+    "blacksail" : ("alma8", "alma9", "alma10", "debian11", "debian12", "debian13", "fedora43", "fedora44", "opensuse156", "opensuse160", "rocky8", "rocky9", "rocky10", "stream9", "stream10", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "ubuntu2604", "perf-"),
-     "wrynose" : ("alma8", "alma9", "debian11", "debian12", "debian13", "fedora42", "fedora43", "opensuse156", "opensuse160", "rocky8", "rocky9", "stream9", "stream10", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "ubuntu2604", "perf-"),
-     "whinlatter" : ("alma8", "alma9", "debian11", "debian12", "debian13", "fedora39", "fedora40", "fedora41", "fedora42", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "perf-"),
-     "walnascar" : ("alma8", "alma9", "debian11", "debian12", "fedora39", "fedora40", "fedora41", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "ubuntu2410", "perf-"),
-diff --git a/schedulers.py b/schedulers.py
-index 54136768..5497eb9a 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -73,6 +73,14 @@ branchdefaults = {
-         'branch_meta-openembedded': 'master',
-         'branch_oecore': 'master',
-     },
-+    'blacksail': {
-+        'branch': 'blacksail',
-+        'branch_bitbake': '2.20',
-+        'branch_meta-mingw': 'blacksail',
-+        'branch_meta-yocto': 'blacksail',
-+        'branch_oecore': 'blacksail',
-+        'branch_yocto-docs': 'blacksail',
-+    },
-     'wrynose': {
-         'branch': 'wrynose',
-         'branch_bitbake': '2.18',
-@@ -581,7 +589,7 @@ def parent_scheduler(target):
-             name="branchselector",
-             default="master",
-             label="Release Shortcut Selector",
--            choices=["master", "master-next", "mathieu-next", "antonin-next", "mut", "wrynose", "wrynose-nut", "whinlatter", "whinlatter-nut", "walnascar", "styhead", "scarthgap", "scarthgap-nut", "nanbield", "mickledore", "langdale", "kirkstone", "kirkstone-nut", "honister", "hardknott", "gatesgarth", "dunfell", "zeus", "warrior", "thud", "sumo", "rocko", "pyro", "morty"],
-+            choices=["master", "master-next", "mathieu-next", "antonin-next", "mut", "blacksail", "wrynose", "wrynose-nut", "whinlatter", "whinlatter-nut", "walnascar", "styhead", "scarthgap", "scarthgap-nut", "nanbield", "mickledore", "langdale", "kirkstone", "kirkstone-nut", "honister", "hardknott", "gatesgarth", "dunfell", "zeus", "warrior", "thud", "sumo", "rocko", "pyro", "morty"],
-             selectors=branchdefaults),
-         util.BooleanParameter(
-             name="swat_monitor",
-@@ -680,9 +688,17 @@ schedulers.append(sched.Nightly(name='nightly-metrics-kirkstone', branch='kirkst
- schedulers.append(sched.Nightly(name='nightly-metrics-scarthgap', branch='scarthgap', properties=parent_default_props('metrics', 'scarthgap'), builderNames=['metrics'], hour=6, minute=30, codebases = {'' : {'branch' : 'scarthgap'}}))
- schedulers.append(sched.Nightly(name='nightly-metrics-whinlatter', branch='whinlatter', properties=parent_default_props('metrics', 'whinlatter'), builderNames=['metrics'], hour=6, minute=45, codebases = {'' : {'branch' : 'whinlatter'}}))
- schedulers.append(sched.Nightly(name='nightly-metrics-wrynose', branch='wrynose', properties=parent_default_props('metrics', 'wrynose'), builderNames=['metrics'], hour=7, minute=0, codebases = {'' : {'branch' : 'wrynose'}}))
-+schedulers.append(sched.Nightly(name='nightly-metrics-blacksail', branch='blacksail', properties=parent_default_props('metrics', 'blacksail'), builderNames=['metrics'], hour=5, minute=15, codebases = {'' : {'branch' : 'blacksail'}}))
- schedulers.append(sched.Nightly(name='nightly-metrics', branch='master', properties=parent_default_props('metrics'), builderNames=['metrics'], hour=7, minute=15))
- schedulers.append(sched.Nightly(name='nightly-metrics-gitstats', branch='master', properties=parent_default_props('metrics-gitstats'), builderNames=['metrics-gitstats'], hour=4, minute=0))
- 
-+# Run check-layer-nightly twice a week for blacksail
-+schedulers.append(sched.Nightly(name='nightly-check-layer-blacksail', properties=parent_default_props('check-layer-nightly', 'blacksail'),
-+                  builderNames=['check-layer-nightly'], dayOfWeek=[1, 4], hour=2, minute=0, codebases = {'' : {'branch' : 'blacksail'}}))
-+# Run meta-oe-mirror twice a month for blacksail
-+schedulers.append(sched.Nightly(name='nightly-meta-oe-mirror-blacksail', properties=parent_default_props('meta-oe-mirror', 'blacksail'),
-+                  builderNames=['meta-oe-mirror'], dayOfMonth=[3, 17], hour=2, minute=0, codebases = {'' : {'branch' : 'blacksail'}}))
-+
- # Run check-layer-nightly twice a week for wrynose
- schedulers.append(sched.Nightly(name='nightly-check-layer-wrynose', properties=parent_default_props('check-layer-nightly', 'wrynose'),
-                   builderNames=['check-layer-nightly'], dayOfWeek=[1, 4], hour=2, minute=0, codebases = {'' : {'branch' : 'wrynose'}}))
-@@ -722,7 +738,7 @@ schedulers.append(sched.Nightly(name='sschduler-indexing', branch='master', prop
- 
- # If any of our sphinx docs branches change, trigger a build
- schedulers.append(sched.AnyBranchScheduler(name="yocto-docs-changed",
--            change_filter=util.ChangeFilter(project=["yocto-docs"], branch=[None, "master", "master-next", "wrynose", "whinlatter", "walnascar", "styhead", "scarthgap", "mickledore", "langdale", "kirkstone", "honister", "hardknott", "gatesgarth", "dunfell", "transition"]),
-+            change_filter=util.ChangeFilter(project=["yocto-docs"], branch=[None, "master", "master-next", "blacksail", "wrynose", "whinlatter", "walnascar", "styhead", "scarthgap", "mickledore", "langdale", "kirkstone", "honister", "hardknott", "gatesgarth", "dunfell", "transition"]),
-             codebases = ['yab-helper', 'yocto-docs', 'bitbake'],
-             treeStableTimer=60,
-             properties=repos_dict_for_scheduler("docs"),
+
+Le 24 septembre 2026 09:37:55 GMT+02:00, Antonin Godard <antonin=2Egodard@=
+bootlin=2Ecom> a =C3=A9crit :
+>On Thu Sep 24, 2026 at 8:51 AM CEST, Yoann Congal wrote:
+>> On Wed Sep 23, 2026 at 5:41 PM CEST, Antonin Godard via lists=2Eyoctopr=
+oject=2Eorg wrote:
+>>> On Yocto Dunfell, an EOL version of Yocto, we consistently have the
+>>> following warning showed during the metrics job:
+>>>
+>>>   WARNING: iputils-s20190709-r0 do_cve_check: iputils: Failed to compa=
+re
+>>>   s20190709 < 20250602 for CVE-2025-47268
+>>>
+>>> This is because upstream stopped adding the leading "s" to their
+>>> version=2E Since we can't patch Yocto dunfell anymore, as a workaround=
+ set
+>>> the version of iputils so that the comparison passes=2E This makes the
+>>> cvecheck class show the following warning instead, which is expected:
+>>>
+>>>   WARNING: iputils-20190709-r0 do_cve_check: Found unpatched CVE
+>>>   (CVE-2025-47268), for more information check
+>>>   /build/tmp/work/aarch64-poky-linux/iputils/20190709-r0/temp/cve=2Elo=
+g
+>>>
+>>> Which isn't shown on the Autobuilder thanks to CVE_CHECK_SHOW_WARNINGS=
+ =3D
+>>> '0'=2E
+>>>
+>>> Signed-off-by: Antonin Godard <antonin=2Egodard@bootlin=2Ecom>
+>>> ---
+>>> Test build (not pushed to metrics repo):
+>>> https://autobuilder=2Eyoctoproject=2Eorg/valkyrie/#/builders/103/build=
+s/4111
+>>
+>> Hello,
+>>
+>> Thanks! (I had that on my todolist for the longest time but never got t=
+o
+>> it)
+>>
+>> Alternatively, since the metrics is the last thing we do actually
+>> maintain, we could actually fix the recipe (if the fix is non intrusive=
+,
+>> obviously)=2E
+>>
+>> FYI, dunfell had 2 recent fixes for the metrics job=2E
+>
+>Ha, I didn't dare sending a patch for dunfell :) Well, the same fix (sett=
+ing PV to
+>"20190709") could be done in the recipe directly=2E If you consider that
+>non-invasive, I can send it today=2E
+
+That should be OK=2E Depending on the sorting rules, you might have to inc=
+rease PE=2E=2E=2E
+
+I'd rather do that instead of injecting PV via override=2E
+
+Thanks!
+
+>
+>Antonin
+
+Yoann Congal (Smile ECS)
 
