@@ -1,134 +1,180 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFFBCA5FA2
-	for <webhook@archiver.kernel.org>; Mon, 28 Sep 2026 16:55:15 +0000 (UTC)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.63323.1790614514790633149
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F90CA5FA1
+	for <webhook@archiver.kernel.org>; Mon, 28 Sep 2026 21:10:20 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.69647.1790629814437377490
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 28 Sep 2026 09:55:14 -0700
+ Mon, 28 Sep 2026 14:10:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=XWqxekwu;
- spf=pass (domain: gmail.com, ip: 209.85.160.170, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-5332b955bb7so506361cf.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 28 Sep 2026 09:55:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790614514; x=1791219314; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=FgcRcDb6pigiFsca5dhMoFyYIH6eWMgHjMtmN4WDxjI=;
-        b=XWqxekwuQtp52le52KJ+IDU1vafn+9beYYwGeSe5l+u81jzwqHNoKpHFFWLZK+420i
-         Ml6Fb7xfdoh7H3fYLGFYwbdfJk0FsQo2u4+Ta4QfD6RKIqJ5A5bVeojHzroEaj3UxYbh
-         A5nt4MihLVgf+n4Plp10ycPGuc36HEcMUhqIm2MwxfZrtVVF/pBXUjnDibVSoOJ4ksJr
-         58W4IpU1uOVTKj1gjFZRa5EXo6L2EJ+s2IIp73t8WZ9htF6u2jEu+8oWG/Yu3IzoNv0N
-         WEUqw+4E32viR+4OwUn0vu0e/2aMbtU2HsATa9J6ZUQ4IyNKKZDeH2hc+qYLpXjSJ+re
-         WVOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790614514; x=1791219314;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FgcRcDb6pigiFsca5dhMoFyYIH6eWMgHjMtmN4WDxjI=;
-        b=tL6f009lkeF5+sUsHB997bj1bjaU9VdeGbXHrbimsu0Qab+LQAuBNboT7iTP4nl2Ke
-         h22xAsvqNikiitZ5JyUl9pNC+pqrgr49GGL+4lYNQ9i4E4w7dSe2Yfcglc1ZhzElPOfj
-         qtCff+6XmnkgDmYHuELw1Dh+k6kifJ1BtXZsUtkmN0T+6nApQgHo92AIL2mSqQjov4c1
-         s8+7KWDkEj09f5l+Mz96dczNCqSHWYEa05tC3RIZRMSoKnLY1xFXqDHRLhzeoprjZpve
-         Jb5v+w61nVn2ru5is8b4J1EP3ITpBGFkODrWv9e4MaLhrHqEaz7twHGweSW9YXuF6gyk
-         wsqA==
-X-Gm-Message-State: AFuF++m9ysnALcsswEO69KRi53GHqrW39CVrhJ4EHEVzDfzbc4/m+4Cp
-	csmi7KApgsYxim2//AxVP/To7W+FKUBBFgNYYV+3lOSO3alHKIYd3FuN
-X-Gm-Gg: AYBFou3fQHmNW8d0t4OFAjAIyjUUKA4/pMp9EAmvN2+O5RwrmJtUQTr5gzovRC15DeP
-	iaSVdJ+Z22T6qLYngKn8QGvvxcwxaVLPTrY/xMSC7PjhucDEzJZ14pMWRul6P39KyybLAIMuDDA
-	4r3pdsYDurknkWs8I5MrxCic8nMd2NoVc2dyAB4aJ0heQfkSn38z7by+UVaO9OD0W8Vv8UNBiFw
-	QOqCZsXy+OdRXyZ8KGU6csjkUosGRtfk8FeurS2/tsnZ/U7XozeJK6BkHMwVDsvYrwRO/GLjkC1
-	aJ1nmLvSER56n4Hyk5SO0ed6z6atprcQN2417CCSNkydRZS3LfNQAKyCWwbYElvoSm5k4APgS+F
-	32CUHGPfMFe8RWtfOe34t6Y9Ro9dP9Iton799LXYkRE8oa+Y30COIc1bQPjVH1xlMRugvxvwxBf
-	lqWsqoVE4wqUnq9f2PEbuN0VUHdptzOXSq6l70znAhcRWnJMb9D/eB969+WxRMdGj12Q0XapnNp
-	OiTsN3TD1qv7u62gx8ICVRLfsABgByO0e0nPbJr
-X-Received: by 2002:ac8:5d4e:0:b0:533:2ea0:e3ad with SMTP id d75a77b69052e-5332ea0ef86mr136936361cf.7.1790614513377;
-        Mon, 28 Sep 2026 09:55:13 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91430ec25a1sm83729766d6.46.2026.09.28.09.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2026 09:55:12 -0700 (PDT)
-Date: Mon, 28 Sep 2026 12:55:10 -0400
-From: Trevor Woerner <twoerner@gmail.com>
-To: sputnik@on-the-web.ch
-Cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH v2 0/3] rkbin: convert LICENSE to SPDX
- expressions
-Message-ID: <arqb7tB0bSwHOYcS@localhost.localdomain>
-References: <20260805121327.3946788-1-sputnik@on-the-web.ch>
- <20260806214149.714963-1-sputnik@on-the-web.ch>
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=OqlY388R;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-256628-20260928211011a78a3a9f76000207e0-qx1o23@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20260928211011a78a3a9f76000207e0
+        for <yocto-patches@lists.yoctoproject.org>;
+        Mon, 28 Sep 2026 23:10:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=UjdokxYyJT+Ta7JOz0YvVyCF+NIcAU64mVmgbR2ud7Q=;
+ b=OqlY388ReQ/EFELrlwGWrXerh2xNCSvDaILYpSo3ewI5xrbn6SHiDmh8XR9wM+TF3JIowq
+ kF5YebPiGH6WM5HI3ODkG9wuq6OPjeIqjkFVeSE9Iuc1et0uEzPcv7gjSdBu2BT3mQ8D3EmX
+ nlWTwO9eyHQYhwoyuCaHnZJc/sqemak9VzgBAnXpKxX/RUA21XkGExeYGMBUYpoDPQyRa4Gk
+ KF6W25yzFiFxZb2cVo8IjT1AK6V3ecFDZN1Mg9aQD7yEsTa1UZ+AtUhhDyQzTCqbXdKE7G+z
+ AqXIDfBqvjwCqzyNtng/w941yCgZ91jL5Ppy9T7StrlIQOJRQCc4a3Mg==;
+From: Peter Marko <peter.marko@siemens.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Peter Marko <peter.marko@siemens.com>
+Subject: [meta-virtualization][wrynose][PATCH] crun: patch CVE-2026-88264
+Date: Mon, 28 Sep 2026 23:09:41 +0200
+Message-ID: <20260928210941.679038-1-peter.marko@siemens.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260806214149.714963-1-sputnik@on-the-web.ch>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 28 Sep 2026 16:55:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4961
+ <yocto-patches@lists.yoctoproject.org>; Mon, 28 Sep 2026 21:10:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4962
 
-On Thu 2026-08-06 @ 09:42:08 PM, sputnik@on-the-web.ch wrote:
-> From: Martin Herren <sputnik@on-the-web.ch>
-> 
-> Hej,
-> 
-> This series fixes the legacy/CLOSED LICENSE warnings coming from the
-> rkbin recipes by OE-Core commit e9d424738d6f ("classes/conf/lib: Parse
-> LICENSE as SPDX Expression"):
-> 
->   https://git.openembedded.org/openembedded-core/commit/?id=e9d424738d6f8411d4e745b7d872a00e10bb14ac
-> 
-> Patches 1 and 2 switch the rkbin family (rockchip-rkbin.inc, used by
-> -ddr, -optee-os and -tf-a) and its native variant from "Proprietary" to
-> a recipe-specific LicenseRef-Rockchip-rkbin backed by NO_GENERIC_LICENSE,
-> so the SPDX manifest references the real Rockchip LICENSE rather than
-> the generic one-line stub.
-> 
-> Patch 3 switches rk3308-rkbin from "CLOSED" to
-> "LicenseRef-rk3308-rkbin-CLOSED" + NO_GENERIC_LICENSE[...]=README.
-> 
-> rk3308-rkbin pins an older rkbin revision whose tree ships no LICENSE
-> file, which is why it used CLOSED and only pointed to the README.
-> 
-> A potential cleaner fix could be to reuse the current repo's LICENSE.
-> The rk3308-rkbin S
-> RCREV dates back to 2019-10-15 while the initial
-> LICENSE was only added 2023-07-26, which beside a typo and a
-> trailing newline is identical to the one used for the other rkbins
-> (updated 2024-10-17).
-> So that's an almost 4 year gap between the used SRCREV and where the
-> LICENSE was introduced.
-> So this would probably require legal validation from Rockchip's side
-> whether it applies retroactively as well.
-> This option would require adding a static LICENSE file to the recipe.
-> 
-> What changed since v1:
-> - Added Reviewed-by tag
-> - Added AI-Generated tag
-> 
-> Cheers,
-> 
-> Martin
-> 
-> Martin Herren (3):
->   bsp: rkbin: use SPDX LicenseRef for Rockchip proprietary firmware
->   bsp: rkbin-native: use SPDX LicenseRef for Rockchip proprietary
->     firmware
->   bsp: rkbin: rk3308-rkbin: replace deprecated CLOSED license with a
->     LicenseRef
-> 
->  recipes-bsp/rkbin/rk3308-rkbin_git.bb          | 3 ++-
->  recipes-bsp/rkbin/rockchip-rkbin-native_git.bb | 3 ++-
->  recipes-bsp/rkbin/rockchip-rkbin.inc         
->   | 3 ++-
->  3 files changed, 6 insertions(+), 3 deletions(-)
+From: Peter Marko <peter.marko@siemens.com>
 
-Applied to meta-rockchip, master branch.
-Thanks!
+Pick patch referencing this CVE.
+
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+---
+ .../crun/crun/CVE-2026-88264.patch            | 109 ++++++++++++++++++
+ recipes-containers/crun/crun_git.bb           |   1 +
+ 2 files changed, 110 insertions(+)
+ create mode 100644 recipes-containers/crun/crun/CVE-2026-88264.patch
+
+diff --git a/recipes-containers/crun/crun/CVE-2026-88264.patch b/recipes-containers/crun/crun/CVE-2026-88264.patch
+new file mode 100644
+index 00000000..1d8eea96
+--- /dev/null
++++ b/recipes-containers/crun/crun/CVE-2026-88264.patch
+@@ -0,0 +1,109 @@
++From ef32479522af883568ce4a5482358069ff71dc8f Mon Sep 17 00:00:00 2001
++From: Giuseppe Scrivano <gscrivan@redhat.com>
++Date: Fri, 11 Sep 2026 09:25:48 +0000
++Subject: [PATCH] utils: do not follow symlinks when creating /dev/console
++
++create_file_if_missing_at() is only used to create `/dev/console` in the
++container rootfs when a terminal is requested, and it opened the file
++with O_CREAT but without O_NOFOLLOW.  A rootfs providing `/dev/console`
++as a symlink made the open follow it, and since the devices are created
++before the pivot_root the target was resolved against the host file
++system, so crun created a root owned file at a path chosen by the
++container image.
++
++Open the file with O_NOFOLLOW, and check for an already existing file
++without following symlinks either, so that a symlink is not mistaken for
++a regular file that is already there.
++
++This is only reachable when nothing is mounted over /dev, so the rootfs
++entry stays visible; the configurations generated by Docker, Podman,
++containerd, CRI-O and `crun spec` mount a tmpfs there.
++
++Add a test case.
++
++Fixes: CVE-2026-88264
++Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
++
++CVE: CVE-2026-88264
++Upstream-Status: Backport [https://github.com/containers/crun/commit/ef32479522af883568ce4a5482358069ff71dc8f]
++Signed-off-by: Peter Marko <peter.marko@siemens.com>
++---
++ src/libcrun/utils.c   |  4 ++--
++ tests/test_devices.py | 36 ++++++++++++++++++++++++++++++++++++
++ 2 files changed, 38 insertions(+), 2 deletions(-)
++
++diff --git a/src/libcrun/utils.c b/src/libcrun/utils.c
++index ce44c261..76175411 100644
++--- a/src/libcrun/utils.c
+++++ b/src/libcrun/utils.c
++@@ -196,14 +196,14 @@ get_file_type (mode_t *mode, bool nofollow, const char *path)
++ int
++ create_file_if_missing_at (int dirfd, const char *file, mode_t mode, libcrun_error_t *err)
++ {
++-  cleanup_close int fd_write = openat (dirfd, file, O_CLOEXEC | O_CREAT | O_WRONLY, mode);
+++  cleanup_close int fd_write = openat (dirfd, file, O_CLOEXEC | O_CREAT | O_WRONLY | O_NOFOLLOW, mode);
++   if (fd_write < 0)
++     {
++       mode_t tmp_mode;
++       int ret;
++ 
++       /* On errors, check if the file already exists.  */
++-      ret = get_file_type_at (dirfd, &tmp_mode, false, file);
+++      ret = get_file_type_at (dirfd, &tmp_mode, true, file);
++       if (ret == 0 && S_ISREG (tmp_mode))
++         return 0;
++ 
++diff --git a/tests/test_devices.py b/tests/test_devices.py
++index 6956e2bd..a99753a3 100755
++--- a/tests/test_devices.py
+++++ b/tests/test_devices.py
++@@ -369,6 +369,41 @@ def test_mknod_char_device():
++         return -1
++     return 0
++ 
+++def test_dev_console_symlink_does_not_escape_rootfs():
+++    escaped = os.path.join(get_tests_root(), "escaped-console")
+++
+++    conf = base_config()
+++    add_all_namespaces(conf)
+++    conf['process']['terminal'] = True
+++    conf['process']['args'] = ['/init', 'true']
+++    conf['mounts'] = [i for i in conf['mounts'] if not i['destination'].startswith("/dev")]
+++    # a hook forces the deferred pivot_root, so the rootfs is still reached
+++    # through the host file system when the devices are created.
+++    conf['hooks'] = {"createRuntime": [{"path": "/bin/true"}]}
+++
+++    def prepare_rootfs(rootfs):
+++        os.symlink(escaped, os.path.join(rootfs, "dev", "console"))
+++
+++    output = None
+++    try:
+++        run_and_get_output(conf, callback_prepare_rootfs=prepare_rootfs)
+++    except Exception as e:
+++        output = e.output.decode()
+++
+++    if os.path.lexists(escaped):
+++        logger.error("`%s` was created outside the rootfs", escaped)
+++        return -1
+++
+++    if output is None:
+++        logger.error("the container was not refused")
+++        return -1
+++
+++    if "create file `console`" not in output:
+++        logger.error("the container failed for a different reason: %s", output)
+++        return -1
+++
+++    return 0
+++
++ def test_dev_symlink_does_not_populate_outside_rootfs():
++     if is_rootless():
++         return (77, "requires root privileges")
++@@ -508,6 +543,7 @@ def test_allow_device_read_only():
++ all_tests = {
++     "mknod-fifo-device": test_mknod_fifo_device,
++     "mknod-char-device": test_mknod_char_device,
+++    "dev-console-symlink-does-not-escape-rootfs": test_dev_console_symlink_does_not_escape_rootfs,
++     "dev-symlink-does-not-populate-outside-rootfs": test_dev_symlink_does_not_populate_outside_rootfs,
++     "allow-device-read-only": test_allow_device_read_only,
++     "owner-device" : test_owner_device,
+diff --git a/recipes-containers/crun/crun_git.bb b/recipes-containers/crun/crun_git.bb
+index 809b6c01..80468b0a 100644
+--- a/recipes-containers/crun/crun_git.bb
++++ b/recipes-containers/crun/crun_git.bb
+@@ -19,6 +19,7 @@ SRC_URI = "git://github.com/containers/crun.git;branch=main;name=crun;protocol=h
+            file://0002-libocispec-fix-array-items-parsing.patch;patchdir=libocispec \
+            file://CVE-2026-30892.patch \
+            file://CVE-2026-47766.patch \
++           file://CVE-2026-88264.patch \
+           "
+ 
+ PV = "1.26.0+git"
 
