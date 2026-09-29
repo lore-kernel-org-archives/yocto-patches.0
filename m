@@ -2,179 +2,194 @@ Return-Path: <floss@jetm.me>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2493CA5FA7
-	for <webhook@archiver.kernel.org>; Tue, 29 Sep 2026 21:46:02 +0000 (UTC)
-Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com [74.125.231.205])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.85.1790718361543465344
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DF8CA5FA7
+	for <webhook@archiver.kernel.org>; Tue, 29 Sep 2026 21:46:12 +0000 (UTC)
+Received: from mail-oo2-f36.google.com (mail-oo2-f36.google.com [74.125.231.164])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.79.1790718361898940280
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 29 Sep 2026 14:46:01 -0700
+ Tue, 29 Sep 2026 14:46:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@peridio.com header.s=google header.b=FPuOu/Qy;
- spf=pass (domain: peridio.com, ip: 74.125.231.205, mailfrom: javier@peridio.com)
-Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4b375b957e0so338422b6e.2
+ dkim=pass header.i=@peridio.com header.s=google header.b=obFJVxqK;
+ spf=pass (domain: peridio.com, ip: 74.125.231.164, mailfrom: javier@peridio.com)
+Received: by mail-oo2-f36.google.com with SMTP id 46e09a7af769-81aac23195fso515898a34.3
         for <yocto-patches@lists.yoctoproject.org>; Tue, 29 Sep 2026 14:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=peridio.com; s=google; t=1790718361; x=1791323161; darn=lists.yoctoproject.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=VjibRAb4gprlRf84C8lLT3PWR2akR5g3CV3uEgZ64YY=;
-        b=FPuOu/QyqZVbNcgM7JRFhkeFwl4SGV5gWCnueYN61BEE7DUWzmGd+DCgDorxrusGHd
-         u2k3OW3YlKuBsyAEknWiNIzbq40Wn3EFMPFM0xxykPG8bW7R3wKg7hlNKpjki4hz8SXq
-         iPntyuCizxUzvOACbWMdi7sXMe0R+u+baOqmLVhRW+URUqZ1vS19c+Q3pBltec4WizaE
-         qxEvwRUyFvrmWQKyAAoLgN9rY8Xow4f5nA7Q2JOk6VhfSMdah6iiS92+RwjESkAlyGG8
-         7J0+oMQ2ziyRuxlqvFOT9aI3ALwsxlp1Ow17l77nwH+Qrd+y2bkg1pWRE7P8DpEsbCiG
-         3weg==
+        h=references:in-reply-to:cc:to:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:feedback-id:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=wK3lYGpRIUNSeVjTeg4T2LyIF/eew2sJAstZ5WkpfEM=;
+        b=obFJVxqKTV50/lB9invTfU+Z7rR2Qsh5jS7GcCvPKKgGy8ApwndrmAPSjCsMfxBY9I
+         JvnZPyJKczQB3Piq/Owax1557ndDwFtfQqZipfO8TInlj8rHLAj/+fgs+FQAruyTKlMb
+         ej+F8uV+td4Ypq/LY78bJynHoIavt4yHdKBEfUJwOkOFaQs4rqib6zbojbnxMAsMnjG6
+         914Y6CEJ39j27L8ruHQ/DMz9MSDsgsgmG3bR6HNEuKNrAJycnCwQngd/qM3a8biyguG7
+         3+17ynpcWPWuJD+rSyg0Gv8SyMrzJ5r/V88TWP1/W6XxPqpaBsccjC47AFbprym0ho97
+         g3pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20260707; t=1790718361; x=1791323161;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:feedback-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=VjibRAb4gprlRf84C8lLT3PWR2akR5g3CV3uEgZ64YY=;
-        b=Ude1cBbh6l5V2nOeVVEPQ9hfIwQrJBIJjEj943CatCX6t5LkpY4iJo8a2EqGTgptWo
-         fBcTxrsjMKORFUMV36eQCoPgrtgt7lz32QjdUsGqfFVutTjq2wukPhbaouwwCMnmngo5
-         XDjp+O3tUJdduzNPiTY5ZRfIcWUPquBKicVHBxFvU+AbxnL2FQ50n7xKIATpYIn/OlAC
-         mLPOImgz0hVIDzvd3TN0rEgmqOUVhcseI8kZrwxU7i+de955gyAqfMetsxVkxvmhUV8/
-         GgHOwmikTQI1ZE4ovUZU1cTmMxbsyJnXkA7z2Foa+xgEobIZRTjRP9WIgSWdEbviQ4pJ
-         gq7w==
-X-Gm-Message-State: AFuF++kfMk9n0ELGFczYdDoT/JeoRLwAkGvWWh8aOhK88fCRt9ogfeV5
-	O6YnEV0bgfOBu6riCep2Fho/F2jEMTizZ+kgO0xs/YLlVtpOGdi4FWQC7Uo6pRq+cNt3E71AGDa
-	40Whj64Q=
-X-Gm-Gg: AYBFou1BZKA1wBvKsrp9oYsQwU5wE4drYnO/AMrErhJz9RPHWAW6ollgFCdfpNiGLIY
-	7uDEY9RHnFdH+sncydSN387ji1nroVZBORJfzcVvRYHQtTg+GCq35z/18iDMKgoy7hFzHZNrcGt
-	RN4xGLZvSW1nd/Fh/rJoT6DRoxyNHZhNCXlnmpqcE1s7IgG9wyjKnvhKnoHhrQovX4k/7fQWcQQ
-	G55+Uj06aBi/Fi/NQB2Z0aODJJBR2jW6Wf6Ygs9hNfZHKxmFZeAPQN5LY8kAXYUM9etID28+Z4I
-	neR79Cf7JDnA39WJyQWkzNGC7AC43p3m2lgrHBh+ru64l5G9R9A2Bb1iHppNqXQ7h6yfGxR/p28
-	lyVUvPDmUPZ5TIMOipuzwt62o049x5TRIJH87K31WFSputvcBHQAe1qkapzSf+RYGwcgGfD/RZG
-	1mSPjGmi1kqwWVVJZjPCqZlkzEB2VJVr6X1AdMZBEQjWtztzJVjYLwTOFy/txUtFKuVarnOCKjc
-	X83J8tnPX6xjMdg4K+/7WgpiQJlmBguffsSy0MVKFsoFVDY3SmUN0lUbAFv3v/0cb3Op7M=
-X-Received: by 2002:a05:6808:23c1:b0:4a3:f036:f3bf with SMTP id 5614622812f47-4f064084a45mr1416145b6e.1.1790718360625;
+        h=references:in-reply-to:cc:to:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:feedback-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wK3lYGpRIUNSeVjTeg4T2LyIF/eew2sJAstZ5WkpfEM=;
+        b=ocktkLk0U0YCJwfyM6dFa4q/SR6umXpKCYmsNWlC4bMflcg5VWyObgZEWPIR1hDWQo
+         bC3IBJNtv8uaFUQXQbiWYWuBz7Uz/nknOWh8waEs38m0xKrJnV4yujKW9Pt1Ql9ww+FM
+         eAiEaUMcBmJY1y4hwZu93tbwmdo8fgNvA1ZfH1cxf8ZRgu8unBOYbR1fkmDG5HuPZUzw
+         vI8fEkpgRl2I4hyHV8FP1yXu3b52En3k1Iqb83R+Du7YeNwy4QGP+3cmTHwNa1E56Vb+
+         bRVNkyW2St7PZLH2/bOsth+zj9aHPjFiublYftw8y9BpP73ksT01+5cN160X6nVXHjh6
+         Zqxg==
+X-Gm-Message-State: AFuF++kQTz5Bf4d5TnksniZCdy9UgDF1vBVGZ/Kp2OWtw0WVAmXMZ2oQ
+	5/umrEJumJNd4z90EtKqaDhBQKR28//m+Y52Yl7nPjgJMzzN4ZhRcT7iabsxWbGOIX5h62UlRQg
+	PJVlRl9E=
+X-Gm-Gg: AYBFou12PCcUpbKjw2WY+ObjroO0DgUFYC15yrfQB+mb/kMEwCCB+kn7A9g0PcEfbD3
+	xtEyDmNI5r3/mOPTuxUA5xeNseszp9ieXTDGP9zEB3QqxGwxymCmofKBwy7Jajn5J7/6/sRdCCU
+	ILbi9lPgzSmVMbqFowU5+pftikAylqpSHbxVcGgGf3F9W5JLCzgZUk+Iuv7L6mvpXCGSxiljApJ
+	WQDjzEuFrafLhE1wkNX+E1TYqlYyRULmvB0plrSfPsIe0BuR27HmlYMfhThhfN7dZK4zvafSIXp
+	Q/nbyrr9zRIa9JaNiYqI+dfaoNvS1wQkkdj626jL9bZM4k/09O+YtiewUcbm9SYzc8FE4x5BXJp
+	Mz7/e28QoacBNlvvdgapYNtotkkORkfhQNpB9/JxXXHEWnjklwx5THUHzBoSG+fg2qofoGHkkyZ
+	+JwSuo2+l3UlamnIdLGK2r7P+w72suMzsGbTF6eOxtemDBkDObHYaBYx2t+kkezKd5/G8Suu9mU
+	n4bPKOGpQeGUeYOvBcXB13LErEzXi/IvjG5om9MLXelPEP93+FLxuo5hieL
+X-Received: by 2002:a05:6830:488b:b0:811:7b6e:d533 with SMTP id 46e09a7af769-81fd5b5a758mr1142474a34.1.1790718360966;
         Tue, 29 Sep 2026 14:46:00 -0700 (PDT)
 Received: from fauth-b1-smtp.messagingengine.com (fauth-b1-smtp.messagingengine.com. [202.12.124.200])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4f0ad2537d8sm542148b6e.6.2026.09.29.14.45.59
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81fafdde8f1sm1017341a34.26.2026.09.29.14.46.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 14:45:59 -0700 (PDT)
+        Tue, 29 Sep 2026 14:46:00 -0700 (PDT)
 Received: from stl-compute-03.internal (stl-compute-03.internal [10.204.2.63])
-	by mailfauth.stl.internal (Postfix) with ESMTP id 70E4C780043;
-	Tue, 29 Sep 2026 17:45:58 -0400 (EDT)
+	by mailfauth.stl.internal (Postfix) with ESMTP id B8706780066;
+	Tue, 29 Sep 2026 17:45:59 -0400 (EDT)
 Received: from stl-imap-04 ([10.204.2.95])
-  by stl-compute-03.internal (MEProxy); Tue, 29 Sep 2026 17:45:58 -0400
-X-ME-Sender: <xms:ljG8akkiWgqCK-3jH6sZMX7L9TUvd72eM1anQVN_HtPSqV8UQhSHng>
-    <xme:ljG8auoCCSg3r4M3oo6Qwn-2UGFCMn7SDSn1VbhyMZafWtHZHQqyanMoClU8dyE9C
-    zQrQphf15JPWWyYf1Rb13rRcnnEQ3ZM5ikJ8prTmyncitWOGtGl>
-X-ME-Proxy-Cause: dmFkZTEItdoMDo9JjJ2+Vp4TXKX8+yTtAf19JcFdjLTeLgzfvjwzkIta5S+Gz1bTG7bPTJ
-    p1/4IqG2Apm8hunhM8NHznYwXbYE/l5eP1171ydalU0vxjSZLecV1fLNoJbtBrSoQoADLz
-    kaawMg7mIAGzMavOe/V4KbPfsZFkN6QQny0ixPTGLWcUJH6NJzB0mDzbFsWSfPxAxRtmdH
-    d4gx0FpDlE9JnpNLMCWxPbCtIQoMNf38Sf975qPmCXyqye/CkynnSLp8eGpDtxLRwtsW6s
-    byRgX5fpU3yqT1FTG90wR9DK9J5L0a4sYzgC+nvztfAXwiaqIX1Q8AN5rwnKD6HGnVG6KS
-    XwLwxB8yq/QeCp2m8hYmCFDnGp3Bo3ATp/LMP3eynWTvYNyJxivBUoGDxHSVOmmprEzUIJ
-    QRKRdo2lNo5kiiM/0Uv3DScBWDpoIwtdKAlRQ3GnIW+Hq+iNEfWdBkEvp3e7KzsULWmWbG
-    8q0Dmy146ID0KAsFriyVVaLDyqeAelEtlHRpYNnVKPx28bviwiv/H2xVD3P84a6WaMxXU9
-    bacVnD+ogOzsTlen17P/pywtlMhdHwlhJKRCQBErYY+1VGz4WfqzF0H+Rb2Ltp2fBQzlSY
-    zsL+gakdiA5UFqFcz0duGgSB8kFefm8kRkR+4TbsNMjceASiE4xj1gRDH6/g
-X-ME-Proxy: <xmx:ljG8arSthTnKAtTKK8ZCgavZBPlg4KHXdC-OIK-5WKceSlSRhRYVMg>
-    <xmx:ljG8aqv2xPm3YcEokLL97R1Ywl1oiFV5nnlZIO_vzvMyKl74Vw8uvQ>
-    <xmx:ljG8aoYm5efHcFCpTCw5QyAXGAGGf6ge4ZUE6uIjCZp1xEyiZ1LVcA>
-    <xmx:ljG8anu2TfJ7LPF0SgnOyx8FCRbQGnQofDifJVdKAst3xEY92VLp6Q>
-    <xmx:ljG8aiHnAbwLjHOhnKGUnJBMo2RXfx4OpGsAlEJEpLFuWLVxUVC1MZVj>
+  by stl-compute-03.internal (MEProxy); Tue, 29 Sep 2026 17:45:59 -0400
+X-ME-Sender: <xms:lzG8ajuTGRhKvN5_krCNQhTUzker2pldv8WFxogBPmRUBKBJ8FhOfg>
+    <xme:lzG8avSFHf1H3elmkcaxjTF8AkQAm54v_SuLvvPSyk5P8OXZMUNwk2laO7WDvFzXJ
+    o2otOVv5TbkPj_kz3cd5tnHEg3On4H2-JfY709iyaIRL7r3IMch>
+X-ME-Proxy-Cause: dmFkZTEOj60ljf8F8ztA8trD+QhORC7g6yyZR10l8QXS1oSjHM4E8/zgzBFe2L1Q0JGFAJ
+    PjeW8JD4j8dkTQ7xwUonr8m2ueSY8E+B/x17V3O/FK4M7gMBzzXUIuv4E7idbYU9DT/0At
+    EA0E7I86zAmZAZW/xpi3UY95qR0pIEXmMS4S3Y/01jPUvwx3H5pjQyiLpxBQEF1JOewXdU
+    258bFkaLFa4xYSLA5h1IAmdOpjVLXOxH1LLHpGsY7I2pxDDDQ8hDsoqkUX/SHapFfmfEJ8
+    22SxmW4uj2HcuvjmoIujth9eEEQ03RWFy2YEZBDRfqJUzlxFJF+lzBk8QWxrRoKJx/2YGO
+    B/Bm2HA3Mfk/a7+6ivQVvFHsC0r/2D/NV5RqnphU38kbORYs3ZsrtbRfODKIYu8f+qH8ce
+    ZACSpVCsem+H7qSiWT0909nie2X/OxqVuBgFWVJR2PBKIcuW+/QNd+olUDGi78+u7gUnZ+
+    FoMx2VO7RbORQk54cLD8qh6TjRj9tFNAicYaPRy3wVAcDegR3XX/sMXDsOj8ejR4cwhN7u
+    vTzRl6wi5HLJztD6vIEPNQSpCOHcutqeGiyhmZZc3ThT8VLUDLGcvD88J6K5+lEwvuumJN
+    OFgok/a6f90BKLcSUroMNNLfbmFydCOw0GOTMLOMnIrbosZFD6FD56eIGrWg
+X-ME-Proxy: <xmx:lzG8aiY_qyPeyM9seX8Db7-YHcrUKO3vPKum2KXGDgKVp06rwX_JsQ>
+    <xmx:lzG8ajVQiF1odd5vOHOfiFerV1YD462eYPFhw_D3hKgyJaK1-d-4gg>
+    <xmx:lzG8akhCvBuTj-rBPSQBaRUxoxhhBIbJEHT1QeFrL5GoSUxlxZ2Jdw>
+    <xmx:lzG8ahXUrBqBfBeGnzcLcam4q5GLmSUCDBiYkiug2jWX89YlgkgCww>
+    <xmx:lzG8arPdETfh7YAXtUT8XpZj1tZvEFqJgfbDxqNqr2FzNf6-BuKXJILq>
 Feedback-ID: if7264b73:Fastmail
 Received: by mailuser.stl.internal (Postfix, from userid 501)
-	id 19BEE80066; Tue, 29 Sep 2026 17:45:58 -0400 (EDT)
+	id 6E85180066; Tue, 29 Sep 2026 17:45:59 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 From: Javier Tia <javier@peridio.com>
-Subject: [PATCH pseudo 0/2] Fix an unbounded recursion in pseudo's own init
- path
-Date: Tue, 29 Sep 2026 15:45:54 -0600
-Message-Id: <20260929-pseudo-init-recursion-fix-v1-0-34e30f4c5349@peridio.com>
+Date: Tue, 29 Sep 2026 15:45:55 -0600
+Subject: [PATCH pseudo 1/2] pseudo_util: bound pseudo_get_value()'s
+ recovery re-init
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMwQrCMBAFf6Xs2YU1B2n8FfGgyWtdD2nZbUQo/
- XdTe5yBmZUcpnC6disZPuo6lQbnU0fp9SgjWHNjChIuEkPk2VHzxFp0YUOqthc86JdFJCbE0Oc
- e1PrZ0PT/faMjo/vhvT7fSMs+pm37AcD1kqyFAAAA
-X-Change-ID: 20260929-pseudo-init-recursion-fix-0009ce928d8e
+Message-Id: <20260929-pseudo-init-recursion-fix-v1-1-34e30f4c5349@peridio.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Javier Tia <javier@peridio.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3186; i=javier@peridio.com;
- h=from:subject:message-id; bh=0R9aCmC1LrWCX0gHcd2rQg3xy1PYurc7eYnDTMGP5D4=;
- b=owEB7QES/pANAwAKAbXuwwuoZ3cfAcsmYgBqvDGS1eyVvn5ih+wt2cWWMnAcdfsxFfGBJcQAR
- lPsu4ToGdSJAbMEAAEKAB0WIQSbE7ILzw7eI0VKk8m17sMLqGd3HwUCarwxkgAKCRC17sMLqGd3
- HylSC/9WNyU/HlHtrXW5KTFxn0PLUdVSAR5CJ3aSukclPdlTbqSwNBdPIEYHrl6Z4qSPzaZGsvL
- SdNtnmJECme7uFwAFA66lFbskTEFt3S4v1uA0zJ92VjWKTeb1VyNHUhuSYjzcTnE9QG2HQ1bYp3
- sN8NYcWQr3QM51NPxap+YC8ugD8YWvbfYZ+k1nZVab1Ne0dtlAYo5eaO3Mud7c6mBZcnv6z953H
- YKDVnPq6rUBMvNaDvY5XqL9cnohUxVYSpkDvksnvb5j7M+DqL+k45gE0eEcv+ftAmHW9GgbHvV0
- J40Jij31C5+OMP+IFobrwytjFEcOryaGbScaIwayspIZIHUzRlhdS8Wqrojt4jGYCGPHNpLpKY2
- ed4RsoM+XQiyuL1cBdlmzNDt1lSBZfMEQ6E+Vc9VWl72enaq0hnuwQW55XRUluSXFqOCZY2RsKT
- 5bKBZxhT9nOOhFq5dLBiQRBF3bU8p6b4YLp2G9t/qJNaecpSAO7TeDO5hRT+VhJsoxbjk=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3279; i=javier@peridio.com;
+ h=from:subject:message-id; bh=OKEUiPjX47kWDoRb0noMXzf7qg2u4aNvx+EUI/CMhQQ=;
+ b=owEB7QES/pANAwAKAbXuwwuoZ3cfAcsmYgBqvDGSkXKPC7RmracDmHviNrCE0xgxKMSokMWCV
+ HLiSyetStuJAbMEAAEKAB0WIQSbE7ILzw7eI0VKk8m17sMLqGd3HwUCarwxkgAKCRC17sMLqGd3
+ H4CkC/wILdG+QMCIuenJjeHhb/B9DVUHkXIn99e+JQAKQgeDQYu5f9cQ+Eeilwsb7C5Cdp8EVl/
+ fHBErxxO3WgUYVkMEjeksPXL75/rB/Fl0CQi02eFEUYHWvyE3f/aMv4I3fTS81NGSm/xiVI+IyA
+ 4L4D2YJwcUoN+Ovt6SRzXLiYJA/TzCBflWTZSowBwxR6eYYZC9R0q7HNM3KG56/Z5aMlFEyV8SP
+ zIRKGgii2kIJkFuLtNI8zIaMor+XXgqmImcy6FT70gT4EpZQRMI26RchhdEuNhBJhFujESeh/i/
+ 4kk+8QaaSQZJ0QuoS1fHWchC+xR5CmC7hAER2Ys2hhmuXOCoL6gbc0Msb8i27cwHiTnBmTQ/StG
+ waufB2cXg9KD7iLng/ASPR/blWqEsPvpYdgZKACpyc/THlibmIR3Q+fBuxw4c5FQu3fvXwLi7cN
+ peNuQIY1/J1Xkjw0clUhu0B/s76z1/BDnHGUikQtWjti5+6g5LTG9X0IjnpdWsJTpcaMM=
 X-Developer-Key: i=javier@peridio.com; a=openpgp;
  fpr=9B13B20BCF0EDE23454A93C9B5EEC30BA867771F
+In-Reply-To: <20260929-pseudo-init-recursion-fix-v1-0-34e30f4c5349@peridio.com>
+References: <20260929-pseudo-init-recursion-fix-v1-0-34e30f4c5349@peridio.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 29 Sep 2026 21:46:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4966
+ <yocto-patches@lists.yoctoproject.org>; Tue, 29 Sep 2026 21:46:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4967
 
-I hit this building with mold 2.42.1 under bitbake's fakeroot (pseudo)
-task: mold links segfault, and pseudo's diagnostic log fills with
-millions of "failed to save new value" lines before the stack
-overflows.
+pseudo_get_value() falls back to calling pseudo_init_util() again when a
+cached value is empty but the environment variable is actually set - a
+recovery path for a value that failed to cache the first time. But
+pseudo_init_util()'s own tail calls pseudo_get_value("PSEUDO_DEBUG") and
+pseudo_get_value("PSEUDO_EVLOG") while it is still running, and it clears
+its own initted guard (pseudo_util_initted = 0) before those calls rather
+than after. If storing a value failed (pseudo_set_value()'s strdup()
+returned NULL, which happens when init runs re-entrantly on the same
+thread, inside another allocator's own not-yet-finished process init),
+the recovery branch re-enters pseudo_init_util() unconditionally, which
+fails the same strdup() again, calls pseudo_get_value() again, and
+recurses until the stack overflows.
 
-mold statically links mimalloc and overrides malloc/strdup process-wide.
-Under pseudo's LD_PRELOAD interception, mimalloc's own lazy process init
-calls syscall() to probe /proc/sys/vm/overcommit_memory. pseudo's
-syscall() wrapper reenters _libpseudo_init(), which allocates via
-strdup() - landing back in mimalloc, still mid-init, which can
-legitimately fail that allocation this early. pseudo_set_value() handles
-a failed strdup() by logging a warning and moving on, which is fine on
-its own. The problem is that pseudo_get_value()'s recovery path
-unconditionally calls pseudo_init_util() again whenever a lookup comes
-back empty but the environment variable is actually set - and
-pseudo_init_util() itself performs exactly such a lookup at its own
-tail, while its init-guard has already been cleared. If the value could
-not be cached, that recovery path re-enters init, which fails the same
-allocation again, and recurses without bound.
+Observed with mold 2.42.1: its bundled mimalloc statically overrides
+malloc/strdup process-wide, and under pseudo's LD_PRELOAD interception,
+mimalloc's own lazy process init can call a libc function pseudo wraps
+before mimalloc has anywhere safe to return an allocation from. See the
+companion patch to ports/linux/pseudo_wrappers.c for the syscall()/
+prctl() half of that same interaction.
 
-Patch 1 closes the recursion in pseudo_util.c: it moves the init-guard
-reset to the end of pseudo_init_util() and gates the recovery re-init on
-it, so a value that still cannot be cached surfaces through the existing
-diagnostic instead of recursing.
+Move the initted-guard reset to the end of pseudo_init_util(), after its
+own lookups, and gate the recovery re-init in pseudo_get_value() on that
+guard. A value that still could not be cached now surfaces through the
+existing "failed to save new value" diagnostic and this function returns
+NULL, instead of recursing.
 
-Patch 2 removes the trigger for this specific caller: pseudo's
-syscall()/prctl() wrappers reach _libpseudo_init() before real_syscall/
-real_prctl are resolved, in two overlapping windows - before the
-constructor runs, and from inside it, before pseudo_init_wrappers() has
-run. Forwarding a pre-resolution call straight to the real libc function
-(for every number/option this port does not itself rewrite) means an
-allocator's own process init no longer re-enters pseudo's init through
-these two wrappers. It does not cover every other generated wrapper,
-which still calls pseudo_check_wrappers() on first use; an allocator
-whose first touch is a different wrapped libc call would still hit the
-same recursion through that path.
-
-Verified against pseudo's own test suite: no change to the 18/45 tests
-that pass in this sandbox (which lacks chroot/openat2/renameat2 support -
-confirmed identical to pristine master). Verified end to end: a real
-`gcc -fuse-ld=mold` build, run under pseudo with PSEUDO_DEBUG set
-(matching what bitbake exports for every fakeroot task), links and runs,
-and a subsequent `chown 0:0` on the output is correctly tracked by
-pseudo.
+Verified against pseudo's own test suite (no change to the 18/45 tests
+that pass in this sandbox, which lacks chroot/openat2/renameat2 support -
+confirmed identical to pristine master) and against a real
+`gcc -fuse-ld=mold` build run under pseudo with PSEUDO_DEBUG set,
+matching what bitbake exports for every fakeroot task.
 
 Signed-off-by: Javier Tia <javier@peridio.com>
 ---
-Javier Tia (2):
-      pseudo_util: bound pseudo_get_value()'s recovery re-init
-      ports/linux/pseudo_wrappers: forward pre-init syscall/prctl to the real function
+ pseudo_util.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
- ports/linux/pseudo_wrappers.c | 48 +++++++++++++++++++++++++++++++++++++++++++
- pseudo_util.c                 | 11 +++++++---
- 2 files changed, 56 insertions(+), 3 deletions(-)
----
-base-commit: ba8887e5f1e922f866681ec7dec1a00b602a9328
-change-id: 20260929-pseudo-init-recursion-fix-0009ce928d8e
+diff --git a/pseudo_util.c b/pseudo_util.c
+index afd0266..b8afe34 100644
+--- a/pseudo_util.c
++++ b/pseudo_util.c
+@@ -159,8 +159,13 @@ pseudo_get_value(const char *key) {
+ 
+ 	/* Check if the environment has it and we don't ...
+ 	 * if so, something went wrong... so we'll attempt to recover
++	 * -- but not while pseudo_init_util() is running.  Its own lookups
++	 * below reach this point, and when a value could not be stored
++	 * (strdup() failed) re-running it fails the same way and recurses
++	 * until the stack overflows.
+ 	 */
+-	if (pseudo_env[i].key && !pseudo_env[i].value && GETENV(pseudo_env[i].key))
++	if (pseudo_util_initted == 0 && pseudo_env[i].key &&
++	    !pseudo_env[i].value && GETENV(pseudo_env[i].key))
+ 		pseudo_init_util();
+ 
+ 	if (pseudo_env[i].value)
+@@ -218,8 +223,6 @@ pseudo_init_util(void) {
+ 			pseudo_set_value(pseudo_env[i].key, GETENV(pseudo_env[i].key));
+ 	}
+ 
+-	pseudo_util_initted = 0;
+-
+ 	/* Somewhere we have to set the debug level.. */
+ 	env = pseudo_get_value("PSEUDO_DEBUG");
+ 	if (env) {
+@@ -241,6 +244,8 @@ pseudo_init_util(void) {
+ 		pseudo_evlog_flags_finalize();
+ 	}
+ 	free(env);
++
++	pseudo_util_initted = 0;
+ }
+ 
+ unsigned long pseudo_util_debug_flags = 0;
 
-Best regards,
---  
-Javier Tia <javier@peridio.com>
+-- 
+2.55.0
 
 
