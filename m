@@ -2,99 +2,85 @@ Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA960CA5FC7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7162CA5FC5
 	for <webhook@archiver.kernel.org>; Wed, 30 Sep 2026 15:59:07 +0000 (UTC)
 Received: from mail-wr2-f34.google.com (mail-wr2-f34.google.com [74.125.225.98])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17150.1790783940563530702
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17147.1790783939758175041
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 30 Sep 2026 08:59:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=cIPyLPug;
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=A3EzDhKT;
  spf=pass (domain: linuxfoundation.org, ip: 74.125.225.98, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr2-f34.google.com with SMTP id ffacd0b85a97d-48b00a0ac65so560972f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 08:59:00 -0700 (PDT)
+Received: by mail-wr2-f34.google.com with SMTP id ffacd0b85a97d-48b00a0ac65so560964f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 08:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1790783939; x=1791388739; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=zwDRTC++iFUTm6RZm9KnTjUJd2AsO0twKs49ofFix7Q=;
-        b=cIPyLPugLgfB0pWhJDm05asF4Y8vFqdN+hJMhABfaH4wsaJaF06ZX0I6p03vZweucB
-         LS6oP4FrCCmGTVJFN9vAKFSNmqxNWt5yH7+SoKpY1IiWbCIuQIGVCwrhmb9UfzI4jZUE
-         6bed3YaHvrv1KOJdeUi0sW0aWFuy8k9vVQa3U=
+        d=linuxfoundation.org; s=google; t=1790783938; x=1791388738; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4AZ0j5cXbPc0ZzMiAtYDO9uWzfrcmtIzhQ2kj050L9o=;
+        b=A3EzDhKTudRI1Cckjdm0QApYyQuOiIH5dZ/AAhH+jaxMWsczcnz7pDFgGXjV2/oRr+
+         VvrImSSlxcaTIWHe598X/ZImaw/Q9+/K3I5pyhXLHIS5oF/0LpjLvwF5cXWenIrkmxLy
+         cx2IF8X0KNeKLoBSNbI97GhBN7eElO3MsIXVM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790783939; x=1791388739;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=zwDRTC++iFUTm6RZm9KnTjUJd2AsO0twKs49ofFix7Q=;
-        b=unSuJGQVtR4kGH/KysZ1ikqUDNZwYM1kHdwMkZdVH01v+QHU+LhqD2JJsTrZauc0am
-         DFsJf/leMgljS8cm+ZyQ8LsjViOVmldMwRD2EOiShx+ef3Es6F9Lf8IyDRb4pLat+YR7
-         HHMsh7g+k4cuh1o5OH4VzpxJ0M9KztOquAAsKLFQDs587HCc0r9UJ4M4oqmTSSmzmaNV
-         LT4O6bVdm2AH0nM82Ssm4IfSi6eW8yOzDdMPZ5jJsdufWwp8MTC1mYgJcJguXh/FHETF
-         tItmty1NdqMq6TsSZxIalR7rbZ6up1IESULgd3jUZ6pFGtr0JjgWGsAHUUNc7CvgnzdW
-         CSxQ==
-X-Gm-Message-State: AFq9FYLTadTHnlqTlSR9TmYyeCemIWYitpVN9YntmgUnBi3iYLHwMApf
-	jj9bPQVEaWyfF7MkJr0iyeG5RgLQL/WBBZnQX0itkN5ypcRxdpe+z6v1rj20ZoL14mm+3USqYe4
-	XoAoCpPY=
-X-Gm-Gg: AYBFou1QdPkvw+okClI2IcPpLtArtfcgGqc3UMY4mCYDnP7tjt+z31oPJXvi5CR56qP
-	I8cycmQF/BcApU2oh1eT4LfFC5kuOgvewxMilA5PBq14I36Iko40ViKidxl+m/GGZ/8T+dbLm1u
-	XnSvlmtG1cY4u+m5+OKXK+Y7xCAV3hPvJ3xLkKjv9wjjj43i3qNUXTFS+f4cFlXbgagn/JWCKTo
-	Hpjjtxh0L+6HZFXpTezEaCypyJdF25OX6GzQZJV4e1dsuZWxbMqjOsUKsFhhc/oFuW1uXqv2hns
-	GCQXsZT6zzp4Ley+LjbCLFdD4Be3tvt0tolW5pd0i373DhIVqedNy8HW3b33nT+fxpRJeBf+nyN
-	92kQOAXlvOD0+lYuPu0rJnKdG4zSgcDTSVQLlFwVEU96HOfvszkC45DrVw6rjpaZIkHVIrTO5Wb
-	2gE58QfjNCm/ir/1xZlLjQPLL18yEvJe6/GnCyvN+3Mvr26vqtaMGCiPEXvOOArsnVQf3CuMMWb
-	rJX5hppG3jqYemzAdAA797EbQ==
-X-Received: by 2002:a05:6000:647:b0:48b:14e:fe04 with SMTP id ffacd0b85a97d-48b049b2ad5mr1503268f8f.6.1790783938705;
-        Wed, 30 Sep 2026 08:58:58 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790783938; x=1791388738;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=4AZ0j5cXbPc0ZzMiAtYDO9uWzfrcmtIzhQ2kj050L9o=;
+        b=DPPNnfedCtf5Pl8tHu4jJtd+4h+jdTI6V0FOkdsJ09KAxFdPrkWLggKS+PUlYET6Ov
+         tolkF8c5iVOol6nLsISmMfT6Xd96fnOtsPnP0Lt45qXYY9Zk5NOpIXQw0StBxeQNx+WK
+         KQFFr8xfkxujriOq/vP6fwpU7NvQtEGgDQJMRA/4A2evRnpsqaM3/QX63UCeRsb7Csk9
+         2d+EWUeHKrWXmdYD3wL/lnw6Pmv6mBHYzG0JG5GLGaWKV5RsamRjndCI8YFTcP7Lj711
+         B3u7zDZPRMzCWTar8qP4QutSjzyGricHV4f1HriuwNCCQIDEkdcVQ13rQSGshuooyrPj
+         etrA==
+X-Gm-Message-State: AFq9FYL4GuCqrmT/t2zJkaJ2Pue8bPneDiwoeAGoeHIBndEqxZpvRJUc
+	ajxAHMogSVfb8r0Gti5axQQKN8kgT1/JSyfsXZGcnvvpQQ1Uaq3DFV9B2mwtr9DcHC7xpYgKp2D
+	rG8lURlU=
+X-Gm-Gg: AYBFou0xdYPfs9ATB2jY8XBodqs++Tg2OfVqAT9sd9iJZtt4ItuPwOXAH+9kHeGU/hH
+	yer6BeBSgZCNLTwCb1oQiRvhQq6+weRkrMBgn+PTbkyneKcaArP3W3jPsBbmTFWkAQHTu6s6ktK
+	HFOGlw+rbIYpfCCBlcS5NGe3P24YdWjdPswf9mGuKlknBUmdOymtElIv7bijydGLoBF/qywKMkV
+	zXVTaE7+StB3hxAjFR2FCJU4HXivcW4biWhfcHk0aXQHCMrX/7kfXAzTClB8GYo6D5EmQrQJFnI
+	v+zeFBYxbM+c1Fpm6IOZfj6185L5ItZo+EoMkhmdZU4lCPgBzTE9iUOc3MleP4EvQT+coVicSkh
+	16FXo0ulJ7P6xrWkJ+tPqULFw4OaN7qZZ4QGRJsmhRhBWCTgiXyM40C++gad1n+2h19zHN0LSfw
+	gyH7EIwbimluouxFdPyHYWM3uqVrIB/S/ea0wdxR7IZZCDxnxPlSFAkyrcbp+6v5FQNUz0WgbLH
+	CcozFfry7UAOuesZEXsTPp3pg==
+X-Received: by 2002:adf:e004:0:10b0:48b:5e2:52dd with SMTP id ffacd0b85a97d-48b05e2600dmr361121f8f.11.1790783937765;
+        Wed, 30 Sep 2026 08:58:57 -0700 (PDT)
 Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:349:f135:e106:4c82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b02a0462bsm4490925f8f.33.2026.09.30.08.58.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b02a0462bsm4490925f8f.33.2026.09.30.08.58.56
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 08:58:58 -0700 (PDT)
+        Wed, 30 Sep 2026 08:58:57 -0700 (PDT)
 From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder2] [PATCH 2/2] config.py: Drop meta-gplv2 from main targets, no longer supposed in any release
-Date: Wed, 30 Sep 2026 16:58:56 +0100
-Message-ID: <20260930155856.1179553-2-richard.purdie@linuxfoundation.org>
+Subject: [yocto-autobuilder2] [PATCH 1/2] config.py: Add meta-mingw to check-layer-nightly
+Date: Wed, 30 Sep 2026 16:58:55 +0100
+Message-ID: <20260930155856.1179553-1-richard.purdie@linuxfoundation.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260930155856.1179553-1-richard.purdie@linuxfoundation.org>
-References: <20260930155856.1179553-1-richard.purdie@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 15:59:07 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4973
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4972
 
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- config.py | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ config.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/config.py b/config.py
-index 3275e6fb..3a36e723 100644
+index 09736b8f..3275e6fb 100644
 --- a/config.py
 +++ b/config.py
-@@ -7,8 +7,8 @@ baserepos = ["bitbake", "oecore", "meta-yocto", "yocto-docs", "poky"]
- # ## Build configuration, tied to config.json in yocto-autobuilder-helpers
- # Repositories used by each builder
- buildertorepos = {
--    "a-quick": baserepos + ["meta-intel", "meta-mingw", "meta-gplv2"],
--    "a-full": baserepos + ["meta-intel", "meta-mingw", "meta-gplv2", "meta-arm", "meta-aws", "meta-agl", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-qcom", "mixin-wrynose-linux-firmware"],
-+    "a-quick": baserepos + ["meta-intel", "meta-mingw"],
-+    "a-full": baserepos + ["meta-intel", "meta-mingw", "meta-arm", "meta-aws", "meta-agl", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-qcom", "mixin-wrynose-linux-firmware"],
-     "non-gpl3": baserepos + ["meta-gplv2"],
-     "meta-mingw": baserepos + ["meta-mingw"],
-     "meta-oe": baserepos + ["meta-openembedded"],
-@@ -23,7 +23,7 @@ buildertorepos = {
-     "buildtools-docs": baserepos + ["meta-openembedded"],
+@@ -24,7 +24,7 @@ buildertorepos = {
      "qemuarm-oecore": ["oecore", "bitbake"],
      "checkuri": baserepos,
--    "check-layer": baserepos + ["meta-mingw", "meta-gplv2"],
-+    "check-layer": baserepos + ["meta-mingw"],
-     "check-layer-nightly": baserepos + ["meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein", "meta-qcom", "meta-riscv", "mixin-wrynose-linux-firmware", "meta-mingw"],
+     "check-layer": baserepos + ["meta-mingw", "meta-gplv2"],
+-    "check-layer-nightly": baserepos + ["meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein", "meta-qcom", "meta-riscv", "mixin-wrynose-linux-firmware"],
++    "check-layer-nightly": baserepos + ["meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein", "meta-qcom", "meta-riscv", "mixin-wrynose-linux-firmware", "meta-mingw"],
      "docs": ["yocto-autobuilder-helper", "yocto-docs", "bitbake"],
      "reproducible-meta-oe": baserepos + ["meta-openembedded"],
+     "patchtest": baserepos + ["meta-patchtest", "meta-openembedded"],
 
