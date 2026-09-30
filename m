@@ -2,186 +2,85 @@ Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD972CA5FB1
-	for <webhook@archiver.kernel.org>; Wed, 30 Sep 2026 10:52:27 +0000 (UTC)
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10574.1790765542906591960
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0614BCA5FBA
+	for <webhook@archiver.kernel.org>; Wed, 30 Sep 2026 11:06:28 +0000 (UTC)
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10854.1790766383812770766
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 30 Sep 2026 03:52:23 -0700
+ Wed, 30 Sep 2026 04:06:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=SlenRsZ5;
- spf=pass (domain: linuxfoundation.org, ip: 74.125.225.140, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49ffde3cec6so21845755e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 03:52:22 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=NULLXXdl;
+ spf=pass (domain: linuxfoundation.org, ip: 74.125.225.76, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-48434392b02so4530209f8f.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 04:06:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1790765541; x=1791370341; darn=lists.yoctoproject.org;
+        d=linuxfoundation.org; s=google; t=1790766382; x=1791371182; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qCdtbeYA3qbU87KNW95wVfJgBT7LxPIbu7/wZSzGjzM=;
-        b=SlenRsZ5CR+8nilnPGrPbM6ogA1nyPBIZdCjBGMHztwPKDIVna54JgrqKV9WYKoT7T
-         +V5dE5TLoS1SlEE5CAm2YMS4wfCo9/ov7MEDNKx6IHTGp9/n88UjEr5UgOzBSkTV/WbZ
-         9Bd/GcwX0yoYWkv+qYgs2rohVWwfv1SZMldLE=
+        bh=Qr+kW55muFCxJhEAUe8kuW9F0lGt1H+CWHpDCZyIyaQ=;
+        b=NULLXXdlN32+bXJP/s2sEm3bPtXtnjrv6HJNiAJPYsBIhEXPtz0gV0TMKAUy01rPD3
+         jSaR4OdFR5SYefrpKEI1yMsA8alOtf5qYGhlPw0jZ867WGdRK8Wl5eMVUg/Vk/hYQNHQ
+         O4HKxhgjGKTzWM/l3lu6OofHBTQLBres2UO/g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790765541; x=1791370341;
+        d=1e100.net; s=20260707; t=1790766382; x=1791371182;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=qCdtbeYA3qbU87KNW95wVfJgBT7LxPIbu7/wZSzGjzM=;
-        b=yHB9UQ4GoWLrjjVrn4WjNhs8jaXYYIUH3WLgac0MDH+JXN90A21urfJ1X+GHBG4IuW
-         mPoyTXVOofsE1oJPbpgav3LKHuvrvZfpg/HVhECWjhlDuGOH+8KkBNjRaURz0eVRYsTK
-         WfITkoMkJaKZmG+1J+/9P8mXUC1Z9nO9rYg5GVrxP08hSNGEnEgqItzXJpt7t9YmvfdJ
-         IiiupQYbPi7kniDQvn/mv8npZB57WHiNot76LJXressSCzxemMoW7EnhJ4EHD9mJrrB8
-         +gWx3w+UDv3Z8Dc5zUVQpVN17wl1xI+u5vgURyik1Nhd064+0PL9WvHE8yBcKHd7OEV0
-         0lBQ==
-X-Gm-Message-State: AFuF++mVlR0tULRvmsZnt20o/+ctEO/tRIMK1sY7pCeyTSbkEHKCQlkB
-	mbV/SvsiD104cgBESkpq0Yhpk3vuYrOWQot9RI2eh9uUOjiFfBjL61waaHIFo5TCCOlNqlWdb1I
-	4j5mNMvc=
-X-Gm-Gg: AYBFou14bQlImea4DKgq8E08nqZXJ6tJ+Gh9Kue+XnCHVUYdcCoBhItoYg7Dd5lN2+9
-	SO+fJKXsIN6+/9j3bgem9LtC88MidqirC6ImKEQOcsGAEiJZh3doegeI1v1e0xyXIS3IZiJq+Te
-	NgPM1Aqi0Ggr6sp3BDpYGFd3CnErYK1Q+aqhngDKqcW9CWcAZBg+OdQOut2OwFYE/GW4NkRhO1o
-	KxJN7to7fHmMNlQhJ4wnaMIvQBe2C6rttY2eb4XpyQ8QqOr8fz6AuOV4Pl1E0dIAySSht7rEuGr
-	rY8jdgDahnXR2URxsqbJJYThox9gIDbRKgc5oT1NIinIJfJO9HDTBr6qQgOlIuNsY3Rag9vAyyC
-	lZW0oJIjFHrP8Otu/Y8ng2+4qO1TIMRvIyVQNHSyWgVwEsb/D3ibgDPt0hFT518KbwJuC6guo7K
-	vJCnEUFiZyW3c7RwZlghk+s1hW7Y1s29kP3fO205XXyFKVMFc55Jap8KHSd+XWNb+HrEZjbZUe3
-	/2xqqtQSeqRjYEsVeaAujpT6Q==
-X-Received: by 2002:a05:600c:4691:b0:49c:fa21:e749 with SMTP id 5b1f17b1804b1-4a01b126e5dmr14462335e9.31.1790765540552;
-        Wed, 30 Sep 2026 03:52:20 -0700 (PDT)
+        bh=Qr+kW55muFCxJhEAUe8kuW9F0lGt1H+CWHpDCZyIyaQ=;
+        b=BMmod9iHoxxQxLM7PeGQfAFGEwUA8fqsiqckfs05lwtv8fBs1aR9mp4ZAJ+glOMVNE
+         ZHNUbbFY+ng4vMJ78TNkh17Bz93dIHPn0Qljz0QgorVQU4GtZrkUF0xf4G0t4SpFllZX
+         0XgYfiT5oIU7QmX3n+xQq+jMMlXxGVt2fpCNaHeK1NGJcKqrzK+Vplg3qr4Kjz02Um/4
+         PKOLsNRnSXDyA9EOwN7q5ghDzyjsNfnIPo70LeoyQ4YYJvMiGIo39MI43I5IplbQbRlf
+         e4Wux3Qd5wpnKEaEJuI42q5vqCZefLWAZrgS93sSx4ttLaSI+tAUlRDhLjNVV5Mxo9Mi
+         TqWQ==
+X-Gm-Message-State: AFq9FYLHJv0n0OwrRacjIwqNRXL9zFktmXyaQn9J46HSgcGpcv6ff8ab
+	5+B+oH36qq4jgdyZgcVNa+VMHNzUCl8Itg42EAg84gReJXV0KjRsYAi6E5jGdLgIbhH6fpuKVlD
+	H6RUkmxU=
+X-Gm-Gg: AYBFou3lLuYmHrGj0nkGdFT629uvJx4872J/D8aA6932pADaLnQISAusoczE6dEfHJS
+	dYIhq6yT3pxUHPcqUhClrgN07kd08yrtHrxnNr2qrAqAsEejad26SOPbK7+hfRviqU0SJuaM7S0
+	OwkbwXO64jftdW+dl7V/fdw3wkVZWQOr6k6qpsaVf6ql3JxZL56ndoRR/oW0PoOD9pz8snjm2sD
+	c2xxnLDAdYLNZbcD7JRwmTxU7eRk7ipH92+eYb+39rXHOHKMtUpCmVhUrRBOFzLWyB9JM2+uTTp
+	I0ziDTbZ5JF0QuvXCNUEH/32ZqtV2udSZ9kGVK4xTT4hVVD0aw/pnv1WzR+XMppFCssRFI2H3gp
+	z/9KkTqPBXAWyFr6T1xstPZHgHFHOLmnNBv7SSLb2m+4wywTFNcBl6mr4Uo3LFWqmqxrtO0FDkT
+	a9x4ul8K7jo9xmpw1GxYiWoD1zoTvn9vEnlnxYQCBDKF7VsctQoC0YBE9iTVbsxEu8xtJhaYol1
+	DxDH5326EWGt5+/Dz6ie+g0CA==
+X-Received: by 2002:a5d:5889:0:b0:488:8568:bb02 with SMTP id ffacd0b85a97d-48b0250efc8mr2247672f8f.23.1790766381551;
+        Wed, 30 Sep 2026 04:06:21 -0700 (PDT)
 Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:349:f135:e106:4c82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a01cb8af89sm2078785e9.1.2026.09.30.03.52.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b029ff46bsm2769612f8f.29.2026.09.30.04.06.20
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 03:52:20 -0700 (PDT)
+        Wed, 30 Sep 2026 04:06:21 -0700 (PDT)
 From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] config.json/scripts: Add a specific list of repos to ignore and reference everywhere
-Date: Wed, 30 Sep 2026 11:52:19 +0100
-Message-ID: <20260930105219.544597-1-richard.purdie@linuxfoundation.org>
+Subject: [yocto-autobuilder-helper] [PATCH] config.json: Renable meta-aws as it works again
+Date: Wed, 30 Sep 2026 12:06:20 +0100
+Message-ID: <20260930110620.571680-1-richard.purdie@linuxfoundation.org>
 X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 10:52:27 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4970
-
-There are a set of repos we need to ignore in builds, poky, meta-gplv2 and
-more. Put these in a specific list in the config and update the shared functions
-to remove them in all places rather than the current inconsistency.
+ <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 11:06:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4971
 
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- config.json                  |  1 +
- scripts/getproperties.py     |  3 ++-
- scripts/prepare-shared-repos |  6 +++---
- scripts/send_qa_email.py     |  5 +----
- scripts/shared-repo-unpack   |  2 +-
- scripts/utils.py             | 10 +++++-----
- 6 files changed, 13 insertions(+), 14 deletions(-)
+ config.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/config.json b/config.json
-index 17c241e..b96a4bd 100644
+index b96a4bd..370ffde 100644
 --- a/config.json
 +++ b/config.json
-@@ -16,6 +16,7 @@
- 
-     "REPO_STASH_DIR" : "${BASE_HOMEDIR}/git/mirror",
-     "TRASH_DIR" : "${BASE_HOMEDIR}/git/trash",
-+    "IGNORE_REPOS" : ["poky", "meta-gplv2", "mixin-wrynose-linux-firmware"],
- 
-     "QAMAIL_TO" : "yocto@lists.yoctoproject.org",
-     "QAMAIL_CC" : "qa-build-notification@lists.yoctoproject.org",
-diff --git a/scripts/getproperties.py b/scripts/getproperties.py
-index 90339e8..0bafa57 100755
---- a/scripts/getproperties.py
-+++ b/scripts/getproperties.py
-@@ -15,7 +15,8 @@ targetname = sys.argv[2] if len(sys.argv) > 2 else None
- with open(builddir + "/../layerinfo.json") as f:
-     repos = json.load(f)
- 
--utils.filterrepojson(repos)
-+ourconfig = utils.loadconfig()
-+utils.filterrepojson(ourconfig, repos)
- 
- def get_revision(repopath):
-     return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repopath).decode('utf-8').strip()
-diff --git a/scripts/prepare-shared-repos b/scripts/prepare-shared-repos
-index 8ffc2c5..a676669 100755
---- a/scripts/prepare-shared-repos
-+++ b/scripts/prepare-shared-repos
-@@ -39,14 +39,14 @@ ourconfig = utils.loadconfig()
- with open(args.repojson) as f:
-     repos = json.load(f)
- 
--utils.filterrepojson(repos)
-+utils.filterrepojson(ourconfig, repos)
- 
- stashdir = utils.getconfig("REPO_STASH_DIR", ourconfig)
-+ignore_repos = utils.getconfig("IGNORE_REPOS", ourconfig)
- 
- with tempfile.TemporaryDirectory(prefix="shared-repo-temp-", dir="/home/pokybuild/tmp") as tempdir:
-     for repo in sorted(repos.keys()):
--        # gplv2 is no longer built/tested in master
--        if repo == "meta-gplv2":
-+        if repo in ignore_repos:
-             continue
-         utils.printheader("Initially fetching repo %s" % repo)
-         # shallow clones disabled as it doesn't work correctly with revision numbers in the result repo leading to release build failures.
-diff --git a/scripts/send_qa_email.py b/scripts/send_qa_email.py
-index 07fc1e7..6ce9c46 100755
---- a/scripts/send_qa_email.py
-+++ b/scripts/send_qa_email.py
-@@ -148,7 +148,7 @@ def send_qa_email():
-     with open(args.repojson) as f:
-         repos = json.load(f)
- 
--    utils.filterrepojson(repos)
-+    utils.filterrepojson(ourconfig, repos)
- 
-     oecorerepodir = os.path.dirname(args.repojson) + "/build/layers/openembedded-core"
-     resulttool = oecorerepodir + "/scripts/resulttool"
-@@ -260,9 +260,6 @@ def send_qa_email():
-     layersdir = os.path.dirname(args.repojson) + "/build/layers/"
-     buildhashes = ""
-     for repo in sorted(repos.keys()):
--        # gplv2 is no longer built/tested in master
--        if repo == "meta-gplv2":
--            continue
-         layerdir = layersdir + repo + "/"
-         if repo == "oecore":
-             layerdir = layersdir + "openembedded-core/"
-diff --git a/scripts/shared-repo-unpack b/scripts/shared-repo-unpack
-index d1089cc..53a89ff 100755
---- a/scripts/shared-repo-unpack
-+++ b/scripts/shared-repo-unpack
-@@ -52,7 +52,7 @@ bbsetup_json = args.repojson.replace("layerinfo.json", "bbsetup-overrides.json")
- with open(layerjson) as f:
-     repos = json.load(f)
- 
--utils.filterrepojson(repos, args.target)
-+utils.filterrepojson(ourconfig, repos, args.target)
- 
- targetsubdir = args.abworkdir + "/repos"
- needrepos_baseddirs = [r.split('/')[0] for r in needrepos]
-diff --git a/scripts/utils.py b/scripts/utils.py
-index ab33734..fee8f67 100644
---- a/scripts/utils.py
-+++ b/scripts/utils.py
-@@ -314,11 +314,11 @@ def publishrepo(clonedir, repo, publishdir):
-     subprocess.check_call("rsync -av " + archive_name + "* " + publishdir, shell=True, cwd=sharedrepo)
- 
- # The repo json needs to be filtered for builds with bitbake-setup
--def filterrepojson(data, target=None):
--    if "poky" in data:
--        del data["poky"]
--    if "meta-gplv2" in data:
--        del data["meta-gplv2"]
-+def filterrepojson(ourconfig, data, target=None):
-+    ignore_repos = utils.getconfig("IGNORE_REPOS", ourconfig)
-+    for repo in ignore_repos:
-+        if repo in data:
-+            del data[repo]
-     return
- 
- def mkdir(path):
+@@ -689,7 +689,7 @@
+                 "BBTARGETS": "agl-image-core-autobuilder"
+             }
+         },
+-        "_meta-aws" : {
++        "meta-aws" : {
+             "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-aws"],
+             "ADDLAYER" : [
+                 "${BUILDDIR}/../meta-openembedded/meta-oe",
 
