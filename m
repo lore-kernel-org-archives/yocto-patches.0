@@ -2,85 +2,99 @@ Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0614BCA5FBA
-	for <webhook@archiver.kernel.org>; Wed, 30 Sep 2026 11:06:28 +0000 (UTC)
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10854.1790766383812770766
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA960CA5FC7
+	for <webhook@archiver.kernel.org>; Wed, 30 Sep 2026 15:59:07 +0000 (UTC)
+Received: from mail-wr2-f34.google.com (mail-wr2-f34.google.com [74.125.225.98])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17150.1790783940563530702
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 30 Sep 2026 04:06:24 -0700
+ Wed, 30 Sep 2026 08:59:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=NULLXXdl;
- spf=pass (domain: linuxfoundation.org, ip: 74.125.225.76, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-48434392b02so4530209f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 04:06:23 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=cIPyLPug;
+ spf=pass (domain: linuxfoundation.org, ip: 74.125.225.98, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr2-f34.google.com with SMTP id ffacd0b85a97d-48b00a0ac65so560972f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 08:59:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1790766382; x=1791371182; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Qr+kW55muFCxJhEAUe8kuW9F0lGt1H+CWHpDCZyIyaQ=;
-        b=NULLXXdlN32+bXJP/s2sEm3bPtXtnjrv6HJNiAJPYsBIhEXPtz0gV0TMKAUy01rPD3
-         jSaR4OdFR5SYefrpKEI1yMsA8alOtf5qYGhlPw0jZ867WGdRK8Wl5eMVUg/Vk/hYQNHQ
-         O4HKxhgjGKTzWM/l3lu6OofHBTQLBres2UO/g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790766382; x=1791371182;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linuxfoundation.org; s=google; t=1790783939; x=1791388739; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=Qr+kW55muFCxJhEAUe8kuW9F0lGt1H+CWHpDCZyIyaQ=;
-        b=BMmod9iHoxxQxLM7PeGQfAFGEwUA8fqsiqckfs05lwtv8fBs1aR9mp4ZAJ+glOMVNE
-         ZHNUbbFY+ng4vMJ78TNkh17Bz93dIHPn0Qljz0QgorVQU4GtZrkUF0xf4G0t4SpFllZX
-         0XgYfiT5oIU7QmX3n+xQq+jMMlXxGVt2fpCNaHeK1NGJcKqrzK+Vplg3qr4Kjz02Um/4
-         PKOLsNRnSXDyA9EOwN7q5ghDzyjsNfnIPo70LeoyQ4YYJvMiGIo39MI43I5IplbQbRlf
-         e4Wux3Qd5wpnKEaEJuI42q5vqCZefLWAZrgS93sSx4ttLaSI+tAUlRDhLjNVV5Mxo9Mi
-         TqWQ==
-X-Gm-Message-State: AFq9FYLHJv0n0OwrRacjIwqNRXL9zFktmXyaQn9J46HSgcGpcv6ff8ab
-	5+B+oH36qq4jgdyZgcVNa+VMHNzUCl8Itg42EAg84gReJXV0KjRsYAi6E5jGdLgIbhH6fpuKVlD
-	H6RUkmxU=
-X-Gm-Gg: AYBFou3lLuYmHrGj0nkGdFT629uvJx4872J/D8aA6932pADaLnQISAusoczE6dEfHJS
-	dYIhq6yT3pxUHPcqUhClrgN07kd08yrtHrxnNr2qrAqAsEejad26SOPbK7+hfRviqU0SJuaM7S0
-	OwkbwXO64jftdW+dl7V/fdw3wkVZWQOr6k6qpsaVf6ql3JxZL56ndoRR/oW0PoOD9pz8snjm2sD
-	c2xxnLDAdYLNZbcD7JRwmTxU7eRk7ipH92+eYb+39rXHOHKMtUpCmVhUrRBOFzLWyB9JM2+uTTp
-	I0ziDTbZ5JF0QuvXCNUEH/32ZqtV2udSZ9kGVK4xTT4hVVD0aw/pnv1WzR+XMppFCssRFI2H3gp
-	z/9KkTqPBXAWyFr6T1xstPZHgHFHOLmnNBv7SSLb2m+4wywTFNcBl6mr4Uo3LFWqmqxrtO0FDkT
-	a9x4ul8K7jo9xmpw1GxYiWoD1zoTvn9vEnlnxYQCBDKF7VsctQoC0YBE9iTVbsxEu8xtJhaYol1
-	DxDH5326EWGt5+/Dz6ie+g0CA==
-X-Received: by 2002:a5d:5889:0:b0:488:8568:bb02 with SMTP id ffacd0b85a97d-48b0250efc8mr2247672f8f.23.1790766381551;
-        Wed, 30 Sep 2026 04:06:21 -0700 (PDT)
+        bh=zwDRTC++iFUTm6RZm9KnTjUJd2AsO0twKs49ofFix7Q=;
+        b=cIPyLPugLgfB0pWhJDm05asF4Y8vFqdN+hJMhABfaH4wsaJaF06ZX0I6p03vZweucB
+         LS6oP4FrCCmGTVJFN9vAKFSNmqxNWt5yH7+SoKpY1IiWbCIuQIGVCwrhmb9UfzI4jZUE
+         6bed3YaHvrv1KOJdeUi0sW0aWFuy8k9vVQa3U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790783939; x=1791388739;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=zwDRTC++iFUTm6RZm9KnTjUJd2AsO0twKs49ofFix7Q=;
+        b=unSuJGQVtR4kGH/KysZ1ikqUDNZwYM1kHdwMkZdVH01v+QHU+LhqD2JJsTrZauc0am
+         DFsJf/leMgljS8cm+ZyQ8LsjViOVmldMwRD2EOiShx+ef3Es6F9Lf8IyDRb4pLat+YR7
+         HHMsh7g+k4cuh1o5OH4VzpxJ0M9KztOquAAsKLFQDs587HCc0r9UJ4M4oqmTSSmzmaNV
+         LT4O6bVdm2AH0nM82Ssm4IfSi6eW8yOzDdMPZ5jJsdufWwp8MTC1mYgJcJguXh/FHETF
+         tItmty1NdqMq6TsSZxIalR7rbZ6up1IESULgd3jUZ6pFGtr0JjgWGsAHUUNc7CvgnzdW
+         CSxQ==
+X-Gm-Message-State: AFq9FYLTadTHnlqTlSR9TmYyeCemIWYitpVN9YntmgUnBi3iYLHwMApf
+	jj9bPQVEaWyfF7MkJr0iyeG5RgLQL/WBBZnQX0itkN5ypcRxdpe+z6v1rj20ZoL14mm+3USqYe4
+	XoAoCpPY=
+X-Gm-Gg: AYBFou1QdPkvw+okClI2IcPpLtArtfcgGqc3UMY4mCYDnP7tjt+z31oPJXvi5CR56qP
+	I8cycmQF/BcApU2oh1eT4LfFC5kuOgvewxMilA5PBq14I36Iko40ViKidxl+m/GGZ/8T+dbLm1u
+	XnSvlmtG1cY4u+m5+OKXK+Y7xCAV3hPvJ3xLkKjv9wjjj43i3qNUXTFS+f4cFlXbgagn/JWCKTo
+	Hpjjtxh0L+6HZFXpTezEaCypyJdF25OX6GzQZJV4e1dsuZWxbMqjOsUKsFhhc/oFuW1uXqv2hns
+	GCQXsZT6zzp4Ley+LjbCLFdD4Be3tvt0tolW5pd0i373DhIVqedNy8HW3b33nT+fxpRJeBf+nyN
+	92kQOAXlvOD0+lYuPu0rJnKdG4zSgcDTSVQLlFwVEU96HOfvszkC45DrVw6rjpaZIkHVIrTO5Wb
+	2gE58QfjNCm/ir/1xZlLjQPLL18yEvJe6/GnCyvN+3Mvr26vqtaMGCiPEXvOOArsnVQf3CuMMWb
+	rJX5hppG3jqYemzAdAA797EbQ==
+X-Received: by 2002:a05:6000:647:b0:48b:14e:fe04 with SMTP id ffacd0b85a97d-48b049b2ad5mr1503268f8f.6.1790783938705;
+        Wed, 30 Sep 2026 08:58:58 -0700 (PDT)
 Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:349:f135:e106:4c82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b029ff46bsm2769612f8f.29.2026.09.30.04.06.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b02a0462bsm4490925f8f.33.2026.09.30.08.58.57
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 04:06:21 -0700 (PDT)
+        Wed, 30 Sep 2026 08:58:58 -0700 (PDT)
 From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] config.json: Renable meta-aws as it works again
-Date: Wed, 30 Sep 2026 12:06:20 +0100
-Message-ID: <20260930110620.571680-1-richard.purdie@linuxfoundation.org>
+Subject: [yocto-autobuilder2] [PATCH 2/2] config.py: Drop meta-gplv2 from main targets, no longer supposed in any release
+Date: Wed, 30 Sep 2026 16:58:56 +0100
+Message-ID: <20260930155856.1179553-2-richard.purdie@linuxfoundation.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260930155856.1179553-1-richard.purdie@linuxfoundation.org>
+References: <20260930155856.1179553-1-richard.purdie@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 11:06:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4971
+ <yocto-patches@lists.yoctoproject.org>; Wed, 30 Sep 2026 15:59:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4973
 
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- config.json | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ config.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/config.json b/config.json
-index b96a4bd..370ffde 100644
---- a/config.json
-+++ b/config.json
-@@ -689,7 +689,7 @@
-                 "BBTARGETS": "agl-image-core-autobuilder"
-             }
-         },
--        "_meta-aws" : {
-+        "meta-aws" : {
-             "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-aws"],
-             "ADDLAYER" : [
-                 "${BUILDDIR}/../meta-openembedded/meta-oe",
+diff --git a/config.py b/config.py
+index 3275e6fb..3a36e723 100644
+--- a/config.py
++++ b/config.py
+@@ -7,8 +7,8 @@ baserepos = ["bitbake", "oecore", "meta-yocto", "yocto-docs", "poky"]
+ # ## Build configuration, tied to config.json in yocto-autobuilder-helpers
+ # Repositories used by each builder
+ buildertorepos = {
+-    "a-quick": baserepos + ["meta-intel", "meta-mingw", "meta-gplv2"],
+-    "a-full": baserepos + ["meta-intel", "meta-mingw", "meta-gplv2", "meta-arm", "meta-aws", "meta-agl", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-qcom", "mixin-wrynose-linux-firmware"],
++    "a-quick": baserepos + ["meta-intel", "meta-mingw"],
++    "a-full": baserepos + ["meta-intel", "meta-mingw", "meta-arm", "meta-aws", "meta-agl", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-qcom", "mixin-wrynose-linux-firmware"],
+     "non-gpl3": baserepos + ["meta-gplv2"],
+     "meta-mingw": baserepos + ["meta-mingw"],
+     "meta-oe": baserepos + ["meta-openembedded"],
+@@ -23,7 +23,7 @@ buildertorepos = {
+     "buildtools-docs": baserepos + ["meta-openembedded"],
+     "qemuarm-oecore": ["oecore", "bitbake"],
+     "checkuri": baserepos,
+-    "check-layer": baserepos + ["meta-mingw", "meta-gplv2"],
++    "check-layer": baserepos + ["meta-mingw"],
+     "check-layer-nightly": baserepos + ["meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein", "meta-qcom", "meta-riscv", "mixin-wrynose-linux-firmware", "meta-mingw"],
+     "docs": ["yocto-autobuilder-helper", "yocto-docs", "bitbake"],
+     "reproducible-meta-oe": baserepos + ["meta-openembedded"],
 
