@@ -1,92 +1,139 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FE9CA5FB3
-	for <webhook@archiver.kernel.org>; Thu,  1 Oct 2026 10:46:51 +0000 (UTC)
-Received: from mail-wr2-f24.google.com (mail-wr2-f24.google.com [74.125.225.88])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.8050.1790851605306083892
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A8BCA5FD2
+	for <webhook@archiver.kernel.org>; Thu,  1 Oct 2026 16:05:12 +0000 (UTC)
+Received: from mail-qk2-f40.google.com (mail-qk2-f40.google.com [74.125.230.232])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14794.1790870710068947206
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 Oct 2026 03:46:46 -0700
+ Thu, 01 Oct 2026 09:05:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=IExVtWor;
- spf=pass (domain: linuxfoundation.org, ip: 74.125.225.88, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr2-f24.google.com with SMTP id ffacd0b85a97d-482f63546c3so4948643f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 Oct 2026 03:46:45 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=EqmqxRa0;
+ spf=pass (domain: gmail.com, ip: 74.125.230.232, mailfrom: twoerner@gmail.com)
+Received: by mail-qk2-f40.google.com with SMTP id af79cd13be357-93c5ce9914dso594037985a.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 Oct 2026 09:05:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1790851603; x=1791456403; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1790870709; x=1791475509; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GrxihWQdio3D2tno7FBCkW8vtPApjF2J/oIw+BXg7sk=;
-        b=IExVtWorqwRaA48DS3/gisYXpDtvlmIZqp3G5lEkbrYMk/QF9rGKTDwnXJkWY0VRXl
-         Aa0R6UM4UIuh2efzqVFcaLpu1LtLYPYCACyDSjKTaXmBW2gwuNBFvWTHtXmfZkcduGze
-         0ja7yT9FLM8rDEkma5l3YKzWvvWnGPjNjF1bo=
+        bh=F2BXKMOzJMnWbAfWBesIItA9nk6sAyYYujfaAHSqGpg=;
+        b=EqmqxRa0ZW54SNwogMl4f4RMj/MMCCHfFsP1WD7qj9IjVlTdwd5lRZvPM1fAo0+fTE
+         e6+jCA2b5ReC9ieLRvYqDKaoraTeNXDsI6eDMqU/n3IEs8yIVS3nvpNFGreU6HNVYCkT
+         uuLHryRetGDwUu9dVT6hUs/uzGCiG59ZVvQnQf7f4A5koxWm+W7RzP4hEcaJeu5q1j0s
+         t11bG2SIzOfEzjdYzhT9z65Yn2xYAQ6AGEtcCzPDIJus1lL0j9XwxPxMOPsuyKoJs49D
+         kYiBpmd2VXW0a3z4GZhiHVJ/ZQR3R6fsPBoKNM4Rd1O/CbtYigiR8X2pri5QqWlqzMMi
+         Kyow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790851603; x=1791456403;
+        d=1e100.net; s=20260707; t=1790870709; x=1791475509;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=GrxihWQdio3D2tno7FBCkW8vtPApjF2J/oIw+BXg7sk=;
-        b=h+BJXbTPJLB2s+Tr8QMcwq8q33uX607A9JDwD78TNZMPXmrWOgMwUwpAFW9hfzHOM+
-         cmgY+uE4kMGYvpBabNIV+slPDfFBrnYR7ilm//povMhLSJJAFDZfoxCt4f7A6TCSbFsC
-         Ry0sXILgJVaXxYGiumsWwv3/0BK9EqB2L1TJ825nPPe7J1tbpOWwzFHVY6J3cD72fWpe
-         ZgL6IsDBuEL6eccwNQmumNWbxPqzcvmNVFLsH7jJhuBG3WveKK8yf+mI454znPr6ygkT
-         wpdzkP3IdYk57KMSoxxa0I1wZRnTAV/mh6zUpdZPWKJlEqD3OSbTgJeQW7D2wq2WANHS
-         UUEQ==
-X-Gm-Message-State: AFq9FYJXry8doL7xH7fL51FZlTsdfIU6lVTbIXVAy4ClkkiRvQh7d3SK
-	cDHC4/tAcKk31v9zdn6rzYWFnJ/q0/uCGQxzBo4xuEgjNt1Sgu0GET3ZEnw6H3r4N5j0lNAEbH8
-	ibu2QYYk=
-X-Gm-Gg: AYBFou0Eb3e7CKOQ7uu6MtidLyQ+LlFCG6uy1yQjhZ5KFsJr4d9ENSwZZ8cZAqNRXsV
-	3Mnmmr6XaBTqIgcJe/VphoY6cpwdFY2QoWMhV5X+ZSxGjbNotc2dh7aGgFo5JE6vb8x9PT5+teO
-	9ECEQOMpQTaZWijbCiDRMTzOTH0jt3Jg/8VkyKNpJzPZAYk1rNZh21p581pOEOLIVeofbdoZ9+u
-	t6EnJVQKafbanTao6X4ouqES5+0ybp0iOHP8DGmhOBB1qhqZqviWsHEAh7DbcS8q4RxS+75nGpb
-	S7JkNNasDhBvr8rpuU90sBEBqpN5jdBRxXuoVawMKWblMEw0yD+kQyuHRvhps4ytacgqUW2gDGI
-	BvZcPyCyU5PqDt+6E3WwVjQRuWc0mUrBfifHjmnW941eIQ9nbLZAtt2ISNk28vvgvBuwJTK871J
-	dh22jBmTDGPdS/DsPvl6VFCNNjYRtKZ+VD95v9ZmcCoVRn5IBw3eLzXdBMGbD5zfWRbwu/yA9Gu
-	BSI8JOqKOrLySbmeIOh0asJmYGloHKbbMKOjQ==
-X-Received: by 2002:a05:6000:240c:b0:488:7bdc:6032 with SMTP id ffacd0b85a97d-48b02519492mr7667670f8f.43.1790851603356;
-        Thu, 01 Oct 2026 03:46:43 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:97e5:70fa:8dd4:c479])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b06a360c2sm5056159f8f.36.2026.10.01.03.46.41
+        bh=F2BXKMOzJMnWbAfWBesIItA9nk6sAyYYujfaAHSqGpg=;
+        b=vJ9QkC5xkHAGMquEq9KhSIz8nO4CqTTCmGDTsyMv3MhwBRXkEcVmOY3HiNtNBvIShH
+         AhbdoAdxyEkQa8cXhfrj4AhLmkfbJY9GNGWp1mmw98oGXc6kP7y4o7b2BWg+WGVXP5fM
+         tcJWwljwn+5bRtUMyTALHRQBweklCmK2kXzhRuYBAiOQMVhQhDUype6/L3SorQn4lvl1
+         hKSsbGBHrHmvRrFH0E/T7S6T/YtglAhc6zTVIzbH6TliREcDZ5CHXwX6sShoblCNm9Gc
+         hzdDXI/ruL5PqeRSGchOBM93OhzMAWTsy5dWti4cFC7XaYaNOlpGc88cSal6oafgW1cd
+         u1dQ==
+X-Gm-Message-State: AFuF++ml8Yt1IGpFabG9PebKYj/kf4mbB4phLsCqdmcUXuCf7h3MPRoM
+	ZZWpmcLmc0SxJLlmKCfGipGgALUomDUcisxHJWLC/7WqUsBe9wfV67Li+wvMXg==
+X-Gm-Gg: AYBFou0lwWLVGs/xtwm6lXq0TxAMA5PmNLrz7EB9ol835c0eWai0ywD2qo2jwtpFJrb
+	zMTEEH0vPATtRQ8Ij6qU+JteX+tN1CSUKd+hyxB1r/w+84IeOaSglLH33+MCa7KDnKRvM24/bU4
+	7dOVoYeekdnDwWTdtjfKwooCe3jmW+vwVAquMBdjZuvtLnc9eui82PSOzKFhIr9UAJjFe6C0wW+
+	JAxrUStjuCcbVUlsaNrbH27RZvJFwQyEqDbqH6e1rcC7PjRMoRFFkXZy8PziQOKxEwnmnJyyn22
+	bYEZ9A0g8g8/t5J7gge/F6E6GFgdobmOJrRrNcQVD69JYXJIoqbtWQpJCs3eJczlfceEX3hovhj
+	qQLtyrNhTPR8KnRZuZv87a58mPDArhDrN9DdXS84sUkgiUxV88i2Izrbl8r/6twnzEnFz2+iXAB
+	cS5tZosoQc4e8b+Xjcw6S0DZJ8gVxivSznvGIcz4Yb8waFFbYeesW7blZ3j0YaQ/gfjX+p1Ttng
+	wsnToCImb7/Ag9akgq6PRUA0quODPSJ5stzaXOp7NTloDUmPVk=
+X-Received: by 2002:a05:620a:370a:b0:93c:b47b:26f with SMTP id af79cd13be357-93cb47b0cd1mr689627485a.49.1790870708637;
+        Thu, 01 Oct 2026 09:05:08 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93cc7069299sm38299185a.33.2026.10.01.09.05.07
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2026 03:46:41 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Thu, 01 Oct 2026 09:05:07 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] getproperties: Ignore meta-mingw if it doesn't exist
-Date: Thu,  1 Oct 2026 11:46:41 +0100
-Message-ID: <20261001104641.1596895-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.53.0
+Subject: [meta-rockchip][PATCH v2] kernel: add config fragment for lttng-modules prerequisites
+Date: Thu,  1 Oct 2026 12:04:57 -0400
+Message-ID: <20261001160457.3405886-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 01 Oct 2026 10:46:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4975
+ <yocto-patches@lists.yoctoproject.org>; Thu, 01 Oct 2026 16:05:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4976
 
-We moved meta-mingw from check-layers to check-layers-nightly which means
-it can sometimes be in the config but not present. It is find to ignore
-if it isn't present.
+These machines build from an upstream defconfig via KBUILD_DEFCONFIG
+rather than a yocto-kernel-cache BSP, so the standard kernel type's
+configuration never applies and lttng-modules gets neither CONFIG_KPROBES
+(a hard compile failure) nor CONFIG_TRACEPOINTS (builds no modules at
+all). Ship the fragment in-layer so it works for any kernel recipe here,
+not just ones that fetch the kernel cache.
 
-The wrynose layer will be removed earlier now and never be present.
-
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+AI-Generated: codex/claude-opus 5 (xhigh)
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- scripts/getproperties.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+changes in v2:
+- drop the dependency on yocto-kernel-cache; v1 added
+  features/kprobes/kprobes.scc to KERNEL_FEATURES, which only resolves
+  for kernel recipes that fetch the cache. linux-yocto fetches it in
+  linux-yocto_7.2.bb, not in linux-yocto.inc, so recipes that require
+  only the .inc never get it.
+- a KERNEL_FEATURES entry that is not found is a hard do_kernel_metadata
+  failure, not a warning, so a shared .inc can only reference fragments
+  the layer itself ships. Ship the config in-layer instead.
+- widen from :rockchip:arm to :rockchip. CONFIG_KPROBES is absent on
+  every machine in the layer; 32-bit merely fails loudly. arm64 also
+  lacks CONFIG_TRACEPOINTS, so lttng-modules silently builds zero
+  modules and ships an empty package.
+- link to v1:
+  https://lore.kernel.org/yocto-patches/20260326130653.478746-1-twoerner@gmail.com/
+---
+ recipes-kernel/linux/linux-rockchip.inc       |  1 +
+ recipes-kernel/linux/linux-rockchip/lttng.cfg | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 recipes-kernel/linux/linux-rockchip/lttng.cfg
 
-diff --git a/scripts/getproperties.py b/scripts/getproperties.py
-index 0bafa57..583745b 100755
---- a/scripts/getproperties.py
-+++ b/scripts/getproperties.py
-@@ -57,7 +57,7 @@ for repo in sorted(repos.keys()):
-     if not os.path.exists(layerpath):
-         # layer may not be used by the build and hence not moved into final position
-         layerpath = builddir + '/repos/' + repo
--    if not os.path.exists(layerpath) and repo in ['meta-security', 'mixin-wrynose-linux-firmware']:
-+    if not os.path.exists(layerpath) and repo in ['meta-security', 'meta-mingw']:
-         # Repos is specified on the controller but not used in the helper config
-         continue
-     getrevs(jsonprops, layerpath, repo)
+diff --git a/recipes-kernel/linux/linux-rockchip.inc b/recipes-kernel/linux/linux-rockchip.inc
+index 6c62e849834c..8e73c84a95ea 100644
+--- a/recipes-kernel/linux/linux-rockchip.inc
++++ b/recipes-kernel/linux/linux-rockchip.inc
+@@ -32,6 +32,7 @@ COMPATIBLE_MACHINE:rock64 = "rock64"
+ COMPATIBLE_MACHINE:soquartz = "soquartz"
+ 
+ SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
++SRC_URI:append:rockchip = " file://lttng.cfg"
+ SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
+ 
+ KERNEL_FEATURES:append:rockchip:arm = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+diff --git a/recipes-kernel/linux/linux-rockchip/lttng.cfg b/recipes-kernel/linux/linux-rockchip/lttng.cfg
+new file mode 100644
+index 000000000000..17ba2a8116eb
+--- /dev/null
++++ b/recipes-kernel/linux/linux-rockchip/lttng.cfg
+@@ -0,0 +1,17 @@
++# Prerequisites for building lttng-modules.
++#
++# These machines have no BSP description in yocto-kernel-cache and build
++# from an upstream defconfig via KBUILD_DEFCONFIG, so the standard kernel
++# type's configuration is never applied and neither the arm nor the arm64
++# defconfig enables what lttng-modules needs.
++#
++# kprobes is required outright: src/wrapper/kallsyms.c fails to compile
++# without it on kernels >= 5.7.
++#
++# Tracepoints are what lttng-modules actually traces with, but that
++# symbol has no prompt and can only be selected, so enabling the function
++# tracer is what pulls it in. Without tracepoints lttng-modules builds no
++# modules at all rather than failing, leaving an empty package behind.
++CONFIG_KPROBES=y
++CONFIG_FTRACE=y
++CONFIG_FUNCTION_TRACER=y
+-- 
+2.50.0.173.g8b6f19ccfc3a
+
 
