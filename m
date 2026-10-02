@@ -1,104 +1,80 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <chee.yang.lee@intel.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBECCA5FD4
-	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 13:09:37 +0000 (UTC)
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11693.1790946574660195532
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71948CA5FE2
+	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 13:13:47 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11783.1790946818147980480
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 02 Oct 2026 06:09:35 -0700
+ Fri, 02 Oct 2026 06:13:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=XskuVqQc;
- spf=pass (domain: linuxfoundation.org, ip: 74.125.225.141, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-4a022e9cbebso338275e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 02 Oct 2026 06:09:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1790946573; x=1791551373; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:to:from:subject:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=PwjxyrNNgd6onzccARs3P87qJjozFcZ9c9zu5uXCCGI=;
-        b=XskuVqQcbWjQmE5QNELijifxtcD92vOClFZRS/oItQPI8n5N2HzYj/mdTJNiD+5mxw
-         /EpHZ2NzEeO8NowpJqB5dgUgL/p6TL1CMLaN27Tbkx2eV0K0Uhj+Q1USHmNbu0Jngs85
-         kgfopDAlxpxAE7M8ph/zNqcOxIozce/H2gWhg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790946573; x=1791551373;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PwjxyrNNgd6onzccARs3P87qJjozFcZ9c9zu5uXCCGI=;
-        b=WvOI4O7QT9KOVzQvAP8qbGy5RGudSWmAnjrdctDQ7Z3/14kNSTN1BvD8Gyh7cblnVV
-         wiV3/lxx5rpjNCasZcMCsPeIuuQx1bVClqMMrTotCZXQ1YBxiNVutyHyo3RlVKHTZszp
-         tu8N+OPKRW6uJDQ+iltRKLo93up/OmSFP/FA0ipjfNs9xTwQb5kIlFDcGy6LkTOZOZXz
-         QfhMRTckwV54maMiuXWghoQkCT4srAqSwZ2D3GjdZhsDAmEvq3UE/LuPpi+5pPqziZpB
-         XgrmGzQyJHf8fSqjGJiDtTwliXT7ilBFGk55XcpcBof8XE9eiXDpA4FL5r9+iUisdi3F
-         Y2RQ==
-X-Gm-Message-State: AFuF++nD3aM6QgY4j+SaYu99TrjBOc8Tbb93DsbsL5nQuF7lrHuOyh7S
-	67XqxZku1jwShDim4hPKtdJIvdhDfnnREI+Shzgtv0HkzmgQOooPWDy5TUxF82o8ECaFu8RbkSn
-	X5wwzrJ8=
-X-Gm-Gg: AYBFou1lSP0UNVshGkyDw0xm2KYYxQ3GSmLj8HWjXvWTV4lADoqkh0fMnG5Fyudtyi2
-	loKwpyWnvYJ1CsfcfXHQQS3vql5s+CKtxztyZFcYzuSvpolPOjktGpKoS8Pd9dxb3lOxUeNl8mx
-	XpszYzsR+fJisj+o5medY6OYe9wZ+NAuHizbQRzQmOy0OfPrk8ZHP/o7ZIRO0cFgxzz6ghCv+Gr
-	7JoMaQuXc8K385fZWM+Ehxl0RJKFNfpEk5jrtQFYhBNeKYi3JhjEV9GBJSISDABZZE6xJETpiLI
-	QNqdlJ7Nt3n1ZzyM9hL0lqMgrB/DNLGgieZjuhRe65Ta0Xd+Y+wVup9q/jzzfRyvsf8egww/8/N
-	mDFWs5KFjlZFHj3btJEXoDM8pHMbYGCDMUY/M0sALNsVHoj/aJbVy9x+R7d84MUQgBhx+oSdC/E
-	ff32cR03M8s+AjTh3vOMXkbUrLW9G6n2wdUtUhdebCEn9tSLbSvL/zUeWaS1iApUGeafkk/ly+T
-	8PDJyVuPdLFCeGYXjFx0ClE/BqqBhd05S6R6iSojihIStWIyqSszRlpK4gF7D8=
-X-Received: by 2002:a05:600d:82c8:b0:49f:fd66:5fec with SMTP id 5b1f17b1804b1-4a027456b72mr60890275e9.0.1790946572522;
-        Fri, 02 Oct 2026 06:09:32 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:755a:bfe8:d050:d1c2? ([2001:8b0:aba:5f3c:755a:bfe8:d050:d1c2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b380faaeesm5405323f8f.18.2026.10.02.06.09.31
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2026 06:09:31 -0700 (PDT)
-Message-ID: <1df10f07a98c7e6d5fa13103fdcb082640979267.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [yocto-autobuilder-helper] [PATCH]
- getproperties: Ignore meta-mingw if it doesn't exist
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+ dkim=pass header.i=@intel.com header.s=Intel header.b=OB9Yqqja;
+ spf=pass (domain: intel.com, ip: 198.175.65.21, mailfrom: chee.yang.lee@intel.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790946819; x=1822482819;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=8Ohrmeqbm0+PjJ574RHtfZSVKkb3hY2BVryFVTwtQDw=;
+  b=OB9YqqjaciLG5FSx/wenCtxn9oMMEJ8VKgvC2bx4xWe3ThWk9vkeVDWZ
+   sWOb5urp9y2B0KIojF03cvGhh/IHmBZGDrn/nST8r7m+diRuc+3kAbbBt
+   5L1KsHC1bOSc4vQgfq5cuigCgZiChbK2CLpjryS066QaKcnUQ1bEfIbmo
+   qDPkSSBJCu8tnmU7vKZK9ajcg02d/176gK8AtI65VMU/uQsRbtmpYIN8S
+   6MjmEOqggypTR1QybjqD1+7GQu9iHUOfpzSbZuNnTXKuECbjPwpMQHBsQ
+   fE41fF2QSUBgLX0J9L98iwj16OdcqjSxONjEqQQXNHLUgtHm5/mYCuSVA
+   w==;
+X-CSE-ConnectionGUID: d8myai6iSxmQaxWArWrVFQ==
+X-CSE-MsgGUID: a2lRdjvFSgi0EUBpfeiAvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11923"; a="90570606"
+X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
+   d="scan'208";a="90570606"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 06:13:39 -0700
+X-CSE-ConnectionGUID: 42YAmLQ/SRqwL03kGb3weg==
+X-CSE-MsgGUID: aoyK9BfVRm+D6bdMAk0jGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
+   d="scan'208";a="280986556"
+Received: from andromeda02.png.intel.com ([10.107.232.49])
+  by fmviesa004.fm.intel.com with ESMTP; 02 Oct 2026 06:13:37 -0700
+From: chee.yang.lee@intel.com
 To: yocto-patches@lists.yoctoproject.org
-Date: Fri, 02 Oct 2026 14:09:30 +0100
-In-Reply-To: <DLUBE7BM3OE8.1FN6C7FT9U310@bootlin.com>
-References: <20261001104641.1596895-1-richard.purdie@linuxfoundation.org>
-	 <DLUBE7BM3OE8.1FN6C7FT9U310@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-9 
+Subject: [meta-zephyr][PATCH 2/2] zephyr-sdk: drop v0.17.4
+Date: Fri,  2 Oct 2026 21:13:35 +0800
+Message-ID: <20261002131335.3541596-2-chee.yang.lee@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261002131335.3541596-1-chee.yang.lee@intel.com>
+References: <20261002131335.3541596-1-chee.yang.lee@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 02 Oct 2026 13:09:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4979
+ <yocto-patches@lists.yoctoproject.org>; Fri, 02 Oct 2026 13:13:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4981
 
-On Fri, 2026-10-02 at 13:27 +0200, Mathieu Dubois-Briand via
-lists.yoctoproject.org wrote:
-> On Thu Oct 1, 2026 at 12:46 PM CEST, Richard Purdie via
-> lists.yoctoproject.org wrote:
-> > We moved meta-mingw from check-layers to check-layers-nightly which
-> > means
-> > it can sometimes be in the config but not present. It is find to
-> > ignore
-> > if it isn't present.
-> >=20
-> > The wrynose layer will be removed earlier now and never be present.
-> >=20
-> > Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-> > ---
->=20
-> Hi Richard,
->=20
-> Do we need to merge this also on wrynose branch?
->=20
-> https://autobuilder.yoctoproject.org/valkyrie/#/builders/85/builds/1441
+From: Lee Chee Yang <chee.yang.lee@intel.com>
 
-Hmm, probably, yes :/
+drop this sdk version as it is for zephyr 4.3.0.
 
-That wasn't quite my intention but that lack of graceful fallback is
-catching us out and I may need to rethink it...
+Signed-off-by: Lee Chee Yang <chee.yang.lee@intel.com>
+---
+ .../recipes-devtools/zephyr-sdk/zephyr-sdk_0.17.4.bb          | 4 ----
+ 1 file changed, 4 deletions(-)
+ delete mode 100644 meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.17.4.bb
 
-Cheers,
+diff --git a/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.17.4.bb b/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.17.4.bb
+deleted file mode 100644
+index a3ca6c6..0000000
+--- a/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.17.4.bb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require zephyr-sdk.inc
+-
+-SRC_URI[x86_64.sha256sum] = "83f2f327dba2d6cf2440f22f2f501041544d7f34ef8b878ecd83f4513d1116b6"
+-SRC_URI[aarch64.sha256sum] = "14ed90e95a74316685c01d3ed7023646d99d69311e198a8e6930bc0ceacb8db9"
+-- 
+2.43.0
 
-Richard
 
