@@ -2,62 +2,62 @@ Return-Path: <alessio.bogani@elettra.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F837CA600A
-	for <webhook@archiver.kernel.org>; Thu,  8 Oct 2026 08:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EF5CA600A
+	for <webhook@archiver.kernel.org>; Thu,  8 Oct 2026 08:18:28 +0000 (UTC)
 Received: from eggs.elettra.eu (eggs.elettra.eu [140.105.207.10])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10680.1791447465014805891
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10687.1791447499881670233
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 08 Oct 2026 01:17:46 -0700
+ Thu, 08 Oct 2026 01:18:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@elettra.eu header.s=esgkey1 header.b=TQzgwZJ5;
+ dkim=pass header.i=@elettra.eu header.s=esgkey1 header.b=KmVUdBJB;
  spf=pass (domain: elettra.eu, ip: 140.105.207.10, mailfrom: alessio.bogani@elettra.eu)
 X-Envelope-From: <alessio.bogani@elettra.eu>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=elettra.eu;
-	s=esgkey1; t=1791447458;
+	s=esgkey1; t=1791447495;
 	bh=3k5xPlyiqL96il615VuBcZmaBCfEbNCuk4zko3XkPKg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=TQzgwZJ5eOY6KdW+jQXQyT0jQOlItB0UNwddnvhX8kyWFnwtc1xSURl4iQrVK7Exl
-	 LSrAAsSjaBn5l+10uWJXtJc0ixrcz9cIS9KPLn9bIjRQfW0IC5zPz8HdiSqAtYRDh7
-	 c5CHouPZwIaGR98iU+zGQFtZtmJaSHqwPh7drAus=
+	b=KmVUdBJBoK5f1Irm1JdUTNuAtE3RwWffiV1EAe7YryRD8tijM9lnMtrTGE+aDmkb9
+	 bWX0On6J7QUdnFuxXN15Uk9u0Hr7HtR4hkKJhVLwFNSkvCY+mO2hPoQneQjniVjZwu
+	 tdxcHUz7OJ77UHumDxywoDiJ/0AmVKeAYP1esEFg=
 Received: from zmp.elettra.eu (zmp.elettra.eu [140.105.206.204])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by eggs.elettra.eu (Postfix) with ESMTPS id 4j0jXf12zvzC5YK;
-	Thu,  8 Oct 2026 10:17:38 +0200 (CEST)
+	by eggs.elettra.eu (Postfix) with ESMTPS id 4j0jYM5hKjzC5YL;
+	Thu,  8 Oct 2026 10:18:15 +0200 (CEST)
 Received: from zmp.elettra.eu (localhost [127.0.0.1])
-	by zmp.elettra.eu (Postfix) with ESMTPS id A2FA414AA8CA;
-	Thu,  8 Oct 2026 10:17:39 +0200 (CEST)
+	by zmp.elettra.eu (Postfix) with ESMTPS id 4E28E14A6508;
+	Thu,  8 Oct 2026 10:18:17 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by zmp.elettra.eu (Postfix) with ESMTP id 9070614AA8DC;
-	Thu,  8 Oct 2026 10:17:39 +0200 (CEST)
+	by zmp.elettra.eu (Postfix) with ESMTP id 3E0CA14AA8BC;
+	Thu,  8 Oct 2026 10:18:17 +0200 (CEST)
 X-Virus-Scanned: amavis at zmp.elettra.eu
 Received: from zmp.elettra.eu ([127.0.0.1])
  by localhost (zmp.elettra.eu [127.0.0.1]) (amavis, port 10026) with ESMTP
- id 8OQF9D39bKPn; Thu,  8 Oct 2026 10:17:39 +0200 (CEST)
+ id iVPLEmWse_dv; Thu,  8 Oct 2026 10:18:17 +0200 (CEST)
 Received: from voltumna.elettra.trieste.it (voltumna.elettra.eu [192.168.205.44])
-	by zmp.elettra.eu (Postfix) with ESMTPSA id 79C6E14AA8CA;
-	Thu,  8 Oct 2026 10:17:39 +0200 (CEST)
+	by zmp.elettra.eu (Postfix) with ESMTPSA id 2A1CE14A6508;
+	Thu,  8 Oct 2026 10:18:17 +0200 (CEST)
 From: alessio.bogani@elettra.eu
 To: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
 Cc: yocto-patches@lists.yoctoproject.org,
 	Alessio Igor Bogani <alessio.bogani@elettra.eu>
 Subject: [PATCH] dpdk/25.11: upgrade 25.11.2 -> 25.11.3
-Date: Thu,  8 Oct 2026 10:17:24 +0200
-Message-ID: <20261008081724.702855-1-alessio.bogani@elettra.eu>
+Date: Thu,  8 Oct 2026 10:18:06 +0200
+Message-ID: <20261008081806.705443-1-alessio.bogani@elettra.eu>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-elettra-Libra-ESVA-Information: Please contact elettra for more information
-X-elettra-Libra-ESVA-ID: 4j0jXf12zvzC5YK
+X-elettra-Libra-ESVA-ID: 4j0jYM5hKjzC5YL
 X-elettra-Libra-ESVA: No virus found
 X-elettra-Libra-ESVA-From: alessio.bogani@elettra.eu
-X-elettra-Libra-ESVA-Watermark: 1792052258.43617@NdBtMoltqqPKgh6zFaMfGg
+X-elettra-Libra-ESVA-Watermark: 1792052296.19327@AjqeNitabn6pbti0Rmv0EQ
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 08 Oct 2026 08:17:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4994
+ <yocto-patches@lists.yoctoproject.org>; Thu, 08 Oct 2026 08:18:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4995
 
 From: Alessio Igor Bogani <alessio.bogani@elettra.eu>
 
