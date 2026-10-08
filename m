@@ -2,193 +2,231 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743A7CA6007
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E21ACA600C
 	for <webhook@archiver.kernel.org>; Thu,  8 Oct 2026 14:28:01 +0000 (UTC)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16612.1791469673228779376
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16613.1791469676301870593
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 08 Oct 2026 07:27:53 -0700
+ Thu, 08 Oct 2026 07:27:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=sjlqA+q/;
- spf=pass (domain: gmail.com, ip: 209.85.221.52, mailfrom: ticotimo@gmail.com)
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48b001cd92bso2806690f8f.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 08 Oct 2026 07:27:53 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=DcNPap6L;
+ spf=pass (domain: gmail.com, ip: 209.85.128.45, mailfrom: ticotimo@gmail.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a01933b584so28489675e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 08 Oct 2026 07:27:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791469671; x=1792074471; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Da5dPwfnVxtUBjJXFmViAgtS1c7dBiOXEw3O2ubE4wY=;
-        b=sjlqA+q/d//VHvRSzt4eKuGVCIkMhvohTA8FgposetDBbMi4VOdeYeENBAMp8DCzR3
-         Xghg5gGbCUGHQxS3xNGPSqtXgbFPe5+Sh2CcbYJSgAHkFMEbQdEuvSxaAX0knGKWHqHv
-         cQHG98VvRc42WGPrH9FKZ7ta58AvumDsiCAC07v3T02miTtbdGRIF6GYSZQB/DgCxPAo
-         jw9bQCFsN3Gi8ouc5SpU8gxJ9X/y1WKx1AVw7dYboFCwA4P2Lo54YgNGaOnUcfgaDFgC
-         qDyhnYrG6NFLF/JSQ3TWZOi30DUnP9Vu1loySzd1qb7dCZPds/1O/mMWENI2EwrOldjw
-         oJfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791469671; x=1792074471;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1791469674; x=1792074474; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Da5dPwfnVxtUBjJXFmViAgtS1c7dBiOXEw3O2ubE4wY=;
-        b=2aBlWC53PskvX1BjMUFOuKNEF8mUGJxT4h+W2VqEctsFjC7FMokzB2sJ6v+H0mOorM
-         O3JjD2nNi3owGZ2qT8H8idqE9s9d2XU0dsCmhDATJhl1exc7Z/tZA1igiVNv7PcSmyir
-         3oS9XL8ycRSBJkEbwOMHHgBZlPMm+bcHW04wENgISGYn4yqflksk1GL91M++SaGq36vO
-         gdTXodRSPvk4BM5dwURgZXYJLdruyNgXrckCHokDkR+v6/kI/oHKtsK3AeVmhzy5zVRe
-         RqJ92UlJz4zBh933U3OK0Ptpo2jOlK8Iagut5SfFAtmZA94cY3X5x3zTpRKA8a6zB1p2
-         JeMg==
-X-Gm-Message-State: AFq9FYIV9Xy9pYGIoE1MX8aiuGXuuDfZjCY+ZnIlpDEmfUgK+PwGZ3I1
-	sZ+H0fIhUoGX9m8KWkE9OeWay2p32us+DLeSvkanJdDjkpUKUjaQHO11kmDNaO4L
-X-Gm-Gg: AYBFou3pGbmipVfd95xNdmPptTpfROxqHfoaB/MEhfIuVgiT45/DiU3qMiOxNU6Um7v
-	J/2RK6cCpQ6J8MY9RDV6WxCaS37+L0KqIZjiLFIZeeJ1CmJZM4EEJ6usLwTFPXrz4fC2urDNppa
-	/0dFmf/wA5SFRx29AJMwoVacW9+ts2m0+F9JQek23pW51ZBzlOeuhdaSp6YEmbh9JWoGDjqny7v
-	XHLUKgeHOfDa2yeaG4bti4rpWOOw3uaXQe7kNdrXfDAdTuk9T8wGmzsrOhMdA9qBSbvAfhgH3wR
-	k17RabI0zK2MYWtgPtzlh5sRaYWcUfwO0Q1yv0PV3UPjCrOKbCcjbxIHMTJFsmf3iUMgAZtgJJG
-	m0q57M05fQCa+E+zp9aM4n8DrcQa4dg1B5V17lLP/QtYxCsgb6vww3pkwn8mjKGIz/qBpiCQixp
-	/7YFTz7CoeMQ/cGicjOZE9nsfgkD+BB+SBECCowwN4Xdb91KOtwHun/MY8gmi1S9paoyW2ORXe/
-	k9eIteSffo95MDlDWOWlQ8bvgFMZ91RA+7anRvL8SE5+tdhpQ==
-X-Received: by 2002:a5d:5584:0:b0:485:8c16:5ee9 with SMTP id ffacd0b85a97d-48c72789c57mr8172362f8f.35.1791469670817;
-        Thu, 08 Oct 2026 07:27:50 -0700 (PDT)
+        bh=XyT9PBsxBPxE7rcFzaJHPTHJ6K9wFdNSO7I06oKK2b8=;
+        b=DcNPap6L40nchwvxQgKYKogMu8wteowSdLRO07GDJEIPOLARfl+DHXY/rrFIC39Cmr
+         xA0+OGT1AUdFMM1UwPHr8WMFxIZ/ORq6jqtL0AOSP6nE794AICXa4G8vik6TZHQOhWZh
+         Dsv9wG+VPfmDKPtoOU0URzDBX/y3XBzf/UpxP08vBrKfRpt9gjNX6wQNouFb4Gt41lDL
+         QW9g2Ck4G2AY9hDo9qngB/MN4CR1/ThhWzsEiqd+71YlylRHRU+2d4STtiDd23PkHUOI
+         hhvrQI7eFda0rKe6J7BjFnJ71SozU2jRD4w4xQbNXEunqqiEWHfkYU5QZ66HUPWyBbL1
+         vGRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791469674; x=1792074474;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=XyT9PBsxBPxE7rcFzaJHPTHJ6K9wFdNSO7I06oKK2b8=;
+        b=ihrWP3iUTv6nwG+OtQpKyUnU3IW9h9Z4dpAkQBUtyFPkEChfpJ9AcWGGVbrtU51e6I
+         NosFhWzAfUo9pFsPB4n0ySOCpAv6skcQJwRsnevluuWxzpyzs0vxILXfRxNrcSidv/Kw
+         kAEGT4jvI5BXJ56ISpTmhzORvmIlGehn8Mvcz9R8nKyXQd0OTEaY7E6pyujdsozsC0d4
+         gLL+rORscJ5q1sFuXhJ5BPiIFRt8zCHAnZOZDgQJ92ZDpbGYJgFBu9SE4dEzNUHJ/I93
+         RSSsdNM6rymwYgza6Bjd+VjiB5Vit+lNOCdcz4/qPVnFcsK+yHTQsMrRrwMImE+S7bzl
+         iA4g==
+X-Gm-Message-State: AFuF++mx/q3zFzcn6paQieCY+chvxFrmQjoWzgvVNtBvp/QNXQU2SckA
+	x8u4x9tMAuKRAViD4QD1C9za6mPmJKHExYEb/7V3TkyGj+pT+fqTVZfUSoRF1eyC
+X-Gm-Gg: AYBFou3zREAVuGSvGLYagYYtevTumgEZBMofnK8+x2uXI6VRwIfdCRsmUyF8bpIxuwo
+	udLTTTS7EKixgaupNghjYGfVCiUobQi5ivd9uQAr/0JEH6avJA4m22GvplcMB2AaMVc573fr3vV
+	kLfncL2i75bTsuW8FC1Wyj74lzTVHBNvgsK2VPvuqClGUFmJJMI2k0NOAyqsl3sqqV/DFdGZMdV
+	FV88FxrLki348pzlWKR1fz4g+yOgfl1w6P/1ed6ogk4tX447aLf2ObMzl2YuoTkCsVa6ku+SFhD
+	Ky8I8NsVLGSn/Ijyr9WhmYfV+nK0P2S6PWjKEW2Ue04W6I7aZE4AE1DamDxz1pxhd6RYFNOFLGX
+	dltv6rSgr7+Rl8bVC8gVlI22kBly2aoDEpSyOiHZXHfxxSuPp5KF4eLmttPFNXebwfS7/YaK1Ct
+	UISuAKFr4vQHAjAJvemebTMG9A7X8/ACovXoOvU78SGtu/bKvYlcqeXVzObaZxMr/a29zXCw2Rg
+	EoJuwWKg6oeGRzsJ43aMp9DYNuorv5q5oZbceTOI3jCUbBLjg==
+X-Received: by 2002:a05:600c:609a:b0:4a1:7703:e52a with SMTP id 5b1f17b1804b1-4a18031133emr86918025e9.9.1791469674254;
+        Thu, 08 Oct 2026 07:27:54 -0700 (PDT)
 Received: from localhost.localdomain (90-182-211-1.rcp.o2.cz. [90.182.211.1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48c71d2014asm11491958f8f.38.2026.10.08.07.27.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48c71d2014asm11491958f8f.38.2026.10.08.07.27.52
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 08 Oct 2026 07:27:49 -0700 (PDT)
+        Thu, 08 Oct 2026 07:27:52 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Michael Halstead <mhalstead@linuxfoundation.org>,
 	Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/2] layerindex/views: fix publishing layers with multiple branches
-Date: Thu,  8 Oct 2026 16:27:37 +0200
-Message-ID: <20261008142738.29958-1-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 2/2] Add sitemap using django.contrib.sitemaps
+Date: Thu,  8 Oct 2026 16:27:38 +0200
+Message-ID: <20261008142738.29958-2-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261008142738.29958-1-tim.orling@konsulko.com>
+References: <20261008142738.29958-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 08 Oct 2026 14:28:01 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4996
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4997
 
 From: Michael Halstead <mhalstead@linuxfoundation.org>
 
-publish_view assumed a layer had exactly one branch: get_object_or_404()
-on LayerBranch raised MultipleObjectsReturned (HTTP 500) for any layer
-with more than one, and passing the Branch object rather than its name to
-reverse() produced a mangled URL when the branch had a short_description.
+Serve /sitemap.xml listing the main branch views and all published,
+non-comparison layers.
 
-Collect active maintainers across all of the layer's branches, keyed by
-email address so the greeting names and the recipient list cannot diverge
-and the ordering is stable between sends, and list every branch the layer
-is indexed on in the email body. A layer with no branches or no active
-maintainers is now published without an email rather than returning 404.
-
+AI-Generated: Claude Sonnet 5.5
 Signed-off-by: Michael Halstead <mhalstead@linuxfoundation.org>
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/views.py                   | 65 ++++++++++++++++-----------
- templates/layerindex/publishemail.txt |  6 ++-
- 2 files changed, 44 insertions(+), 27 deletions(-)
+ docker/settings.py     |  1 +
+ layerindex/sitemaps.py | 36 ++++++++++++++++++++++++++++++++++++
+ settings.py            |  1 +
+ tests/test_sitemap.py  | 38 ++++++++++++++++++++++++++++++++++++++
+ urls.py                |  9 +++++++++
+ 5 files changed, 85 insertions(+)
+ create mode 100644 layerindex/sitemaps.py
+ create mode 100644 tests/test_sitemap.py
 
-diff --git a/layerindex/views.py b/layerindex/views.py
-index c671cc5..4f8e64e 100644
---- a/layerindex/views.py
-+++ b/layerindex/views.py
-@@ -31,7 +31,7 @@ from django.db.models.query import QuerySet
- from django.db.models.signals import pre_save
- from django.dispatch import receiver
- from django.http import Http404, HttpResponse, HttpResponseRedirect
--from django.shortcuts import get_list_or_404, get_object_or_404, render
-+from django.shortcuts import get_object_or_404, render
- from django.template.loader import get_template
- from django.utils.decorators import method_decorator
- from django.utils.html import escape
-@@ -376,31 +376,44 @@ def publish_view(request, name):
+diff --git a/docker/settings.py b/docker/settings.py
+index e3ae0fd..90bc5f4 100644
+--- a/docker/settings.py
++++ b/docker/settings.py
+@@ -148,6 +148,7 @@ INSTALLED_APPS = (
+     'django.contrib.contenttypes',
+     'django.contrib.sessions',
+     'django.contrib.sites',
++    'django.contrib.sitemaps',
+     'django.contrib.messages',
+     'django.contrib.staticfiles',
+     'django.contrib.admin',
+diff --git a/layerindex/sitemaps.py b/layerindex/sitemaps.py
+new file mode 100644
+index 0000000..7d6e0ac
+--- /dev/null
++++ b/layerindex/sitemaps.py
+@@ -0,0 +1,36 @@
++# layerindex-web - sitemap definitions
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
++
++from django.contrib.sitemaps import Sitemap
++from django.urls import reverse
++
++from layerindex.models import LayerItem
++
++BRANCH_VIEWS = ('layer_list', 'recipe_search', 'machine_search', 'distro_search', 'class_search')
++
++
++class StaticViewSitemap(Sitemap):
++    changefreq = 'daily'
++    priority = 0.5
++
++    def items(self):
++        return list(BRANCH_VIEWS) + ['about', 'stats']
++
++    def location(self, item):
++        if item in BRANCH_VIEWS:
++            return reverse(item, args=('master',))
++        return reverse(item)
++
++
++class LayerSitemap(Sitemap):
++    changefreq = 'weekly'
++    priority = 0.8
++
++    def items(self):
++        return LayerItem.objects.filter(status='P', comparison=False).order_by('name')
++
++    def lastmod(self, obj):
++        return obj.updated
+diff --git a/settings.py b/settings.py
+index 94b3dd1..b318687 100644
+--- a/settings.py
++++ b/settings.py
+@@ -148,6 +148,7 @@ INSTALLED_APPS = (
+     'django.contrib.contenttypes',
+     'django.contrib.sessions',
+     'django.contrib.sites',
++    'django.contrib.sitemaps',
+     'django.contrib.messages',
+     'django.contrib.staticfiles',
+     'django.contrib.admin',
+diff --git a/tests/test_sitemap.py b/tests/test_sitemap.py
+new file mode 100644
+index 0000000..12b4b87
+--- /dev/null
++++ b/tests/test_sitemap.py
+@@ -0,0 +1,38 @@
++# layerindex-web - tests for sitemap.xml
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
++
++import pytest
++from django.test import TestCase
++
++from layerindex.models import LayerItem
++
++
++@pytest.mark.django_db
++class TestSitemap(TestCase):
++
++    def _layer(self, name, status='P', comparison=False):
++        return LayerItem.objects.create(
++            name=name,
++            status=status,
++            layer_type='A',
++            summary=name,
++            description=name,
++            vcs_url='git://example.com/%s.git' % name,
++            comparison=comparison,
++        )
++
++    def test_sitemap(self):
++        self._layer('meta-published')
++        self._layer('meta-new', status='N')
++        self._layer('meta-compare', comparison=True)
++
++        response = self.client.get('/sitemap.xml')
++        self.assertEqual(response.status_code, 200)
++        content = response.content.decode()
++        self.assertIn('/layerindex/branch/master/layer/meta-published/', content)
++        self.assertIn('/layerindex/about/', content)
++        self.assertNotIn('meta-new', content)
++        self.assertNotIn('meta-compare', content)
+diff --git a/urls.py b/urls.py
+index 295fc0b..4bd5998 100644
+--- a/urls.py
++++ b/urls.py
+@@ -12,13 +12,22 @@ from django.views.generic import RedirectView, TemplateView
+ from layerindex.auth_views import CaptchaRegistrationView, CaptchaPasswordResetView, delete_account_view, \
+     PasswordResetSecurityQuestions
+ from django.contrib import admin
++from django.contrib.sitemaps.views import sitemap
++from layerindex.sitemaps import StaticViewSitemap, LayerSitemap
+ admin.autodiscover()
  
-     if getattr(settings, 'SEND_PUBLISH_EMAIL', True):
-         layeritem = get_object_or_404(LayerItem, name=name)
--        layerbranch = get_object_or_404(LayerBranch, layer=layeritem)
--        layer_url = request.build_absolute_uri(reverse('layer_item', args=(layerbranch.branch, layeritem.name)))
--        maintainers = get_list_or_404(LayerMaintainer, layerbranch=layerbranch)
--        from_email = settings.SUBMIT_EMAIL_FROM
--        subjecttext = get_template('layerindex/publishemailsubject.txt')
--        bodytext = get_template('layerindex/publishemail.txt')
--        maintainer_names = [m.name for m in maintainers]
--
--        # create subject from subject template
--        d = {
--            'layer_name': layeritem.name,
--            'site_name': request.META['HTTP_HOST'],
--        }
--        subject = subjecttext.render(d).rstrip()
--
--        #create body from body template
--        d = {
--            'maintainers': maintainer_names,
--            'layer_name': layeritem.name,
--            'layer_url': layer_url,
--            'help_contact': _get_help_contact(),
--        }
--        body = bodytext.render(d)
--
--        tasks.send_email.apply_async((subject, body, from_email, [m.email for m in maintainers]))
-+        layerbranches = list(LayerBranch.objects.filter(layer=layeritem).select_related('branch'))
-+
-+        # Collect active maintainers across all branches of this layer, keyed by
-+        # email so names and addresses stay in step and the order is stable.
-+        maintainers = {}
-+        for m in LayerMaintainer.objects.filter(layerbranch__layer=layeritem,
-+                                                 status='A').order_by('name', 'email'):
-+            maintainers.setdefault(m.email, m.name)
-+
-+        if layerbranches and maintainers:
-+            branch_info = [{'branch': lb.branch.name,
-+                             'url': request.build_absolute_uri(
-+                                 reverse('layer_item', args=(lb.branch.name, layeritem.name)))}
-+                            for lb in layerbranches]
-+
-+            # Prefer master as the primary link, otherwise the first branch
-+            primary = next((b for b in branch_info if b['branch'] == 'master'), branch_info[0])
-+
-+            from_email = settings.SUBMIT_EMAIL_FROM
-+            subjecttext = get_template('layerindex/publishemailsubject.txt')
-+            bodytext = get_template('layerindex/publishemail.txt')
-+
-+            d = {
-+                'layer_name': layeritem.name,
-+                'site_name': request.META.get('HTTP_HOST', ''),
-+            }
-+            subject = subjecttext.render(d).rstrip()
-+
-+            d = {
-+                'maintainers': list(maintainers.values()),
-+                'layer_name': layeritem.name,
-+                'layer_url': primary['url'],
-+                'branches': branch_info,
-+                'help_contact': _get_help_contact(),
-+            }
-+            body = bodytext.render(d)
-+
-+            tasks.send_email.apply_async((subject, body, from_email, list(maintainers.keys())))
+ from django.conf import settings
  
-     return _statuschange(request, name, 'P')
- 
-diff --git a/templates/layerindex/publishemail.txt b/templates/layerindex/publishemail.txt
-index 5d703d8..068eca1 100644
---- a/templates/layerindex/publishemail.txt
-+++ b/templates/layerindex/publishemail.txt
-@@ -3,7 +3,11 @@ Hi {{ maintainers|slice:":-1"|join:", "}}{% if maintainers|length > 2 %},{% endi
- You are listed as the {% if maintainers|length > 1 %}maintainers{% else %}maintainer{% endif %} for the new layer, {{ layer_name }}. This layer has now been published. You can view it at the following URL:
- 
-  {{ layer_url }}
--
-+{% if branches|length > 1 %}
-+This layer is indexed on the following branches:
-+{% for b in branches %}
-+ {{ b.branch }} - {{ b.url }}{% endfor %}
-+{% endif %}
- If you need to make changes to this layer's entry in the index in the future, create an account (using this email address) if you haven't already, and you should then be able to click on "Edit layer" on the layer's detail page and make the desired changes. If you need any assistance please contact {% if help_contact.first_name and help_contact.last_name %}{{ help_contact.first_name }} {{ help_contact.last_name}}{% else %}{{ help_contact.username }}{% endif %} <{{ help_contact.email }}>.
- 
- Thanks!
++sitemaps = {
++    'static': StaticViewSitemap,
++    'layers': LayerSitemap,
++}
++
+ urlpatterns = [
+     re_path(r'^layerindex/', include('layerindex.urls')),
+     re_path(r'^admin/', admin.site.urls),
++    re_path(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps},
++        name='django.contrib.sitemaps.views.sitemap'),
+     re_path(r'^accounts/password_reset/$',
+         CaptchaPasswordResetView.as_view(
+             email_template_name='registration/password_reset_email.txt',
 -- 
 2.56.0
 
