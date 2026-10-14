@@ -2,61 +2,61 @@ Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231DBCC6B2F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26564CC6B2D
 	for <webhook@archiver.kernel.org>; Wed, 14 Oct 2026 14:12:55 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.14775.1791987165228611580
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14680.1791987166954170833
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 14 Oct 2026 07:12:45 -0700
+ Wed, 14 Oct 2026 07:12:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=eoLn96+y;
- spf=pass (domain: snapchat.com, ip: 209.85.128.50, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4956869750eso29223945e9.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 07:12:45 -0700 (PDT)
+ dkim=pass header.i=@snap.com header.s=google header.b=UBImVVxk;
+ spf=pass (domain: snapchat.com, ip: 209.85.128.44, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a02718da81so33617555e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 07:12:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1791987163; x=1792591963; darn=lists.yoctoproject.org;
+        d=snap.com; s=google; t=1791987165; x=1792591965; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=lg0d7lopx1sRbQGDyk+rYGFiIm4+d8yXVKU006qTceM=;
-        b=eoLn96+yejXYqXYagfguHK6KMjrhQIwLDNv9vUpGOLxRtCCudOXvBjydfOMdmEGOvD
-         eRl07qxrYXu4+LAxqFLs2cd0EZvY5UGjaueLvwkv48trZQP7+6jd/m97/qQgUleyYT4Q
-         nHMttiGb1YJbSjZdL1plOF30BbENk4bANBdB8=
+        bh=1iQKp3uEXTMxAJpSIOEbKRa6dnxrirTTmZShJjS1FK0=;
+        b=UBImVVxk1J7Cw2NTEct5OjLnHg7yMknWVKNjRoxw+3YF1pru+oL41jUT5p/sK+Z0tN
+         mPNI8+eAJ0fVYdzyXzhcF45wdi/i7BRPm4hmy4/34Ss9vb5XshHm6O2SdPf+ppj1Z0aQ
+         E1xm203aE2rGcBuWRTmop9X26M91Py+a7UOxQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791987163; x=1792591963;
+        d=1e100.net; s=20260707; t=1791987165; x=1792591965;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=lg0d7lopx1sRbQGDyk+rYGFiIm4+d8yXVKU006qTceM=;
-        b=T6BQ3Dk/aW08f+Z+vH3javV7OURaVXdbbq0KJIq2OcjDL5zQ9xqIXWeCraz/dfrz3G
-         DSCI3RkSMmeSYbjuxVuG41D7VPDjvZwxlNVdorxer0H7PoTr3JPRU4vSuXbPFT4zmoBW
-         yungT0tj0daXe7gwKZiMcNVEHI+Z3vDDhanFSpALmzFmHsD5Uk1pz0YYITzCjlheBrMu
-         +gkosdxx618DPuZV0YY8UvxSjNRGTrQJRsiSbyIj5c20lGiOOe3FD4sqWKf18bqbOjUK
-         Qinrv3Ji+e/cWvMKXVFX4Mydp4TgGqYXK5JJ8ZQcqrZ9N6yzwY+HgXk7ZFKO8GITkvvF
-         9olw==
-X-Gm-Message-State: AFq9FYJgdMTdIghhLlJCl+XxvWy/wednOsjJ3ZC0PAbfmT5ff76mq5b1
-	P2W+2dAWW8a+2KfM7X37RvKovtk6psEIvc96FBpmuaqNno3mK6K2NpgSo5UmgNE47xsW716ylgo
-	lAxxgO3I=
-X-Gm-Gg: AYBFou2aUq977TD4Z0dgAwliAvMe7Rbwdoj5zTeCPQvCODK6MV1nwI3ykrlG8wHCIyS
-	COeX6jxengm+7XObDILCQWYuua1D8j+qYwLE327cR5WXcCHg0WePgH/pqMwPjYiA7ediM6dOphd
-	UDoyT9ai8YfassTycBRw042a20VNVgFtByoyHml1vPSMIJydoOLIIAQJpPgGpsZSHtBtem37o3H
-	yLV41/dH6OIHHUr5aCibvSlhrkj5qk1+QWaR+zLkPrqqlNoGElZwYR8nbl2ds1sEA0rhiKAsTiz
-	hz9OY6F7kG8+Ohd9UVtyyxMrLO331Ot6c8xFrM397UWyxqMwIzvvZ1C1B022dQNhKAWDKEDyEq7
-	lRxIKcfFBdkiyCAq9noDWWUwfm+FQV1n45DMCyvXtJtWK8DWKRM+TU7kYE3lzvT2wlUfVJ1qaAN
-	IJ5qmVBc6OV/JF165kcZKTVXEkkUmmNwKj4HhYH52efrTwcdTMeSaF4+2MsiDXdeaGuYCRJFtnc
-	zXloBBg9RyBeRegkGZrrDRwJHz4Xbd5kvGlJBGKSQ==
-X-Received: by 2002:a05:600c:3e05:b0:4a0:2391:6540 with SMTP id 5b1f17b1804b1-4a18e4cdbd0mr297988205e9.25.1791987161769;
-        Wed, 14 Oct 2026 07:12:41 -0700 (PDT)
+        bh=1iQKp3uEXTMxAJpSIOEbKRa6dnxrirTTmZShJjS1FK0=;
+        b=rQN8qqNxQpxiBWUBNaXKVECjB8XlBdGJuFqVDBOTs44xpzH6lyu4RGouOwYGk1EDyv
+         fwGFhaUhPQXuad2Zb/l3uNPCJIdtPn2xaOhiqU+itwuCL3cLLExl4LX5cfSHsama0rE2
+         uSLfs8G62tdyU93/8xgXpICDxh8jUyqSZ1/kgC/OjIoEh+RytTAOIFZTEDoD1AFlAcWQ
+         oWTy1pGs6/Evo4brROe/igDXu5vsFnEJhUdDgTX/35oTrjQbYG7AAo2OpCDFwtMJAJa1
+         lTSi2+e4WGfUpFaOFrktLBBWOTZKhVhpkj6XI4Wi19OknMP18Yzwncsb3ar0T1aRIyfy
+         d9IQ==
+X-Gm-Message-State: AFq9FYKn4g0paEzGHZCXyG/FEOxH36nbatYDW34qWpHQRXqEtdqYa6DC
+	bL0xM+Qb3zBNqmdZ3khyJlL8yqsJYzFrftqjcvfhq6hKTUfIRAn6wainpeSzWaW/W//DD+Acl4h
+	qR/lFir8=
+X-Gm-Gg: AYBFou2qisnr7LtT0IgjqgcoYtEDIn9ny4/CdSXk31QHJJ/TPOfjnvdak6y+ZHeo0qS
+	nL1lJ1ZWgkDwH44JW7zhsPeBVQ6GC6xsKqRl11kyofnlmh/VzA1jWPEOix3K65s7Elv0vQfuURJ
+	4xcgGXI12zguBbCB123y04q2y2epvAWGQbb5OfFgydFePwr4cY+hpDXB7MkeQP2Mm4lIqtvchcW
+	bEwBDNJgrgxV7rMui/ype1ah5fozrrXaMCkWmlOupcf8gRpPgl0CnlamwZZQrb2Qbf8hLkJZm1K
+	3UYbcpBOmpDRk+V54J+ZxI0IBShJrOsDd/TZR4qJkJTKJHe/WQyPVTTIgpw6Qvb0OcOnfpBTwpB
+	CIrVdjUghdxFpmIfi9cOxZMZRlCglaKsIEUcvrsylBBRtYwDHpsz7E2MoYEevv+LZ8F5jfaZgIE
+	OBwL9UmhmOqnyv+CHoFxIqTrHcPf52AGBlJnpwEV7eUSnukdsslVUCe46iYDqPH96YWnNZB17hX
+	I47BlcXHpoma6fbyTGr0AUimdt4/6/YjZi3YdK/Og==
+X-Received: by 2002:a05:600c:524d:b0:4a1:80d8:aeb3 with SMTP id 5b1f17b1804b1-4a18e4a95c2mr315023365e9.12.1791987165043;
+        Wed, 14 Oct 2026 07:12:45 -0700 (PDT)
 Received: from lj8k2dq3.sc-core.net ([85.237.126.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd202e8esm299965e9.6.2026.10.14.07.12.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd202e8esm299965e9.6.2026.10.14.07.12.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 07:12:41 -0700 (PDT)
+        Wed, 14 Oct 2026 07:12:44 -0700 (PDT)
 From: ecordonnier@snap.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Etienne Cordonnier <ecordonnier@snap.com>
-Subject: [meta-darwin][PATCH 16/21] darwin-common: don't treat buildpaths QA as an error for the SDK
-Date: Wed, 14 Oct 2026 16:10:37 +0200
-Message-ID: <20261014141209.488034-16-ecordonnier@snap.com>
+Subject: [meta-darwin][PATCH 20/21] bash: link the in-tree readline on Darwin nativesdk
+Date: Wed, 14 Oct 2026 16:10:41 +0200
+Message-ID: <20261014141209.488034-20-ecordonnier@snap.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261014141209.488034-1-ecordonnier@snap.com>
 References: <20261014141209.488034-1-ecordonnier@snap.com>
@@ -66,37 +66,36 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 14:12:55 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5022
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5025
 
 From: Etienne Cordonnier <ecordonnier@snap.com>
 
-OSX_TOOLCHAIN_OPTIONS adds absolute -L paths below TMPDIR to the
-compiler command lines, which then end up in headers (gmp.h's
-__GMP_CC), libraries and binaries across most nativesdk and
-cross-canadian packages. Handling this per recipe doesn't scale.
+-lreadline resolves to the macOS SDK's libreadline.tbd stub, found via
+the runtime/usr/lib -L path which precedes -L./lib/readline, instead of
+the readline built in-tree. All rl_* symbols are then undefined at link
+time. Link the in-tree archive by path.
 
-Tested: nativesdk-gmp and nativesdk-ninja do_package_qa.
+Tested by building nativesdk-bash for x86_64-darwin.
 
 AI-Generated: Claude Sonnet 5.5
 
 Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
 ---
- conf/machine-sdk/darwin-common.inc | 5 +++++
+ recipes-extended/bash/bash_%.bbappend | 5 +++++
  1 file changed, 5 insertions(+)
+ create mode 100644 recipes-extended/bash/bash_%.bbappend
 
-diff --git a/conf/machine-sdk/darwin-common.inc b/conf/machine-sdk/darwin-common.inc
-index 632c6b0..1e3f03b 100644
---- a/conf/machine-sdk/darwin-common.inc
-+++ b/conf/machine-sdk/darwin-common.inc
-@@ -86,3 +86,8 @@ fakeroot create_macos_img() {
-    bzip2 "${sdk_img}"
-    ls -lh "${sdk_img}.bz2"
- }
-+
-+# OSX_TOOLCHAIN_OPTIONS puts absolute -L paths into the sysroot under TMPDIR on
-+# every nativesdk/cross-canadian compiler command line, and those end up in
-+# headers (e.g. gmp.h's __GMP_CC), libraries and binaries.
-+ERROR_QA:remove = "buildpaths"
+diff --git a/recipes-extended/bash/bash_%.bbappend b/recipes-extended/bash/bash_%.bbappend
+new file mode 100644
+index 0000000..31d46a6
+--- /dev/null
++++ b/recipes-extended/bash/bash_%.bbappend
+@@ -0,0 +1,5 @@
++# "-lreadline" resolves to the macOS SDK's libreadline.tbd stub (found via
++# the runtime/usr/lib -L path, which comes before -L./lib/readline) instead
++# of the readline built in-tree, which leaves all rl_* symbols undefined.
++# Link the in-tree archive by path.
++EXTRA_OEMAKE:append:darwin21 = " 'READLINE_LIB=$(READLINE_LIBRARY)'"
 -- 
 2.43.0
 
