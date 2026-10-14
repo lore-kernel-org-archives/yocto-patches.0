@@ -2,61 +2,61 @@ Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96670CC6B2D
-	for <webhook@archiver.kernel.org>; Wed, 14 Oct 2026 14:12:33 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14671.1791987152500044137
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A11CC6B1A
+	for <webhook@archiver.kernel.org>; Wed, 14 Oct 2026 14:12:43 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14672.1791987153628209928
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 14 Oct 2026 07:12:32 -0700
+ Wed, 14 Oct 2026 07:12:33 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=LWOBMTu2;
- spf=pass (domain: snapchat.com, ip: 209.85.128.53, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a1880e1bf1so9352025e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 07:12:32 -0700 (PDT)
+ dkim=pass header.i=@snap.com header.s=google header.b=EO1Dxkkv;
+ spf=pass (domain: snapchat.com, ip: 209.85.128.44, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a0213948d3so25730865e9.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 07:12:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1791987151; x=1792591951; darn=lists.yoctoproject.org;
+        d=snap.com; s=google; t=1791987152; x=1792591952; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=ppozSKgOMH6aUP/vwDUiPR92XKcVpGL3FXSjVIyHBKc=;
-        b=LWOBMTu2ORtStM3slk0JlBsGcLbGDyyvhyx7r+0H+MzkNig/Zy+eyz8+Qy2oE7h3eO
-         BIv0URUCtzTsW/V50Dj1mxeZn7uEKm9bSAqtdkeGLYjS1nX3tKIcM1SWWiQpX9t7FZmU
-         kNIJ6pgt4FpzFizfcgCp4DM2LjXo5iPlyBtbM=
+        bh=r+Hqw8AXLhClCOz5PmSTsx88ITnL+KobmWm6ONCsFaU=;
+        b=EO1Dxkkv3M3P1YxKLshQQ5dlknTiRA8yCFPK40+6EavBcVOfUZiAKH8mH0FY+PKHqo
+         NnRXrS8QS4zcGlVpvwpeh4afITEouAuN5OkwGqEYKTXn10xpqNUmUuboV2oAejEWVscQ
+         POJ7uVasTHMc14LFZYKBwzsEd41KdGJOAGXW8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791987151; x=1792591951;
+        d=1e100.net; s=20260707; t=1791987152; x=1792591952;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ppozSKgOMH6aUP/vwDUiPR92XKcVpGL3FXSjVIyHBKc=;
-        b=134mNG5y7ejMHVht6qGmIDWKFtpKN5sCAE+u5TZQvcVahs5ciKcxl8yMOEV8pJKL1B
-         TBcxckKNYZ0MVKyAw+AoC5N24BfOd1ACIVMPUmrfzTFl3uDzHjV9uLBdKwXpM7kg8F07
-         uUBOgZzHJ1IBbQwbjl3+O6FJmafAqj21qQ2itZOHhhSz0PL5MebxLfpk1ItNKUIfiOeq
-         3Qo4B00NZ+QUiSLm1tUmR9BwPUZgIGawWGcip/bg0NhvRTr1dH/Y1UgvxGnW2k6WiNAX
-         /7SR1daS6xr5xex6bci1It5+MZ/Mfgz1zfnIM+pnvVbCKpMrqrvFUOrrySZlHAzamZSY
-         E2FQ==
-X-Gm-Message-State: AFq9FYK5cjvYgfm+SEjqxnUVedWvZm3Q+1xdl/48Hy/n7poRhEFGMigM
-	NOOKCE1+LMAwTj/OGjc/VAr3B3e9Wvd7rrkdoDGrq+6xxvMHBKgdVexDFffuOdOrce4Pl26VNzk
-	3hPL+UvA=
-X-Gm-Gg: AYBFou0dWiVdb/lpg8g5stEGy/DhOBF9ZJ8eBvFA1Tug7ezfakFpKUHSwK83bR5JtMF
-	pLZY0S3vUr8511E3t0nGsyZYkdI7NscZaB844rgOCMBvowt3zfhuitnimWRhxf1yCRzgtrhOibz
-	DddYik016kEoVwYrpAD7I4ZdXKluWdCzkxUczEMAtPqhetL3RgKXo8/sk8kMP7DBpLyS65vynnG
-	2dp0DePAwwXNYbRDem4e8lFvGzh0HIf9uk3HhVYphU0oAhQjvFGfBCslPl6dTbQJMxbM2qUbpoG
-	1RFHLVfLfkwFjkyuce21hYC/YyP7ZkKmr4K/bzZ+QoE0rp6c0LxknokOXKEE/3TfoAWKSg1HC8x
-	YC/rRtg1CL7bqYko8VMnpHGWUbIBcW0wTQv0KLz0v/GsoFs9JSt5QQb/Qmy7R9vF4soHaYML5M0
-	4AC4JRR8cjdsNHGYkrDctiJdMj7eeDwSbGZzOzlrELpwOZG2rxqJCZNalfUNLTb0XDAD4T66Wb8
-	dn7m8+ndu+32O670GBrhWbydjOUt4/VxCeRj0pRXQ==
-X-Received: by 2002:a05:600c:8106:b0:4a0:c02:938c with SMTP id 5b1f17b1804b1-4a18e4d683dmr309873225e9.25.1791987150627;
-        Wed, 14 Oct 2026 07:12:30 -0700 (PDT)
+        bh=r+Hqw8AXLhClCOz5PmSTsx88ITnL+KobmWm6ONCsFaU=;
+        b=1SR1NF4hOx6irgY8LQsB0XoGXL2JN0MkHnPoxbMBiXL3f7uwAnYxoB+7NaaTYjl6/X
+         bLVcicbAxi2Ef2ad/rmRDbGXTqr+9xgTW5RKVQK5riOCs3ZDR3Ah5vicB/plEV7mKEaD
+         hDuX8gk0HxaQKlYDPFcBnR7vurS2ODZURWSVyoeAum9X4/NZICSCu78xsv0o7jOVL+rE
+         zEEk48kuPdra0qRHmHenErE9B3HVEs4JDvhKzgsX85lzNn6r+nlBdBVRNZtI1cZhwaAp
+         D+qYVTpLmDbxVHnQ16G1rg3gkT2pSc07MBvl13W2ZUOrbSX7r9SOB/PlCN5Uf/NUOHWg
+         NigQ==
+X-Gm-Message-State: AFq9FYI8ccyx1liZFxjn8cy+bDfrqM/J0D2+5AmsLIN6j43JRtJgc5yp
+	sUcQ+MUmbo6xBDTp4iD0bnR0PANgB+yKtyc52bMAi2WjsWRFpHxIgZ96uPITnqpqlyU+/yO1hKE
+	CMTmLYZs=
+X-Gm-Gg: AYBFou2PO4YvXBeqjvXEf7c5ifM2CEExvgOqSR5J4sX1TqB00DqPlkTjTDYxTERp36R
+	m3nADauuPwi+T6VCRB8hVUIf1+4qHMAsK+NYKxQdbDJL6X+jhnfKX42NHcPqDP0W+cC7mfQRPnA
+	p4rFsep1zUNscEdy5okIjNCFZZLqj5UGcIiS0qtArI24axol4DFqfTqlRH7oec3tTeC+R85kHp2
+	y+meKiS6TfHZBoBSuT5nbkHk4BuTZ6Mhn5mNiRKsjHnlDxntdq3hbtz4tBwuAOlw9pSRSFjSirS
+	djCQ9G1QbhJxdjsyFGIdWHIJOW++upkZr9kf0VNkWBPJ4wvHKMo8D892qVzB091ya9IktfY0CuC
+	M4xPwfo8tM9Ub2hIY45evTor18doDPGldFw7B8je/VRnbrhpl8rFSi2qsdpFMZTcSh4MN4JsfzP
+	R5hJmH8Ik79ezo7NmKv/0uChVtUO3VUI53YZDmYddab2wx2uUNBP2Gi6bADSLCcE2qzt2POocrw
+	FN5p7pfoEUJ7l8j0qwICuigsBKg23JPagc7OADbnQ==
+X-Received: by 2002:a05:600c:3e0a:b0:49e:6050:9fbe with SMTP id 5b1f17b1804b1-4a18e49c52bmr308168835e9.15.1791987151788;
+        Wed, 14 Oct 2026 07:12:31 -0700 (PDT)
 Received: from lj8k2dq3.sc-core.net ([85.237.126.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd202e8esm299965e9.6.2026.10.14.07.12.29
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd202e8esm299965e9.6.2026.10.14.07.12.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 07:12:29 -0700 (PDT)
+        Wed, 14 Oct 2026 07:12:30 -0700 (PDT)
 From: ecordonnier@snap.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Etienne Cordonnier <ecordonnier@snap.com>
-Subject: [meta-darwin][PATCH 06/21] darwin recipes: fix S/WORKDIR/destsuffix breakage from git-fetcher UNPACKDIR relocation
-Date: Wed, 14 Oct 2026 16:10:27 +0200
-Message-ID: <20261014141209.488034-6-ecordonnier@snap.com>
+Subject: [meta-darwin][PATCH 07/21] cctools-port-crosssdk: fix stale virtual/binutils provider name
+Date: Wed, 14 Oct 2026 16:10:28 +0200
+Message-ID: <20261014141209.488034-7-ecordonnier@snap.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261014141209.488034-1-ecordonnier@snap.com>
 References: <20261014141209.488034-1-ecordonnier@snap.com>
@@ -65,218 +65,62 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 14:12:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5010
+ <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 14:12:43 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5012
 
 From: Etienne Cordonnier <ecordonnier@snap.com>
 
-Two related upstream bitbake.conf changes broke several Darwin
-recipes' S assignments:
+Upstream OE-core commit 4ccc3bc826 ("classes/recipes: Switch
+virtual/XXX-gcc to virtual/cross-cc (and c++/binutils)", Jan 2025)
+renamed the parameterized virtual/${TARGET_PREFIX}binutils and
+virtual/${SDK_PREFIX}binutils to fixed literals virtual/cross-binutils
+and virtual/nativesdk-cross-binutils. binutils-crosssdk and
+gcc-crosssdk.inc were updated upstream to the new name, but
+cctools-port-crosssdk's own PROVIDES and the darwin-common.inc
+PREFERRED_PROVIDER override still used the old, now-unmatched name, so
+cctools-port-crosssdk silently stopped being selected as the
+binutils/as/ld provider for the darwin crosssdk toolchain (gcc, clang,
+go). Builds fell back to plain GNU binutils-crosssdk instead, which
+has no working Mach-O assembler/linker, causing gcc-crosssdk's
+target-libgcc configure to fail with "as: $original is unset".
 
-- The git fetcher's checkout destination moved from ${WORKDIR}/git to
-  ${UNPACKDIR}/${destsuffix or BP}, and oe-core's do_qa_unpack now
-  fatally rejects any S literally containing "${WORKDIR}"/"git" or
-  matching the old default. Drop the now-redundant/forbidden
-  S = "${WORKDIR}/git" assignments (cctools-port-crosssdk,
-  libdispatch-native, libtapi-native, xar, bomutils, hfsprogs,
-  libdmg-hfsplus) and update any LIC_FILES_CHKSUM/CXXFLAGS/B that
-  hardcoded the old path to use ${S}/${UNPACKDIR} instead. Also drop
-  B = "${WORKDIR}/build" overrides exactly duplicating the
-  autotools/cmake class default.
-
-- Two recipes' real unpack destination still diverges from the new
-  default (${UNPACKDIR}/${BP}):
-    - nativesdk-osx-runtime explicitly overrode destsuffix to the
-      now-banned literal "git" (and has a subpath, which would
-      otherwise pick a different default destsuffix). Renamed the
-      destsuffix to "osx-sdk" and pointed S there explicitly, and
-      fixed LIC_FILES_CHKSUM's local LICENSE path, which never
-      resolved to WORKDIR either.
-    - libtapi-native has a single git fetch with no subpath/destsuffix
-      override, so its default destsuffix (${BP}) already matches the
-      new S default - no override needed. Fixed S/LIC_FILES_CHKSUM to
-      point at the existing ${BP}-named checkout dir instead of
-      introducing an unnecessary explicit destsuffix.
+Confirmed against hawaii/sources/yocto-docs's own migration-5.2.rst,
+which documents this exact rename.
 
 AI-Generated: Claude Sonnet 5
 
 Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
 ---
- .../cctools-port/cctools-port-crosssdk_1010.6.bb           | 3 ---
- recipes-devtools/libdispatch/libdispatch-native_git.bb     | 6 +-----
- recipes-devtools/libtapi/libtapi-native_1300.6.5.bb        | 7 +++----
- recipes-devtools/osx-runtime/nativesdk-osx-runtime_14.5.bb | 6 +++---
- recipes-devtools/xar/xar_git.bb                            | 5 +----
- recipes-support/bomutils/bomutils_git.bb                   | 5 ++---
- recipes-support/hfsprogs/hfsprogs_git.bb                   | 2 --
- recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb       | 4 +---
- 8 files changed, 11 insertions(+), 27 deletions(-)
+ conf/machine-sdk/darwin-common.inc                            | 2 +-
+ recipes-devtools/cctools-port/cctools-port-crosssdk_1010.6.bb | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/conf/machine-sdk/darwin-common.inc b/conf/machine-sdk/darwin-common.inc
+index 3dec2b4..632c6b0 100644
+--- a/conf/machine-sdk/darwin-common.inc
++++ b/conf/machine-sdk/darwin-common.inc
+@@ -5,7 +5,7 @@ SOLIBSDEV:darwin21 = ".dylibbroken"
+ 
+ PREFERRED_PROVIDER_virtual/nativesdk-${SDK_PREFIX}libc-for-gcc = "nativesdk-osx-runtime"
+ PREFERRED_PROVIDER_virtual/nativesdk-${SDK_PREFIX}libc-initial = "nativesdk-osx-runtime"
+-PREFERRED_PROVIDER_virtual/${SDK_PREFIX}binutils = "cctools-port-crosssdk"
++PREFERRED_PROVIDER_virtual/nativesdk-cross-binutils = "cctools-port-crosssdk"
+ PREFERRED_PROVIDER_virtual/nativesdk-libc = "nativesdk-osx-runtime"
+ PREFERRED_PROVIDER_virtual/nativesdk-libintl = "nativesdk-osx-runtime"
+ PREFERRED_PROVIDER_virtual/nativesdk-libiconv = "nativesdk-osx-runtime"
 diff --git a/recipes-devtools/cctools-port/cctools-port-crosssdk_1010.6.bb b/recipes-devtools/cctools-port/cctools-port-crosssdk_1010.6.bb
-index 4d2625a..0053585 100644
+index 0053585..3abeb02 100644
 --- a/recipes-devtools/cctools-port/cctools-port-crosssdk_1010.6.bb
 +++ b/recipes-devtools/cctools-port/cctools-port-crosssdk_1010.6.bb
-@@ -36,9 +36,6 @@ EXTRA_OECONF:append = " \
-     --with-libtapi=${STAGING_DIR_NATIVE}/usr \
+@@ -16,7 +16,7 @@ DEPENDS += " \
+     libdispatch-native \
  "
  
--S = "${WORKDIR}/git"
--B = "${WORKDIR}/build"
--
- AUTOTOOLS_SCRIPT_PATH = "${S}/cctools"
- 
- do_configure:prepend() {
-diff --git a/recipes-devtools/libdispatch/libdispatch-native_git.bb b/recipes-devtools/libdispatch/libdispatch-native_git.bb
-index 07f3c78..c7dadd0 100644
---- a/recipes-devtools/libdispatch/libdispatch-native_git.bb
-+++ b/recipes-devtools/libdispatch/libdispatch-native_git.bb
-@@ -4,7 +4,7 @@
- SUMMARY = "Apple Grand Central Dispatch (libdispatch)"
- HOMEPAGE = "https://github.com/tpoechtrager/apple-libdispatch"
- LICENSE = "Apache-2.0"
--LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=1cd73afe3fb82e8d5c899b9d926451d0"
-+LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=1cd73afe3fb82e8d5c899b9d926451d0"
- 
- SECTION = "devel"
- 
-@@ -13,10 +13,6 @@ SRC_URI = "git://github.com/swiftlang/swift-corelibs-libdispatch.git;nobranch=1;
- 
- inherit cmake native
- 
--S = "${WORKDIR}/git"
--B = "${WORKDIR}/build"
--
--
- DEPENDS += " \
-     clang-native \
-     libcxx-native \
-diff --git a/recipes-devtools/libtapi/libtapi-native_1300.6.5.bb b/recipes-devtools/libtapi/libtapi-native_1300.6.5.bb
-index 66fd29d..5442f39 100644
---- a/recipes-devtools/libtapi/libtapi-native_1300.6.5.bb
-+++ b/recipes-devtools/libtapi/libtapi-native_1300.6.5.bb
-@@ -6,7 +6,7 @@ TAPI_VERSION = "1300.6.5"
- SUMMARY = "Apple libtapi for tdb support"
- HOMEPAGE = "https://github.com/tpoechtrager/apple-libtapi"
- LICENSE = "NCSA"
--LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE.APPLE-LIBTAPI.txt;md5=ecd05d65aa93d096452d196dcd233f1e"
-+LIC_FILES_CHKSUM = "file://${UNPACKDIR}/${BP}/LICENSE.APPLE-LIBTAPI.txt;md5=ecd05d65aa93d096452d196dcd233f1e"
- 
- SECTION = "devel"
- 
-@@ -17,8 +17,7 @@ PACKAGES = "${PN}-dbg ${PN} ${PN}-dev"
- 
- inherit cmake native
- 
--S = "${WORKDIR}/git/src/llvm"
--B = "${WORKDIR}/build"
-+S = "${UNPACKDIR}/${BP}/src/llvm"
+-PROVIDES = "virtual/${TARGET_PREFIX}binutils"
++PROVIDES = "virtual/nativesdk-cross-binutils"
  
  DEPENDS += " \
      clang-native \
-@@ -30,7 +29,7 @@ COMPILER_RT:class-native = "-rtlib=libgcc --unwindlib=libgcc"
- LIBCPLUSPLUS:class-native = "-stdlib=libc++ -lc++abi"
- 
- CXXFLAGS += " \
--    -I${WORKDIR}/git/src/llvm/projects/clang/include \
-+    -I${S}/projects/clang/include \
-     -I${B}/projects/clang/include \
- "
- 
-diff --git a/recipes-devtools/osx-runtime/nativesdk-osx-runtime_14.5.bb b/recipes-devtools/osx-runtime/nativesdk-osx-runtime_14.5.bb
-index a7421cf..06865d8 100644
---- a/recipes-devtools/osx-runtime/nativesdk-osx-runtime_14.5.bb
-+++ b/recipes-devtools/osx-runtime/nativesdk-osx-runtime_14.5.bb
-@@ -3,7 +3,7 @@ LICENSE = "Proprietary"
- 
- COMPATIBLE_HOST = ".*-darwin.*"
- 
--OSX_SDK ?= "git://github.com/alexey-lysiuk/macos-sdk.git;nobranch=1;protocol=https;subpath=MacOSX14.5.sdk;destsuffix=git"
-+OSX_SDK ?= "git://github.com/alexey-lysiuk/macos-sdk.git;nobranch=1;protocol=https;subpath=MacOSX14.5.sdk;destsuffix=osx-sdk"
- SRCREV = "69ddec41e6224afebd5f19bb24764305ac3e828a"
- 
- SRC_URI = " \
-@@ -12,11 +12,11 @@ SRC_URI = " \
-     file://LICENSE \
- "
- 
--LIC_FILES_CHKSUM = "file://${WORKDIR}/LICENSE;md5=03fe683ef28b9ddfe7f658a0f4b3b80e"
-+LIC_FILES_CHKSUM = "file://${UNPACKDIR}/LICENSE;md5=03fe683ef28b9ddfe7f658a0f4b3b80e"
- 
- PR = "1"
- 
--S = "${WORKDIR}/git"
-+S = "${UNPACKDIR}/osx-sdk"
- 
- inherit nativesdk
- 
-diff --git a/recipes-devtools/xar/xar_git.bb b/recipes-devtools/xar/xar_git.bb
-index 19930b5..9941920 100644
---- a/recipes-devtools/xar/xar_git.bb
-+++ b/recipes-devtools/xar/xar_git.bb
-@@ -11,15 +11,12 @@ SRC_URI = " \
- 
- inherit autotools pkgconfig
- 
--LIC_FILES_CHKSUM = "file://${WORKDIR}/git/xar/LICENSE;md5=64becc7b238f5b2d599c009ab19c2c27"
-+LIC_FILES_CHKSUM = "file://${S}/xar/LICENSE;md5=64becc7b238f5b2d599c009ab19c2c27"
- 
- DEPENDS = "libxml2"
- 
- BBCLASSEXTEND = "native"
- 
--S = "${WORKDIR}/git"
--B = "${WORKDIR}/build"
--
- do_configure() {
-     ${S}/xar/configure --enable-autogen --prefix=${STAGING_EXECPREFIXDIR}
- }
-diff --git a/recipes-support/bomutils/bomutils_git.bb b/recipes-support/bomutils/bomutils_git.bb
-index 4c76f26..5d29675 100644
---- a/recipes-support/bomutils/bomutils_git.bb
-+++ b/recipes-support/bomutils/bomutils_git.bb
-@@ -7,12 +7,11 @@ SRC_URI = " \
-     git://github.com/elhernes/bomutils.git;branch=master;protocol=https \
- "
- 
--LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=55d923cdeef7e46b4d6415cb173b345a"
-+LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=55d923cdeef7e46b4d6415cb173b345a"
- 
- BBCLASSEXTEND = "native"
- 
--S = "${WORKDIR}/git"
--B = "${WORKDIR}/git/build"
-+B = "${S}/build"
- 
- do_compile() {
-     make -C ${S}
-diff --git a/recipes-support/hfsprogs/hfsprogs_git.bb b/recipes-support/hfsprogs/hfsprogs_git.bb
-index 550888d..5572435 100644
---- a/recipes-support/hfsprogs/hfsprogs_git.bb
-+++ b/recipes-support/hfsprogs/hfsprogs_git.bb
-@@ -9,8 +9,6 @@ LIC_FILES_CHKSUM = "file://README.md;md5=ea27fd14a7e575753270cc5527d29023"
- SRCREV = "064b7fece00d069f206fd2d4a9a4493dd2777d9f"
- SRC_URI = "git://github.com/elhernes/hfsprogs.git;branch=master;protocol=https"
- 
--S = "${WORKDIR}/git"
--
- DEPENDS = "openssl libbsd"
- 
- inherit cmake native
-diff --git a/recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb b/recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb
-index 98ff652..1ee9fff 100644
---- a/recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb
-+++ b/recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb
-@@ -7,9 +7,7 @@ LICENSE = "GPL-3.0-only"
- SRC_URI = "git://github.com/elhernes/libdmg-hfsplus.git;branch=master;protocol=https"
- SRCREV = "3c3ce87a7e2f036f771f81147f9e125a2bb207f1"
- 
--LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=d32239bcb673463ab874e80d47fae504"
--
--S = "${WORKDIR}/git"
-+LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=d32239bcb673463ab874e80d47fae504"
- 
- inherit cmake
- 
 -- 
 2.43.0
 
