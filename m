@@ -1,131 +1,137 @@
-Return-Path: <mathieu.dubois-briand@bootlin.com>
+Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 041ADCC6B1A
-	for <webhook@archiver.kernel.org>; Tue, 13 Oct 2026 17:48:58 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3854.1791913728943434049
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1FDCC6B2A
+	for <webhook@archiver.kernel.org>; Wed, 14 Oct 2026 14:12:32 +0000 (UTC)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14668.1791987150420807605
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 13 Oct 2026 10:48:49 -0700
+ Wed, 14 Oct 2026 07:12:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=hAEWYjcs;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=tX59qH0p;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id EB8674E4120F
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 13 Oct 2026 17:48:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BB27060362
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 13 Oct 2026 17:48:46 +0000 (UTC)
-Received: by mail.galae.net (Postcow, from userid 0)
-	id 4869111D7159B; Tue, 13 Oct 2026 19:48:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791913722; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=mAhPXidxEVbUK8eNEX94J9vkifOvqYMEVwSY/fPgCUU=;
-	b=hAEWYjcs0ggNb42UC5msjIv7F43OgkDNFxDTYacXDk294yLNeIMPnYbJapsgJOH9hA+cRT
-	PrVnVLvagq7uN9YTs3W6UFCq9qvYiEUs3/03tbibIgsc+4XDtRBusYuSytffBPeOQvwTLT
-	U33urc99/rUlOz6wD5OpbbP9Qvhw/bt+u5cRo6mXndSoPK8q0xQeNfPuEbxf67j7EYGFkb
-	mntQEBQ5RxXDnZRsDZe1+YIv1NVY2jD0GR7pl+6qlDJTI9VldpLv7fLexwUobnHE27CVYt
-	VECYnZCvDouFmpekat6zI11zb1vGMp/qvmYywmfsbsbSYpvk6iQq6inZMCn2vg==
-Authentication-Results: mail.galae.net;
-	none
-Received: from mail.galae.net ([172.22.1.253])
-	by 9e7fea892943 with LMTP
-	id aIORKB7CzGorOQ8AtaWaaQ
-	(envelope-from <mathieu.dubois-briand@bootlin.com>)
-	for <mathieu.dubois-briand@bootlin.com>; Mon, 12 Oct 2026 13:18:54 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2DC7411D70E4E;
-	Mon, 12 Oct 2026 13:18:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791803934; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=mAhPXidxEVbUK8eNEX94J9vkifOvqYMEVwSY/fPgCUU=;
-	b=tX59qH0pq2igpvFy85LB+CU0a6f7wVLiDxxbb4uyaC1Ju+2OWkeSlZoPFbve1dpDTpdBlb
-	AmriFZOmLEAeX2tmC3YSjtHBj+LiC27V8RpCre3vpBoLw2O6nXzcKl5j3vFQk1c4Xzi3QN
-	gU07ylfVWfNkm3EYcmR2i/xtFEYUDEeWtZ5n8ZtK1SksiCe12+iseRSmPIt0rD04d3A3oO
-	n3Es1gk1YlFvE4l7A+tkPQiNcPBGMdJJIv4n95JTLFnX1vrrA3hT2DHJD5/PQ4Gwm7HD1H
-	iKuC8n88anHcPJwOaWPpI3PhynCRaCrTI8EZEk3+jixozR72VH8LVSM6lJv/yg==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Mon, 12 Oct 2026 13:18:50 +0200
-Subject: [PATCH yocto-autobuilder2] schedulers: Fix meta-exein branch for
- scarthgap
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261012-mathieu-exein-scarthgap-v1-1-154376f31836@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIABrCzGoC/x3MTQqDQAxA4atI1g2YUKr0KqWLOEYn0M7I/BSLe
- PcOXX6L9w7Imkwz3LsDkn4sWwwNdOnAeQmros3NwD3fqCfGtxRvWlF3tYDZSSp+lQ2ZSRcaZaD
- pCq3eki62/88P+EZXIkotcar2mjUxPM/zBw2uaop9AAAA
-X-Change-ID: 20261012-mathieu-exein-scarthgap-221ef18a71b4
+ dkim=pass header.i=@snap.com header.s=google header.b=V9UVJLwu;
+ spf=pass (domain: snapchat.com, ip: 209.85.221.54, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-48c45111bebso2570801f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 07:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=snap.com; s=google; t=1791987148; x=1792591948; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=hvxa7TQz62dHobAm0nrVApA/uBl/bdWPYfchBOwW+C8=;
+        b=V9UVJLwuxdgpN2QGcupuyVdTqs4yO7y0ON2CJ/W4QZVMjSwkOCKxI5gT7niBcebzdE
+         UeGwbWWZTV8Ba5BIHqsQnVkIjHfgM+OhDvdnQwfWVNtlbv/nGUI/joDPkH5H05RGnzYT
+         M6XnDnRnMk/VZTjx+Cl/pFCCsUWuCmqSnoa+8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791987148; x=1792591948;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=hvxa7TQz62dHobAm0nrVApA/uBl/bdWPYfchBOwW+C8=;
+        b=DPCz3J+rSU2cOtOJNGcCEWKbSb6pQr7mgeGViMCUXBIkJfdcebGl0qcayd5TddkMnd
+         VmAacRLEzLQx7yHLgYkUYbX3pZlUY1DeZ5RwNdbeo+canj/exUr73cHGwJc9xO7wtzCo
+         M/cxW7jJsYb9GYPdInJ1CS1brd94fd1qGKDzoPAVsoXFVq5wXrsyQ1UpMUOJJnkJw4ow
+         1ezg606xcxfPMKkHQJXpz0RCCdCD6l28AoGvKscXZXDQpmTHQ7kFsCpt2IdoyJS9EAlk
+         JphaxlVdXCpccowimTp2KzpnjvzKBe3yhk0SjL3jNu9URkKwQsHXbVxfjnxZAbi7sHa1
+         kgHQ==
+X-Gm-Message-State: AFq9FYIH+0hQ/FCo7Wizr5SJArPPNpRzzD+IEmYBkGL6ts3LKtC8+iLp
+	qcXs8J0PtuqsymZj8FOHugQ/GLh6yh+zam2R93KWMCO4aNxYYai7VNsvrijpSlMrMukq811fECU
+	mSZZJ0do=
+X-Gm-Gg: AYBFou1RwbP0VCb9X0gYVjdN6Cg38Jj3coWUcZZob5asOf5aiMx0pXLm+ne7rc41fvc
+	0AlZm1+FS7qbSzcXFJDExdRHu/HWeDaXfbPPJBFs0pVitxQ5Whukd04jyFj9UGD58quELcuhAnW
+	a9xfvOZg5rXzNwvxmOt0ZA3RsbODmHAW5HtLDN3y24+u/QpMBOTjSTVMbpGxwyQtrlAFqhAZP2K
+	9WpcFUx86h0zOtwcm5bApOA6Ti3KpmPqVg+3crvDjmWwMPx/fGPLl0LwXdRjgxbySJLjJJXF8lQ
+	1tKfGnGtuwzZik/2p0Rlbx3Qcvyvbv9tIIoxyGSarpEwZvhmtFJLQ4tInmPrA7br/s5uz6gw0R/
+	tp+Jm6DyJKqTmiylZLVXSBzkTq7nNjze4mTShLL9yDs6UItYFA7kM6lvJqGHlelyH+g503yB8Xc
+	/1ALQhY/nj3va/sbAaiDApbTzGHC8MkzKh4W2JjUnFinm32mV0S7ZtGE+7WwuuXX7MBMzTFIYUe
+	JS6OAqGhQV49qH4WCLh2tqsDbmhl0qjmlmoBoH1pQ==
+X-Received: by 2002:a05:600c:8b70:b0:49f:e701:51c8 with SMTP id 5b1f17b1804b1-4a18e4a01acmr331108465e9.9.1791987148264;
+        Wed, 14 Oct 2026 07:12:28 -0700 (PDT)
+Received: from lj8k2dq3.sc-core.net ([85.237.126.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd202e8esm299965e9.6.2026.10.14.07.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Oct 2026 07:12:27 -0700 (PDT)
+From: ecordonnier@snap.com
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791803933; l=874;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=L0JWnVeF+66EY7zkzbrbdrUS4AojGzhmrCetnhEci7Y=;
- b=DEwGbqxHxUFBaSIQosMKqHZqP6ciXSbkkPzzKgD28lvGLs0LKHyUo+fd+xHipvBD+gsvPRxMH
- v/IaB3MM9JuCChgji63uzhbaoWz3M36O+QkSvTC/TscD6p03+X+A/o6
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-Last-TLS-Session-Version: TLSv1.3
-X-Last-TLS-Session-Version: None
-X-Rspamd-Queue-Id: 4869111D7159B
-X-Spamd-Result: default: False [-1.24 / 30.00];
-	BAYES_HAM(-2.24)[89.38%];
-	DATE_IN_PAST(1.00)[30];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_NO_TLS_LAST(0.10)[];
-	DKIM_SIGNED(0.00)[bootlin.com:s=dkim];
-	BCC(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FORWARDED(0.00)[mathieu.dubois-briand@bootlin.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MAILCOW_DOMAIN_HEADER_FROM(0.00)[bootlin.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	PREVIOUSLY_DELIVERED(0.00)[mathieu.dubois-briand@bootlin.com];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	URIBL_BLOCKED(0.00)[schedulers.py:url,bootlin.com:mid,bootlin.com:email,localhost:rdns,localhost:helo];
-	RCPT_COUNT_THREE(0.00)[3]
+Cc: Etienne Cordonnier <ecordonnier@snap.com>
+Subject: [meta-darwin][PATCH 04/21] automake: drop obsolete Darwin bbappend
+Date: Wed, 14 Oct 2026 16:10:25 +0200
+Message-ID: <20261014141209.488034-4-ecordonnier@snap.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261014141209.488034-1-ecordonnier@snap.com>
+References: <20261014141209.488034-1-ecordonnier@snap.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 13 Oct 2026 17:48:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5005
+ <yocto-patches@lists.yoctoproject.org>; Wed, 14 Oct 2026 14:12:32 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5008
 
-Scarthgap builds should use "scarthgap" branch instead of "main".
+From: Etienne Cordonnier <ecordonnier@snap.com>
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+OE-core dropped the equivalent 0001-Drop-ar-u-argument.patch upstream
+(ar no longer takes crD there), making our own copy of the same fix
+redundant.
+
+AI-Generated: Composer 2.5
+
+Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
 ---
- schedulers.py | 1 +
- 1 file changed, 1 insertion(+)
+ .../automake/0001-Remove-ar-D-argument.patch  | 30 -------------------
+ recipes-devtools/automake/automake_%.bbappend |  5 ----
+ 2 files changed, 35 deletions(-)
+ delete mode 100644 recipes-devtools/automake/automake/0001-Remove-ar-D-argument.patch
+ delete mode 100644 recipes-devtools/automake/automake_%.bbappend
 
-diff --git a/schedulers.py b/schedulers.py
-index f52b772831c2..5577f5b6fbe2 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -189,6 +189,7 @@ branchdefaults = {
-         'branch_meta-arm': 'scarthgap',
-         'branch_meta-aws': 'scarthgap',
-         'branch_meta-clang': 'scarthgap',
-+        'branch_meta-exein': 'scarthgap',
-         'branch_meta-gplv2': 'master',
-         'branch_meta-intel': 'scarthgap',
-         'branch_meta-mingw': 'scarthgap',
-
----
-base-commit: 2f571236971d2e77010e8fd06198b7733123a36f
-change-id: 20261012-mathieu-exein-scarthgap-221ef18a71b4
-
-Best regards,
+diff --git a/recipes-devtools/automake/automake/0001-Remove-ar-D-argument.patch b/recipes-devtools/automake/automake/0001-Remove-ar-D-argument.patch
+deleted file mode 100644
+index 6e27448..0000000
+--- a/recipes-devtools/automake/automake/0001-Remove-ar-D-argument.patch
++++ /dev/null
+@@ -1,30 +0,0 @@
+-From 862a7ca3269b54a595051454c6fbb3c45688d929 Mon Sep 17 00:00:00 2001
+-From: Etienne Cordonnier <ecordonnier@snap.com>
+-Date: Sat, 8 Jun 2024 22:39:08 +0200
+-Subject: [PATCH] Remove ar 'D' argument
+-
+-Poky patch "automake/0001-Drop-ar-u-argument.patch" adds the argument 'D' (deterministic mode),
+-however this option does not exist on MacOS.
+-
+-Upstream-Status: Inappropriate [OE specific]
+-Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
+----
+- bin/automake.in | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/bin/automake.in b/bin/automake.in
+-index dbcf47c..0f2b84b 100644
+---- a/bin/automake.in
+-+++ b/bin/automake.in
+-@@ -2678,7 +2678,7 @@ sub handle_libraries ()
+-     }
+- 
+-   define_variable ('AR', 'ar', INTERNAL);
+--  define_variable ('ARFLAGS', 'crD', INTERNAL);
+-+  define_variable ('ARFLAGS', 'cr', INTERNAL);
+-   define_verbose_tagvar ('AR');
+- 
+-   foreach my $pair (@liblist)
+--- 
+-2.34.1
+-
+diff --git a/recipes-devtools/automake/automake_%.bbappend b/recipes-devtools/automake/automake_%.bbappend
+deleted file mode 100644
+index 4820dd9..0000000
+--- a/recipes-devtools/automake/automake_%.bbappend
++++ /dev/null
+@@ -1,5 +0,0 @@
+-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+-
+-SRC_URI:append = " \
+-    file://0001-Remove-ar-D-argument.patch \
+-    "
 -- 
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+2.43.0
 
 
