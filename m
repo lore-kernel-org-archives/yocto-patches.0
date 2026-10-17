@@ -1,129 +1,97 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F0ACCA462
-	for <webhook@archiver.kernel.org>; Fri, 16 Oct 2026 08:04:08 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17023.1792137840941897976
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87755CCF2CA
+	for <webhook@archiver.kernel.org>; Sat, 17 Oct 2026 16:57:22 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.343.1792256235179934955
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 16 Oct 2026 01:04:01 -0700
+ Sat, 17 Oct 2026 09:57:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=MZBeIEkg;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.52, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a171b677d2so38588275e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 16 Oct 2026 01:04:00 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=DjJ9uwrT;
+ spf=pass (domain: gmail.com, ip: 209.85.214.175, mailfrom: ticotimo@gmail.com)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2e8da6ef7ddso3904125ad.3
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 17 Oct 2026 09:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1792137839; x=1792742639; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=5ci/Egpc1rP1khXTLxPy2mScVTOs7jDiaaYMLpxcF+o=;
-        b=MZBeIEkgDLuLGLilZ9fuzpcuNJGtOuwIi0aVWo+Qv6XKNU1G6aMwa1EOrxELPGhaD8
-         QJQ3Yv4gMYaTB9C9OlrgtszqIeE0JkjT7yzsgwgKN2malEXHD1Yx5w7RkzdL/LKatcUY
-         Ukch/sNykH/U70ylHdl/f0blSxrjbb/WzH4Wk=
+        d=gmail.com; s=20251104; t=1792256234; x=1792861034; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=+5a6VHycAPs5b0bQ2HsTtIP03p39Xiv4tUYlbwHIS6I=;
+        b=DjJ9uwrThHMKx/+LmlQqdltdPm2geZ37YyRLG/Z07OJE+4cKvRRYFT2pRVtkoNp87d
+         duPrx5N+9lPrs/r99DuYKh0We5OV/+vOe4Oqcf93oziTKB7yTzrglzs5YDK8eEIF/34i
+         RNxJDv/tnnra45JfhZkqdiZSID7axJJlzONHn01oYSc2RX/cfvybfn8n+DoulSoXf7EZ
+         hEbHJwegg/JAFhuGnDruw9It2knj0YrOKkLW0Lb7MYBClcI3IfxK6qasRmOSUi3sIxWj
+         Z/bdcRDmTEbm7MZtktPOr5P8nk4Pw4QD3dZdDnD0YcBcs7gRlCI5OflEyZLchzNSNw0k
+         JoEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792137839; x=1792742639;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5ci/Egpc1rP1khXTLxPy2mScVTOs7jDiaaYMLpxcF+o=;
-        b=gwj+E355MQTLXX6BiOGaLd0NqeQHqIaa6/OJxu7fybwoA7kxroe1z2sk+GLx15Qq9Q
-         gzkaGWQYO8ZNEn/KLYpTCe2RwWAf5kyqViejyfbIgKOg292PThvk2lYAJEsnZO1T6r0f
-         uaJtuR9tEmQ4PKWj8vvJJB9aJ8riRWGFdlrh/RhoUl3fcRWlvSgw1ZvPAJBgI6ITzduk
-         /M+PvPDITyxSwA+sRZf4/N6MPqwysr3mn1OdkfqgDRcSx7lQqpvIWbKRrCa67FoybF8U
-         sOQ2XNoU4+bVdbC4VSeIcrJptVJIU5c962GSLZIqpIqiiUyDx4kfg68PIIFPTA/6FzW8
-         kdeQ==
-X-Gm-Message-State: AFq9FYJg7S6iewuw7qS2rR3jhEzkm7ocRslnoZUsUatrxdescrtQBju8
-	XDCQWPRkoX/B7Wk7MJ9c6q+NfVwNIcXJ1G0XJ4NKa1obv0bWnHPsZhjCmXznITcdYelND6VlRxs
-	SRuaeT4Q=
-X-Gm-Gg: AYBFou2N0Yn3+W3qKIPdjheXd40WFDmpLjR2WLNmordqC+sIrPf/A9nMLimeAapRbah
-	7bw5ay3FhYm0FCNO5KtHUndjZts1WN7KMz4Yh4xJlBQ7jWiQkMwaU/4vvHKP1TsdNhJ4SlDpCGI
-	byUt6YDsUNlpa5pEOM+jYmaVcZrGAHgPYPinGdSe0e4BZs8zI4n/PGWj4S9UwhSB2ZVIuX7+Myx
-	fK205cHmoiIBenXiCiYCtCdtMEb4ptVzMDOBtjtjKT/+4Uho7DkkQWMvkQvammdk75Z0D0CelVg
-	dMvpzfId8EPNBVdqhkMoyqRDsbz6ByuF3qyduHTx550YD10i2cy8TV8RN/k6p3fk+vxAIVa+FLM
-	KBhXFfy5MokZ+aDDGNiXLqJBUqJZ773acTp+TmnLplWRpRp9cUs6tdh6brXaqTe8a46mTz6I7M0
-	1wYwrBjRmMQTdsb1vQgZDXLebJLecmsLpy6JhKSZ9z0oKyzmKugoVFVhzES3I0GRo2rSlajHpkg
-	zsUfkUHmzoO2vrep5Xg577Mrmxi2BFSZ12T813TeKbS7qHk2FmQ10GmMUIewG0=
-X-Received: by 2002:a05:600c:6388:b0:4a1:6f78:8419 with SMTP id 5b1f17b1804b1-4a18e3ee8f9mr435842485e9.0.1792137838757;
-        Fri, 16 Oct 2026 01:03:58 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:988f:f245:635a:3450? ([2001:8b0:aba:5f3c:988f:f245:635a:3450])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd9b8ebdsm149091455e9.10.2026.10.16.01.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 01:03:57 -0700 (PDT)
-Message-ID: <279f30c06d89b7ca0749251a802d1eac0adfb89c.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [pseudo] [PATCH v2] pseudo_client: Fix
- xattr/rename handling with empty paths
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        d=1e100.net; s=20260707; t=1792256234; x=1792861034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=+5a6VHycAPs5b0bQ2HsTtIP03p39Xiv4tUYlbwHIS6I=;
+        b=zDg8nBg6oxTc8+BT/dJJS9tHxWn8dFo8ihMV/CrzimAvsoEaW+y/kWTMWV7gOciopP
+         HN/0ultcwVKF99MByEp7n5NSSNPdQwSBna+Y1kWfILDh9evMQcgFDPQjns0C977ZWst8
+         5zEQ+Jl0IMb8tNZK0gpUnzPieK7qVayhqmMlcU4r3alfXJGETtEwXD76TNkTt9iDqDNV
+         sLnrTLDJFuGTSfp0KI5V8kVQRjjRczl/HTzsSqHkwddB0o0BfQA0oKn7p90FS6UeOMv2
+         0UduqqVJID1TcE5Q/o+YZJtsKM6AWz4VxCRk0Q2gOMk8s76HNMVJRHVy/Sb3iKDzxb4H
+         u06w==
+X-Gm-Message-State: AFq9FYLeC/IvUr/sb9LfGqkdNuK58hak0nwZsOhjATAzK+C/PFzkSsP7
+	z4BC3en48BkzZyRwXc+dqV9fx0rF1fgZwFYOuPMCXjdD0fusv4gfAKEmogG0nw==
+X-Gm-Gg: AYBFou2fF3UzOCwTtOpbL5SfYxUi4BDJOqJN3qQu0HpXbp8VjSjE7zEQYgNM4yr57/Y
+	yCIDxKOL7WytPizXLLbEakG6F3w/BeInRQbR1Qy7ShHJMmQ53MJF/UkH+9Dh02Iz2TacmWNB+Xa
+	Qi7sG0eMSny8MO+1fFL4QjiPZNNyx1qfRMoXGuSAkXQRBJhX0LkCZd6Fpboy8WVE6Xt6+/2qK0a
+	2vBicim3QEPIwXpKT3n1qJBXxiT/MMXukGwMZxyfwpU0bvwBURPf/Ft3vi1xq99DZXPSCUVhCW8
+	msRzS+/pP0kfgl4tlXKO58VLpSSiJmmH/thLf8c5W3XCvOJ+N39Com+RfV3s09bSu3opU616yP9
+	3UQyGTBmOn3yZqB7lgF8UTBwdUnptK6SGrTSrWrgSgZ9YRStwGXuiNohppv7gJFdb0ZwbSOK72e
+	ypcZNsU6KQ33y6KottZCG9ZJrcHUrrPKFw72CtSyHEy7ZHFZnIVoZogpUop7IKa/b+47YkcDsy7
+	b79ppQxRytN2tgw9Vq+HF1eARu5uTg=
+X-Received: by 2002:a17:902:c405:b0:2e2:e3aa:7a35 with SMTP id d9443c01a7336-2e9a6e41184mr29097455ad.36.1792256234323;
+        Sat, 17 Oct 2026 09:57:14 -0700 (PDT)
+Received: from localhost.localdomain ([69.9.132.159])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e97e5d7efcsm22402035ad.5.2026.10.17.09.57.10
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 17 Oct 2026 09:57:12 -0700 (PDT)
+From: Tim Orling <ticotimo@gmail.com>
+X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: seebs@seebs.net, mark.hatle@kernel.crashing.org
-Date: Fri, 16 Oct 2026 09:03:55 +0100
-In-Reply-To: <DM61H2PIVOOH.2ZEU6CJ6BQST7@bootlin.com>
-References: <20261015220227.794655-1-richard.purdie@linuxfoundation.org>
-	 <DM61H2PIVOOH.2ZEU6CJ6BQST7@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-9 
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 1/3] layerindex/views: BranchCompareView: fix to_branch check
+Date: Sat, 17 Oct 2026 09:57:01 -0700
+Message-ID: <20261017165703.70617-1-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.56.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 16 Oct 2026 08:04:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5035
+ <yocto-patches@lists.yoctoproject.org>; Sat, 17 Oct 2026 16:57:22 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5036
 
-On Fri, 2026-10-16 at 08:12 +0200, Mathieu Dubois-Briand via lists.yoctopro=
-ject.org wrote:
-> On Fri Oct 16, 2026 at 12:02 AM CEST, Richard Purdie via lists.yoctoproje=
-ct.org wrote:
-> > On Fedora45, we can end up in a situation where path_extra_1 (for xattr=
-/rename ops)
-> > but path is of zero length. The path_extra_1 codepath does not handle t=
-his well and
-> > corrupts memory.
-> >=20
-> > The issue is "partial_len =3D pathlen - 1 - strip_slash" when pathlen i=
-s 0 (and
-> > hence strip_slash is also 0). This leads to invalid memory writes and i=
-f those
-> > happen to access off the end of a mapped segment, the program segfaults=
-.
-> >=20
-> > Fix the code to handle the pathlen=3D0 case.
-> >=20
-> > Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-> > ---
-> > =C2=A0pseudo_client.c | 18 ++++++++++++------
-> > =C2=A01 file changed, 12 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/pseudo_client.c b/pseudo_client.c
-> > index d83175e..1c742ba 100644
-> > --- a/pseudo_client.c
-> > +++ b/pseudo_client.c
-> > ...
-> > @@ -1806,12 +1810,14 @@ pseudo_client_op(pseudo_op_t op, int access, in=
-t fd, int dirfd, const char *path
-> > =C2=A0				return 0;
-> > =C2=A0			}
-> > =C2=A0		}
-> > -		memcpy(alloced_path, path, partial_len);
-> > -		alloced_path[partial_len] =3D '\0';
-> > -		memcpy(alloced_path + partial_len + 1, path_extra_1, path_extra_1len=
-);
-> > -		alloced_path[partial_len + path_extra_1len + 1] =3D '\0';
-> > +		if (pathlen) {
-> > +			memcpy(alloced_path, path, partial_len - 1);
-> > +		{
->=20
-> Typo :)
+The to_branch lookup was guarded by from_branch_id instead of
+to_branch_id, so a request with only from_branch set tried to fetch a
+Branch with id None and returned a 404 instead of the empty form.
 
-I wondered if anyone would notice :)
+AI-Generated: Claude Opus 5.5
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+---
+ layerindex/views.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> But aside of that, I believe it's OK now.
+diff --git a/layerindex/views.py b/layerindex/views.py
+index 4f8e64e..73a4f6a 100644
+--- a/layerindex/views.py
++++ b/layerindex/views.py
+@@ -1927,7 +1927,7 @@ class BranchCompareView(FormView):
+             from_branch = get_object_or_404(Branch, id=from_branch_id)
+         context['from_branch'] = from_branch
+         to_branch = None
+-        if from_branch_id is not None:
++        if to_branch_id is not None:
+             to_branch = get_object_or_404(Branch, id=to_branch_id)
+         context['to_branch'] = to_branch
+         if from_branch and to_branch:
+-- 
+2.56.0
 
-Thanks, it did pass testing too so I think it should be good.
-
-Cheers,
-
-Richard
 
