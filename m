@@ -2,124 +2,161 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E09ACCF2C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3112CCCF2D2
 	for <webhook@archiver.kernel.org>; Sat, 17 Oct 2026 18:32:23 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1922.1792261935521447634
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1908.1792261938289711201
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 17 Oct 2026 11:32:15 -0700
+ Sat, 17 Oct 2026 11:32:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=LzUoNI5J;
- spf=pass (domain: gmail.com, ip: 209.85.216.54, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3acb512a7a0so482106a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 17 Oct 2026 11:32:15 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=VtMQcQyM;
+ spf=pass (domain: gmail.com, ip: 209.85.216.52, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-38759bcd877so543992a91.2
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 17 Oct 2026 11:32:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792261935; x=1792866735; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=VT/XBt06NciPgTm60d8wSqtaBYnASyEBqnho5E0WhkQ=;
-        b=LzUoNI5JqfjBw0elvrNqVIeHrEtVyfQuen/6vAbA+b1Nc4/IcM3TYMeHLqp7bXy/GI
-         ZYBWu83FeZyzUMJiNmhK+NK3Cn70MuwoX0PbYlXYOYmCLlvwStfseIUEW+i7JVMqz9tu
-         mKYywLTpNp8DcUaiOizqxa+RTsjgAY554M7dBbe2cxH5F4PnHw5OOjCaEoC7kran6by2
-         JWC8PMxhN5yDsD+aS2BO4Ld+50SLeTDcru1fF+mb7xaGb3z7HKDxLFUdij3YuOjUEB8g
-         XcxdW0Bp1Vx9SBgJxwijby/uH5VY4KNUfVzecb3K+NL78kno4/dyrVA4TWqQvSIZ46QC
-         RQOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792261935; x=1792866735;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792261938; x=1792866738; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=VT/XBt06NciPgTm60d8wSqtaBYnASyEBqnho5E0WhkQ=;
-        b=xC5qj2+sjz/4axUl8pbkPL+DRNQ691WjFTHyod+80h6yT00HhdtibCZDalTV3ckr6k
-         Wub/n0sxpwRBxsivjEfcG5LqWIN+3VsdVRl9cOmyDxBXi7GsQvU44CeO8BKn5vixGNK8
-         eC6hjIPs5HnTrujKu5DgMJiWIM/swuWsxCzO8amT21byvTChduEt0LXqX/pbMkGzfs5O
-         nCPtNW1g8SF7dv6feZXkeJ6cLsrIeG3NNFXbQETGhFm+JMVNecjof19lck04n0lMczI+
-         JsUMthW9TkiieWVtWAc6tCYEHTNrL+DtIDwkikU2nqi76UMhs+ellf5OPxzN6Vgq1YBA
-         xw7w==
-X-Gm-Message-State: AFq9FYK5OdJQhYNkmwITRsGQN/8VAj87G0c0A+XTEUoy6EYDHARZvulz
-	QXTjVRAmjTMJrXnnioYjWnAaXk9BsPsN9h6PKS15ExtwOqkt2A1TdTDTWPznuA==
-X-Gm-Gg: AYBFou3Xv/9aUxzeYHf7jRnOCX8Wf4NG/oN2Pe5LliuQhelXIiqMuOO559xz46j/3vY
-	c/WxdPD7na6iszrotFLFNWmzI6Dpse2F0M793uJ3OElhtE53txn6x+fYACEq7qjoQJqKSG5kqli
-	BWYiDa94j6D7NMPhNIVlc+BXtYZMKirlUpShC1F45bX54Kcy5npSJc5OYWyayN00b0TcXUwZNMo
-	0C0z3JM2jYBiH74gaZ+mrQi6w2rCz60QUwDYyJMGo7zupb8xluwnKa59pJOXwmYrBoe7WBqaZl3
-	Ns7oeyRqV+KZPEOwkmDABMVyvt/43hLw/UmY3R20BPznLLdgQJZc489RkcpyZAevCov7qyr9+tc
-	9rB5ATOjt/PDnYjnlX6vmTd07c8PLzF/0cbYjLKWbzJKPcvq+p3H/ZnP+70LAZycC6/liUwxCk6
-	Sy7qcmF6GP8criMOkHQV6/MnVFYnOcBCdb/X3Yg0FJClniCwCWq84NgNFKl0kqV729X/WLfePWV
-	9f1hK7CHH9c237GYGoHXpwDdxEK6QUUXRVebK46SA==
-X-Received: by 2002:a17:90b:380f:b0:3ac:a1c7:20fd with SMTP id 98e67ed59e1d1-3acee97ae24mr3038226a91.4.1792261934833;
-        Sat, 17 Oct 2026 11:32:14 -0700 (PDT)
+        bh=S4AuhXY4qjQvLP9ruucqYU6jZ+aotqdWoKHzCsIca7Q=;
+        b=VtMQcQyMFw/ZKI6+2/I2r8R9Xon5abEVm4DrNBhHABCZiR/z4gbBPiFCD9ew9OkR0i
+         6COGxGqr0EM/bxD9UuUQF9Ln/zDAGQ59nHsP/RSKD6RjQLjJIBI4S0SKm3Tv+4XEaAtJ
+         p0JUsYqDIpVklqVOncBNa4a6pjvP1JBoC85mwiAdWaJEYv6QSmizWvYQrXh5JY9hpedd
+         T1s7epUi0AxjQulVDOz3mtpv71fFV2lTO6rS+rfLVmjzdDH7Fx1ql8lKwnMjtNDWmhXj
+         hu8tS4i4UsS9j3en6VgcnN9VCofq2wuRdU20mEQDi2hzqHrpEjCh3niCVouP7wGXPHDR
+         xh8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792261938; x=1792866738;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=S4AuhXY4qjQvLP9ruucqYU6jZ+aotqdWoKHzCsIca7Q=;
+        b=21Rfa4LSJO2rt3rHiqS6K5CQht5BCmDkQhUXPknR7eSZqtgOKO18xtkgSJsrrCKdjA
+         Z9dRfRuqjjze9yywxPipRe3g+6E15L2F7XsQJ8IvQONtuqJbNxzMl+2BjM6u1YxgsGzx
+         56e9qMDvvvIxjIalvrqI0TXllQUGWkRo6ChowGDDBzr3nlCQxQN+Q35oqXhgP0aUdUnO
+         +9UeIa+tlhsVqrFQih97b8pqcSaFlEyJ02XKpCbktmj3FVvM/+ShjngIVssQ0AUhlWvj
+         Y0H/IPEU1/0NcdAC9GVJk6wmSskqGjN55ixdylcM4Jp91x5exJ/5xMi2zVTCQuhsf2EH
+         0NxA==
+X-Gm-Message-State: AFq9FYJ3C0DN1IwWs+fscksojFIkLr1w0lRbegZq4WqjFUWq/z0I5zw3
+	CWXuX9NW9keyEPz1NeaZ3xDpu6bYw09HxR8IokXoNIhUZLCSZ7xrxUbr66cfEg==
+X-Gm-Gg: AYBFou1Fbc4sELWEzf3t0EpmtbGx9L4eIbvjHz/5T62WrouramuIgqag3UF9BxHzhg8
+	xuG99s6VL3Sgc2YWzYxuaVQUSZrARlrJeyW1UfOvDnCiv3nPlwGPh/A4fcCzVI7yjKxgb+NHe1U
+	73OJgma1HyqbtlzLLQXrr1xqkw06QQZ5gpaOlILCtK0Y97DJKTGrkf4+LxWb1EkGbYq5Ba7I2rA
+	bfzbIn7EuhHr4CdBp5meun2dr0oDzA6NbK6c6kPZPd6PhNztQrpRT7g7r/wP0udFsIy9VXAkbXz
+	kx4ONWBHbaJCrqDWVd2pqv4Dg1KCE52jX2LM1mwRqrkVSGfFPkpEbGPsAh/QVpfPOXwXMIamiO+
+	x+xPZEXbAbjM+FzzblspNT8npX3yzLc7dqR61xXyMbGBVozHVw9s2duldVr+3Zz9qgjUMFUsyGj
+	o2lvBMeQH8lwUQ4KobgyFWZTqLO55CNs6mDQWFpVOuaJ02scYG4xPRiderU5ZLr9At9/FVLQzuO
+	blFm2ldwBJ/VANmumUEMAtE18u9Jm8=
+X-Received: by 2002:a17:90b:5111:b0:3aa:f4af:1e0f with SMTP id 98e67ed59e1d1-3acee292795mr3153738a91.8.1792261937551;
+        Sat, 17 Oct 2026 11:32:17 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ace34c8d9asm5634097a91.5.2026.10.17.11.32.13
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ace34c8d9asm5634097a91.5.2026.10.17.11.32.16
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 17 Oct 2026 11:32:14 -0700 (PDT)
+        Sat, 17 Oct 2026 11:32:16 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/3] layerindex: use raw strings for regular expressions
-Date: Sat, 17 Oct 2026 11:32:07 -0700
-Message-ID: <20261017183209.90930-1-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 2/3] tools: use raw strings for regular expressions
+Date: Sat, 17 Oct 2026 11:32:08 -0700
+Message-ID: <20261017183209.90930-2-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261017183209.90930-1-tim.orling@konsulko.com>
+References: <20261017183209.90930-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sat, 17 Oct 2026 18:32:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5040
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5041
 
-Fix the "invalid escape sequence" DeprecationWarnings reported by the
-test suite in models.py, utils.py and forms.py. Python 3.12 turns these
-into SyntaxWarnings and a future release will make them errors. The
-patterns themselves are unchanged.
+Fix the remaining "invalid escape sequence" warnings in the layerindex
+and rrs tools, which the test suite does not import. Python 3.12 turns
+these into SyntaxWarnings and a future release will make them errors.
+The resulting pattern strings are unchanged.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/forms.py  | 2 +-
- layerindex/models.py | 2 +-
- layerindex/utils.py  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ layerindex/tools/import_layer.py       | 2 +-
+ layerindex/tools/import_otherdistro.py | 6 +++---
+ rrs/tools/common.py                    | 4 ++--
+ rrs/tools/rrs_maintainer_history.py    | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/layerindex/forms.py b/layerindex/forms.py
-index b0ffc31..733adc2 100644
---- a/layerindex/forms.py
-+++ b/layerindex/forms.py
-@@ -136,7 +136,7 @@ class EditLayerForm(StyledModelForm):
-     def clean_summary(self):
-         # Compress whitespace and use only spaces
-         summary = self.cleaned_data['summary'].strip()
--        summary = re.sub('\s+', ' ', summary)
-+        summary = re.sub(r'\s+', ' ', summary)
-         return summary
+diff --git a/layerindex/tools/import_layer.py b/layerindex/tools/import_layer.py
+index 0b203c3..0547223 100755
+--- a/layerindex/tools/import_layer.py
++++ b/layerindex/tools/import_layer.py
+@@ -205,7 +205,7 @@ def get_layer_type_choices():
+     return (help_str, choices)
  
-     def clean_layer_type(self):
-diff --git a/layerindex/models.py b/layerindex/models.py
-index 1a2ec60..a72a72b 100644
---- a/layerindex/models.py
-+++ b/layerindex/models.py
-@@ -278,7 +278,7 @@ class LayerBranch(models.Model):
-             url = base_url.replace('%branch%', branchname)
-             if path:
-                 splitpath = path.split('/')
--                for match in re.findall('(%pathelement\[([0-9]*)(:[0-9]*)?\]%)', url):
-+                for match in re.findall(r'(%pathelement\[([0-9]*)(:[0-9]*)?\]%)', url):
-                     if match[1] == '':
-                         start = None
-                     else:
-diff --git a/layerindex/utils.py b/layerindex/utils.py
-index 6c0ad8f..7e7ebe4 100644
---- a/layerindex/utils.py
-+++ b/layerindex/utils.py
-@@ -528,7 +528,7 @@ def sanitise_html(html):
-     return soup.renderContents()
+ def main():
+-    valid_layer_name = re.compile('[-\w]+$')
++    valid_layer_name = re.compile(r'[-\w]+$')
  
- def squashspaces(string):
--    return re.sub("\s+", " ", string).strip()
-+    return re.sub(r"\s+", " ", string).strip()
+     parser = optparse.OptionParser(
+         usage = """
+diff --git a/layerindex/tools/import_otherdistro.py b/layerindex/tools/import_otherdistro.py
+index f6ee395..2a39fb4 100755
+--- a/layerindex/tools/import_otherdistro.py
++++ b/layerindex/tools/import_otherdistro.py
+@@ -52,8 +52,8 @@ def update_recipe_file(path, recipe, repodir, raiseexceptions=False):
+     # yes, yes, I know this is all crude as hell, but it gets the job done.
+     # At the end of the day we are scraping the spec file, we aren't trying to build it
  
- def sha256_file(ifn):
-     import hashlib
+-    pnum_re = re.compile('-p[\s]*([0-9]+)')
+-    configure_re = re.compile('[/%]configure\s')
++    pnum_re = re.compile(r'-p[\s]*([0-9]+)')
++    configure_re = re.compile(r'[/%]configure\s')
+ 
+     try:
+         logger.debug('Updating recipe %s' % path)
+@@ -294,7 +294,7 @@ def update_recipe_file(path, recipe, repodir, raiseexceptions=False):
+                     patchsplit = line.split()
+                     if '-P' in line:
+                         # Old style
+-                        patchid = re.search('-P[\s]*([0-9]+)', line)
++                        patchid = re.search(r'-P[\s]*([0-9]+)', line)
+                         if patchid:
+                             patchid = patchid.groups()[0]
+                         else:
+diff --git a/rrs/tools/common.py b/rrs/tools/common.py
+index 1ce5dd5..0cac1f7 100644
+--- a/rrs/tools/common.py
++++ b/rrs/tools/common.py
+@@ -146,7 +146,7 @@ def get_recipe_pv_without_srcpv(pv, uri_type):
+     sfx = ''
+ 
+     if uri_type == 'git':
+-        git_regex = re.compile("(?P<pfx>(v|r|))(?P<ver>((\d+[\.\-_]*)+))(?P<sfx>(\+|)(git|)(r|)(AUTOINC|)(\+|))(?P<rev>.*)")
++        git_regex = re.compile(r"(?P<pfx>(v|r|))(?P<ver>((\d+[\.\-_]*)+))(?P<sfx>(\+|)(git|)(r|)(AUTOINC|)(\+|))(?P<rev>.*)")
+         m = git_regex.match(pv)
+ 
+         if m:
+@@ -154,7 +154,7 @@ def get_recipe_pv_without_srcpv(pv, uri_type):
+             pfx = m.group('pfx')
+             sfx = m.group('sfx')
+     else:
+-        regex = re.compile("(?P<pfx>(v|r|))(?P<ver>((\w+[\.\-_]*)+))")
++        regex = re.compile(r"(?P<pfx>(v|r|))(?P<ver>((\w+[\.\-_]*)+))")
+         m = regex.match(pv)
+         if m:
+             pv = m.group('ver')
+diff --git a/rrs/tools/rrs_maintainer_history.py b/rrs/tools/rrs_maintainer_history.py
+index c509e5a..6465ac7 100755
+--- a/rrs/tools/rrs_maintainer_history.py
++++ b/rrs/tools/rrs_maintainer_history.py
+@@ -37,7 +37,7 @@ MAINTAINERS_INCLUDE_PATH = 'conf/distro/include/maintainers.inc'
+ """
+ def get_recipe_maintainer(line, logger):
+     import re
+-    regex = re.compile('^RECIPE_MAINTAINER[:_]pn-(?P<pn>.*)\s=\s"(?P<name>.+) <(?P<email>.*)>"$')
++    regex = re.compile(r'^RECIPE_MAINTAINER[:_]pn-(?P<pn>.*)\s=\s"(?P<name>.+) <(?P<email>.*)>"$')
+ 
+     match = regex.search(line)
+     if match:
 -- 
 2.56.0
 
