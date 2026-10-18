@@ -2,98 +2,145 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4B0CCF2C9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A11CCA490
 	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 21:42:03 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.22119.1792359718518376138
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.22117.1792359714042921418
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 18 Oct 2026 14:41:58 -0700
+ Sun, 18 Oct 2026 14:41:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=WWcz3Mty;
- spf=pass (domain: gmail.com, ip: 209.85.214.182, mailfrom: ticotimo@gmail.com)
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2e977109392so5847505ad.0
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 14:41:58 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=OCPlxoHn;
+ spf=pass (domain: gmail.com, ip: 209.85.214.179, mailfrom: ticotimo@gmail.com)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2e5378b281aso6125995ad.2
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 14:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792359718; x=1792964518; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=0Dnm33/EW1CwdgfXI1cCFr6AsYRPeXktA7UMS/jMkC0=;
-        b=WWcz3Mtyp7OK9yoLCVZrPflQeV2nwxz9ET1EMlsQXpBC7zN1AQSqT5WjYA95GlCDQn
-         /JZQ1dcLZdAA7968I51HtmCU88+faLd9yIWIaxGIDuI3QqGLZsBeKOd2QIGHC2zEixB+
-         Nd6Fg2pKr0bb5L9jawSrMYxOqeb3yZ5pBS5lLqIi6h71vcuDqthrLK4jgoOYlHvYNsIy
-         ww9PTwRBNNlzYoWcGwX9hrCsojOqhXGwfJSTGNPU0Nu2CvTpFXk/Ai2lhix5V3mGBezn
-         zxDLUFWHgXWQFKSu0DNExjt2uQM9opWpN7WktoDkPq03OiCcA426CAwFmPBFDA+dtgvs
-         /5lQ==
+        d=gmail.com; s=20251104; t=1792359713; x=1792964513; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=tlLrlVlVZ1thgL2Xgu3A53UCQqd0dZurlOyqCp5cT10=;
+        b=OCPlxoHnWxuwZvCF5MD89YRAM0JYC3K1fpbnNcMBhHm+q/2JwdiTpL1MEnm6VMawzq
+         ZjGPu8Nr70141UiTMeJ9JQuxCpHhhaumaIJ5bYwdjCGUjxdc3mIHPPz/pPOPBDb/g+bO
+         k+BILxQV6tL5lrkdZ5RA9Td1FsMP3M3J+MfHfcaXRY8bquMPUS9gXGfbq7SzdB2D843O
+         +g4Pgej+yn4d8Rvigy0fsxFghTqiPQFV8AwA+VsK06gtlH8Fr0sxtRD0GglZzxUL1e6j
+         5vX/ffDNDVGXXk5BjdNVdQCLb4xaz3WbybPF3Q/fvBB1wIOt14b5ZBZvqJZSCKYgGPBo
+         QYUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792359718; x=1792964518;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0Dnm33/EW1CwdgfXI1cCFr6AsYRPeXktA7UMS/jMkC0=;
-        b=VcyRheAsaQmPdBKN2kou4emAmeoLxN95PMs8vDOpNZSwp/D0fA561y4qH9SAwZ5u6g
-         H04Yf5Qt7ei50vni54j7lkO0V0KqUtBukEYl9hZJ1vViAI//hgrwihLQ0jpW/UgAkneV
-         D2Epqr9iYrjiY3PAHq9NaRVLDX2aOY9gs42mUNkis83Vk4QD5VA3IkNO/pc13Qyx/CaQ
-         09bAS6WnSA3vvlNRx4SvNquO2FWMiyW3sEmzAblNP8NOsnYw31wyP1tGvpOZo4Madngl
-         3NYEVx+Peh1CJyQF2JWZwBijZoQ7ZrI0S6ASZItUnQ2TbcfWDuUzk1o6ziSI7DeHFzCd
-         hkIg==
-X-Gm-Message-State: AFq9FYKXZcIZ/kCl1+wHhTZFxdNG/vQVCi7ajxjmmTmHHD+U7B2cZTf+
-	olMQaLpmoxhaLFk0EipizFR9SLW6YPeCL0lByif0/Y6LsuDI77Hgq5Xoh9UbJYVP
-X-Gm-Gg: AYBFou1irHVvlqQKNaMR4oPMX+lNg6zR2Yk1D79kEFw+k06jP9z93bM5wpKji0flkDY
-	1feZGTP4s8JP2J7aZM0LlB0W3Q0qIQLln9aKWSo4Fl4TOID+VYVoqc1kiOcWb0Vl7Z9As4TI47b
-	d0lcNlLaLy0MZiHfvoqg7OFACYprPhMC9Qc7Pb6Q04MsYmbnN1gEZ6J6YFYghA3sFTbT7gayc1n
-	LKu82NV3Cv7KyGq1v8LLqOH88CxL9BtELCNQShoM1NUUwoaAuofxE5H+MsI1o0u8yJeGYNMoIbI
-	CybhKI57dTHkoDGq9MwYF0bT/tMJSuWINKUd2Dgsz3oDYYw4kQUUU1BdDyQcf0+7UVxS0V3g8F7
-	tAL8CkFIey6PGirHhDNEz94lXtPBGxQjhY6ACvdWrYQobb6FEaleWXogozB34jFnbghZFeOHFcI
-	b0YuGsaOJdbLbbJWGddIRD3Q/s/X9UcqvCiHG4vIz+rmlBUhzdhff4l1h2v68MVvOrw7iLWPwag
-	UqV67q0T88ODw671KeD331FeTrMNxZFdv+478BTXA==
-X-Received: by 2002:a17:902:f543:b0:2e2:dd98:59e8 with SMTP id d9443c01a7336-2e9a6834bd3mr47578285ad.3.1792359717825;
-        Sun, 18 Oct 2026 14:41:57 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1792359713; x=1792964513;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=tlLrlVlVZ1thgL2Xgu3A53UCQqd0dZurlOyqCp5cT10=;
+        b=DbiIS/CNhcscRbgRzXLB2La3uvxqSeEDIBTZSbIrBbpjyP4bbNqD1zsLTkKnmGoIxO
+         kzgce+Sw/H5pdq+oIKoJ7sPQnLGQ8y9Xy8c9vW1DqBzjeMG7ofXiJGXLoRY8NUa6hUWm
+         nG7h9fvjei5+baGnSWI+A/1QkAIb0OR8sdD3ATNrUZznz87pryg+QAREmEldOjkFp2rS
+         310ImGV8KKKqrUD/3XoRf3WRCJrVkBmNuudYd1FtMbHYjjah4NsCfuQk2ooNLmITiEL+
+         uSO9FrzfP8TvReYAIV2eyR/DZUNa+OtLuDZYBZh/WC1LBFOHI3MEJVCatpoD1ca+MAIA
+         436A==
+X-Gm-Message-State: AFq9FYJrie8ltudVgYfB66nJZM4ER6ydkVSzJJEpTIpi9DDYUVwCypfi
+	wV+ML4xNEDpqUmiyp76xisOrsnEgva/EuTWzUyPz7NESCPquEQ5zjzHDI8Bb7w==
+X-Gm-Gg: AYBFou3tFnVm2Dksyt04WQ/gCpvFJc16FWa/GxAN93ZyAyPscCQnl8R+ht3H8ME6MsP
+	E5E/10/PzeTd4lWZ3qnOIchgf2lkQerJN38IgJeDPnRGDq5V6cop6kMGzWRUMjjVcKoYON4SfMH
+	9cBUSndKGUl+gYmHJAt+3bP05i5mv/8t5Xo1/0lq/zXFOR6574fwPcvWmijAnlY3m8xnh95PvL8
+	zUEY3GwmOneCaGPZbAdtnIfLYPFoMdcpydylGS+7/JSxMFzFHhNb3WeBjs9k5T3I7aVLL6VT5vz
+	V5/PFKasPrGeA+ZtHs+gsMYNUw5wo7deIWzMGzRVMj8Ja+m4cUYtVRQB0Kz1T3s59zuyE27ddTR
+	X7/ZrOm8v2maofgKju/yehWGl0CsCpfU0rADQzaf53VhNyMkjbSj1RARLskOLftdPgBfv5o6GZ5
+	FNmj+ngJmdWfCgaGIZZscyKIc9d3nyDB9/zZHZ0RL/yLgowccSH/2a7tc3Q5owx0YqtlENuBMe7
+	6YRX8BBNdRk3dslGAnn7OfSTucupok=
+X-Received: by 2002:a17:90b:5111:b0:3aa:f4af:1e0f with SMTP id 98e67ed59e1d1-3acee292795mr5641318a91.8.1792359713261;
+        Sun, 18 Oct 2026 14:41:53 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e9d3fa9ffdsm9004155ad.58.2026.10.18.14.41.55
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e9d3fa9ffdsm9004155ad.58.2026.10.18.14.41.51
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 18 Oct 2026 14:41:55 -0700 (PDT)
+        Sun, 18 Oct 2026 14:41:52 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/4] docker/settings.py: don't enable DEBUG when DEBUG=0
-Date: Sun, 18 Oct 2026 14:41:43 -0700
-Message-ID: <20261018214146.67856-2-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 0/4] Docker: environment files for dev, staging and production
+Date: Sun, 18 Oct 2026 14:41:42 -0700
+Message-ID: <20261018214146.67856-1-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261018214146.67856-1-tim.orling@konsulko.com>
-References: <20261018214146.67856-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 21:42:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5073
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5072
 
-os.getenv() returns a string, and any non-empty string is true, so
-DEBUG=0 (or DEBUG=False) turned debug mode on, exposing tracebacks and
-settings on error pages. Only enable it for 1, true or yes.
+This series moves the Docker container settings out of
+docker-compose.yml into tracked .env.<context>.<service> files and adds
+staging and production compose setups, with two fixes found on the way.
 
-AI-Generated: Claude Opus 5.5
-Signed-off-by: Tim Orling <tim.orling@konsulko.com>
----
- docker/settings.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 1 stops DEBUG=0 from enabling Django's debug mode: any non-empty
+value used to count as true.
 
-diff --git a/docker/settings.py b/docker/settings.py
-index 90bc5f4..c33731c 100644
---- a/docker/settings.py
-+++ b/docker/settings.py
-@@ -7,7 +7,7 @@
- 
- import os
- 
--DEBUG = os.getenv('DEBUG', False)
-+DEBUG = os.getenv('DEBUG', '0').lower() in ('1', 'true', 'yes')
- 
- ADMINS = (
-     # ('Your Name', 'your_email@example.com'),
+Patch 2 makes nginx send X-Forwarded-Proto, which docker/settings.py
+already trusts. Without it Django treated HTTPS requests as plain HTTP,
+which is also what caused the 403 on login on a non-default HTTPS port
+[YOCTO #15329].
+
+Patch 3 lets DATABASE_PORT and STATIC_ROOT be set from the environment
+and adds ENABLE_RRS to turn on the Recipe Reporting System.
+
+Patch 4 adds the env files and the staging and production setups. The
+secrets in the staging and production files are commented out, so
+nothing starts with a known password; the real values belong in a local
+commit on the server. dockersetup.py now writes the secrets it generates
+to untracked .env.local.* files instead of editing docker-compose.yml.
+Installations set up with dockersetup.py before this keep their secrets
+in docker-compose.yml and need them carried over once; the README
+change in the documentation series that follows describes how.
+
+Tested with docker/run-tests.sh (the full suite, including
+tests/test_update.py) and on a test deployment.
+
+Tim Orling (4):
+  docker/settings.py: don't enable DEBUG when DEBUG=0
+  docker: set X-Forwarded-Proto in the nginx configs
+  docker/settings.py: read more settings from the environment
+  Add staging and production docker-compose setups with env files
+
+ .dockerignore              |   1 +
+ .env.dev.app               |  14 +++++
+ .env.dev.celery            |  14 +++++
+ .env.dev.db                |   3 +
+ .env.dev.rabbit            |   3 +
+ .env.prod.app              |  15 +++++
+ .env.prod.celery           |  15 +++++
+ .env.prod.db               |   4 ++
+ .env.prod.rabbit           |   4 ++
+ .env.staging.app           |  15 +++++
+ .env.staging.celery        |  15 +++++
+ .env.staging.db            |   4 ++
+ .env.staging.rabbit        |   4 ++
+ .gitignore                 |   2 +
+ README                     |  23 +++++++-
+ docker-compose.prod.yml    |  74 +++++++++++++++++++++++++
+ docker-compose.staging.yml |  74 +++++++++++++++++++++++++
+ docker-compose.yml         |  42 +++-----------
+ docker/nginx-ssl.conf      |   2 +
+ docker/nginx.conf          |   1 +
+ docker/settings.py         |   9 ++-
+ dockersetup.py             | 111 +++++++++++++++++--------------------
+ 22 files changed, 350 insertions(+), 99 deletions(-)
+ create mode 100644 .env.dev.app
+ create mode 100644 .env.dev.celery
+ create mode 100644 .env.dev.db
+ create mode 100644 .env.dev.rabbit
+ create mode 100644 .env.prod.app
+ create mode 100644 .env.prod.celery
+ create mode 100644 .env.prod.db
+ create mode 100644 .env.prod.rabbit
+ create mode 100644 .env.staging.app
+ create mode 100644 .env.staging.celery
+ create mode 100644 .env.staging.db
+ create mode 100644 .env.staging.rabbit
+ create mode 100644 docker-compose.prod.yml
+ create mode 100644 docker-compose.staging.yml
+
+
+base-commit: e6040597ae0f614581de241fe78f20e34dae13ac
 -- 
 2.56.0
 
