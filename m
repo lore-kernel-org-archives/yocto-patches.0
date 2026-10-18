@@ -2,64 +2,64 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3DFCCF2C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B774CCF2CA
 	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 22:03:23 +0000 (UTC)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.22601.1792361002960216671
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.22492.1792360996382884508
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 18 Oct 2026 15:03:23 -0700
+ Sun, 18 Oct 2026 15:03:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=c3/IJ0aI;
- spf=pass (domain: gmail.com, ip: 209.85.215.181, mailfrom: ticotimo@gmail.com)
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cc1c9879395so374530a12.1
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:22 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=X+YzwMRO;
+ spf=pass (domain: gmail.com, ip: 209.85.216.50, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3acb512a7a0so786388a91.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792361002; x=1792965802; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792360996; x=1792965796; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=E00g/+ktgwy4cYs2PVXOK5U1XB5HLNEyGiyt0z8ZZzE=;
-        b=c3/IJ0aIh5THanp2ZP0CsxZmDL35fEK9e5ZZdZdrE0fmerRdAxYvUn+8EqujxNr1+t
-         0TRFrpfTV+lbbMBlpB0kqF2L6r3cDqZrMsheptDkryuyr1uN7O2I3LV4ZIx5FsYVfPuR
-         /l6yqpew1nlqn4394+agB1WYsR/VGCuc9UPWkXtKF2UOnOD112o0klcH/NocS6OhNXnW
-         GIV31eFfuqmEiOby81Y/7URxgP1IInA0wct1ltnJAghD+pVM8tRPVh07Uzl1C4Z6Fcy2
-         QqeA037QQsnXXWyI5inSYOLzGOo7lc6qEzho66gvx4eE4aQnTv1CM8P5ihzEtESZp6NT
-         MgfQ==
+        bh=KNKy+tLo2s9D1hKO6VHKcLRCazYnLZDBzyIWFP/lrj8=;
+        b=X+YzwMROjTNaOYaNVDKj65L/XQj1rRYcnomg4a7tQVyadpVHLZ9ZuzCxQaMiSwCBwY
+         PfoDicj1H4jqkGWPfUgVe9FTXOZqxkDSvShgUOOiq8ejq8NWrqYF6i32I2x9aS7Ssoci
+         74KX1HjbHD94beEheMvxMhjG8V/7wc6xS6Zp0Dv/e8PBS5wdkikHW0b12m0d6sCte6oI
+         iriIiSV1yHk3x/TfG7+GfLcNa4su9f5ut+Qr6cm0oI/Fm3807FjuS+8hIcsZyiZsJsnb
+         Ja5JJAWmPpU7JyOa7rAj5nGiF38roAr1kGwlj8NFva7cuKTUtYkM/o7TSV1gOnc1FN87
+         dvtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792361002; x=1792965802;
+        d=1e100.net; s=20260707; t=1792360996; x=1792965796;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=E00g/+ktgwy4cYs2PVXOK5U1XB5HLNEyGiyt0z8ZZzE=;
-        b=eFmC/y8iE1Puq216H6qX7oMK+6iWp5YBPrki72N1dndQUWAp2RAoAypKboQhMos6YY
-         yodMNgJS2eYBgb/Oozhy8248fFngnmVcqKxgFsmayUypc6Wo3VYeBA/pJPTyxUamDFCy
-         jOCfKYk1yTHTxW1Zxc2C858wvq9xtCDKqn46agZLVH3EIy+Tk9GEL1SX1/pxBO5IWgHn
-         iI2nm4Bv/o7YeuGskWoHEZWYk1IwP87FND/qTvOSR2fVQC69qxwBhvze/QtJyvHK58FH
-         TUSlYk/+8pf+uAD6aGf19zoVmiDFTapbjaCSgUahDnqb5MrxxfsusY5wNAEQ/KIiw9zN
-         q3Cw==
-X-Gm-Message-State: AFq9FYL1imQ77wcUlMbd+8vN+NFEf57TO/WL2ZnR6kgEQWMQNEUN1/f5
-	lc8XwIvgkr6EK2tMqPyaou5c5boGDAqQ3TmGD7VMosO9ZoGjENA5+e0vHy/c/EK+
-X-Gm-Gg: AYBFou1PFRFaDnMS/6O0cJwM5uemXlP/da5eGWtiMxMg/5TIwJMEvfhG4OFqQPby2if
-	DtezIGRY/q9IT8PYdasFn4QohmpgKlJ4QOKhA25PWjnLbwk9+uCHVxfQ9+if70HL1gT5ibEnElD
-	tLJpSlk8iBYoBZPOPXZDDTd+h1MQkKz5bhKM/eLsjLJdoPeAhNHpgFlpIh3SHkeYJqoZarkYfDQ
-	0zXZ72CBS/XDHWIipMJthbO+gGVR6+6BIEoijr1Stq1i0QE0JjtCRCI5fkIqeGytx9tDI0hh4fI
-	pJkSiZ7a8fLrBBh1cyqWX7kz6vac3pYB1qKZWoI/UH9bJ8EIFnLXGkQzaYORjkEK4WF7A0liwAK
-	iMOKNJ2liXPu0sFQZf77CMek3gK14+bkdB1/n7nKeK8ne1+DmFU1THmB0BA4L/GTefOIckOkbUk
-	/eWWb2WFAfN9p4ci7FauDbVWRqqIRAP1/uCk5wGtWOyH5KYwwUqlN64cOAnsWlfV0WjNnl0oUqW
-	3hI3XU6HIblES2K8jWP+nPfVs+u21U=
-X-Received: by 2002:a17:90b:4fc8:b0:3a8:1943:cb7a with SMTP id 98e67ed59e1d1-3aceefc4effmr4790916a91.18.1792361002242;
-        Sun, 18 Oct 2026 15:03:22 -0700 (PDT)
+        bh=KNKy+tLo2s9D1hKO6VHKcLRCazYnLZDBzyIWFP/lrj8=;
+        b=ZTRjhWfvZormxoSWNICqLrvCMm/+WIazXe1R+7/kYNRVzX2kl90cJxvwG7h9gcBR6I
+         eKUfubsIBtnzYjhJyu4jK1GufOVdmwKQzv9MVIHpYRFi+wOWcDYnjCDGLp+MI3udms3G
+         cpusDyf83TIKO/+XSK9Bqfy7GqfrynH5gzIJgikqDmMcj+KTC6BN4KpJDdOVgVXRpHtj
+         arfQakSBn/4lf3NidpIbG12w+yIhkLQKJBFGFmlMV2L4kV4LvK3jM8pSrwCXLADGsWsO
+         apAhnjzuKY0p1OdMOKx4NQmTxnbD8nwSbvHs1vFnKRV9+U+xOybPjT2y5UbFkJ5TNMcE
+         reIQ==
+X-Gm-Message-State: AFq9FYJsupacS/y4LJGml8DwUh+p3hiZ2iOfsrNrCkFNTSATVI84r3fy
+	FVga0PV/R9RJKqn2kFLQKJz/5RthYgR3N+OTWa4Zdl75AL70s8yBvtnuZRoODB91
+X-Gm-Gg: AYBFou31ltvQXmrJbn0v4GbPwxxhU1FJyYERhElBTf9HaqZ7nWZEm6BhLtQW/ulO1fX
+	bbtzrtlHijxwrplv2hu3CrE5i58A0uDJRk0J7ddJk+VF3yvUr6Gl6HavNQn8NR1Wao31qKafJLj
+	0Jt4Y+WXhbLzyD6mDHVWebFis7pRyDmQX18kXlVYWLmUT9/sLw4OfQgnRf+0yKhrw2sWS08sRhe
+	Uz/m1hNroaAXe7a/vQbMiQQYs+bVmkFGFRpiqKKkRgkSpLqy5FVSxHei9bVkXJUuziEQFrCeMZ4
+	fn1idFU5wNFaCl+2N68bGHCJfl8ZrP0h+UJCbuqnpLs//A6ZA/SnbPFDAMQSGBaUS+EVVYEh+iv
+	44UuWT0RwLHxwjVaVo6yhKpXN8vIpphTdScnw3y8RzT2JRh54Dq3eZLiE02HVU4PDVmpxwjysVC
+	qsTeO9FvoSUQv9IyWU914JYFv+j7CQ2kwhh2TPMUhtxv9XHtzLl+iAZzxlERNicO5WtnTJKS7fP
+	WqgXzTqBesJqbxZOqnjwPOf5USJx9QVJfn18TlG1Q==
+X-Received: by 2002:a17:90b:164c:b0:3ac:e6a:1b27 with SMTP id 98e67ed59e1d1-3acef29e770mr4582148a91.42.1792360995698;
+        Sun, 18 Oct 2026 15:03:15 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.21
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.14
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 18 Oct 2026 15:03:21 -0700 (PDT)
+        Sun, 18 Oct 2026 15:03:14 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 04/10] docker/README: remove
-Date: Sun, 18 Oct 2026 15:03:02 -0700
-Message-ID: <20261018220308.72731-5-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 01/10] README.devel: document running the tests; update requirements
+Date: Sun, 18 Oct 2026 15:02:59 -0700
+Message-ID: <20261018220308.72731-2-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261018220308.72731-1-tim.orling@konsulko.com>
 References: <20261018220308.72731-1-tim.orling@konsulko.com>
@@ -69,77 +69,108 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 22:03:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5086
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5083
 
-It has not been updated since 2018 and is superseded by the "Docker
-Setup" section of the main README. It still describes a setup.py script,
-an internal Intel clone URL and branch, and an Intel proxy.
+Add a "Running the tests" section covering docker/run-tests.sh (the
+only way to run tests/test_update.py), running the other tests against
+a local database, tests/test_dockersetup.py, and what the CI and Safety
+workflows run.
+
+The requirements still listed Python 3.6+ and Django 3.2; Django 5.2
+needs Python 3.10 or later. The SMTP test server instructions used
+python3 -m smtpd, which was removed in Python 3.12; use Django's console
+email backend instead, which needs nothing extra.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- docker/README | 52 ---------------------------------------------------
- 1 file changed, 52 deletions(-)
- delete mode 100644 docker/README
+ README.devel | 56 ++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 43 insertions(+), 13 deletions(-)
 
-diff --git a/docker/README b/docker/README
-deleted file mode 100644
-index 86348a1..0000000
---- a/docker/README
-+++ /dev/null
-@@ -1,52 +0,0 @@
--Layerindex Docker Setup Instructions
--
--The script setup.py will set up and configure a cluster of 5 docker containers:
--
--  - layersapp: the application
--  - layersdb: the database
--  - layersweb: NGINX web server (as a proxy and for serving static content)
--  - layerscelery: Celery (for running background jobs)
--  - layersrabbit: RabbitMQ (required by Celery)
--
--The script will edit all necessary configuration files, build and launch all containers, and do the initial database setup. It is advised that you start with a .sql database file to prepopulate your database. The following instructions will walk you through the setup.  
--
--1) Install docker and docker-compose per instructions: 
-- 	https://docs.docker.com/compose/install/ 
--	** Note: for latest docker-compose version follow the directions above, rather than using apt. 
--
--2) Clone the repo and checkout appropriate branch:
-- 	git clone https://github.intel.com/peggleto/layerindex-web.git
-- 	git checkout origin/dev_snapshot
--
--2) Run the setup script (dockerstup.py). You can optionally supply your hostname, proxy settings, a sql database file of layer mappings to import, and a host to container port mapping. For more information, run: 
-- 	./dockersetup.py -h 
--
--	Example command to run containers with a proxy and with a database to import:
-- 	./dockersetup.py -d ~/databasedump.sql -p http://proxy-chain.intel.com:911 
--
-- 	During the setup you will be asked for a username, email and password to set up a super user for the database. This will allow you to access the database later, should you need to. 
--
--3) Once the script completes, open a web browser and navigate to <hostname>:<mapped_port>/layerindex. If you haven't supplied hostname and/or port mapping, this will by default be localhost:8080. 
--
--4) If you have chosen to not supply a prepopulated database and are instead starting fresh, you should now
--follow the instructions in the "Database Setup" section of the main README.
--
--5) If you need to rerun this script for any reason a second time, make sure to tear the containers down first with docker-compose down. Otherwise, your new automatically generated root database password will not match.
--
--6) To update the layers in the future, you can optionally do the following: 
--
--	Run the layer updates
--	docker-compose run --rm layersapp /opt/layerindex/layerindex/update.py
--
--	Or do a full refresh
--	docker-compose run --rm layersapp /opt/layerindex/layerindex/update.py -r
--
--
--TROUBLESHOOTING:
--
--- Network issues behind a proxy when building container: On some Ubuntu systems, /etc/resolv.conf is set to 127.0.0.x, rather than your local DNS server. Docker will look there for your DNS server, and when it fails to find it it will default to using a public one (frequently 8.8.8.8). Many corporate proxies blocks public DNS servers, so you will need to manually supply the DNS server to docker using /etc/docker/daemon.json:
--	{"dns": ["xx.xx.xx.xx] }
--
--
--
--
+diff --git a/README.devel b/README.devel
+index de370e5..31460ef 100644
+--- a/README.devel
++++ b/README.devel
+@@ -7,9 +7,9 @@ covered in the main README.
+ 
+ In order to run this application standalone, you will need:
+ 
+-* Python 3.6+
+-* Django 3.2.x (not compatible with 3.0 or older)
+-* RabbitMQ 3.8.x
++* Python 3.10+
++* Django 5.2 LTS, as pinned in requirements.txt
++* RabbitMQ
+ * For production usage, a web server set up to host Django applications
+   (not needed for local-only testing/development)
+ * A database system supported by Django (SQLite, MariaDB/MySQL, etc.).
+@@ -22,8 +22,8 @@ In order to run this application standalone, you will need:
+   have to have Django installed, have the same or similar configuration
+   in settings.py and have access to the database used by the web
+   application):
+-  * Python 3.5+ to match with the version of BitBake
+-    for the OpenEmbedded branch being parsed
++  * A Python version supported both by Django and by the BitBake of
++    the OpenEmbedded branches being parsed
+   * Python dependencies as per requirements.txt (we still need Django
+     etc. here since we interact with the database through Django's ORM.)
+ 
+@@ -128,17 +128,47 @@ SMTP test server
+ ----------------
+ 
+ If you want to test email functionality (e.g. for password reset, layer
+-submission or other notifications) you can do so without dealing with actual
+-emails being sent by running python's built-in SMTP test server (in a
+-separate shell session):
++submission or other notifications) without sending real emails, set Django's
++console email backend in settings.py:
+ 
+-python3 -m smtpd -n -c DebuggingServer localhost:1025
++EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ 
+-This will stay running and print out any email that is sent to it. All you
+-need to do then is edit settings.py and set it to point to the server:
++Every email is then printed to the console running the server (or the Celery
++worker, for emails sent from background tasks) instead of being sent.
+ 
+-EMAIL_HOST = 'localhost'
+-EMAIL_PORT = 1025
++
++Running the tests
++-----------------
++
++The tests use pytest and pytest-django, which are not in requirements.txt:
++
++    pip install pytest pytest-django
++
++To run the full suite as CI does, in the Docker image against a throwaway
++MariaDB container, run this from the top of the source tree:
++
++    docker/run-tests.sh
++
++This is the only way to run tests/test_update.py, which fetches
++openembedded-core, meta-layerindex-test and BitBake from the network and runs
++the update scripts (BitBake only runs on Linux).
++
++To run the other tests directly, set SECRET_KEY in settings.py and point it
++at a MariaDB/MySQL server where your database user may create databases
++(pytest-django creates and removes a test_<name> database), then run:
++
++    pytest --ignore=tests/test_update.py tests/
++
++tests/test_dockersetup.py tests the files dockersetup.py writes. It needs only
++pytest and PyYAML, and is skipped inside the Docker image:
++
++    python3 -m pytest tests/test_dockersetup.py
++
++On GitHub, .github/workflows/ci.yml runs docker/run-tests.sh and
++tests/test_dockersetup.py for pushes to master and master-next and for pull
++requests to master. .github/workflows/safety.yml scans the packages
++installed in the Docker image for known vulnerabilities on each push and
++weekly, if the repository has a SAFETY_API_KEY secret.
+ 
+ 
+ 
 -- 
 2.56.0
 
