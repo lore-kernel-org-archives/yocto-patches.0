@@ -2,64 +2,64 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4C3CCA490
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB56FCCF2C4
 	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 22:03:43 +0000 (UTC)
 Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.22528.1792361014741398185
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.22624.1792361018642726266
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 18 Oct 2026 15:03:34 -0700
+ Sun, 18 Oct 2026 15:03:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=NputjcU2;
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=l8JoYwhN;
  spf=pass (domain: gmail.com, ip: 209.85.216.42, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3ac6794fe45so1267321a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:34 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3ac6794fe45so1267335a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792361014; x=1792965814; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792361018; x=1792965818; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=3imi8wcbzPfsOeZnt2hFIRAbxNtFiuhb0dG1ZSpHnyQ=;
-        b=NputjcU2SFBScSycSeNXSoS/HSkZYGmXHrvGI15y4nTH0BvOCNLcJ8m0vDxTCbVt7q
-         hc0wfWD5+C5Hrtu/hjsxCODyt7wswpWerhMX/g6VrSyCN4ZnBj8LOk9x5AvP8R7O9zn8
-         Mj5ijn1+c/tBUq7c78WMY3r9zF1PvQMTHbp+tgkB13xRuBCgVFxvT34MuYYyfH4LxQR7
-         OukVK/YYC/I892GCTSEEYF2On7MVKm8HmzCkaJ969j/kug3YxmDkmf6tmhspGOdIt/ut
-         oJKv5zMrXqzWJ5fsQdB8mNnGpSUvUOfLz0nIO0ymRvZzybRMjuqr3n/P9ZS3NHuvPyl9
-         hveA==
+        bh=1dCUqZxHM9wIKo/TMeLgyvZ/EkqtlILk+rliCBRQVvg=;
+        b=l8JoYwhNGNxIXnRESyRzswQim8LuRhIXDjvPcrjN41U8JjrgMoffXitNPp+6jm4BOL
+         gGOAOQNBy/sVoelXG4b6RdbY6pyyGm4AAw6LXUX+vF3EeVRq4LCKLk9m3wrROKCv+TVW
+         atbc5tin8Wp5eexjnfQq4iSQuyN5rUpK9RBbUQCCev1Ac1rYn/CNvSljBh97UVQ9NDf6
+         6T/omT811ZdhWdD8JqQ35fP3yUsacFzCI8GkGo1sS70nbtWD2pLuFxdYL2zexEiOSknG
+         Wm8GzT5ryogq7CN/+lj+3tTeZRh+WEKXr1Gq4WvRpqU5lBGddZyoZX56YSnvrbAS+Nst
+         Dssw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792361014; x=1792965814;
+        d=1e100.net; s=20260707; t=1792361018; x=1792965818;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3imi8wcbzPfsOeZnt2hFIRAbxNtFiuhb0dG1ZSpHnyQ=;
-        b=Dt3MZxXgtPy71h7zRu0oU98+23AyeZJa/xL5tgQUdJIj9gCEFoAQja3uxTeBi+M+Yq
-         v8w6wGiwUSQT04oPmezRr1YCGUoJRrKYjxQAtNSpWL17xY+4W8zrS8i/V1jP88bPwi5f
-         CFGFq8GGwwLgGJylH83exyPHqj58dHV7wV7WDiwHkGy4VvKKcBIPzL/dMq13o6ZOuSCc
-         ayW2AWV1ZcDRWH8FNNOJz2l2eaC2P+K2VyLy7fR3EW+s8bi6yYfPF66VRPQgbNq/ts09
-         BfQT0ef8v2ifo1QnZJuhtVjmP4S9D8uwEEiCPPvvs0nBCWwID0LnJ8i0/k/2ssQjFBqH
-         0/Tw==
-X-Gm-Message-State: AFq9FYLFA1AVefIBNWLrBHicpWPgRJO8GnOBUGxrQ19+un7b9gW1wZe5
-	UPYgGsvWg1V72Q+VB0vQ3+oyoQNvpjFehzhe+Xe5iwbJhZw9o0yVTvVD8TB9lg==
-X-Gm-Gg: AYBFou3xOSxwCj/47k9v/3rusfPooGONs9ONw6XeWZK62RER89ZBE9quSGL7S3K4nu4
-	cdkKgwymhlT6bnSWCA9nVs1d7dvOhI4uLuiGqT4Tl8d/ihIIYXl13j/jcu0QhZG+ruNGi9CBPR9
-	KHirE85vEUdIRz/iYa+JvBpFPM8beAjQIaqKqosSTj99DSsN/GPn2ZipGqmm9xB/tuLAQVJMKRh
-	jGIViQhAhtYSGb7EYCsoPDr6jtaimPbQR5BddYOI1VNV8T1VYP6UE7llf33CPxmcb+k4+EG20P9
-	P/a2OZGfmJNTn+JH9/AB2hfu4Ctne7HYyInOn0MWFxD2CY/Z2LHjupnvF/wKR33FJZYGHlUjXPa
-	sO/2w0akAH81OGTmh5rhjVpAv4BCRzXVFlHybp3ZvXVTEM2mA0B6xf/UktroH9JGdS0VH/AvrLX
-	BBLis2ySKwttDj//QHtF+53GI8/oS+knIUige/WwcqHM6vEANMtWgzI0ViukN0SK9VM4fDY0Ubn
-	4QMtajvlHplGI/F6wwXUsLbElAiDwo=
-X-Received: by 2002:a17:90a:e7ca:b0:3a8:878:ebab with SMTP id 98e67ed59e1d1-3acef0c8905mr5377809a91.35.1792361014026;
-        Sun, 18 Oct 2026 15:03:34 -0700 (PDT)
+        bh=1dCUqZxHM9wIKo/TMeLgyvZ/EkqtlILk+rliCBRQVvg=;
+        b=cgJ2yHQz3Qz1FohuQrdC6EHEVhp9StDI4uMLHmkMYeqalld/5AGFcjFpHD8wcZBu4j
+         Cg1W1MWpxgaWiWnD/b7rnykMc9BN20+UPbch7X1ahVNXqyF5u8CbKrHHP0hXI8/dDp7i
+         Zcq9BlaOeu4MOI/DPVPuXUbSMMsOPal9HAPTNNkWj7fPhGHGpxV7uf+IKslrz2NqmK8R
+         4nL3Sm3boYeWAqiYStXCj5AdOdeQfdALEcNul5K0gGdr+iMYvk+jGQmYb3+zcnzLeS7I
+         2z0qfuq49PDhAXePRtcKcniR8gG8cnfG2+ecsXJdLYaudiLOY52x0z6h2eSCAEe8T8ql
+         ioyQ==
+X-Gm-Message-State: AFq9FYJTvJDe9Se9DWMMbfJo0h6HtqU+OD4xb0Tn5rw8pCVH95cTjB+p
+	u+1wz5uLvOGHLGpy6XdiHXMGB5ipm2FfgNiY2nhvTjs4Nwz3lkx93V80lwUa9Vj1
+X-Gm-Gg: AYBFou3fbpdCoJ3g0zT5Shj6NKajGLvuKOtKMnbnugry+G6pjmk/B/clWQl80Bhc8Yg
+	6t3yW6PDem63uo0E7/+1ZZXvjQtUKHo24qClItV5i/bE8QGbOZF5ZWUFfv1+idxqwN0fYTmWqjw
+	OkLvQ5X4Wg4huCauXaEi9sF0OS/XKMz8soGIhnFv0p7Jk4vQM+TkNaF5sOvMyiIe6uSGo37HqCb
+	7G1rs9n3qzX6r5mY5vGFeVZQXZEoHz9skdnlKhujKuizDXiDsABa/D2XWVw53gaLWoVxt3W0N5Y
+	X9SkMvgYg7Dt6UmSri7wK0aWk8rrGtuekkLVret9mMawQQyBhgVIsbUT4zaCcSldBCkQVSQGcDd
+	cP7yg1sd0VAiiIAcM+9zf0KNJIsQp3zdCqCLN/mI1mEUSb9aqxgoZxfEjGFZN/CgKF8euTgC1fa
+	XvWfWomMhxssIpAXDBNdswDl2Q1e5CWizpbZjqux6D7wy5LgpBLuRkbZv4K0LhsHnka2wwgR2Xi
+	yv3tNsLEBsHqjWePckyxAQmthi9RdI=
+X-Received: by 2002:a17:90a:e7d2:b0:3ac:a204:aa27 with SMTP id 98e67ed59e1d1-3acef55d72cmr5587440a91.66.1792361017865;
+        Sun, 18 Oct 2026 15:03:37 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.30
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.35
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 18 Oct 2026 15:03:31 -0700 (PDT)
+        Sun, 18 Oct 2026 15:03:37 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 08/10] README.md: fix the REST API note, a JSON example and a typo
-Date: Sun, 18 Oct 2026 15:03:06 -0700
-Message-ID: <20261018220308.72731-9-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 09/10] README.md: use "docker compose"
+Date: Sun, 18 Oct 2026 15:03:07 -0700
+Message-ID: <20261018220308.72731-10-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261018220308.72731-1-tim.orling@konsulko.com>
 References: <20261018220308.72731-1-tim.orling@konsulko.com>
@@ -69,53 +69,109 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 22:03:43 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5090
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5091
 
-The security notes said the REST API had been disabled because it has
-no access controls. It is enabled: it is read-only, needs no login and
-serves the published layer data, including maintainer email addresses,
-to tools such as bitbake-layers layerindex-fetch and Toaster. Say so.
-
-Also add the missing quote in the /etc/docker/daemon.json example and
-drop a doubled "the".
+Ask for Docker with the Compose plugin rather than docker-compose, and
+use "docker compose" in the example commands. Current Docker installs
+provide only the plugin; dockersetup.py now uses it, falling back to
+the standalone docker-compose.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- README.md | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ README.md | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/README.md b/README.md
-index d33bb5d..e53ddfa 100644
+index e53ddfa..a34457f 100644
 --- a/README.md
 +++ b/README.md
-@@ -121,7 +121,7 @@ Other settings the app and celery files can set:
-   `/etc/docker/daemon.json`:
+@@ -29,12 +29,13 @@ containers, and do the initial database setup. It is advised that you start
+ with a .sql database file to prepopulate your database. The following
+ instructions will walk you through the setup.
  
-   ```json
--  {"dns": ["xx.xx.xx.xx] }
-+  {"dns": ["xx.xx.xx.xx"]}
+-1. Install docker and docker-compose per instructions:
++1. Install Docker Engine (or Docker Desktop) with the Compose plugin, which
++   provides the `docker compose` command, per instructions:
+ 
+    https://docs.docker.com/compose/install/
+ 
+-   **Note:** for latest docker-compose version follow the directions above,
+-   rather than using a perhaps outdated one provided by your distribution.
++   `dockersetup.py` uses `docker compose`, or the older standalone
++   `docker-compose` if the plugin is not installed.
+ 
+ 2. Run the setup script (`dockersetup.py`). You can optionally supply your
+    hostname, proxy settings, a sql database file of layer mappings to import,
+@@ -135,7 +136,7 @@ setup within it:
+    public instance at layers.openembedded.org you can run the following:
+ 
+    ```sh
+-   docker-compose run --rm layersapp /opt/layerindex/layerindex/tools/import_layers.py https://layers.openembedded.org
++   docker compose run --rm layersapp /opt/layerindex/layerindex/tools/import_layers.py https://layers.openembedded.org
+    ```
+ 
+    Alternatively, you can populate the database manually -
+@@ -205,21 +206,21 @@ following:
+ Incremental update:
+ 
+ ```sh
+-docker-compose run --rm layersapp /opt/layerindex/layerindex/update.py
++docker compose run --rm layersapp /opt/layerindex/layerindex/update.py
+ ```
+ 
+ Reload all data (should only be needed if the database structure has
+ changed as part of an upgrade of the application code):
+ 
+ ```sh
+-docker-compose run --rm layersapp /opt/layerindex/layerindex/update.py -r
++docker compose run --rm layersapp /opt/layerindex/layerindex/update.py -r
+ ```
+ 
+ Alternatively, you can update the data from an existing layer index instance
+ (as per above during setup):
+ 
+ ```sh
+-docker-compose run --rm layersapp /opt/layerindex/layerindex/tools/import_layers.py https://layers.openembedded.org
++docker compose run --rm layersapp /opt/layerindex/layerindex/tools/import_layers.py https://layers.openembedded.org
+ ```
+ 
+ 
+@@ -430,7 +431,7 @@ Some things to be aware of from a security perspective:
+   backend you can run the following command:
+ 
+   ```sh
+-  docker-compose exec layersapp /opt/layerindex/manage.py changepassword <username>
++  docker compose exec layersapp /opt/layerindex/manage.py changepassword <username>
    ```
  
+ - The web-based password reset function will ask the user answers to
+@@ -463,7 +464,7 @@ Some things to be aware of from a security perspective:
+     immediately using the following command:
  
-@@ -473,12 +473,12 @@ Some things to be aware of from a security perspective:
+     ```sh
+-    docker-compose exec layersapp /opt/layerindex/manage.py axes_reset
++    docker compose exec layersapp /opt/layerindex/manage.py axes_reset
+     ```
  
-   - By account for too many incorrect password reset attempts. To remove
-     this lockout, log into the admin interface, go to Users, click on the
--    the user, tick the Active checkbox and then save.
-+    user, tick the Active checkbox and then save.
+     If you wish to disable this, remove or comment out "axes" in
+@@ -488,14 +489,14 @@ following command (no need to substitute `${MYSQL_ROOT_PASSWORD}`, it's
+ already present within the container environment):
  
--- The REST API inherited from the OpenEmbedded layerindex upon which this
--  application is based has been disabled, since it has no access controls
--  on querying data (since the OE layer index operates entirely on publicly
--  accessible information, whereas this application may not in actual usage).
-+- The REST API at `/layerindex/api/` is read-only and needs no login. It
-+  serves the same information as the public web pages for published layers,
-+  including the names and email addresses of layer maintainers, and is used
-+  by tools such as `bitbake-layers layerindex-fetch` and Toaster.
+ ```sh
+-docker-compose exec layersdb /bin/sh -c '/usr/bin/mariadb-dump -u root --password=${MYSQL_ROOT_PASSWORD} --max_allowed_packet=512M layersdb' | gzip > backup-`date +%Y_%m_%d_%H%M`.sql.gz
++docker compose exec layersdb /bin/sh -c '/usr/bin/mariadb-dump -u root --password=${MYSQL_ROOT_PASSWORD} --max_allowed_packet=512M layersdb' | gzip > backup-`date +%Y_%m_%d_%H%M`.sql.gz
+ ```
+ 
+ To restore one of these backups you would run the following command (take
+ care, this will overwrite the data immediately without prompting!):
+ 
+ ```sh
+-zcat backupfile.sql.gz | docker-compose exec -T layersdb /bin/sh -c '/usr/bin/mariadb -u root --password=${MYSQL_ROOT_PASSWORD} layersdb'
++zcat backupfile.sql.gz | docker compose exec -T layersdb /bin/sh -c '/usr/bin/mariadb -u root --password=${MYSQL_ROOT_PASSWORD} layersdb'
+ ```
  
  
- ## Backup and restore
 -- 
 2.56.0
 
