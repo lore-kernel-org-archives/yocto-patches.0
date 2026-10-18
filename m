@@ -2,64 +2,64 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B75CCCF2D4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3DFCCF2C4
 	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 22:03:23 +0000 (UTC)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.22591.1792360998484500266
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.22601.1792361002960216671
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 18 Oct 2026 15:03:18 -0700
+ Sun, 18 Oct 2026 15:03:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=M9WLyB1g;
- spf=pass (domain: gmail.com, ip: 209.85.216.48, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3acb11973c3so1428016a91.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:18 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=c3/IJ0aI;
+ spf=pass (domain: gmail.com, ip: 209.85.215.181, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cc1c9879395so374530a12.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792360998; x=1792965798; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792361002; x=1792965802; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=t4hOn2rMoFcSx85bpOrfIhZ1QwBfSg0mrNGVUg1W2/M=;
-        b=M9WLyB1gkAo0oGw41rsy6nTTGmOuACaiy2d/Utzo4u/AKcP11nrdKWP/FHGqwjtpLF
-         1vMTN6qQUzzxsE5tGrC/eZc/MC2xk2ZAylqlehAHXVckYDy17KjEu9DL8mGLPXUiP7ZZ
-         7yxUzUFlbA3zjMUWom0QU0bBWF4PEQ+jbgPmLZmu/k3grEU0jknk4BdF/VxXfcnC+NSe
-         mzAopjR8tuKD+hORLlq0iXN6H5i9thVnSX6HkXfzeMuple11GooyPS3TVZzaHB1Rlxb3
-         f7cUB+2ku18UaGLHC7hUfpZVd9gWbCmQwlrIkS0mlzBYdCDEtHy2pR+jkPP4DBXNgigh
-         A9vg==
+        bh=E00g/+ktgwy4cYs2PVXOK5U1XB5HLNEyGiyt0z8ZZzE=;
+        b=c3/IJ0aIh5THanp2ZP0CsxZmDL35fEK9e5ZZdZdrE0fmerRdAxYvUn+8EqujxNr1+t
+         0TRFrpfTV+lbbMBlpB0kqF2L6r3cDqZrMsheptDkryuyr1uN7O2I3LV4ZIx5FsYVfPuR
+         /l6yqpew1nlqn4394+agB1WYsR/VGCuc9UPWkXtKF2UOnOD112o0klcH/NocS6OhNXnW
+         GIV31eFfuqmEiOby81Y/7URxgP1IInA0wct1ltnJAghD+pVM8tRPVh07Uzl1C4Z6Fcy2
+         QqeA037QQsnXXWyI5inSYOLzGOo7lc6qEzho66gvx4eE4aQnTv1CM8P5ihzEtESZp6NT
+         MgfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792360998; x=1792965798;
+        d=1e100.net; s=20260707; t=1792361002; x=1792965802;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=t4hOn2rMoFcSx85bpOrfIhZ1QwBfSg0mrNGVUg1W2/M=;
-        b=l/r1VPRBH0c7G1JiC6pTXFtO3j+F5ffTFT2ai1Y4cNkRlWconOYx9b+CPORMhtieIO
-         EuSjrnQuRp4cQWvXEfjQrD5W1T65vPN8zwPmYD0HACnHHlnrFy19/dbz0ejVMZcmjkFd
-         WwN0TYIbQxlhWVJD7WoGqA7GoXonGv9xUUt6JpDhQqDaNVvc4ruYvAfJlqaKL1nZDIjx
-         icmS1cYJvu5Ur6WJTV3UZ06xptsPTKLMuyOOz5fBh36GlQPQGq0x5ZPWd1pxOyWAPNjL
-         OKb60uwedO000I5ZZYXxR2pPGkFYstWuBJIp6B27uPHoL2OuxjD7tdRTnPqW0krLb5qB
-         S4mA==
-X-Gm-Message-State: AFq9FYJc9iYV/F2uLjRu6Ao7WlOwft4b0dSAULo6k9LACtwfkFl84ozm
-	kHpWTwaSDo8itIsMZrbVZ82SLR0cqBaN5nf8jkd838XGCPPfuYhC99Gq52M0kg==
-X-Gm-Gg: AYBFou3jWtI5bmMe7fILOwUdJUW4zMnFLsCNhE/dpiTmFO/lnOKxGpTqhLX+7PyaIL4
-	zC+B/GSAmpfTOaiT+oa7W6WoZ5g7NhLIJutk3G8i3zXAfrQ601qSITY2AzElOpFlSeEGb8AFjHr
-	yEOdufhm1kt/ktkyCfhaWs9+IUcOFAIhq3Sqk0LplMN9uAgZVQPa3hkg+Sj5sWEezgqHVFmcoEt
-	HXkPZhYG7Sh1jet6rIOcoL7ylyDE2Zn+tJUOfj5T0F9RDD1dt5LfIPSeg26GZclzuBCnJvU2Qx4
-	6rxvN1eyyF2T93wB4+HTgxPedrWDwKZMQY4i3yEnuAMweLZ7/UttYigs/EfEDtmH2uKoZFSmv/D
-	U73sbC1EXozcNLtULriAkJsII3rKw9k6pzCQL/Xvk1hAfpsf3DZ0w95JwWJUSUFfV11T1VWIY6S
-	YhHdfjQxOrynpmKCU47RL6+A1LzlKXlGRhPkIfK/VIDh6cUC9ApCcZTQnigUmbH7ico3TEM/Qw3
-	KpKWu4n9HuEt+WOqWosBCJrBybQuuQ28/N5BihglQ==
-X-Received: by 2002:a17:90b:28c7:b0:3ac:945c:7f69 with SMTP id 98e67ed59e1d1-3acef15c97cmr5125608a91.66.1792360997815;
-        Sun, 18 Oct 2026 15:03:17 -0700 (PDT)
+        bh=E00g/+ktgwy4cYs2PVXOK5U1XB5HLNEyGiyt0z8ZZzE=;
+        b=eFmC/y8iE1Puq216H6qX7oMK+6iWp5YBPrki72N1dndQUWAp2RAoAypKboQhMos6YY
+         yodMNgJS2eYBgb/Oozhy8248fFngnmVcqKxgFsmayUypc6Wo3VYeBA/pJPTyxUamDFCy
+         jOCfKYk1yTHTxW1Zxc2C858wvq9xtCDKqn46agZLVH3EIy+Tk9GEL1SX1/pxBO5IWgHn
+         iI2nm4Bv/o7YeuGskWoHEZWYk1IwP87FND/qTvOSR2fVQC69qxwBhvze/QtJyvHK58FH
+         TUSlYk/+8pf+uAD6aGf19zoVmiDFTapbjaCSgUahDnqb5MrxxfsusY5wNAEQ/KIiw9zN
+         q3Cw==
+X-Gm-Message-State: AFq9FYL1imQ77wcUlMbd+8vN+NFEf57TO/WL2ZnR6kgEQWMQNEUN1/f5
+	lc8XwIvgkr6EK2tMqPyaou5c5boGDAqQ3TmGD7VMosO9ZoGjENA5+e0vHy/c/EK+
+X-Gm-Gg: AYBFou1PFRFaDnMS/6O0cJwM5uemXlP/da5eGWtiMxMg/5TIwJMEvfhG4OFqQPby2if
+	DtezIGRY/q9IT8PYdasFn4QohmpgKlJ4QOKhA25PWjnLbwk9+uCHVxfQ9+if70HL1gT5ibEnElD
+	tLJpSlk8iBYoBZPOPXZDDTd+h1MQkKz5bhKM/eLsjLJdoPeAhNHpgFlpIh3SHkeYJqoZarkYfDQ
+	0zXZ72CBS/XDHWIipMJthbO+gGVR6+6BIEoijr1Stq1i0QE0JjtCRCI5fkIqeGytx9tDI0hh4fI
+	pJkSiZ7a8fLrBBh1cyqWX7kz6vac3pYB1qKZWoI/UH9bJ8EIFnLXGkQzaYORjkEK4WF7A0liwAK
+	iMOKNJ2liXPu0sFQZf77CMek3gK14+bkdB1/n7nKeK8ne1+DmFU1THmB0BA4L/GTefOIckOkbUk
+	/eWWb2WFAfN9p4ci7FauDbVWRqqIRAP1/uCk5wGtWOyH5KYwwUqlN64cOAnsWlfV0WjNnl0oUqW
+	3hI3XU6HIblES2K8jWP+nPfVs+u21U=
+X-Received: by 2002:a17:90b:4fc8:b0:3a8:1943:cb7a with SMTP id 98e67ed59e1d1-3aceefc4effmr4790916a91.18.1792361002242;
+        Sun, 18 Oct 2026 15:03:22 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.21
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 18 Oct 2026 15:03:16 -0700 (PDT)
+        Sun, 18 Oct 2026 15:03:21 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 02/10] README: document upgrading to env files and the new settings
-Date: Sun, 18 Oct 2026 15:03:00 -0700
-Message-ID: <20261018220308.72731-3-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 04/10] docker/README: remove
+Date: Sun, 18 Oct 2026 15:03:02 -0700
+Message-ID: <20261018220308.72731-5-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261018220308.72731-1-tim.orling@konsulko.com>
 References: <20261018220308.72731-1-tim.orling@konsulko.com>
@@ -69,87 +69,77 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 22:03:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5084
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5086
 
-dockersetup.py -u does not update the code itself, so say to update it
-first. Installations set up before the move to environment files keep
-their secrets in docker-compose.yml, which the update replaces; describe
-how to carry them over to .env.local.* files once.
-
-List the optional DEBUG, ENABLE_RRS, DATABASE_PORT and STATIC_ROOT
-settings, and point the HSTS link at the current Django documentation
-rather than Django 1.11's.
+It has not been updated since 2018 and is superseded by the "Docker
+Setup" section of the main README. It still describes a setup.py script,
+an internal Intel clone URL and branch, and an Intel proxy.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- README | 36 +++++++++++++++++++++++++++++++++---
- 1 file changed, 33 insertions(+), 3 deletions(-)
+ docker/README | 52 ---------------------------------------------------
+ 1 file changed, 52 deletions(-)
+ delete mode 100644 docker/README
 
-diff --git a/README b/README
-index 3f733af..49ce4d3 100644
---- a/README
-+++ b/README
-@@ -98,6 +98,14 @@ credentials, email server, DEBUG) from .env.<context>.<service> files, where
- 
- The .env* files are excluded from the Docker images.
- 
-+Other settings the app and celery files can set:
-+
-+  - DEBUG: 1, true or yes enables Django's debug mode; anything else, or
-+    leaving it unset, keeps it off. Never enable it on a public site.
-+  - ENABLE_RRS: 1 enables the Recipe Reporting System (see README.rrs).
-+  - DATABASE_PORT (default 3306) and STATIC_ROOT (default
-+    /usr/share/nginx/html/static/).
-+
- 
- 
- TROUBLESHOOTING:
-@@ -209,11 +217,33 @@ Alternatively, you can update the data from an existing layer index instance
- Upgrading from an earlier version
- ---------------------------------
- 
--To upgrade the Docker-based setup from a previous release, simply run:
-+To upgrade the Docker-based setup from a previous release, update the code
-+(e.g. with git pull) and then run:
- 
- ./dockersetup.py -u
- 
--This will update the code and run any required database migrations.
-+This will rebuild the containers and run any required database migrations.
-+
-+Installations set up by dockersetup.py before it used environment files
-+(see "Environment files" above) have their secret key and passwords in the
-+environment sections of docker-compose.yml. Carry them over by hand once:
-+
-+1. Copy docker-compose.yml somewhere safe, then restore the tracked version
-+   (git checkout docker-compose.yml) and update the code.
-+
-+2. For each of app, celery, db and rabbit, copy .env.dev.<service> to
-+   .env.local.<service> and fill in the values from the matching service
-+   in the old file: SECRET_KEY, DATABASE_USER, DATABASE_PASSWORD,
-+   MYSQL_ROOT_PASSWORD, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS and any
-+   EMAIL_* settings. Set DEBUG=0 in .env.local.app, and make the files
-+   readable only by you (chmod 600 .env.local.*).
-+
-+3. In docker-compose.yml, change the env_file entries from .env.dev.* to
-+   .env.local.*, and reapply your other changes from the old file (hostname,
-+   ports, certificate volumes and, if you use Let's Encrypt, the
-+   layerscertbot service).
-+
-+4. Run ./dockersetup.py -u as above.
- 
- 
- 
-@@ -371,7 +401,7 @@ REGISTRATION_OPEN = False
-   also enable HSTS in your configuration. Refer to the Django Security
-   guide for details on how to do that:
- 
--  https://docs.djangoproject.com/en/1.11/topics/security/#ssl-https
-+  https://docs.djangoproject.com/en/stable/topics/security/#ssl-https
- 
- * To reset a forgotten account password, you can either use the password
-   reset function ( /accounts/password_reset/ ) or alternatively from the
+diff --git a/docker/README b/docker/README
+deleted file mode 100644
+index 86348a1..0000000
+--- a/docker/README
++++ /dev/null
+@@ -1,52 +0,0 @@
+-Layerindex Docker Setup Instructions
+-
+-The script setup.py will set up and configure a cluster of 5 docker containers:
+-
+-  - layersapp: the application
+-  - layersdb: the database
+-  - layersweb: NGINX web server (as a proxy and for serving static content)
+-  - layerscelery: Celery (for running background jobs)
+-  - layersrabbit: RabbitMQ (required by Celery)
+-
+-The script will edit all necessary configuration files, build and launch all containers, and do the initial database setup. It is advised that you start with a .sql database file to prepopulate your database. The following instructions will walk you through the setup.  
+-
+-1) Install docker and docker-compose per instructions: 
+- 	https://docs.docker.com/compose/install/ 
+-	** Note: for latest docker-compose version follow the directions above, rather than using apt. 
+-
+-2) Clone the repo and checkout appropriate branch:
+- 	git clone https://github.intel.com/peggleto/layerindex-web.git
+- 	git checkout origin/dev_snapshot
+-
+-2) Run the setup script (dockerstup.py). You can optionally supply your hostname, proxy settings, a sql database file of layer mappings to import, and a host to container port mapping. For more information, run: 
+- 	./dockersetup.py -h 
+-
+-	Example command to run containers with a proxy and with a database to import:
+- 	./dockersetup.py -d ~/databasedump.sql -p http://proxy-chain.intel.com:911 
+-
+- 	During the setup you will be asked for a username, email and password to set up a super user for the database. This will allow you to access the database later, should you need to. 
+-
+-3) Once the script completes, open a web browser and navigate to <hostname>:<mapped_port>/layerindex. If you haven't supplied hostname and/or port mapping, this will by default be localhost:8080. 
+-
+-4) If you have chosen to not supply a prepopulated database and are instead starting fresh, you should now
+-follow the instructions in the "Database Setup" section of the main README.
+-
+-5) If you need to rerun this script for any reason a second time, make sure to tear the containers down first with docker-compose down. Otherwise, your new automatically generated root database password will not match.
+-
+-6) To update the layers in the future, you can optionally do the following: 
+-
+-	Run the layer updates
+-	docker-compose run --rm layersapp /opt/layerindex/layerindex/update.py
+-
+-	Or do a full refresh
+-	docker-compose run --rm layersapp /opt/layerindex/layerindex/update.py -r
+-
+-
+-TROUBLESHOOTING:
+-
+-- Network issues behind a proxy when building container: On some Ubuntu systems, /etc/resolv.conf is set to 127.0.0.x, rather than your local DNS server. Docker will look there for your DNS server, and when it fails to find it it will default to using a public one (frequently 8.8.8.8). Many corporate proxies blocks public DNS servers, so you will need to manually supply the DNS server to docker using /etc/docker/daemon.json:
+-	{"dns": ["xx.xx.xx.xx] }
+-
+-
+-
+-
 -- 
 2.56.0
 
