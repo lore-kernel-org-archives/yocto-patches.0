@@ -2,64 +2,64 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F01CCF2C7
-	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 02:01:56 +0000 (UTC)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8020.1792288908231865195
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B0ECCF2C4
+	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 02:02:46 +0000 (UTC)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7982.1792288965028029358
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 17 Oct 2026 19:01:48 -0700
+ Sat, 17 Oct 2026 19:02:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=I3irTvEc;
- spf=pass (domain: gmail.com, ip: 209.85.216.53, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3ace1f3897cso638100a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 17 Oct 2026 19:01:48 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=Ebsk6W/z;
+ spf=pass (domain: gmail.com, ip: 209.85.215.176, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-cd60c5da24cso728759a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 17 Oct 2026 19:02:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792288907; x=1792893707; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792288964; x=1792893764; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=p9M3MLZaamTylsuBAxRFX4wRzkj6g7kG5tVO3UeqlmE=;
-        b=I3irTvEcezaoExz5tRCuDi6rSl3nyI/g3M7U5+IFKEsFRjLclpdpBl9kzRjRypGcFY
-         7EF/9N0L2+N+J1D11xZ9fz5OCRXiVSE2lyKQRQEcYVYy3V1uV05yP/cMElFl1zyaFg0U
-         sbDHU+prCTpwUlRnWSc4uGt9oXu16CHcwFTNQOyV1P7tBZlnKKtf/kisA4cZVDLoHBwD
-         XjmYGSvI0RboS1/jCxcCrgPNXnfStPmVc9koXO36jiwUenyvNBchrfdsUGEgYMOdQQoA
-         2Ztu++z3eDKj/qzZ7LEagdDXZ8kdAqLt46HAzopn4zzqPhjRBbvj3Cs69hPqXZqK7WXx
-         0lzw==
+        bh=aT3TzLIKd/y/G/5/GBZQtjRzvOdRA7AcEO17RAuKEL0=;
+        b=Ebsk6W/zYOhMOK/JKLb7aLe2IUkhIktjxmYeGvRQ2luWezypqKEvK9QRYFFQt8yb0Q
+         u+HOEK9Htfrq7HCxriY2hdHLY3QhXp71fE7EcNcEV5k6pGEQ54IR+ff7CbQBWRFSoFpy
+         8gEEj/rY0CpMZX+n7kpwdlBFWkcaFyfKnbEn1MEp9TYVtPQLGx+sW52qmxe0x/8wzMU9
+         UwZn+TlAfLHL2om1p+Qa+qKRJcCN40PAksRrbtQgj/CR45VGsTPuVMGM8RDd4KvhgX6z
+         HkSbQklJQBTjo58ibbMNHXS2hKaIuuygYYkXTJkFTz7Rg2n0V4n1pr4gMogWslKj09NA
+         80lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792288907; x=1792893707;
+        d=1e100.net; s=20260707; t=1792288964; x=1792893764;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=p9M3MLZaamTylsuBAxRFX4wRzkj6g7kG5tVO3UeqlmE=;
-        b=rSdKNALYEo3vE/ge13Y0TdwxtqKxmYC6Xxb1456DjTYW+xf7rZXXGfxQAQbHowa8CG
-         mxLIXTm9CsUGzykujy0YMdSYXrnuQQKPHC4UkKzHyL7+QZhPedNZ3y7pTdOuU874wPbZ
-         nWZTp14avnqdqkEWk/OYUTXKk6oTDUBa0KsfUFhCP+9SHW7Kj+IRD3Wfbh3hk4L3Brba
-         ohqo7pk9SqrM2fZqQzo9mcwKIuPOvatk4q4XMX51ghTfuFiLvGqWoI6Ow5+WtCaiG0yD
-         5vfcNeIGj4kvJ1jUVfxxZPWMBU44sa5UICMVJe5cndkw00KaDwglhvOIZ0eeLvH75RGq
-         4upQ==
-X-Gm-Message-State: AFq9FYKzR8mBmeFBLtgA9XUfxl5Deh2bo+BsMsKIjV3hDAOdFfuHNmWT
-	+/rd/eYe6QjrQCnjxfBt+XMR3k6dDdp4atOFzLiABupjtAZ1Opz7TXAbsqrbGA==
-X-Gm-Gg: AYBFou0/+7CeYBK8I6B9Ae+e0TE/hHbHOoApmCHje2AWkqakkZwBPwifN4cNuSA9ZbO
-	GldKfm5POM0/i6sb4Z0WivE47uRZ1dqNtsKpHisFo4fzPKW/IoSP+3grah1SaZs+/Ec/LQWaGjC
-	wsGbLYm93cLIg/z9znFoK1hRGcYgY5DHaPePNaIDQxzSeH2uBWFtNIDYIGn6RDegVkOP0rudeF6
-	tNFkTGC4a+Qn20oZEsngQXkf55ta+BlwH9w7hu6/PuhGRWgDkJO/uiWP2sOY6ZZJH6jG5qQwhz3
-	2zfVuA1dqH/vpYu4SPJR68ICJaLi8s98TITb8pzEsX3HNXXPxmSWWERHONtDvytXlU4P6ckodiD
-	qVieH/yIl+vO1orTG8LMo6nA2adYjJx45uUhHB9QJQGVBV5lrAdR4JvFeRbYEpkoawEHffuDUka
-	pRDpUN3z9Jt5BLZAPp4OK2bEV94tD1vvlyO/29S07kUj2HrGZA4KMCLcfujz+VwSerW+BLavOeI
-	cOu1f+HZSqMhwUI86Traohd05meyvo=
-X-Received: by 2002:a17:90b:4a4d:b0:3ac:97bc:4c98 with SMTP id 98e67ed59e1d1-3acef648c40mr3531731a91.64.1792288907515;
-        Sat, 17 Oct 2026 19:01:47 -0700 (PDT)
+        bh=aT3TzLIKd/y/G/5/GBZQtjRzvOdRA7AcEO17RAuKEL0=;
+        b=zkRM9pulkrG+esD9pQKxZJHjWt1xsa89qodvMi4hCfifTB6y8ahaISIqGBYZvBWXQ3
+         hClCPiau+EdG5a4Y2HWC3zqxqqrKynHfa1JGAf8OWL8Axi5AFJdsbAhgrQk4LwDh++wr
+         QJ3gN245y/EY7Zz0ROsmi/jglOlQRw2VM+xnhV1dGnukS+/cTdkMWUMWzR/6Mmiv+9pM
+         +7RrwOB2OTGBkwqqtkzZ54tvMXKIoAM1nYQzXUVnKw5PTVI4DvhuRXgPYw49CMN3XtAI
+         1wIjnWB5PXCyVQpO58yfJrTdXWjnXULpC4158U94DWgStQwlcsF4sUTiF+6exh0M2CR6
+         n33A==
+X-Gm-Message-State: AFq9FYLfcBZBmHDYYC9ncdr42szQezuS2qVtlE68/WTKwUmFijZhgU84
+	RoTUHVCxDuJ5EtExrwlUKjjr/9W75uFA57V2TyipnTRxUb9uh0x0jRe8puSb+zm9
+X-Gm-Gg: AYBFou06FiLXS9BVWT/B9AH5ZBC6yhkuiLpxM2BDwA2e98vBI6RPHAo9DhCHzCqWXTA
+	07GoCbg1ul2l5H7onerLm7ShXaSY8FvZ2L02HLBkjrfvvJqcdpOXf1ZHNchgKzdUGlB6cS9n/hs
+	KQk8QnZK37E2tGP1OidtGmDiy5O6ttBjP4bjvFtQO+kZlJqe6IcCmjgj5SubFXDusumUyZVXBIF
+	YvIDT+HLGXgeBml1rRLeDU1sRrdojp2hxX9FttzLqxykPQCKlDTrFb/mLJO3C424qe/nyyfwQFu
+	rmp55KWs5OP63OtUN7ADWJ3UrE5X+nxUSEtWMhPq/6s4j9vzl3J/KyeK6cMRP0OCK8a2ZDz7QVQ
+	qErWcrNVTGN95V/9cJfYUmceCSfYfTe5BRgYvOSxY/9wtsSgOl3VCbSvV3Ay5qFN1/xSRtKVR4k
+	LxYuTsoUYytWmFK8Ciq1Lv1KQp1nQhHbdQ0IFx2kpByHvdRI8UAzzuN4YViaOfvWff8Fxv0bzyg
+	XzL6xQo8IAIGTPL8MMmBafQLRZstKL0
+X-Received: by 2002:a17:90a:c110:b0:39e:6a80:b799 with SMTP id 98e67ed59e1d1-3aceefab282mr3156394a91.41.1792288964210;
+        Sat, 17 Oct 2026 19:02:44 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac947928b4sm14569131a91.11.2026.10.17.19.01.45
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac947928b4sm14569131a91.11.2026.10.17.19.02.40
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 17 Oct 2026 19:01:45 -0700 (PDT)
+        Sat, 17 Oct 2026 19:02:42 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [error-report-web][PATCH 1/4] Run gunicorn behind nginx in docker-compose.
-Date: Sat, 17 Oct 2026 18:57:05 -0700
-Message-ID: <20261018020116.75276-3-tim.orling@konsulko.com>
+Subject: [error-report-web][PATCH 2/4] Add staging and production docker-compose setups with env files.
+Date: Sat, 17 Oct 2026 18:57:07 -0700
+Message-ID: <20261018020116.75276-5-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261018020116.75276-1-tim.orling@konsulko.com>
 References: <20261018020116.75276-1-tim.orling@konsulko.com>
@@ -68,84 +68,355 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 02:01:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5062
+ <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 02:02:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5063
 
-As in layerindex-web, nginx serves static files and proxies to
-gunicorn. Unlike it, nginx sets X-Forwarded-Proto and accepts 10MB
-reports. Drop the obsolete compose version key.
+Follow layerindex-web's timo/docker-compose-env branch: tracked
+.env.{dev,staging,prod}.{app,db}, with real values in a local commit on
+the server. Staging and prod leave secrets commented out, so nothing
+starts with a known password, and serve HTTPS with Let's Encrypt
+(staging from its staging server); certbot renews. /ClientPost/ stays on
+HTTP, as send-error-report may post there. The db healthcheck no longer
+needs the root password. Keep docker/certs out of git and the env files
+out of the image.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- Dockerfile                 |  2 +-
- docker-compose.yaml        | 20 ++++++++++++----
- docker/nginx.conf          | 49 ++++++++++++++++++++++++++++++++++++++
- project/settings.py.docker |  3 ++-
- 4 files changed, 68 insertions(+), 6 deletions(-)
- create mode 100644 docker/nginx.conf
+ .dockerignore               |  2 ++
+ .env.dev.app                |  8 +++++
+ .env.dev.db                 |  5 +++
+ .env.prod.app               |  9 +++++
+ .env.prod.db                |  6 ++++
+ .env.staging.app            |  9 +++++
+ .env.staging.db             |  6 ++++
+ .gitignore                  |  1 +
+ README                      | 39 ++++++++++++++++++++
+ docker-compose.prod.yaml    | 55 ++++++++++++++++++++++++++++
+ docker-compose.staging.yaml | 55 ++++++++++++++++++++++++++++
+ docker-compose.yaml         | 12 +++----
+ docker/nginx-ssl.conf       | 72 +++++++++++++++++++++++++++++++++++++
+ 13 files changed, 272 insertions(+), 7 deletions(-)
+ create mode 100644 .env.dev.app
+ create mode 100644 .env.dev.db
+ create mode 100644 .env.prod.app
+ create mode 100644 .env.prod.db
+ create mode 100644 .env.staging.app
+ create mode 100644 .env.staging.db
+ create mode 100644 docker-compose.prod.yaml
+ create mode 100644 docker-compose.staging.yaml
+ create mode 100644 docker/nginx-ssl.conf
 
-diff --git a/Dockerfile b/Dockerfile
-index 94d55a6..b786a8c 100644
---- a/Dockerfile
-+++ b/Dockerfile
-@@ -10,7 +10,7 @@ WORKDIR /app
+diff --git a/.dockerignore b/.dockerignore
+index adce5c5..217a4a4 100644
+--- a/.dockerignore
++++ b/.dockerignore
+@@ -8,3 +8,5 @@ __pycache__
+ *.patch
+ venv
+ .venv
++.env.*
++docker/certs
+diff --git a/.env.dev.app b/.env.dev.app
+new file mode 100644
+index 0000000..26e1c54
+--- /dev/null
++++ b/.env.dev.app
+@@ -0,0 +1,8 @@
++# Development only; not secret.
++SECRET_KEY=dev-only-not-secret
++DEBUG=1
++ALLOWED_HOSTS=localhost,127.0.0.1
++MYSQL_DATABASE=errorreport
++MYSQL_USER=errorreport
++MYSQL_PASSWORD=testingpw
++#CSP_REPORT_ONLY=1
+diff --git a/.env.dev.db b/.env.dev.db
+new file mode 100644
+index 0000000..72b7b32
+--- /dev/null
++++ b/.env.dev.db
+@@ -0,0 +1,5 @@
++# Development only; not secret.
++MYSQL_DATABASE=errorreport
++MYSQL_USER=errorreport
++MYSQL_PASSWORD=testingpw
++MYSQL_ROOT_PASSWORD=testingpw
+diff --git a/.env.prod.app b/.env.prod.app
+new file mode 100644
+index 0000000..485c553
+--- /dev/null
++++ b/.env.prod.app
+@@ -0,0 +1,9 @@
++# Set real values in a local commit on the server; never push them.
++# Commented-out secrets stop the service starting.
++#SECRET_KEY=<set this here>
++DEBUG=0
++ALLOWED_HOSTS=errors.yoctoproject.org
++MYSQL_DATABASE=errorreport
++MYSQL_USER=errorreport
++#MYSQL_PASSWORD=<set this here, same as in .env.prod.db>
++#CSP_REPORT_ONLY=1
+diff --git a/.env.prod.db b/.env.prod.db
+new file mode 100644
+index 0000000..55fc5fd
+--- /dev/null
++++ b/.env.prod.db
+@@ -0,0 +1,6 @@
++# Set real values in a local commit on the server; never push them.
++# Commented-out secrets stop the service starting.
++MYSQL_DATABASE=errorreport
++MYSQL_USER=errorreport
++#MYSQL_PASSWORD=<set this here, same as in .env.prod.app>
++#MYSQL_ROOT_PASSWORD=<set this here>
+diff --git a/.env.staging.app b/.env.staging.app
+new file mode 100644
+index 0000000..d9aeeb0
+--- /dev/null
++++ b/.env.staging.app
+@@ -0,0 +1,9 @@
++# Set real values in a local commit on the server; never push them.
++# Commented-out secrets stop the service starting.
++#SECRET_KEY=<set this here>
++DEBUG=0
++#ALLOWED_HOSTS=<set this here>
++MYSQL_DATABASE=errorreport
++MYSQL_USER=errorreport
++#MYSQL_PASSWORD=<set this here, same as in .env.staging.db>
++#CSP_REPORT_ONLY=1
+diff --git a/.env.staging.db b/.env.staging.db
+new file mode 100644
+index 0000000..ca595b1
+--- /dev/null
++++ b/.env.staging.db
+@@ -0,0 +1,6 @@
++# Set real values in a local commit on the server; never push them.
++# Commented-out secrets stop the service starting.
++MYSQL_DATABASE=errorreport
++MYSQL_USER=errorreport
++#MYSQL_PASSWORD=<set this here, same as in .env.staging.app>
++#MYSQL_ROOT_PASSWORD=<set this here>
+diff --git a/.gitignore b/.gitignore
+index 2b8f143..a0a7642 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -8,3 +8,4 @@ pull-*/
+ venv
+ *.sqlite3
+ .env
++docker/certs/
+diff --git a/README b/README
+index a7bb64c..7539329 100644
+--- a/README
++++ b/README
+@@ -41,6 +41,45 @@ In order to send an error report to the server, run the "send-error-report file_
  
- # Install dependencies
- COPY requirements.txt /app/
--RUN pip install -r requirements.txt
-+RUN pip install -r requirements.txt gunicorn==26.2.0
+ For more information on error reporting and log collection see: http://www.yoctoproject.org/docs/current/dev-manual/dev-manual.html#using-the-error-reporting-tool
  
- # Copy the project code into the container
- COPY . /app/
-diff --git a/docker-compose.yaml b/docker-compose.yaml
-index 0291ff5..1fcb242 100644
---- a/docker-compose.yaml
-+++ b/docker-compose.yaml
-@@ -1,4 +1,3 @@
--version: '3'
- services:
-   db:
-     image: mysql:8.4
-@@ -23,14 +22,27 @@ services:
-       context: .
-       dockerfile: Dockerfile
-     container_name: error_report_web_backend
--    command: sh -c "python3 manage.py migrate --noinput && python3 manage.py runserver 0.0.0.0:8000"
++Docker
++------
++
++docker-compose.yaml runs a development setup: MySQL, the application in
++gunicorn, and nginx serving it on http://localhost:8080. Its settings are in
++.env.dev.app and .env.dev.db, which hold development-only values.
++
++  docker compose up -d --build
++
++To run the tests in a container, as CI does:
++
++  docker/run-tests.sh
++
++docker-compose.staging.yaml and docker-compose.prod.yaml serve the site over
++HTTPS on ports 80 and 443, with a certificate from Let's Encrypt. Staging uses
++Let's Encrypt's staging server, whose certificates browsers don't trust but
++whose rate limits are generous; production uses the real server. Taking prod
++as the example:
++
++1. Set the real values in .env.prod.app and .env.prod.db (SECRET_KEY,
++   ALLOWED_HOSTS and the database passwords) in a local commit on the server.
++   Never push them.
++2. Get the first certificate. nginx needs it to start, so certbot answers the
++   challenge itself on port 80 (for staging, use docker-compose.staging.yaml
++   and add --test-cert):
++
++     docker compose -f docker-compose.prod.yaml run --rm -p 80:80 \
++         --entrypoint certbot certbot certonly --standalone \
++         --cert-name error-report-web -d errors.example.org \
++         -m you@example.org --agree-tos --no-eff-email
++
++   The certificate is stored in docker/certs, which git ignores.
++3. Start everything:
++
++     docker compose -f docker-compose.prod.yaml up -d --build
++
++The certbot container renews the certificate from the server that issued it,
++and nginx reloads every 6 hours to pick it up.
++
+ Content Security Policy
+ -----------------------
+ 
+diff --git a/docker-compose.prod.yaml b/docker-compose.prod.yaml
+new file mode 100644
+index 0000000..582f76c
+--- /dev/null
++++ b/docker-compose.prod.yaml
+@@ -0,0 +1,55 @@
++# Prod: nginx with Let's Encrypt TLS in front of gunicorn. See README.
++services:
++  db:
++    image: mysql:8.4
++    restart: unless-stopped
++    volumes:
++      - data:/var/lib/mysql
++    env_file:
++      - .env.prod.db
++    healthcheck:
++      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
++      timeout: 20s
++      retries: 10
++
++  backend:
++    build: .
 +    command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && gunicorn project.wsgi --bind=:8000 --workers=4 --timeout=60"
-     restart: always
--    ports:
--      - "8000:8000"
++    restart: unless-stopped
 +    volumes:
 +      - static:/app/staticfiles
-     env_file:
-       - .env
-     depends_on:
-       db:
-          condition: service_healthy
++    env_file:
++      - .env.prod.app
++    depends_on:
++      db:
++        condition: service_healthy
 +
 +  web:
 +    image: nginx:1.30
-+    container_name: error_report_web_nginx
-+    restart: always
++    restart: unless-stopped
 +    ports:
-+      - "8080:80"
++      - "80:80"
++      - "443:443"
 +    volumes:
-+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
++      - ./docker/nginx-ssl.conf:/etc/nginx/nginx.conf:ro
 +      - static:/usr/share/nginx/html/static:ro
++      - ./docker/certs:/etc/letsencrypt:ro
++      - certbot-www:/var/www/certbot:ro
++    # Reload every 6 hours to pick up renewed certificates.
++    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 +    depends_on:
 +      - backend
- volumes:
-   data:
++
++  # Renews from whichever Let's Encrypt server issued the certificate.
++  certbot:
++    image: certbot/certbot
++    restart: unless-stopped
++    volumes:
++      - ./docker/certs:/etc/letsencrypt
++      - certbot-www:/var/www/certbot
++    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done;'"
++
++volumes:
++  data:
 +  static:
-diff --git a/docker/nginx.conf b/docker/nginx.conf
++  certbot-www:
+diff --git a/docker-compose.staging.yaml b/docker-compose.staging.yaml
 new file mode 100644
-index 0000000..f1afcd4
+index 0000000..908bbb7
 --- /dev/null
-+++ b/docker/nginx.conf
-@@ -0,0 +1,49 @@
-+# nginx in front of gunicorn, plain HTTP for local use. Production uses
-+# nginx-ssl.conf.
++++ b/docker-compose.staging.yaml
+@@ -0,0 +1,55 @@
++# Staging: nginx with Let's Encrypt TLS in front of gunicorn. See README.
++services:
++  db:
++    image: mysql:8.4
++    restart: unless-stopped
++    volumes:
++      - data:/var/lib/mysql
++    env_file:
++      - .env.staging.db
++    healthcheck:
++      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
++      timeout: 20s
++      retries: 10
++
++  backend:
++    build: .
++    command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && gunicorn project.wsgi --bind=:8000 --workers=4 --timeout=60"
++    restart: unless-stopped
++    volumes:
++      - static:/app/staticfiles
++    env_file:
++      - .env.staging.app
++    depends_on:
++      db:
++        condition: service_healthy
++
++  web:
++    image: nginx:1.30
++    restart: unless-stopped
++    ports:
++      - "80:80"
++      - "443:443"
++    volumes:
++      - ./docker/nginx-ssl.conf:/etc/nginx/nginx.conf:ro
++      - static:/usr/share/nginx/html/static:ro
++      - ./docker/certs:/etc/letsencrypt:ro
++      - certbot-www:/var/www/certbot:ro
++    # Reload every 6 hours to pick up renewed certificates.
++    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
++    depends_on:
++      - backend
++
++  # Renews from whichever Let's Encrypt server issued the certificate.
++  certbot:
++    image: certbot/certbot
++    restart: unless-stopped
++    volumes:
++      - ./docker/certs:/etc/letsencrypt
++      - certbot-www:/var/www/certbot
++    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done;'"
++
++volumes:
++  data:
++  static:
++  certbot-www:
+diff --git a/docker-compose.yaml b/docker-compose.yaml
+index 1fcb242..9f0a735 100644
+--- a/docker-compose.yaml
++++ b/docker-compose.yaml
+@@ -5,15 +5,13 @@ services:
+     restart: always
+     volumes:
+       - data:/var/lib/mysql
+-    environment:
+-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+-      MYSQL_USER: ${MYSQL_USER}
+-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
++    env_file:
++      - .env.dev.db
+     ports:
+       - "3306:3306"
+     healthcheck:
+-      test: ["CMD", "mysql", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}", "-e", "SELECT 1"]
++      # TCP: MySQL's init-time server only listens on the socket.
++      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+       timeout: 20s
+       retries: 10
+   
+@@ -27,7 +25,7 @@ services:
+     volumes:
+       - static:/app/staticfiles
+     env_file:
+-      - .env
++      - .env.dev.app
+     depends_on:
+       db:
+          condition: service_healthy
+diff --git a/docker/nginx-ssl.conf b/docker/nginx-ssl.conf
+new file mode 100644
+index 0000000..264ecca
+--- /dev/null
++++ b/docker/nginx-ssl.conf
+@@ -0,0 +1,72 @@
++# nginx with TLS for docker-compose.{staging,prod}.yaml; see README.
 +#
 +# SPDX-License-Identifier: MIT
 +
@@ -168,12 +439,42 @@ index 0000000..f1afcd4
 +        server backend:8000 fail_timeout=0;
 +    }
 +
++    # Reports can be up to DATA_UPLOAD_MAX_MEMORY_SIZE (10MB).
++    client_max_body_size 10m;
++    keepalive_timeout 20;
++
++    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++    # Overwrites the client's value; Django trusts it.
++    proxy_set_header X-Forwarded-Proto $scheme;
++    proxy_set_header Host $http_host;
++    proxy_redirect off;
++
 +    server {
-+        listen 80 default;
++        listen 80 default_server;
 +        server_name _;
-+        # Reports can be up to DATA_UPLOAD_MAX_MEMORY_SIZE (10MB).
-+        client_max_body_size 10m;
-+        keepalive_timeout 20;
++
++        location /.well-known/acme-challenge/ {
++            root /var/www/certbot;
++        }
++
++        # send-error-report may POST over HTTP; a redirect would drop it.
++        location /ClientPost/ {
++            proxy_pass http://app_server;
++        }
++
++        location / {
++            return 301 https://$host$request_uri;
++        }
++    }
++
++    server {
++        listen 443 ssl default_server;
++        server_name _;
++        ssl_certificate     /etc/letsencrypt/live/error-report-web/fullchain.pem;
++        ssl_certificate_key /etc/letsencrypt/live/error-report-web/privkey.pem;
++        ssl_protocols       TLSv1.2 TLSv1.3;
++        ssl_session_cache   shared:SSL:12m;
++        ssl_session_timeout 12m;
 +
 +        # path for static files
 +        root /usr/share/nginx/html;
@@ -183,30 +484,10 @@ index 0000000..f1afcd4
 +        }
 +
 +        location @proxy_to_app {
-+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+            # Overwrites the client's value; Django trusts it.
-+            proxy_set_header X-Forwarded-Proto $scheme;
-+            proxy_set_header Host $http_host;
-+            proxy_redirect off;
-+
 +            proxy_pass http://app_server;
 +        }
 +    }
 +}
-diff --git a/project/settings.py.docker b/project/settings.py.docker
-index e1f9812..8cc9b7f 100644
---- a/project/settings.py.docker
-+++ b/project/settings.py.docker
-@@ -105,7 +105,8 @@ MEDIA_URL = ''
- # Don't put anything in this directory yourself; store your static files
- # in apps' "static/" subdirectories and in STATICFILES_DIRS.
- # Example: "/home/media/media.lawrence.com/static/"
--STATIC_ROOT = ''
-+# Shared with nginx.
-+STATIC_ROOT = '/app/staticfiles'
- 
- # URL prefix for static files.
- # Example: "http://media.lawrence.com/static/"
 -- 
 2.56.0
 
