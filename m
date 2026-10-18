@@ -2,64 +2,64 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C77FCCA490
-	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 21:49:03 +0000 (UTC)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.22358.1792360140846438852
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 301E1CCF2C9
+	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 21:49:13 +0000 (UTC)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.22360.1792360144769433463
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 18 Oct 2026 14:49:00 -0700
+ Sun, 18 Oct 2026 14:49:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=MOOdaBdp;
- spf=pass (domain: gmail.com, ip: 209.85.210.181, mailfrom: ticotimo@gmail.com)
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-8a06b27bf9bso51028b3a.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 14:49:00 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=qVc9vqIJ;
+ spf=pass (domain: gmail.com, ip: 209.85.210.170, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8a05f2d5cd3so256889b3a.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 14:49:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792360140; x=1792964940; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792360144; x=1792964944; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=GEBAL1aH6f3PS/QjPDV/zyDiSsBOUay2JlXlpSSeHtE=;
-        b=MOOdaBdpUQCJLDqMa5Ldhy58AnjNtPSIOS6I88b23iuU0zkr8+9Ba55KPN1m9i6xOj
-         b2gsufbW+/nKnAq4tJwlejcxX34kL3/hrTpCHZtIgfAcOGdW1M2+MtbrDlFodMdrut8Q
-         JZYIK0WNBzpztoChjSNC9o1tJRd+Oa/rqbV56ZHkdS295SiZ4fSKo6qmhZyKCkxXlPy+
-         bCRTWOED1EILyStYZJPhpcsgmpQ89yWUyH0/vZvLP41B0HXJBXaJ9yvcFg8jkM/oOIwe
-         XCIU1ihtbA1jikkLz4y52CCIUDDZR1WQ14TBN44BkGk05S0uF6f9/5WkVFWfybkRN72J
-         eEsg==
+        bh=0p8YMojJp75qu7Gb0juMvyOJ8ohUjuzJSQUrWK5ZQvs=;
+        b=qVc9vqIJO9XNGdhKUuvRoNqwLh4qjnL8aHlzH4whykwlRts/8eI9lzP0J5b50X72Eu
+         ccCdE305XIpLAa67VhY/CM59sdCavTNdmNYIRVBU7jUv1crP5YmzwfWg3WWCAbpGHWMH
+         Qb9DQHxKng3mUxOaXFVUEugFCm9I2Gh7yuET8lXKCbPQpGSvUXqAesU5jHHwqjEnIbyJ
+         LLVxnX6+B4xk2Kcj11i/MkyOm1IEs3cyqwUKaFXIgg/kBQ7+t8fO2azUPS4QCy5NXzrE
+         EFeDRu2LFAyyYxt6pvb5Mv54ioTTck1yRh2ba5CGGWNGIKYGOzgbCAzusd9ArtgnV4xa
+         gZog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792360140; x=1792964940;
+        d=1e100.net; s=20260707; t=1792360144; x=1792964944;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GEBAL1aH6f3PS/QjPDV/zyDiSsBOUay2JlXlpSSeHtE=;
-        b=p8jOyePIx+oaXdKChs6r2ItxSkLIXT3jRUJ4PIwfFbnBEeanfoHDuhGglNn+QcmYcz
-         IngSmLjv3KkHHd+ydnbFJPTDJBHTgziRXQT446eF9/wNMlepuwujTXA372HapeZmHwMe
-         krnqSz1LhrGZ6wo9PoaKdFWcb6vlcy56g/6G6Nhw9/LEyezjwP/wvDSImaUZhQg3XLmj
-         aALPXnSlOARb4hXMF53STdknn4u166acasSUUEOwoVxUNs6J1eFXfVRzi60OAWHW8th0
-         KLP5pRUsXwcKN3qD0UnBt8dtuLeTWln2GlZNgZPNg+mUm61wUCpwvMNomQIZu4A61e6B
-         bNzA==
-X-Gm-Message-State: AFq9FYIx1xm7JvKIijl/VwvHHOrFA7uxDMQj1i3v2+MTqL8+Ez+RHwRJ
-	oXe5fXpK2oUfdyAHXALslTejYK7tZ0h25pIlY4wEs9H05xfURjA+iNhNQF8k2pNu
-X-Gm-Gg: AYBFou0kEsq6XCBGnKGzwr2rqW/3y/+QwSz5EgGrpZPWQFhvCspGOO2E7K1vwkJ6DqA
-	EsobaJubzR8hBkukNhLVamlLfZnsRvsV1j6Jjark+85gh/d1hVZFTh+qDf0zM/URRVk1Ssjz53X
-	A+/ErCTMNs6jtxftyR9PN/5/sCDcKiWIbxMCX1Cqt2F5YMNIuMcAfayAvXJ5H6Zfo/WMrOQPPOp
-	8/uJQogoEP+JO2Y+KZd8EFG9IT8RqnBFC3OihW/9Bn3khDiHnojI1qXrKe+pWChjRkylkeo6h+b
-	lcelFs0cVNw3AuP2pUS/CfPGJkfyB4feMGssh2lT2Gkx8iM/yTwwghoLshUMSAT8na5dUGPRSaM
-	fHv5W3gHRRZjl/yhUy7rnWaXl54J3/5l6MsJ0zW1i1JOkCtkCZUZ2xT57glW0E6Al5RMaaWHEcH
-	1zIsuiaXMNe2hX1LFRZSHJSgN8Z3I1C8T25ptGyJ1jNC5aXzGnwij1XPs5SQbxBcYWgd4FGdB/L
-	ef4uEVU+lwYBJpAHNAG7Cj6G9RhvvU=
-X-Received: by 2002:a05:6a00:4107:b0:87c:f67f:f7d3 with SMTP id d2e1a72fcca58-8a0490d566bmr3778282b3a.0.1792360139860;
-        Sun, 18 Oct 2026 14:48:59 -0700 (PDT)
+        bh=0p8YMojJp75qu7Gb0juMvyOJ8ohUjuzJSQUrWK5ZQvs=;
+        b=b+S6Q+C+cHi0HuR+2AQJEPW70PIfuYjPymQLrIbzz1h11zjo6dIEpdUanLRkbYd+hi
+         n+hPP5lHi5E7qgLsmAHSTdJwJjGku8aD3fOzr2uEJomw7FWjXDcUug3kouokSAqZjSR0
+         vYfvbmJvZqxTTMakOcFsBel2EWPczykZXFi2QsrZOlNtSpKG+U/Hh7fqnDX0cyS67GgO
+         oSlwEHExOdDSDmyom/D++tJoJE4kC1XuXLerRRSKpz0UPoAff2xz93g7iZdhheERl183
+         ChVmFpsqqcQbmibAvqmf5K47teD1bn3UGLCjzX8j6sWWhMxaT46EuiUA1AucNYR8tas7
+         7RXg==
+X-Gm-Message-State: AFq9FYLEN7apxvkM3wyfkMY7aEtYlImJ6c8xaBieVmebvAnWIEplmKx7
+	329MvG0sdNQ4iULLTeh568IUVpORD4Bni2BUMWUsGVj+WOCtaBNjfWL+AMifjfBH
+X-Gm-Gg: AYBFou24RVn517EV3f6YF1kMTO+q4n6v41n1eP1x+xqb8NHmhd0ShwIDMHIJ5NlPv0E
+	qi9c8XN6zY5LWcpxk4ETGm2Mh58bfWjyBvbXU79y/ufN29CT8xluyOXgJTfdclpT/UxoYkVuXe9
+	gQG1e+NXeBisGHcgMNPZ6Rvn7xSiKEvBGojdlXEVt9ghXsh38Vw4gSCZMQOJC4VAwmalpKHkzd4
+	FsVqHoOz6jYWphVneGQOhIIkr4faTmMhGrsfNLKvJfS5VX+ZPn7k69m+o4lFWfj8aOvQxmjqMFb
+	LMI110KheI1riO2qRP/BfIlx6+0tSIEg9iuWYlSC9Pi0I0xfaX9vdz7RKF7nOlPZ5WXe/kxOiuz
+	fd3URMkP/9VJIjeAF6tadNDYF232p7bBvfgfE1/7O+9DIvN6z8sdplFItiYNKozzpY6DvVVONRR
+	sPCh2BDurnZgd4lc1hkVuj35wqSd/Ll8DsEHpThClH2nxbcVMPORQdg9+91Y7Y+q8Ea2MBFwESy
+	7Zxz07iOdjO8O9H08d4BNJqkPBq/h0=
+X-Received: by 2002:a05:6a20:6a23:b0:3de:52c4:50bd with SMTP id adf61e73a8af0-3e225ae1709mr4531599637.0.1792360143818;
+        Sun, 18 Oct 2026 14:49:03 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a04493551csm2010759b3a.44.2026.10.18.14.48.56
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a04493551csm2010759b3a.44.2026.10.18.14.49.01
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 18 Oct 2026 14:48:57 -0700 (PDT)
+        Sun, 18 Oct 2026 14:49:02 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/3] dockersetup.py: move the script body into main()
-Date: Sun, 18 Oct 2026 14:48:45 -0700
-Message-ID: <20261018214847.69431-2-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 2/3] tests: add tests for the files dockersetup.py writes
+Date: Sun, 18 Oct 2026 14:48:46 -0700
+Message-ID: <20261018214847.69431-3-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261018214847.69431-1-tim.orling@konsulko.com>
 References: <20261018214847.69431-1-tim.orling@konsulko.com>
@@ -68,609 +68,216 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 21:49:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5078
+ <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 21:49:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5079
 
-The setup steps ran at module level, so importing dockersetup.py ran
-the whole setup and none of its functions could be tested. Move them
-into main(), called only when the file is run as a script, and move
-the lookup of an existing installation's database root password into
-read_db_root_password(). No change in behaviour.
+Check, against copies of the tracked files, that dockersetup.py:
+- writes the generated secrets to .env.local.* with mode 0600, leaving
+  unset email settings commented out and the .env.dev.* files alone
+- points docker-compose.yml at the .env.local.* files, sets the hostname
+  and port mapping, and enables certbot only for Let's Encrypt
+- reads the database root password back for update mode, including from
+  installations made before .env.local.db existed
+- sets and clears the proxy settings in the Dockerfile and git proxy
+- writes an nginx SSL config it can read back
+
+The Docker image doesn't contain dockersetup.py or those files, so the
+tests are skipped by docker/run-tests.sh and run by a separate CI job on
+the host, which needs only pytest and PyYAML.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- dockersetup.py | 523 +++++++++++++++++++++++++------------------------
- 1 file changed, 266 insertions(+), 257 deletions(-)
+ .github/workflows/ci.yml  |  13 ++++
+ tests/test_dockersetup.py | 158 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 171 insertions(+)
+ create mode 100644 tests/test_dockersetup.py
 
-diff --git a/dockersetup.py b/dockersetup.py
-index bf4a814..e58cff2 100755
---- a/dockersetup.py
-+++ b/dockersetup.py
-@@ -631,84 +631,89 @@ def writefile(filename, data):
-         f.write(data)
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 74405ac..76a4cf9 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -20,3 +20,16 @@ jobs:
  
- 
--## Get user arguments
--try:
--    args, socks_proxy_port, socks_proxy_host, email_host, email_port = get_args()
--except argparse.ArgumentTypeError as e:
--    print('error: %s' % e)
--    sys.exit(1)
--
--if args.update:
--    dbapassword = 'testingpw'
-+# Read the database root password of an existing installation, from
-+# .env.local.db or, for installations made before it existed, from
-+# docker-compose.yml. Returns the development default if neither has one.
-+def read_db_root_password():
-     for filename in ('.env.local.db', 'docker-compose.yml'):
-         if os.path.exists(filename):
-             with open(filename, 'r') as f:
-                 for line in f:
-                     if 'MYSQL_ROOT_PASSWORD=' in line and not line.lstrip().startswith('#'):
--                        dbapassword = line.split('=')[1].rstrip().rstrip('"')
--                        break
--            if dbapassword != 'testingpw':
--                break
--    # Use last project name
-+                        return line.split('=')[1].rstrip().rstrip('"')
-+    return 'testingpw'
+       - name: Build image and run tests
+         run: docker/run-tests.sh
++
++  dockersetup:
++    runs-on: ubuntu-latest
++    timeout-minutes: 10
++    steps:
++      - uses: actions/checkout@v5
++
++      # dockersetup.py runs on the host, not in the image
++      - name: Test dockersetup.py
++        run: |
++          python3 -m venv /tmp/venv
++          /tmp/venv/bin/pip install -q pytest PyYAML
++          /tmp/venv/bin/python -m pytest -rs -p no:cacheprovider tests/test_dockersetup.py
+diff --git a/tests/test_dockersetup.py b/tests/test_dockersetup.py
+new file mode 100644
+index 0000000..3a6d8ff
+--- /dev/null
++++ b/tests/test_dockersetup.py
+@@ -0,0 +1,158 @@
++# layerindex-web - tests for the file editing done by dockersetup.py
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
++
++import os
++import shutil
++import stat
++
++import pytest
++import yaml
++
++# The Docker image doesn't contain dockersetup.py or the files it edits, so
++# these tests are skipped by docker/run-tests.sh; CI runs them on the host.
++dockersetup = pytest.importorskip('dockersetup')
++
++basepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
++
++TRACKED_FILES = [
++    'docker-compose.yml',
++    '.env.dev.app', '.env.dev.celery', '.env.dev.db', '.env.dev.rabbit',
++    'Dockerfile',
++    'docker/git-proxy', 'docker/.gitconfig', 'docker/nginx-ssl.conf',
++]
 +
 +
-+def main():
-+    ## Get user arguments
-     try:
--        with open('.dockersetup-options', 'r') as f:
--            for line in f:
--                if line.startswith('project_name='):
--                    args.project_name = line.split('=', 1)[1].rstrip()
--    except FileNotFoundError:
--        pass
--else:
--    # Generate secret key and database password
--    secretkey = generatepasswords(50)
--    dbapassword = generatepasswords(10)
--    dbpassword = generatepasswords(10)
--    rmqpassword = generatepasswords(10)
--
--if args.project_name:
--    os.environ['COMPOSE_PROJECT_NAME'] = args.project_name
--else:
--    # Get the project name from the environment (so we can save it for a future upgrade)
--    args.project_name = os.environ.get('COMPOSE_PROJECT_NAME', '')
--
--https_port = None
--http_port = None
--if not args.update:
--    for portmap in args.portmapping.split(','):
--        outport, inport = portmap.split(':', 1)
--        if inport == '443':
--            https_port = outport
--        elif inport == '80':
--            http_port = outport
--    if (not https_port) and (not args.no_https):
--        print("No HTTPS port mapping (to port 443 inside the container) was specified and --no-https was not specified")
--        sys.exit(1)
--    if not http_port:
--        print("Port mapping must include a mapping to port 80 inside the container")
-+        args, socks_proxy_port, socks_proxy_host, email_host, email_port = get_args()
-+    except argparse.ArgumentTypeError as e:
-+        print('error: %s' % e)
-         sys.exit(1)
- 
--## Check if it's installed
--installed = False
--return_code = subprocess.call("docker ps -a | grep -q layersapp", shell=True)
--if return_code == 0:
--    installed = True
-+    if args.update:
-+        dbapassword = read_db_root_password()
-+        # Use last project name
-+        try:
-+            with open('.dockersetup-options', 'r') as f:
-+                for line in f:
-+                    if line.startswith('project_name='):
-+                        args.project_name = line.split('=', 1)[1].rstrip()
-+        except FileNotFoundError:
-+            pass
-+    else:
-+        # Generate secret key and database password
-+        secretkey = generatepasswords(50)
-+        dbapassword = generatepasswords(10)
-+        dbpassword = generatepasswords(10)
-+        rmqpassword = generatepasswords(10)
-+
-+    if args.project_name:
-+        os.environ['COMPOSE_PROJECT_NAME'] = args.project_name
-+    else:
-+        # Get the project name from the environment (so we can save it for a future upgrade)
-+        args.project_name = os.environ.get('COMPOSE_PROJECT_NAME', '')
- 
--if args.uninstall:
--    if not installed:
--        print("Cannot uninstall - application does not appear to be installed")
--        sys.exit(1)
--elif args.update:
--    if not installed:
--        print("Application container not found - update mode can only be used on an existing installation")
--        sys.exit(1)
--    if dbapassword == 'testingpw':
--        print("Update mode can only be used when previous configuration is still present in docker-compose.yml and other files")
-+    https_port = None
-+    http_port = None
-+    if not args.update:
-+        for portmap in args.portmapping.split(','):
-+            outport, inport = portmap.split(':', 1)
-+            if inport == '443':
-+                https_port = outport
-+            elif inport == '80':
-+                http_port = outport
-+        if (not https_port) and (not args.no_https):
-+            print("No HTTPS port mapping (to port 443 inside the container) was specified and --no-https was not specified")
-+            sys.exit(1)
-+        if not http_port:
-+            print("Port mapping must include a mapping to port 80 inside the container")
-+            sys.exit(1)
-+
-+    ## Check if it's installed
-+    installed = False
-+    return_code = subprocess.call("docker ps -a | grep -q layersapp", shell=True)
-+    if return_code == 0:
-+        installed = True
-+
-+    if args.uninstall:
-+        if not installed:
-+            print("Cannot uninstall - application does not appear to be installed")
-+            sys.exit(1)
-+    elif args.update:
-+        if not installed:
-+            print("Application container not found - update mode can only be used on an existing installation")
-+            sys.exit(1)
-+        if dbapassword == 'testingpw':
-+            print("Update mode can only be used when previous configuration is still present in docker-compose.yml and other files")
-+            sys.exit(1)
-+    elif installed and not args.reinstall:
-+        print('Application already installed. Please use -u/--update to update or -r/--reinstall to reinstall')
-         sys.exit(1)
--elif installed and not args.reinstall:
--    print('Application already installed. Please use -u/--update to update or -r/--reinstall to reinstall')
--    sys.exit(1)
- 
--if not args.uninstall:
--    print("""
-+    if not args.uninstall:
-+        print("""
- OE Layer Index Docker setup script
- ----------------------------------
- 
-@@ -723,232 +728,236 @@ Note that this script does have interactive prompts, so be prepared to
- provide information as needed.
- """)
- 
--if not (args.update or args.uninstall) and not email_host:
--    print("""  WARNING: no email host has been specified - functions that require email
-+    if not (args.update or args.uninstall) and not email_host:
-+        print("""  WARNING: no email host has been specified - functions that require email
-   (such as and new account registraion, password reset and error reports will
-   not work without it. If you wish to correct this, press Ctrl+C now and then
-   re-run specifying the email host with the --email-host option.
- """)
- 
--if args.reinstall:
--    print("""  WARNING: continuing will wipe out any existing data in the database and set
-+    if args.reinstall:
-+        print("""  WARNING: continuing will wipe out any existing data in the database and set
-   up the application from scratch! Press Ctrl+C now if this is not what you
-   want.
- """)
- 
--if args.uninstall:
--    print("""
-+    if args.uninstall:
-+        print("""
-   WARNING: continuing will wipe out any existing data in the database and
-   uninstall the application. Press Ctrl+C now if this is not what you want.
- """)
- 
--try:
--    if args.uninstall:
--        promptstr = 'Press Enter to begin uninstallation (or Ctrl+C to exit)...'
--    elif args.update:
--        promptstr = 'Press Enter to begin update (or Ctrl+C to exit)...'
--    else:
--        promptstr = 'Press Enter to begin setup (or Ctrl+C to exit)...'
--    input(promptstr)
--except KeyboardInterrupt:
--    print('')
--    sys.exit(2)
--
--if not (args.update or args.uninstall):
--    # Get email address
--    print('')
--    if args.letsencrypt:
--        print('You will now be asked for an email address. This will be used for the superuser account, to send error reports to and for Let\'s Encrypt.')
--    else:
--        print('You will now be asked for an email address. This will be used for the superuser account and to send error reports to.')
--    emailaddr = None
--    while True:
--        emailaddr = input('Enter your email address: ')
--        if '@' in emailaddr:
--            break
-+    try:
-+        if args.uninstall:
-+            promptstr = 'Press Enter to begin uninstallation (or Ctrl+C to exit)...'
-+        elif args.update:
-+            promptstr = 'Press Enter to begin update (or Ctrl+C to exit)...'
-         else:
--            print('Entered email address is not valid')
--
--if args.reinstall or args.uninstall:
--    return_code = subprocess.call(['docker-compose', 'down', '-v'], shell=False)
--
--if args.uninstall:
--    # We're done
--    print('Uninstallation completed')
--    sys.exit(0)
-+            promptstr = 'Press Enter to begin setup (or Ctrl+C to exit)...'
-+        input(promptstr)
-+    except KeyboardInterrupt:
-+        print('')
-+        sys.exit(2)
- 
--if args.update:
--    args.no_https = read_dockerfile_web()
--    if not args.no_https:
--        container_cert_dir = args.app_dir + '/cert'
--        args.hostname, https_port, certdir, certfile, keyfile = read_nginx_ssl_conf(container_cert_dir)
--        edit_nginx_ssl_conf(args.hostname, https_port, certdir, certfile, keyfile)
--else:
--    # Always edit these in case we switch from proxy to no proxy
--    edit_gitproxy(socks_proxy_host, socks_proxy_port, args.no_proxy)
--    edit_dockerfile(args.http_proxy, args.https_proxy, args.no_proxy)
--    write_env_file(args.app_dir)
-+    if not (args.update or args.uninstall):
-+        # Get email address
-+        print('')
-+        if args.letsencrypt:
-+            print('You will now be asked for an email address. This will be used for the superuser account, to send error reports to and for Let\'s Encrypt.')
-+        else:
-+            print('You will now be asked for an email address. This will be used for the superuser account and to send error reports to.')
-+        emailaddr = None
-+        while True:
-+            emailaddr = input('Enter your email address: ')
-+            if '@' in emailaddr:
-+                break
-+            else:
-+                print('Entered email address is not valid')
- 
--    write_service_env_files(dbpassword, dbapassword, secretkey, rmqpassword, email_host, email_port, args.email_user, args.email_password, args.email_ssl, args.email_tls)
--    edit_dockercompose(args.hostname, args.portmapping, args.letsencrypt, args.app_dir)
-+    if args.reinstall or args.uninstall:
-+        return_code = subprocess.call(['docker-compose', 'down', '-v'], shell=False)
- 
--    edit_dockerfile_web(args.hostname, args.no_https)
-+    if args.uninstall:
-+        # We're done
-+        print('Uninstallation completed')
-+        sys.exit(0)
- 
--    edit_settings_py(emailaddr, args.app_dir)
-+    if args.update:
-+        args.no_https = read_dockerfile_web()
-+        if not args.no_https:
-+            container_cert_dir = args.app_dir + '/cert'
-+            args.hostname, https_port, certdir, certfile, keyfile = read_nginx_ssl_conf(container_cert_dir)
-+            edit_nginx_ssl_conf(args.hostname, https_port, certdir, certfile, keyfile)
-+    else:
-+        # Always edit these in case we switch from proxy to no proxy
-+        edit_gitproxy(socks_proxy_host, socks_proxy_port, args.no_proxy)
-+        edit_dockerfile(args.http_proxy, args.https_proxy, args.no_proxy)
-+        write_env_file(args.app_dir)
- 
--    edit_options_file(args.project_name)
-+        write_service_env_files(dbpassword, dbapassword, secretkey, rmqpassword, email_host, email_port, args.email_user, args.email_password, args.email_ssl, args.email_tls)
-+        edit_dockercompose(args.hostname, args.portmapping, args.letsencrypt, args.app_dir)
- 
--    if not args.no_https:
--        setup_https(args.hostname, http_port, https_port, args.letsencrypt, args.letsencrypt_production, args.cert, args.cert_key, emailaddr, args.app_dir)
-+        edit_dockerfile_web(args.hostname, args.no_https)
- 
--## Start up containers
--return_code = subprocess.call(['docker-compose', 'up', '-d', '--build'], shell=False)
--if return_code != 0:
--    print("docker-compose up failed")
--    sys.exit(1)
-+        edit_settings_py(emailaddr, args.app_dir)
- 
--if not (args.update or args.no_connectivity):
--    ## Run connectivity check
--    check_connectivity(args.app_dir)
--
--# Get real project name (if only there were a reasonable way to do this... ugh)
--real_project_name = ''
--output = subprocess.check_output(['docker-compose', 'ps', '-q'], shell=False)
--if output:
--    output = output.decode('utf-8')
--    for contid in output.splitlines():
--        output = subprocess.check_output(['docker', 'inspect', '-f', '{{ .Mounts }}', contid], shell=False)
--        if output:
--            output = output.decode('utf-8')
--            for volume in re.findall('volume ([^ ]+)', output):
--                if '_' in volume:
--                    real_project_name = volume.rsplit('_', 1)[0]
--                    break
--            if real_project_name:
--                break
--if not real_project_name:
--    print('Failed to detect docker-compose project name')
--    sys.exit(1)
-+        edit_options_file(args.project_name)
- 
--# Database might not be ready yet; have to wait then poll.
--time.sleep(8)
--while True:
--    time.sleep(2)
--    # Pass credentials through environment for slightly better security
--    # (avoids password being visible through ps or /proc/<pid>/cmdline)
--    env = os.environ.copy()
--    env['MYSQL_PWD'] = dbapassword
--    # Dummy command, we just want to establish that the db can be connected to
--    return_code = subprocess.call("echo | docker-compose exec -T -e MYSQL_PWD layersdb mariadb -uroot layersdb", shell=True, env=env)
--    if return_code == 0:
--        break
--    else:
--        print("Database server may not be ready; will try again.")
--
--if not args.update:
--    # Import the user's supplied data
--    if args.databasefile:
--        filename, file_extension = os.path.splitext(args.databasefile)
--        if file_extension == ".zst":
--            return_code = subprocess.call("zstd -t %s > /dev/null 2>&1" % quote(args.databasefile), shell=True)
--            if return_code == 0:
--                catcmd = 'zstdcat'
--        elif file_extension == ".gz":
--            return_code = subprocess.call("gunzip -t %s > /dev/null 2>&1" % quote(args.databasefile), shell=True)
--            if return_code == 0:
--                catcmd = 'zcat'
--        else:
--            catcmd = 'cat'
--        env = os.environ.copy()
--        env['MYSQL_PWD'] = dbapassword
--        return_code = subprocess.call("%s %s | docker-compose exec -T -e MYSQL_PWD layersdb mariadb -uroot layersdb" % (catcmd, quote(args.databasefile)), shell=True, env=env)
--        if return_code != 0:
--            print("Database import failed")
--            sys.exit(1)
-+        if not args.no_https:
-+            setup_https(args.hostname, http_port, https_port, args.letsencrypt, args.letsencrypt_production, args.cert, args.cert_key, emailaddr, args.app_dir)
- 
--if not args.no_migrate:
--    # Apply any pending layerindex migrations / initialize the database.
--    env = os.environ.copy()
--    env['DATABASE_USER'] = 'root'
--    env['DATABASE_PASSWORD'] = dbapassword
--    return_code = subprocess.call(['docker-compose', 'run', '--rm', '-e', 'DATABASE_USER', '-e', 'DATABASE_PASSWORD', 'layersapp', args.app_dir + '/migrate.sh'], shell=False, env=env)
-+    ## Start up containers
-+    return_code = subprocess.call(['docker-compose', 'up', '-d', '--build'], shell=False)
-     if return_code != 0:
--        print("Applying migrations failed")
-+        print("docker-compose up failed")
-         sys.exit(1)
- 
--if not args.update:
--    # Create normal database user for app to use
--    with tempfile.NamedTemporaryFile('w', dir=os.getcwd(), delete=False) as tf:
--        sqlscriptfile = tf.name
--        tf.write("DROP USER IF EXISTS layers;")
--        tf.write("CREATE USER layers IDENTIFIED BY '%s';\n" % dbpassword)
--        tf.write("GRANT SELECT, UPDATE, INSERT, DELETE ON layersdb.* TO layers;\n")
--        tf.write("FLUSH PRIVILEGES;\n")
--    try:
-+    if not (args.update or args.no_connectivity):
-+        ## Run connectivity check
-+        check_connectivity(args.app_dir)
-+
-+    # Get real project name (if only there were a reasonable way to do this... ugh)
-+    real_project_name = ''
-+    output = subprocess.check_output(['docker-compose', 'ps', '-q'], shell=False)
-+    if output:
-+        output = output.decode('utf-8')
-+        for contid in output.splitlines():
-+            output = subprocess.check_output(['docker', 'inspect', '-f', '{{ .Mounts }}', contid], shell=False)
-+            if output:
-+                output = output.decode('utf-8')
-+                for volume in re.findall('volume ([^ ]+)', output):
-+                    if '_' in volume:
-+                        real_project_name = volume.rsplit('_', 1)[0]
-+                        break
-+                if real_project_name:
-+                    break
-+    if not real_project_name:
-+        print('Failed to detect docker-compose project name')
-+        sys.exit(1)
-+
-+    # Database might not be ready yet; have to wait then poll.
-+    time.sleep(8)
-+    while True:
-+        time.sleep(2)
-         # Pass credentials through environment for slightly better security
-         # (avoids password being visible through ps or /proc/<pid>/cmdline)
-         env = os.environ.copy()
-         env['MYSQL_PWD'] = dbapassword
--        return_code = subprocess.call("docker-compose exec -T -e MYSQL_PWD layersdb mariadb -uroot layersdb < " + quote(sqlscriptfile), shell=True, env=env)
--        if return_code != 0:
--            print("Creating database user failed")
--            sys.exit(1)
--    finally:
--        os.remove(sqlscriptfile)
-+        # Dummy command, we just want to establish that the db can be connected to
-+        return_code = subprocess.call("echo | docker-compose exec -T -e MYSQL_PWD layersdb mariadb -uroot layersdb", shell=True, env=env)
-+        if return_code == 0:
-+            break
-+        else:
-+            print("Database server may not be ready; will try again.")
-+
-+    if not args.update:
-+        # Import the user's supplied data
-+        if args.databasefile:
-+            filename, file_extension = os.path.splitext(args.databasefile)
-+            if file_extension == ".zst":
-+                return_code = subprocess.call("zstd -t %s > /dev/null 2>&1" % quote(args.databasefile), shell=True)
-+                if return_code == 0:
-+                    catcmd = 'zstdcat'
-+            elif file_extension == ".gz":
-+                return_code = subprocess.call("gunzip -t %s > /dev/null 2>&1" % quote(args.databasefile), shell=True)
-+                if return_code == 0:
-+                    catcmd = 'zcat'
-+            else:
-+                catcmd = 'cat'
-+            env = os.environ.copy()
-+            env['MYSQL_PWD'] = dbapassword
-+            return_code = subprocess.call("%s %s | docker-compose exec -T -e MYSQL_PWD layersdb mariadb -uroot layersdb" % (catcmd, quote(args.databasefile)), shell=True, env=env)
-+            if return_code != 0:
-+                print("Database import failed")
-+                sys.exit(1)
- 
--    ## Set the volume permissions using debian:stretch since we recently fetched it
--    volumes = ['layersmeta', 'layersstatic', 'logvolume']
--    with open('docker-compose.yml', 'r') as f:
--        for line in f:
--            if line.lstrip().startswith('- srcvolume:'):
--                volumes.append('srcvolume')
--                break
--    for volume in volumes:
--        volname = '%s_%s' % (real_project_name, volume)
--        return_code = subprocess.call(['docker', 'run', '--rm', '-v', '%s:%s/mount' % (volname, args.app_dir), 'debian:stretch', 'chown', '500', args.app_dir + '/mount'], shell=False)
-+    if not args.no_migrate:
-+        # Apply any pending layerindex migrations / initialize the database.
-+        env = os.environ.copy()
-+        env['DATABASE_USER'] = 'root'
-+        env['DATABASE_PASSWORD'] = dbapassword
-+        return_code = subprocess.call(['docker-compose', 'run', '--rm', '-e', 'DATABASE_USER', '-e', 'DATABASE_PASSWORD', 'layersapp', args.app_dir + '/migrate.sh'], shell=False, env=env)
-         if return_code != 0:
--            print("Setting volume permissions for volume %s failed" % volume)
-+            print("Applying migrations failed")
-             sys.exit(1)
- 
--## Generate static assets. Run this command again to regenerate at any time (when static assets in the code are updated)
--return_code = subprocess.call("docker-compose run --rm -e STATIC_ROOT=/usr/share/nginx/html -v %s_layersstatic:/usr/share/nginx/html layersapp %s/layerindex/manage.py collectstatic --noinput" % (quote(real_project_name), args.app_dir), shell = True)
--if return_code != 0:
--    print("Collecting static files failed")
--    sys.exit(1)
-+    if not args.update:
-+        # Create normal database user for app to use
-+        with tempfile.NamedTemporaryFile('w', dir=os.getcwd(), delete=False) as tf:
-+            sqlscriptfile = tf.name
-+            tf.write("DROP USER IF EXISTS layers;")
-+            tf.write("CREATE USER layers IDENTIFIED BY '%s';\n" % dbpassword)
-+            tf.write("GRANT SELECT, UPDATE, INSERT, DELETE ON layersdb.* TO layers;\n")
-+            tf.write("FLUSH PRIVILEGES;\n")
-+        try:
-+            # Pass credentials through environment for slightly better security
-+            # (avoids password being visible through ps or /proc/<pid>/cmdline)
-+            env = os.environ.copy()
-+            env['MYSQL_PWD'] = dbapassword
-+            return_code = subprocess.call("docker-compose exec -T -e MYSQL_PWD layersdb mariadb -uroot layersdb < " + quote(sqlscriptfile), shell=True, env=env)
-+            if return_code != 0:
-+                print("Creating database user failed")
-+                sys.exit(1)
-+        finally:
-+            os.remove(sqlscriptfile)
- 
--if https_port and not args.no_https:
--    protocol = 'https'
--    port = https_port
--    defport = '443'
--else:
--    protocol = 'http'
--    port = http_port
--    defport = '80'
--if port == defport:
--    host = args.hostname
--else:
--    host = '%s:%s' % (args.hostname, port)
--
--if not args.update:
--    if not args.databasefile:
--        ## Set site name
--        return_code = subprocess.call(['docker-compose', 'run', '--rm', 'layersapp', args.app_dir + '/layerindex/layerindex/tools/site_name.py', host, 'OpenEmbedded Layer Index'], shell=False)
--
--    if not args.no_admin_user:
--        ## For a fresh database, create an admin account
--        print("Creating database superuser. Input user name and password when prompted.")
--        return_code = subprocess.call(['docker-compose', 'run', '--rm', 'layersapp', args.app_dir + '/layerindex/manage.py', 'createsuperuser', '--email', emailaddr], shell=False)
--        if return_code != 0:
--            print("Creating superuser failed")
--            sys.exit(1)
-+        ## Set the volume permissions using debian:stretch since we recently fetched it
-+        volumes = ['layersmeta', 'layersstatic', 'logvolume']
-+        with open('docker-compose.yml', 'r') as f:
-+            for line in f:
-+                if line.lstrip().startswith('- srcvolume:'):
-+                    volumes.append('srcvolume')
-+                    break
-+        for volume in volumes:
-+            volname = '%s_%s' % (real_project_name, volume)
-+            return_code = subprocess.call(['docker', 'run', '--rm', '-v', '%s:%s/mount' % (volname, args.app_dir), 'debian:stretch', 'chown', '500', args.app_dir + '/mount'], shell=False)
-+            if return_code != 0:
-+                print("Setting volume permissions for volume %s failed" % volume)
-+                sys.exit(1)
- 
-+    ## Generate static assets. Run this command again to regenerate at any time (when static assets in the code are updated)
-+    return_code = subprocess.call("docker-compose run --rm -e STATIC_ROOT=/usr/share/nginx/html -v %s_layersstatic:/usr/share/nginx/html layersapp %s/layerindex/manage.py collectstatic --noinput" % (quote(real_project_name), args.app_dir), shell = True)
-+    if return_code != 0:
-+        print("Collecting static files failed")
-+        sys.exit(1)
- 
--if args.update:
--    print("Update complete")
--else:
--    if args.project_name:
-+    if https_port and not args.no_https:
-+        protocol = 'https'
-+        port = https_port
-+        defport = '443'
-+    else:
-+        protocol = 'http'
-+        port = http_port
-+        defport = '80'
-+    if port == defport:
-+        host = args.hostname
-+    else:
-+        host = '%s:%s' % (args.hostname, port)
-+
-+    if not args.update:
-+        if not args.databasefile:
-+            ## Set site name
-+            return_code = subprocess.call(['docker-compose', 'run', '--rm', 'layersapp', args.app_dir + '/layerindex/layerindex/tools/site_name.py', host, 'OpenEmbedded Layer Index'], shell=False)
-+
-+        if not args.no_admin_user:
-+            ## For a fresh database, create an admin account
-+            print("Creating database superuser. Input user name and password when prompted.")
-+            return_code = subprocess.call(['docker-compose', 'run', '--rm', 'layersapp', args.app_dir + '/layerindex/manage.py', 'createsuperuser', '--email', emailaddr], shell=False)
-+            if return_code != 0:
-+                print("Creating superuser failed")
-+                sys.exit(1)
++@pytest.fixture
++def workdir(tmp_path, monkeypatch):
++    """A copy of the files dockersetup.py edits, as the current directory."""
++    for name in TRACKED_FILES:
++        dest = tmp_path / name
++        dest.parent.mkdir(parents=True, exist_ok=True)
++        shutil.copy(os.path.join(basepath, name), dest)
++    monkeypatch.chdir(tmp_path)
++    return tmp_path
 +
 +
-+    if args.update:
-+        print("Update complete")
-+    else:
-+        if args.project_name:
-+            print("")
-+            print("NOTE: you may need to use -p %s (or set COMPOSE_PROJECT_NAME=\"%s\" ) if running docker-compose directly in future" % (args.project_name, args.project_name))
-         print("")
--        print("NOTE: you may need to use -p %s (or set COMPOSE_PROJECT_NAME=\"%s\" ) if running docker-compose directly in future" % (args.project_name, args.project_name))
--    print("")
--    print("The application should now be accessible at %s://%s" % (protocol, host))
--    print("")
-+        print("The application should now be accessible at %s://%s" % (protocol, host))
-+        print("")
++def read_env(path):
++    values = {}
++    for line in path.read_text().splitlines():
++        if line and not line.startswith('#'):
++            key, value = line.split('=', 1)
++            values[key] = value
++    return values
 +
 +
-+if __name__ == '__main__':
-+    main()
++def write_env_files(email_host=None, email_tls=False):
++    dockersetup.write_service_env_files('dbpw', 'rootpw', 'sekrit', 'mqpw', email_host, None,
++                                        None, None, False, email_tls)
++
++
++def test_env_files_get_generated_secrets(workdir):
++    write_env_files(email_host='smtp.example.com', email_tls=True)
++
++    app = read_env(workdir / '.env.local.app')
++    assert app['SECRET_KEY'] == 'sekrit'
++    assert app['DATABASE_USER'] == 'layers'
++    assert app['DATABASE_PASSWORD'] == 'dbpw'
++    assert app['RABBITMQ_DEFAULT_USER'] == 'layermq'
++    assert app['RABBITMQ_DEFAULT_PASS'] == 'mqpw'
++    assert app['EMAIL_HOST'] == 'smtp.example.com'
++    assert app['EMAIL_USE_TLS'] == 'True'
++    assert app['DEBUG'] == '0'
++    assert read_env(workdir / '.env.local.celery')['DATABASE_PASSWORD'] == 'dbpw'
++    assert read_env(workdir / '.env.local.db')['MYSQL_ROOT_PASSWORD'] == 'rootpw'
++    assert read_env(workdir / '.env.local.rabbit') == {'RABBITMQ_DEFAULT_USER': 'layermq',
++                                                       'RABBITMQ_DEFAULT_PASS': 'mqpw'}
++
++
++def test_env_files_are_private_and_leave_unset_email_commented(workdir):
++    write_env_files()
++    for service in ('app', 'celery', 'db', 'rabbit'):
++        path = workdir / ('.env.local.' + service)
++        assert stat.S_IMODE(path.stat().st_mode) == 0o600
++        assert 'not secret' not in path.read_text()
++    app = read_env(workdir / '.env.local.app')
++    assert 'EMAIL_HOST' not in app
++    assert 'EMAIL_USE_TLS' not in app
++    # The tracked defaults are left alone
++    assert read_env(workdir / '.env.dev.db')['MYSQL_ROOT_PASSWORD'] == 'testingpw'
++
++
++def load_compose(workdir):
++    return yaml.safe_load((workdir / 'docker-compose.yml').read_text())
++
++
++def test_compose_uses_local_env_files(workdir):
++    dockersetup.edit_dockercompose('layers.example.com', '8080:80,8081:443', False)
++    services = load_compose(workdir)['services']
++    for service, env in (('layersdb', 'db'), ('layersapp', 'app'),
++                         ('layersrabbit', 'rabbit'), ('layerscelery', 'celery')):
++        assert services[service]['env_file'] == ['.env.local.' + env]
++    assert services['layersapp']['hostname'] == 'layers.example.com'
++    assert services['layersweb']['ports'] == ['8080:80', '8081:443']
++    assert 'layerscertbot' not in services
++
++
++def test_compose_enables_certbot_for_letsencrypt(workdir):
++    dockersetup.edit_dockercompose('layers.example.com', '80:80,443:443', True)
++    services = load_compose(workdir)['services']
++    assert 'layerscertbot' in services
++    assert './docker/certs:/etc/letsencrypt' in services['layerscertbot']['volumes']
++    assert './docker/certs:/etc/letsencrypt' in services['layersweb']['volumes']
++
++
++def test_read_db_root_password(workdir):
++    assert dockersetup.read_db_root_password() == 'testingpw'
++    # Installations made before .env.local.db kept it in docker-compose.yml
++    compose = workdir / 'docker-compose.yml'
++    compose.write_text(compose.read_text() + '    environment:\n     - "MYSQL_ROOT_PASSWORD=oldpw"\n')
++    assert dockersetup.read_db_root_password() == 'oldpw'
++    write_env_files()
++    assert dockersetup.read_db_root_password() == 'rootpw'
++
++
++def test_dockerfile_proxy(workdir):
++    dockersetup.edit_dockerfile('http://proxy:3128', 'http://proxy:3128', 'localhost')
++    text = (workdir / 'Dockerfile').read_text()
++    assert 'ENV http_proxy http://proxy:3128\n' in text
++    assert 'ENV no_proxy localhost\n' in text
++    dockersetup.edit_dockerfile('', '', '')
++    lines = (workdir / 'Dockerfile').read_text().splitlines()
++    assert not [line for line in lines if line.startswith(('ENV http_proxy', 'ENV https_proxy', 'ENV no_proxy'))]
++
++
++@pytest.mark.parametrize('no_proxy, expected', [
++    ('localhost,.example.com', 'localhost|*.example.com'),
++    ('10.0.0.0/8,192.168.1.0/24,10.1.2.3/32', '10.*|192.168.1.*|10.1.2.3'),
++    ('172.16.0.0/12', ''),
++])
++def test_convert_no_proxy(no_proxy, expected):
++    assert dockersetup.convert_no_proxy(no_proxy) == expected
++
++
++def test_gitproxy(workdir):
++    dockersetup.edit_gitproxy('socks.example.com', '1080', 'localhost,.example.com')
++    proxy = (workdir / 'docker' / 'git-proxy').read_text()
++    assert 'PROXY=socks.example.com\n' in proxy
++    assert 'PORT=1080\n' in proxy
++    assert '    localhost|*.example.com)\n' in proxy
++    gitconfig = (workdir / 'docker' / '.gitconfig').read_text()
++    assert any('gitproxy' in line and not line.lstrip().startswith('#') for line in gitconfig.splitlines())
++
++    dockersetup.edit_gitproxy('', '', '')
++    gitconfig = (workdir / 'docker' / '.gitconfig').read_text()
++    assert all(line.lstrip().startswith('#') for line in gitconfig.splitlines() if 'gitproxy' in line)
++
++
++def test_nginx_ssl_conf_round_trip(workdir):
++    dockersetup.edit_nginx_ssl_conf('layers.example.com', '8081', '/opt/cert', 'cert.pem', 'key.pem')
++    edited = (workdir / 'docker' / 'nginx-ssl-edited.conf').read_text()
++    assert 'ssl_dhparam /opt/cert/dhparam.pem;' in edited
++    assert 'layers.openembedded.org' not in edited
++    # The template is left alone, so the hostname can be replaced again
++    assert 'layers.openembedded.org' in (workdir / 'docker' / 'nginx-ssl.conf').read_text()
++    assert dockersetup.read_nginx_ssl_conf('/opt/cert') == \
++        ('layers.example.com', '8081', '/opt/cert', 'cert.pem', 'key.pem')
 -- 
 2.56.0
 
