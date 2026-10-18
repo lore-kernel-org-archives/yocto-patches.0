@@ -2,129 +2,154 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DB0CCA490
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B75CCCF2D4
 	for <webhook@archiver.kernel.org>; Sun, 18 Oct 2026 22:03:23 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.22484.1792360994230033010
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.22591.1792360998484500266
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 18 Oct 2026 15:03:14 -0700
+ Sun, 18 Oct 2026 15:03:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=BYrY4r76;
- spf=pass (domain: gmail.com, ip: 209.85.216.54, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3856d6fbcb3so934345a91.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:14 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=M9WLyB1g;
+ spf=pass (domain: gmail.com, ip: 209.85.216.48, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3acb11973c3so1428016a91.3
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 15:03:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792360993; x=1792965793; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=i6NaifV0qlmZ+Mqhk9cykfkIMyDb86hXhKBZLMdAneA=;
-        b=BYrY4r7645DWc6KFQ2paVowwHycqPr7yJPOLFDuDv00NMv3euGfMJb5ZYRaQZws2k/
-         7cOnRhvLQ0vmomMwDbmj/dEms/mvHMAlCWLUZOfi0neabp4bPPcjQzHSB2GJuXSEFkle
-         cfhmRdbAA8wVcQjyGCUHmDNjWbVaO5rQOurpZuPwOkP7zTeOqJTpY8bdrIU/UpdAiwnG
-         1sThtuInDWQGy0UgsY32dL85lI6y+qmxT0abzpN8pu+bG6H/eXI9E2Q4MY6KULItva+L
-         YQj3BLOnCIbLQf+4n4RNoUq5KgmPZYW7AR8ZRySy0mpImYwJ6cOhqabAGKsD1IFplTez
-         tYGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792360993; x=1792965793;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792360998; x=1792965798; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=i6NaifV0qlmZ+Mqhk9cykfkIMyDb86hXhKBZLMdAneA=;
-        b=i13B0KiIeA5D1B2ZQEzoSdDZ3oZahB0bYPv+AZEcb2o94OmzGGrMT3tPNYS5ACj6Ic
-         +QB2iiGB0GysvCzjEzJC8jJZL5vXFHBUcwYsF+ZS6hFyKGZNVYO8Va6AVuxtoWsR6GhV
-         7nDZNz/Yp69PqSVSkKvNIfjbychixh/lORRHz8ewY7nk4wgiYRtTN0Tf7GpBLzQRhKAz
-         FrzOcUkMnXw2EppGGMGEp4Uz9ct51H51rI20EsjE/o6/0ZgyQZn538lFpR6qIGeJ6CIF
-         FSbkVTZ6+G8NBYuuF4OLA/ddLLSDwhhkV8stmOY8p1+TT4tlXJIZJDD7P6ILQmBBAsqE
-         a2YQ==
-X-Gm-Message-State: AFq9FYKATBY8G33AKdDV9KfaYOnqZre9suAGruL+SX/cY4icBSgGnwLc
-	QIekJEJjbIjMgqmcrgS2sdHXHafKW56kz4xQEu28dUNjaAIMrWx2X/+g39AoB4Vf
-X-Gm-Gg: AYBFou00HBuE+asc5irHQJN2NSRjAgOcyy1txkO69iMbwWQ7a/iFryrKJp+VXbhUPGN
-	2fMDf34zIrdQrtzgWbhCsX3FZGMRXlZ4p3Rvmp0+jNU8NjXXm2PfpVjvcf6di6Kj8uS4HguSlQW
-	HWgRYzxMWioXYV0/WOjM3es1UILUMh+rHruRJOYP9ucPxTAbKVjw1IvLiodvHUYXctP+iwoxtIf
-	lZhc6vEdk0dzsQ8FQ4Sb05EpAKyO2/7Q0bfeKrStjxUj6pswtlgU3ZXzcnf33QgvwABOrn/93wE
-	4TIHXmRwaUPM81+vVa4Pq07sClvi49exL9MHF7OWFaoIXlLq55qJHIfZc6pjqBQVFmdTWF3kxUA
-	a9o3Bx0X9HdjkwWES4DD8/h6Wvqq5xmqt68gLrLhP5Z+Ef2AKl7ZS380WVFyNIpZuVrwnp/TDNA
-	MoUcS9HAZz6wL2+ZJ1IyrvPsgw+kaRiIViidv9Hrl9Q3xi6u7vCUBALi0TUC+/Zyh2bgff6BuvY
-	AChTTZ1WfE1POLKO0Sb9DusgovA5pU=
-X-Received: by 2002:a17:90a:d44d:b0:3ac:9176:e836 with SMTP id 98e67ed59e1d1-3aceefbddadmr5019983a91.21.1792360993222;
-        Sun, 18 Oct 2026 15:03:13 -0700 (PDT)
+        bh=t4hOn2rMoFcSx85bpOrfIhZ1QwBfSg0mrNGVUg1W2/M=;
+        b=M9WLyB1gkAo0oGw41rsy6nTTGmOuACaiy2d/Utzo4u/AKcP11nrdKWP/FHGqwjtpLF
+         1vMTN6qQUzzxsE5tGrC/eZc/MC2xk2ZAylqlehAHXVckYDy17KjEu9DL8mGLPXUiP7ZZ
+         7yxUzUFlbA3zjMUWom0QU0bBWF4PEQ+jbgPmLZmu/k3grEU0jknk4BdF/VxXfcnC+NSe
+         mzAopjR8tuKD+hORLlq0iXN6H5i9thVnSX6HkXfzeMuple11GooyPS3TVZzaHB1Rlxb3
+         f7cUB+2ku18UaGLHC7hUfpZVd9gWbCmQwlrIkS0mlzBYdCDEtHy2pR+jkPP4DBXNgigh
+         A9vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792360998; x=1792965798;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=t4hOn2rMoFcSx85bpOrfIhZ1QwBfSg0mrNGVUg1W2/M=;
+        b=l/r1VPRBH0c7G1JiC6pTXFtO3j+F5ffTFT2ai1Y4cNkRlWconOYx9b+CPORMhtieIO
+         EuSjrnQuRp4cQWvXEfjQrD5W1T65vPN8zwPmYD0HACnHHlnrFy19/dbz0ejVMZcmjkFd
+         WwN0TYIbQxlhWVJD7WoGqA7GoXonGv9xUUt6JpDhQqDaNVvc4ruYvAfJlqaKL1nZDIjx
+         icmS1cYJvu5Ur6WJTV3UZ06xptsPTKLMuyOOz5fBh36GlQPQGq0x5ZPWd1pxOyWAPNjL
+         OKb60uwedO000I5ZZYXxR2pPGkFYstWuBJIp6B27uPHoL2OuxjD7tdRTnPqW0krLb5qB
+         S4mA==
+X-Gm-Message-State: AFq9FYJc9iYV/F2uLjRu6Ao7WlOwft4b0dSAULo6k9LACtwfkFl84ozm
+	kHpWTwaSDo8itIsMZrbVZ82SLR0cqBaN5nf8jkd838XGCPPfuYhC99Gq52M0kg==
+X-Gm-Gg: AYBFou3jWtI5bmMe7fILOwUdJUW4zMnFLsCNhE/dpiTmFO/lnOKxGpTqhLX+7PyaIL4
+	zC+B/GSAmpfTOaiT+oa7W6WoZ5g7NhLIJutk3G8i3zXAfrQ601qSITY2AzElOpFlSeEGb8AFjHr
+	yEOdufhm1kt/ktkyCfhaWs9+IUcOFAIhq3Sqk0LplMN9uAgZVQPa3hkg+Sj5sWEezgqHVFmcoEt
+	HXkPZhYG7Sh1jet6rIOcoL7ylyDE2Zn+tJUOfj5T0F9RDD1dt5LfIPSeg26GZclzuBCnJvU2Qx4
+	6rxvN1eyyF2T93wB4+HTgxPedrWDwKZMQY4i3yEnuAMweLZ7/UttYigs/EfEDtmH2uKoZFSmv/D
+	U73sbC1EXozcNLtULriAkJsII3rKw9k6pzCQL/Xvk1hAfpsf3DZ0w95JwWJUSUFfV11T1VWIY6S
+	YhHdfjQxOrynpmKCU47RL6+A1LzlKXlGRhPkIfK/VIDh6cUC9ApCcZTQnigUmbH7ico3TEM/Qw3
+	KpKWu4n9HuEt+WOqWosBCJrBybQuuQ28/N5BihglQ==
+X-Received: by 2002:a17:90b:28c7:b0:3ac:945c:7f69 with SMTP id 98e67ed59e1d1-3acef15c97cmr5125608a91.66.1792360997815;
+        Sun, 18 Oct 2026 15:03:17 -0700 (PDT)
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.11
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac945e72c6sm17714440a91.5.2026.10.18.15.03.16
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 18 Oct 2026 15:03:12 -0700 (PDT)
+        Sun, 18 Oct 2026 15:03:16 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 00/10] Documentation updates; README files as Markdown
-Date: Sun, 18 Oct 2026 15:02:58 -0700
-Message-ID: <20261018220308.72731-1-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 02/10] README: document upgrading to env files and the new settings
+Date: Sun, 18 Oct 2026 15:03:00 -0700
+Message-ID: <20261018220308.72731-3-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261018220308.72731-1-tim.orling@konsulko.com>
+References: <20261018220308.72731-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 18 Oct 2026 22:03:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5082
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5084
 
-This series applies on top of the "Docker: environment files" and
-"dockersetup.py" series, which patches 2 and 9 document.
+dockersetup.py -u does not update the code itself, so say to update it
+first. Installations set up before the move to environment files keep
+their secrets in docker-compose.yml, which the update replaces; describe
+how to carry them over to .env.local.* files once.
 
-Patches 1-4 update the content: running the tests and the current
-requirements in README.devel, upgrading to the environment files and
-the new settings in README, ENABLE_RRS in README.rrs, and removing the
-obsolete docker/README.
+List the optional DEBUG, ENABLE_RRS, DATABASE_PORT and STATIC_ROOT
+settings, and point the HSTS link at the current Django documentation
+rather than Django 1.11's.
 
-Patches 5-7 convert the README files to Markdown in three steps to keep
-the history readable: a pure rename, the updated references to the
-files, and a formatting-only change that leaves the wording alone.
+AI-Generated: Claude Opus 5.5
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+---
+ README | 36 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 3 deletions(-)
 
-Patches 8-10 correct the REST API note (the API is enabled and
-read-only, not disabled), fix a JSON example and a typo, use
-"docker compose" in the examples, and show the git configuration for
-sending patches to this list.
-
-Tim Orling (10):
-  README.devel: document running the tests; update requirements
-  README: document upgrading to env files and the new settings
-  README.rrs: mention ENABLE_RRS for the Docker-based setup
-  docker/README: remove
-  Rename the README files to .md
-  Update references to the renamed README files
-  Format the README files as Markdown
-  README.md: fix the REST API note, a JSON example and a typo
-  README.md: use "docker compose"
-  README.md: show how to configure git for sending patches
-
- COPYING.MIT                 |   2 +-
- Dockerfile                  |   2 +-
- README.devel                | 159 --------------
- README.devel.md             | 228 ++++++++++++++++++++
- README => README.md         | 417 ++++++++++++++++++++----------------
- README.rrs => README.rrs.md |  48 +++--
- README.vscode               |  50 -----
- README.vscode.md            |  49 +++++
- SECURITY.md                 |   2 +-
- docker/README               |  52 -----
- 10 files changed, 544 insertions(+), 465 deletions(-)
- delete mode 100644 README.devel
- create mode 100644 README.devel.md
- rename README => README.md (50%)
- rename README.rrs => README.rrs.md (53%)
- delete mode 100644 README.vscode
- create mode 100644 README.vscode.md
- delete mode 100644 docker/README
-
-
-base-commit: e6040597ae0f614581de241fe78f20e34dae13ac
-prerequisite-patch-id: 0cfb656e605b0ec4a84298986850c958648f94bf
-prerequisite-patch-id: cf25fa25d9d94e47af321358b41c451717173512
-prerequisite-patch-id: a3d6bb81b18633b51f922cc20a99b84ac423393b
-prerequisite-patch-id: e1c00c40927a7db84488f2ce1b4ed40f3aa14aa0
-prerequisite-patch-id: f957afb8dce214b3974e5c8c5924da1f7ba45ea4
-prerequisite-patch-id: e67a8b6db7218cda1936f1b5d4eb9a9cad4c2dd0
-prerequisite-patch-id: 6876328ca001cfedf7a4c9695dee294b40028ba6
+diff --git a/README b/README
+index 3f733af..49ce4d3 100644
+--- a/README
++++ b/README
+@@ -98,6 +98,14 @@ credentials, email server, DEBUG) from .env.<context>.<service> files, where
+ 
+ The .env* files are excluded from the Docker images.
+ 
++Other settings the app and celery files can set:
++
++  - DEBUG: 1, true or yes enables Django's debug mode; anything else, or
++    leaving it unset, keeps it off. Never enable it on a public site.
++  - ENABLE_RRS: 1 enables the Recipe Reporting System (see README.rrs).
++  - DATABASE_PORT (default 3306) and STATIC_ROOT (default
++    /usr/share/nginx/html/static/).
++
+ 
+ 
+ TROUBLESHOOTING:
+@@ -209,11 +217,33 @@ Alternatively, you can update the data from an existing layer index instance
+ Upgrading from an earlier version
+ ---------------------------------
+ 
+-To upgrade the Docker-based setup from a previous release, simply run:
++To upgrade the Docker-based setup from a previous release, update the code
++(e.g. with git pull) and then run:
+ 
+ ./dockersetup.py -u
+ 
+-This will update the code and run any required database migrations.
++This will rebuild the containers and run any required database migrations.
++
++Installations set up by dockersetup.py before it used environment files
++(see "Environment files" above) have their secret key and passwords in the
++environment sections of docker-compose.yml. Carry them over by hand once:
++
++1. Copy docker-compose.yml somewhere safe, then restore the tracked version
++   (git checkout docker-compose.yml) and update the code.
++
++2. For each of app, celery, db and rabbit, copy .env.dev.<service> to
++   .env.local.<service> and fill in the values from the matching service
++   in the old file: SECRET_KEY, DATABASE_USER, DATABASE_PASSWORD,
++   MYSQL_ROOT_PASSWORD, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS and any
++   EMAIL_* settings. Set DEBUG=0 in .env.local.app, and make the files
++   readable only by you (chmod 600 .env.local.*).
++
++3. In docker-compose.yml, change the env_file entries from .env.dev.* to
++   .env.local.*, and reapply your other changes from the old file (hostname,
++   ports, certificate volumes and, if you use Let's Encrypt, the
++   layerscertbot service).
++
++4. Run ./dockersetup.py -u as above.
+ 
+ 
+ 
+@@ -371,7 +401,7 @@ REGISTRATION_OPEN = False
+   also enable HSTS in your configuration. Refer to the Django Security
+   guide for details on how to do that:
+ 
+-  https://docs.djangoproject.com/en/1.11/topics/security/#ssl-https
++  https://docs.djangoproject.com/en/stable/topics/security/#ssl-https
+ 
+ * To reset a forgotten account password, you can either use the password
+   reset function ( /accounts/password_reset/ ) or alternatively from the
 -- 
 2.56.0
 
