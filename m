@@ -1,190 +1,110 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5865.1792445725757654947
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5866.1792445728808583086
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 Oct 2026 14:35:25 -0700
+ Mon, 19 Oct 2026 14:35:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=gv24MTCY;
- spf=pass (domain: gmail.com, ip: 209.85.210.182, mailfrom: ticotimo@gmail.com)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-8a06c60065fso964874b3a.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 14:35:25 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=VXqxebly;
+ spf=pass (domain: gmail.com, ip: 209.85.210.169, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-8a06e79e152so592581b3a.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 14:35:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792445725; x=1793050525; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792445728; x=1793050528; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=t50t8m8INy93F4pg5Wr++Bl+EN8ToRBd6SBMm9clHis=;
-        b=gv24MTCYnnn7qCaPbtxwn19dNpHXhRhc/sbNtkIBTn2tPiNxCTB3U0jTQ9aXMRMjAA
-         6IFvZXt7649Wl1oifw5sS6W5Asx/MYxZFYkU/0ie0l/vw+BhVPv9zkT6r8iH6nwwqPiS
-         24wZtjvpuQPxZtRX3T8c6DRmhwNLYvBHlqYxIi4PqakKDoVmQvKlLvMpUG2usxufeRuA
-         KZlk7jy9u9gvFfZUaYgdfhAh7zHYxXgqoudTBLm7MxQqNNlsr6NVgh833nm9y8Okw/vn
-         DVXWCH3WdxvL7zxKPN1h3K+EL5HeEib8K/nilnVxlqwv0mLIgGL+JF8/Icz1HpC94sPa
-         7d3Q==
+        bh=WonUais3wbrsAOKZn2Ok1GFMVSxmjcFXngmV8veTCMU=;
+        b=VXqxeblyvLv+5xX6UC0ZOgUDhSWpKJ5fXyz0CPZWjkmrgqjQaix+FPeZ30QTBy7aDM
+         G2EpAgsu4eNTYxyd8J9FEVv+a5FuOSEEveAPyZSKW+/lkl37apwdJOSgc99MhWyWjNuW
+         XzxbNheFahIP9ssq5wi7im+OfyifUEDFMTiZGUH2HpwG0Cug+Wr4caLF4/5DtYNJFy7x
+         KZytNHJt7FgqTOGPGDi0l+XEuhtdRIcsQ63sLjTYukHWGwIeWawtHg38FbnxQLYoWMDy
+         TDOnukkdfLN0OF5enkk1pM32/rTc+eobnMzl05COPyU2lH2ayHTlNejRfwdKEpa+JEED
+         5vxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792445725; x=1793050525;
+        d=1e100.net; s=20260707; t=1792445728; x=1793050528;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=t50t8m8INy93F4pg5Wr++Bl+EN8ToRBd6SBMm9clHis=;
-        b=1YikZdHH8klx3MMvHp20P2ZZmuFcf+PYlnj5PGwsLKVRx9B60IztLP2hGhcZubLMBY
-         +Z4SrFwLcxR7OR2vobIbKDd2wnPrQ+676V4WLeb23EAew//SEJzTwi0Fr3+EvNMocYJc
-         G8fsn293FgYCzgc+4jrSjCrOHBW+wQCQ0sR6cMumQQIhTTUjEvfsiM7KFKX+h2/+bOXE
-         g5lbdx1mbxqNOdU07Jno2Z8ePzSJ6fgd9+L/2Tc52XPWtpI++A8B71LIGQScKBG9A7DY
-         uOn0aa7pDVBL0gjrZg0Cx8FZyrqEiTXSjld+I9OgVKUO0pbI3/SgAhKtIzfI1tsYm76Y
-         I5RQ==
-X-Gm-Message-State: AFq9FYLmMrmAqI91hwb7yDMHA4TJ0LpNqh/9viAWWSHkPxfRqTNq/Eyt
-	Vq1jg4k2WMLn4KrURSPTkDl3A6cK1pzVcdwafj2FlnQIoLIMh9Tn2VUMsek+/7fH
-X-Gm-Gg: AYBFou2bgYCl+3vSG2mIuIAfh/IDjqa00fvimm6xPG6uUjFjkrP/kw15WQ7QGHGKrJi
-	ys3lIDJkXAqqGL05Or+3xlRLAGWTimg+wECplktjZ5RIkEWXrpVbWeO2gXfAzqmRBLug2b10R8E
-	o6wBnOSM3l05JKNGWCgd10xRms7anYOL+wqmNAlX8wlkfEViIh928kGrx0kHHsy8UgiM8TPEPKP
-	/vJchlfuGgR8DZVm/IFmfjlUHQAHeVKITyi3DYR8LoIxSecyzJWUlH89L2AjE6na4O9p04WIBPu
-	zwX67fSfhXGjpD78xY8HP5o3ddNvIeJ9Gh7RTBxBm0kBYYPEgp3FJkDWMhPWqIdmGqkLW9g9gO5
-	S/cbB2kbHPG9r4OWclnw87mQmZNIhTr5HYxBJq780WVEFGyJe4StRFLYI+IA5oocnVhUn00/heA
-	4oIr8LqRyPve4eJ5igODkz6otXmgFFLOw5ctOOjjzx9Jvp3YvTFgMvfW6voVboqQMXZnoPhfPzK
-	apCQsXvwAnRPywbK+eFHP+M/br+Zbs=
-X-Received: by 2002:a05:6a00:4106:b0:89e:5133:d98b with SMTP id d2e1a72fcca58-8a04ba22ddamr6806314b3a.24.1792445724987;
-        Mon, 19 Oct 2026 14:35:24 -0700 (PDT)
+        bh=WonUais3wbrsAOKZn2Ok1GFMVSxmjcFXngmV8veTCMU=;
+        b=U7wakVCGX3yfCBtQiiXTDmCTwqlOPBpLox1uQInD9EaWIwZ4C2U7DDCJqP4ZYX2Zm/
+         eGICB3UD4cy/nUkpUsqt3oRx/XUNhtCVUendUD1LFCM1M+Bf447F3+sfcOxsZ2aI+WJ6
+         g1ZA8YZaMBxXNkcQbDqQTevqWjryqoj4AQfm4kVQs87l+9ktTjC819rS3vPvdBwNab31
+         qSsWUOVjarmkdM8u50d1qGEY4+7K7M2sge1tY9XDoJBCV87RyXb7NRpP5+5rnYnHcuVM
+         j4sTEcgPc+KpNJLfeIZnLiXxGSxbZzEl1K+iM4SHoFyR54Xv3CqvyLZlj6itK6itl3GL
+         mGiw==
+X-Gm-Message-State: AFq9FYJJXqwFKG5nYUQPvBYsWMecksw2YZK95twIB8a8yYXHjA7WkFkr
+	7tGoW+04lqXvCXfYVueV4UgtjMGu4WH4QiUDGvIgdtbTa8p5xwlf+5NgbPtN+g1c
+X-Gm-Gg: AYBFou0LfvNKtkQzcVJrQfw9pGqo9V1nQZtXhiqLrLql+Tk5H9+EWLJbiQrrp4Gs++N
+	5Zrjtw/FfO18NnuZsmKVNjr7TLeMq9XSN6KxpMhiNHBYEW9kH1789FwMbyYa7jbkvOEyHFAHh9l
+	iU+pVBByryhLNr8n9YpXgMa37X4UZLsHtw9azj87dZl6Ybw0JYjHax3v7AiFFdexobThFPIytuS
+	XSjT/pa5MA1jCQTlljPZC0WbxBh7QFOxiZKnIhEdMLniJfXrWVT8FnXTfiCOTluU0cTyNF/bLJm
+	mLN6iXbgl53c/+eCjNXAbhAT53eg8f2/KnZ0OOqfYP62qEYLIc0uUBYqRQX+OruGyvz1DALcnJW
+	g006lGrCbdJN0nQm17tkNkqTgQXfwWQJRrTFnYLwTY9FzGhlvH1frNLGVoE2+Gv8yR7VIjAMUAy
+	7NtWH7dHIG1pObq6iFK83nLtAAiWQOXnu11htTJ2sn7J5PtCsZGP81Y1lsYrKaA87ShrI1ESAIg
+	sRGmgfV8aondEVQePuMGE3QOBQ/k1d2
+X-Received: by 2002:a05:6a00:22ca:b0:891:d071:1e55 with SMTP id d2e1a72fcca58-8a04ba1ebf1mr5650900b3a.21.1792445728148;
+        Mon, 19 Oct 2026 14:35:28 -0700 (PDT)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89f5820b344sm4307747b3a.53.2026.10.19.14.35.22
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89f5820b344sm4307747b3a.53.2026.10.19.14.35.26
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 19 Oct 2026 14:35:23 -0700 (PDT)
+        Mon, 19 Oct 2026 14:35:26 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 2/4] update: copy a new layer branch's subdirectory from the newest branch
-Date: Mon, 19 Oct 2026 14:35:08 -0700
-Message-ID: <20261019213510.4384-3-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 3/4] recipeparse: don't add the core layer to BBPATH twice
+Date: Mon, 19 Oct 2026 14:35:09 -0700
+Message-ID: <20261019213510.4384-4-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261019213510.4384-1-tim.orling@konsulko.com>
 References: <20261019213510.4384-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 21:35:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5102
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 21:35:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5103
 Content-Type: text/plain; charset="utf-8"
 
-When a layer is first found on a new branch, vcs_subdir was copied from
-get_layerbranch(None), an arbitrary and usually the oldest layer branch.
-meta-tq has since moved into a subdirectory, so its wrynose update
-failed with "conf/layer.conf not found". Copy it from the newest
-non-comparison branch instead.
+The core layer is in BBLAYERS, so its layer.conf already appends it to
+BBPATH. Adding it to the initial BBPATH as well made include_all read
+maintainers.inc twice, giving "Duplicate inclusion" warnings. Leave it
+out of the initial BBPATH, and use core_layerdir in BBLAYERS instead of
+assuming "meta".
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/models.py             |  9 ++++++
- layerindex/update.py             |  2 +-
- layerindex/update_layer.py       |  2 +-
- tests/test_latest_layerbranch.py | 52 ++++++++++++++++++++++++++++++++
- 4 files changed, 63 insertions(+), 2 deletions(-)
- create mode 100644 tests/test_latest_layerbranch.py
+ layerindex/recipeparse.py | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/layerindex/models.py b/layerindex/models.py
-index a72a72b..a9e9bdf 100644
---- a/layerindex/models.py
-+++ b/layerindex/models.py
-@@ -162,6 +162,15 @@ class LayerItem(models.Model):
-             return res[0]
-         return None
+diff --git a/layerindex/recipeparse.py b/layerindex/recipeparse.py
+index d593def..d8486e7 100644
+--- a/layerindex/recipeparse.py
++++ b/layerindex/recipeparse.py
+@@ -66,10 +66,11 @@ def init_parser(settings, branch, bitbakepath, enable_tracking=False, nocheckout
+             utils.checkout_repo(core_repodir, "origin/%s" % core_branchname, logger=logger)
+         if not os.path.exists(os.path.join(core_layerdir, 'conf/bitbake.conf')):
+             raise RecipeParseError("conf/bitbake.conf not found in core layer %s - is subdirectory set correctly?" % core_layer.name)
+-        # The directory above where this script exists should contain our conf/layer.conf,
+-        # so add it to BBPATH along with the core layer directory
++        # The directory above where this script exists should contain our conf/local.conf,
++        # so add it to BBPATH. The core layer is added by its layer.conf via BBLAYERS
++        # below; listing it here as well would put it in BBPATH twice.
+         confparentdir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+-        os.environ['BBPATH'] = str("%s:%s" % (confparentdir, core_layerdir))
++        os.environ['BBPATH'] = str(confparentdir)
  
-+    def get_latest_layerbranch(self):
-+        """
-+        Return the layer branch for the newest non-comparison branch (by
-+        branch sort priority), e.g. to copy settings such as vcs_subdir from
-+        when the layer is first seen on a new branch.
-+        """
-+        return self.layerbranch_set.filter(branch__comparison=False).order_by(
-+            models.F('branch__sort_priority').asc(nulls_last=True), '-id').first()
-+
-     def active_maintainers(self):
-         matches = None
-         for layerbranch in self.layerbranch_set.all():
-diff --git a/layerindex/update.py b/layerindex/update.py
-index dd730ca..ca68e3e 100755
---- a/layerindex/update.py
-+++ b/layerindex/update.py
-@@ -389,7 +389,7 @@ def main():
-                         layerbranch.branch = branchobj
-                         layerbranch_source = layer.get_layerbranch(branchobj)
-                         if not layerbranch_source:
--                            layerbranch_source = layer.get_layerbranch(None)
-+                            layerbranch_source = layer.get_latest_layerbranch()
-                         if layerbranch_source:
-                             layerbranch.vcs_subdir = layerbranch_source.vcs_subdir
+     # Change into a temporary directory so we don't write the cache and other files to the current dir
+     if not os.path.exists(settings.TEMP_BASE_DIR):
+@@ -84,7 +85,7 @@ def init_parser(settings, branch, bitbakepath, enable_tracking=False, nocheckout
+         if not classic:
+             # We need this to avoid problems with AVAILABLE_LICENSES
+             f.write('COREBASE = "%s"\n' % core_repodir)
+-            f.write('BBLAYERS = "%s/meta"\n' % core_repodir)
++            f.write('BBLAYERS = "%s"\n' % core_layerdir)
+         pass
  
-diff --git a/layerindex/update_layer.py b/layerindex/update_layer.py
-index 441efc2..0f49371 100644
---- a/layerindex/update_layer.py
-+++ b/layerindex/update_layer.py
-@@ -380,7 +380,7 @@ def main():
-                     layerbranch.actual_branch = options.actual_branch
-                 layerbranch_source = layer.get_layerbranch(branch)
-                 if not layerbranch_source:
--                    layerbranch_source = layer.get_layerbranch(None)
-+                    layerbranch_source = layer.get_latest_layerbranch()
-                 if layerbranch_source:
-                     layerbranch.vcs_subdir = layerbranch_source.vcs_subdir
-                 layerbranch.save()
-diff --git a/tests/test_latest_layerbranch.py b/tests/test_latest_layerbranch.py
-new file mode 100644
-index 0000000..33e0844
---- /dev/null
-+++ b/tests/test_latest_layerbranch.py
-@@ -0,0 +1,52 @@
-+# layerindex-web - tests for choosing the layer branch to copy settings from
-+#
-+# Licensed under the MIT license, see COPYING.MIT for details
-+#
-+# SPDX-License-Identifier: MIT
-+
-+import pytest
-+from django.test import TestCase
-+
-+from layerindex.models import Branch, LayerBranch, LayerItem
-+
-+
-+@pytest.mark.django_db
-+class TestLatestLayerBranch(TestCase):
-+    """When a layer is first seen on a new branch, the update script copies
-+    vcs_subdir from an existing layer branch. It must use the newest branch:
-+    meta-tq moved into a meta-tq/ subdirectory, and copying the empty
-+    subdirectory of an old branch made the new branch's update fail with
-+    "conf/layer.conf not found"."""
-+
-+    def setUp(self):
-+        self.layer = LayerItem.objects.create(name='meta-tq', status='P', layer_type='B',
-+                                              summary='test', description='test',
-+                                              vcs_url='https://example.com/meta-tq.git')
-+
-+    def branch(self, name, sort_priority, comparison=False):
-+        return Branch.objects.create(name=name, bitbake_branch=name, sort_priority=sort_priority,
-+                                     comparison=comparison)
-+
-+    def layerbranch(self, branch, subdir):
-+        return LayerBranch.objects.create(layer=self.layer, branch=branch, vcs_subdir=subdir)
-+
-+    def test_newest_branch_wins_over_oldest_record(self):
-+        # Oldest branch first, so it is the first record (as for meta-tq)
-+        self.layerbranch(self.branch('krogoth', 20), '')
-+        self.layerbranch(self.branch('kirkstone', 5), 'meta-tq')
-+        newest = self.layerbranch(self.branch('scarthgap', 3), 'meta-tq')
-+        self.assertEqual(self.layer.get_latest_layerbranch(), newest)
-+        self.assertEqual(self.layer.get_latest_layerbranch().vcs_subdir, 'meta-tq')
-+
-+    def test_comparison_and_unprioritised_branches_are_not_preferred(self):
-+        self.layerbranch(self.branch('comparison', 1, comparison=True), 'other')
-+        self.layerbranch(self.branch('unsorted', None), 'other')
-+        newest = self.layerbranch(self.branch('scarthgap', 3), 'meta-tq')
-+        self.assertEqual(self.layer.get_latest_layerbranch(), newest)
-+
-+    def test_only_unprioritised_branches(self):
-+        lb = self.layerbranch(self.branch('unsorted', None), 'meta-tq')
-+        self.assertEqual(self.layer.get_latest_layerbranch(), lb)
-+
-+    def test_no_layer_branches(self):
-+        self.assertIsNone(self.layer.get_latest_layerbranch())
+     if logger:
 -- 
 2.56.0
 
