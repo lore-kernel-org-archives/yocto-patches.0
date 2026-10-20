@@ -1,60 +1,60 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2010.1792529859913968616
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2013.1792529865606792319
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 20 Oct 2026 13:57:39 -0700
+ Tue, 20 Oct 2026 13:57:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=LpzcQDQt;
- spf=pass (domain: gmail.com, ip: 209.85.214.181, mailfrom: ticotimo@gmail.com)
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2dd76b1361dso232725ad.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 13:57:39 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=Sx5ty3gv;
+ spf=pass (domain: gmail.com, ip: 209.85.214.175, mailfrom: ticotimo@gmail.com)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2e831e86ebfso40075ad.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 13:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792529859; x=1793134659; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792529865; x=1793134665; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=F9SE/o8z6hKNH+cHvqLL0T+gEq2TC4h83Gg9ZXdlEL0=;
-        b=LpzcQDQt9BL/pzLzfTKdfeuCQaKjfmW6CtySzGlzrNPrZaqL2JYPVHvqeBuecRjrQv
-         KCzC0J+twQG99aIYi2zLv3LAncAui1Nbh3URQHiBgAMn5ih3qJvlKei8L3K1UDlt3CyJ
-         LWGPLWViFWxhwGxaHAUhvxTla0RnKf93hQ7biZdQzWBMnhoPO71wMkMgUnXg6QaZYOeZ
-         d0GM0r4bgRVUuvrDQgzDrEWxJgwJBT9NmqPZhAH5ejPOlrjUOS/qHfjS+kZonbXSjrEx
-         flFCp+FK3EMQwvZuKmKMWYAk20z6OUIF7Apznh4dpJCIsIvAngVzvlJK3zjYZ01Wt3fB
-         Wjbg==
+        bh=WPcE02lrZfWwY+OCoO1LnUwR3P3XVsUx+DNDWxOCV3s=;
+        b=Sx5ty3gvGi5mDBoyphinG7HrTRSG8tB2lboI35VvAaqtZJTOCEFyQumjdMVnnLaBWY
+         EzC3bt4EddkjKKSAPTBkCepfnlxfx7tap2YuA/1O1WGMRGUUPcwV16RpkzaHgbwVLvGf
+         h28vTdq0IgBrm97MZexZdwzKcmyqFxhhH07DL7C0SxdoLlyPaX+UWsbQ2qWHamYPmLNW
+         bihoILqNED6UJ0SsZEm3Osu2pfHK9D3e2L87QjKN2c1Lc+qQGp7U/YoIhIujhfDtADB2
+         KsW1uPgnRC6IzbLfsDaTmSQKYD287LdYhuD8zQyJ+s3nSQoX47C3Aqa9/JB1BZSFGS/W
+         f8Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792529859; x=1793134659;
+        d=1e100.net; s=20260707; t=1792529865; x=1793134665;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=F9SE/o8z6hKNH+cHvqLL0T+gEq2TC4h83Gg9ZXdlEL0=;
-        b=qp1sjwZYRfXavND00qlFETJIIA1+mSiKsF7L/fkCWL03FBr8dSHHpGwrduKAF5ElnN
-         konmxI+oaZ+FGDmdSbYpRE71LZAmBcaTMuThwPS4m4p2IsB8XOTDxcS2mF9rnvkXXDbv
-         XhrziG3Ax+7s15ZZlPoCkuUHdDkAHDxL2oKScapVz3j2vGGkKxW//EFweZTTxSySuhYi
-         NmSTc/ICFeikNKqWFKYf4jEjXbSp3ue9FGvQfbODVqJJFl0Hh4J2b1ABcpoYY8PG0y64
-         Pmwt6Ie+a0bBGh4qFISjrtiZWvFvCXjaRO561+KOY5Kgf0gLWFyAYS9KH+61EVg3YDsv
-         Ybgg==
-X-Gm-Message-State: AFq9FYKaGCil2AQp12FsfCbteu6/HgCKteZeiB1zcipgUYdRHAhaus87
-	COKQzPKn4McV6UjfC5Are63MiO+2esQIFTsXQ8f6aXS2g++GSQ6KNKK6ATT1Advd
-X-Gm-Gg: AYBFou2Gh+2ybE3JUhNOouh07m4p3vYf5YOf3dPaGsuJXh2hVIdrNYl4wbriZhmLSW/
-	6Rv+IAOLdeH5Q9slxPmM2vNQRYD4NfO8Ki1QB/p3zW4Yf/0Ozhuo1JRYnxO7IwDp8SFYzM/uUmr
-	fEfEe77cjk7+c8kPdVvF8nSD95cMc7jA1vZRNgX9LDvnfSj//oudgI1sf7zsNx1NpKl46ZFgq4e
-	GVk+a3xv65GYmYrykOkANFyBGjZdWR5y4pF0X7GD+r5Avzn66darptYVimvf7sRHZoG4gUL+3fI
-	ZKx6AEdQ4mMo1c1paCqcatp3UNudU6myw44Ouvdq+sQAJ/BEnVlHcbnu3D3WRc2C00O+7pyz4+R
-	zb40TJ/dgzixsJ49p7jWRdymZJUSewjHKP7kSCfZsoR+mnDEUYROu934BREQ12L3wA0IdZbfWIG
-	/AiBp5cUzRnuufQboy8dy3T/G9fy9baU01kceVJyHH1+fRvv6ildPw+jk39rh8G9ozTiW0sFhqJ
-	5qSW7g8vduF11XApL9ZwEYSgAT6NGc0Vy19Yfluvw==
-X-Received: by 2002:a17:90b:5106:b0:3a8:6a04:80ef with SMTP id 98e67ed59e1d1-3ad86dcaf4dmr102711a91.6.1792529859098;
-        Tue, 20 Oct 2026 13:57:39 -0700 (PDT)
+        bh=WPcE02lrZfWwY+OCoO1LnUwR3P3XVsUx+DNDWxOCV3s=;
+        b=AP3cIBaoeqyiRJ8iWlFAZ80N4wD3e+YkmufhYJiRuky3/uObS/RIp6h8JZ2/qiZcS9
+         uhTZZVZsEdfzG0gQnPIAJa90CMkI62A8Z91AP74tEkwTNCrTTOH0hvSl72qXIbEAOGR0
+         fVdYsM09FhUoXeFXj6WAH6fldhgdI3y9Jjb7MAA9zA/h212seoFpHliDNmq/ONQnqWjL
+         JbxbspSUam0aZMPSstd26ByIvfa5X1eKNITRrdhkjOrEehk15LpvpyIWa6KmBOhcsa/x
+         wlggXpbq+8p/xFaYBU4hJi4Hzx40w7Dtnzl5NpHDqfSpXrbXZIOvO5Q468ImoW92cjM4
+         Firg==
+X-Gm-Message-State: AFq9FYI+0KNOb6xKmv/MGhi+NiP44K98tQCJfTR7TFlkeo4fYbpKNWhq
+	Vmf/Tqt+32QA98AmxtESQaD95x0GmRi2JNdx+sL982mg2+dMIVbk0aaf8QvxF9Sc
+X-Gm-Gg: AYBFou2fWCqrWjflmBjTragNIsJMQBldPAuhOiaGn9Bq28W47jFoCd7RZJYxCxm+lFS
+	ysrewttDpDV4mmMG79pdiskaVUrWD5dydBNxlPb7i6XnFeIDCTQELXdNxoUE7RBgf6yiFyn2ilH
+	+eoy2PAottg0mybcvxQXFYzwxrR7DU5ibV9cF6ufD0m3F6i9sZp+e1bQ4P+drlWA2PrWJVCyPxx
+	Q4JKcWVRhl4jxV8k6fxoDwOLwC/6jBZi4NJYOqOe0DjRaOkOiEj7adWvZcbEbmgxvoZd1WIGQnr
+	+WOgT1LF8IeedGZN+uUBFkfAQ9uIj4cQcGEhutUFb4BQ9Ofz20kW71SlApAZxP7jgQjRCpbxyv7
+	Y842dmG5NWnhhrokbTPj7awjYWUykrKPVMB7bajOkprZGkG4FoKRysnkLIi+m0ae6GRbhJS0ZHR
+	Z4wLn/3g41W3ED0BvLOBcg1CJ+ZUBCv4NQd9ASayDiGdUEdE5JExm46bnYijbldT/TshqETRPAF
+	yQoRpehr8g7BRe8RFeY8yAPZSzkYJlu
+X-Received: by 2002:a17:90b:6cc:b0:3a8:5fd6:cb6 with SMTP id 98e67ed59e1d1-3ad86a402ebmr169502a91.0.1792529864848;
+        Tue, 20 Oct 2026 13:57:44 -0700 (PDT)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ad8029765fsm1039115a91.10.2026.10.20.13.57.36
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ad8029765fsm1039115a91.10.2026.10.20.13.57.43
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 20 Oct 2026 13:57:36 -0700 (PDT)
+        Tue, 20 Oct 2026 13:57:43 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/4] layerindex/views: fix reflected XSS in recipes CSV export
-Date: Tue, 20 Oct 2026 13:57:27 -0700
-Message-ID: <20261020205730.53370-2-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 3/4] layerindex/views: don't expose patch generation errors to users
+Date: Tue, 20 Oct 2026 13:57:29 -0700
+Message-ID: <20261020205730.53370-4-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261020205730.53370-1-tim.orling@konsulko.com>
 References: <20261020205730.53370-1-tim.orling@konsulko.com>
@@ -62,77 +62,82 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 20:57:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5114
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5116
 Content-Type: text/plain; charset="utf-8"
 
-layer_export_recipes_csv_view echoed an invalid name from the "fields"
-query parameter back in an HttpResponse with the default text/html
-content type, so a crafted link could run script on the site without
-the victim being logged in. Return the error as text/plain with status
-400 instead.
+bulk_change_patch_view returned the output of the failing bulkchange.py
+run, or the exception text, in the HTTP response. That can include
+tracebacks, server paths and bitbake output. Log the details instead
+and return a generic error with status 500. The lock timeout message
+is kept, since it tells the user what to do and reveals nothing.
 
-Reported by CodeQL (py/reflective-xss).
+Reported by CodeQL (py/stack-trace-exposure).
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/views.py       |  2 +-
- tests/test_recipes_csv.py | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+), 1 deletion(-)
- create mode 100644 tests/test_recipes_csv.py
+ layerindex/views.py             | 14 ++++++++------
+ tests/test_bulkchange_access.py | 11 +++++++++++
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 
 diff --git a/layerindex/views.py b/layerindex/views.py
-index dea0a98..c030ae1 100644
+index 42722bf..592311f 100644
 --- a/layerindex/views.py
 +++ b/layerindex/views.py
-@@ -1599,7 +1599,7 @@ def layer_export_recipes_csv_view(request, branch, slug):
-     recipe_fields = [f.name for f in Recipe._meta.get_fields() if not (f.auto_created and f.is_relation)]
-     for field in fieldlist:
-         if field not in recipe_fields:
--            return HttpResponse('Field %s is invalid' % field)
-+            return HttpResponse('Field %s is invalid' % field, content_type='text/plain', status=400)
+@@ -6,6 +6,7 @@
+ #
+ # SPDX-License-Identifier: MIT
  
-     writer = csv.writer(response)
-     for recipe in layerbranch.sorted_recipes():
-diff --git a/tests/test_recipes_csv.py b/tests/test_recipes_csv.py
-new file mode 100644
-index 0000000..9ed9084
---- /dev/null
-+++ b/tests/test_recipes_csv.py
-@@ -0,0 +1,33 @@
-+# layerindex-web - tests for the layer recipes CSV export
-+#
-+# Licensed under the MIT license, see COPYING.MIT for details
-+#
-+# SPDX-License-Identifier: MIT
++import logging
+ import os
+ import sys
+ import re
+@@ -63,6 +64,8 @@ from layerindex.models import (BBAppend, BBClass, BBClassGlobal, BBClassRecipe,
+ 
+ from . import tasks, utils
+ 
++logger = logging.getLogger(__name__)
 +
-+import pytest
-+from django.test import TestCase
-+from django.urls import reverse
+ def edit_layernote_view(request, template_name, slug, pk=None):
+     layeritem = get_object_or_404(LayerItem, name=slug)
+     if layeritem.comparison:
+@@ -347,12 +350,11 @@ def bulk_change_patch_view(request, pk):
+         return HttpResponse('No patch data generated', content_type='text/plain')
+     except Exception as e:
+         output = getattr(e, 'output', None)
+-        if output:
+-            if 'timeout' in output:
+-                return HttpResponse('Failed to generate patches: timed out waiting for lock. Please try again shortly.', content_type='text/plain')
+-            else:
+-                return HttpResponse('Failed to generate patches: %s' % output, content_type='text/plain')
+-        return HttpResponse('Failed to generate patches: %s' % e, content_type='text/plain')
++        if output and 'timeout' in output:
++            return HttpResponse('Failed to generate patches: timed out waiting for lock. Please try again shortly.', content_type='text/plain')
++        # Details can include paths and bitbake output, so keep them in the server log
++        logger.exception('Failed to generate patches for bulk change %s: %s', pk, output)
++        return HttpResponse('Failed to generate patches, please contact the site administrator.', content_type='text/plain', status=500)
+     # FIXME better error handling
+ 
+ 
+diff --git a/tests/test_bulkchange_access.py b/tests/test_bulkchange_access.py
+index e85451d..914493c 100644
+--- a/tests/test_bulkchange_access.py
++++ b/tests/test_bulkchange_access.py
+@@ -51,3 +51,14 @@ class TestBulkChangeAccess(TestCase):
+         for name in ('bulk_change_edit', 'bulk_change_review'):
+             response = self.client.get(self._url(name))
+             self.assertEqual(response.status_code, 200, name)
 +
-+from layerindex.models import Branch, LayerItem, LayerBranch
-+
-+
-+@pytest.mark.django_db
-+class TestRecipesCsv(TestCase):
-+
-+    def setUp(self):
-+        branch = Branch.objects.create(name='master', bitbake_branch='master')
-+        layer = LayerItem.objects.create(name='meta-test', status='P', layer_type='A',
-+                                         summary='test', description='test',
-+                                         vcs_url='git://example.com/meta-test.git')
-+        LayerBranch.objects.create(layer=layer, branch=branch)
-+        self.url = reverse('layer_export_recipes_csv', args=('master', 'meta-test'))
-+
-+    def test_valid_fields(self):
-+        response = self.client.get(self.url, {'fields': 'pn,pv'})
-+        self.assertEqual(response.status_code, 200)
-+        self.assertTrue(response['Content-Type'].startswith('text/csv'))
-+
-+    def test_invalid_field_not_reflected_as_html(self):
-+        response = self.client.get(self.url, {'fields': '<script>alert(1)</script>'})
-+        self.assertEqual(response.status_code, 400)
-+        self.assertTrue(response['Content-Type'].startswith('text/plain'))
++    def test_patch_error_details_not_exposed(self):
++        import subprocess
++        from unittest import mock
++        self.client.force_login(self.owner)
++        err = subprocess.CalledProcessError(1, 'bulkchange.py', output='Traceback: /opt/secret/path')
++        with mock.patch('layerindex.views.utils.runcmd', side_effect=err), \
++                self.assertLogs('layerindex.views', 'ERROR'):
++            response = self.client.get(self._url('bulk_change_patches'))
++        self.assertEqual(response.status_code, 500)
++        self.assertNotIn(b'/opt/secret/path', response.content)
 -- 
 2.56.0
 
