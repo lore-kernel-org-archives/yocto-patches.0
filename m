@@ -1,158 +1,161 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1312.1792476430454471304
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.12])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3294.1792487356736634852
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 Oct 2026 23:07:10 -0700
+ Tue, 20 Oct 2026 02:09:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=U3QK60Nk;
- spf=pass (domain: gmail.com, ip: 209.85.208.181, mailfrom: martin.jansa@gmail.com)
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3ab07d956f2so13716361fa.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 23:07:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792476428; cv=none;
-        d=google.com; s=arc-20260327;
-        b=s0DEFQOUmTvznIBfdN14bRUeWlQn8ui12iAvXqNiW+BMNIgfCFf9NcBVehinX/KnBo
-         Sjpcr3fTaLaT2qi/09EtHDAND7ANKKr7hoLPV3X08wyVkK0K9mz51ANx90sGq6f92FQ8
-         5jwohMiWT25XvQo/R7qV3dBJovNgP16PfVdg9mB1WAYd2xarRJBD6hDFCjcqxHJpNJCO
-         ZzMveBRHlMzI9ZHPJWF2eCW5LcL61N0z//f/2RnlaXYnUXcaxLbcG8UuZ5vibFji/aA4
-         a5N9P0CSmhObpN5rmfPXoDt9GyqdhoiyNcV4y4v+bxGF/c6UZI/QAJFjN2MOIlIqve0I
-         +64w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=mRYy7+589lR7Mq3DB5KVRsjIZluN2xvmMpX06YNaGe4=;
-        fh=5n1l9ClUU2n8NCvynOdAYuW3ZfEeOx0UqsUvFizfswc=;
-        b=iYLMYz3ln4FlCcZtCHmcxPBvDW7FMXgNstZvFTZVsTva/y3sRo2TaFol6JzwrpqPTP
-         WXl3YT796X/plvrxWKmvittWfTicoNA7TBRkcKdqna72A0MV+Xj/Lr1cOCjEBpTSpB//
-         dNmwjqWI4TFnzSllycRefz2TS/L3gNGrAEJzWalmOUvI70n4s5TpFbe2X0SzdStYDs6W
-         1uETaXkAPLMacvE3PG6vsQ4LSm5efKSlEd5+cqu9rhKxd/ladTwDqqhIzyISem6gAOa/
-         FwbXx2Yhsm88cGmsx1Y8XadLYY/aMjcaz9OyGT+Bqje5kGTuRejWIEHr7AdFUztW1Zn8
-         qrNg==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792476428; x=1793081228; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=mRYy7+589lR7Mq3DB5KVRsjIZluN2xvmMpX06YNaGe4=;
-        b=U3QK60NkFtIApUbutMRcQyzMwWyKxKoH7HCw6N+r/+NpK3IcoVGjL04Z2rPiotT4rm
-         poWdfnHm/DnRO7O9rJrmAHkLK34Sr1E+syGAb+teaMvuWP2K4lre+1zfG3M19MA4z8VG
-         xQJFPUeKjt40LETQltc/+TqnQTri0PxAx9Y+anDPLxGrVXy+n08IQhQnCoCREacGADIu
-         sQSxIU9r22iYHRgbafpYliLvTArA/bfrInwMI0LzGVPBW3DF0mHinQ9eq3WnzM4wVNcV
-         GhlRFMB1fxD5m1inKZhygjrhndrfJGYNIBO6o/NVyXPFEhFLpVKHwi2ZeUKqPD2I21rA
-         /7Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792476428; x=1793081228;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=mRYy7+589lR7Mq3DB5KVRsjIZluN2xvmMpX06YNaGe4=;
-        b=hDettZayKYFluZW5eFEW6EKMfRXcYd9i0gspWB06lIp9NR5FBq6ROlHxD3dmLN+p1G
-         pT3+aWooKPiWIyHCHDBOa9idmoVAzI8MoGUeNaVMscX5aphko/H1qEz6/TRxXv0mEnRP
-         /z0/B6DHV4zAMi2xidXMqOXAL/bUZtqLh1y+0Wc88GwUjnnaOp13RPb9qDhKpRiJM0Ig
-         l9OfSwZdGsAUsxJg36z/KIu9veivtFfbf8zzDfhZltRs7qYGsY+3zZSpJr5K7XZmamQQ
-         4TX1Uaf2ty5ZcCuXH0ySu/Ggh8rHjFzajLhAYPa/O1/hB8er1WeCjDBNyNV0dJg22n/D
-         YoDw==
-X-Gm-Message-State: AFq9FYJ01BzMKvHN4KemtDu7xkigYDv9u+OyaKBiYuzu0uke1qNBkD/d
-	QjUqHrZgY4mCBUeXXI97mIT+Wm4GLl2DbRpGAYSkn1/nzTUTDPfz9wgKTy7EbPzNydbz1c6YskU
-	xdWDThgx4+prbO41RH86s9wiYa4ksAazkbBFn
-X-Gm-Gg: AYBFou1IqQO6MrMDfE7Qw3SNjGFKkpGI4RiSFgRk+j9z2I78nD3Z2Im3OZiCrNxoqxa
-	y4aSVH0fbH9t5mm/ub/TSTEP7l5U1XvhGjoD9dFAsUNVT5Bql641zcF2KNSZm1d62z7p/IW38tS
-	KMyfv0iNkTrb7+1LXZP5h+RUNB/aWTAdpr/TXcPNdbOJ3LXdRITL4rmhoze/6H3nJhlbpD5ZtWI
-	tT4puVG49pugrnYRh3Dar4xEedxZAinbkWa9GgHl5zzgfK051JPDFVNd/twRLmsDSw5RhYBF21D
-	cxaYjc2IjhnKCnwmyZak2hQQ96aimPm7c5sDY59Q4eZOye2H4TlmR4M7xs/s2ypjaMHES7vUwf4
-	zszQwvV9fcX1uTjMepIgHOTxr3qyq7WKJqJTU
-X-Received: by 2002:a05:651c:41cc:b0:3a9:d70c:f75e with SMTP id
- 38308e7fff4ca-3ab2917580amr19592321fa.7.1792476427977; Mon, 19 Oct 2026
- 23:07:07 -0700 (PDT)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector2 header.b=MfU568GI;
+ spf=pass (domain: ericsson.com, ip: 52.101.70.12, mailfrom: edaturu@ericsson.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AwaV9Was0RVk4K+uhVs4JHP4Ccys5AFugYWsWQmDBhwMP6YhnBWg6pN6F/y9JN5SryKZv6+FUruiGS+uazln2VXBhQEo4HsqHpg1zoqR6c4WY/mmBd8PHX2IPsxSfnkWavQeWLzeTVhTXPKImEV5gODIagrpbRfu+a+6lv9I09ilsh1mkRO+0tqAZjpN3RkOuxhdhpRKER/NmK7DjItsTYpJQCZvPTvNzjzRzh1fcJerJeSpRCXYPP+OmCW50bJenV25cn7U9HhoLnq75dRiLtOSiXYECsDbvs8fBCi99qKPfMB3Mg4IVbI4JDxvCjsT0ZyVMfSnCZNNTxKHC6P6XQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ninWXbaf3+Cz7QrMh0drtjmIJzRRSofkyNy9YNQVdjA=;
+ b=LNs1v1CkWHpTrUlM47mkMiynjsjrGxCfDmLPUfZPnqtVgkA6oYo3uuDXWK3RTigjAC81jJDgXsPE4wrU5KeJG8lqqd3LzsEZUayJuU5FJ8mROqxQMkZdlNAG6mAaj6nL9rHhHb7jskPMIbfWQvj/zJJ6MXQ8R5m8saI0qvoP3jjuXouAQr8MPLz//mu/VguPqL2eKw6uFI3WLbu1dTNrKci+lPblwVYiB+gqTuVqluy0wwfHOh/i/Q7lhRAM1abS+j03Fs8KUN4n5hen+rejStvrHrNIiRecr6rhUkG8LnRpsvNkzVEvn4QbKzgwUvEt89mLFXsUXgn92UqD/NSXAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=gmail.com smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ninWXbaf3+Cz7QrMh0drtjmIJzRRSofkyNy9YNQVdjA=;
+ b=MfU568GI4kTDkpCiwiriEgwkF801GNNtp9/yWBpqg4B0atorgTjoCvkrL+RWfFZ0uyLpRqu24ZJ2lYX9mj1XZttGWWPSAEEd0F449/3rA+DYwD5kSMYhUMBuYFtuWvQ+PCYKrFiY1wO4amxaMRI3cGoedonLqpzuYIvsthyZF8j/Fx6qly58YX67lgdpXtXcWHqemb6BxwJzUjZaX1hanpbFS/yQbhO38y+5Ovnbg8DPDeMhC9KBRfuxETM3lvpgvwIhzc8yuzPYsjrcQopUqABEJPiQdR93DdGlocurSYVAeQ7n1U+El8WMdnCXhR308jCRNsAhtm72GMoHIz0ZFA==
+Received: from LO4P265CA0163.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:312::7)
+ by PAVPR07MB9213.eurprd07.prod.outlook.com (2603:10a6:102:319::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Tue, 20 Oct
+ 2026 09:09:11 +0000
+Received: from AM2PEPF00070CF7.eurprd02.prod.outlook.com
+ (2603:10a6:600:312:cafe::1d) by LO4P265CA0163.outlook.office365.com
+ (2603:10a6:600:312::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.27 via Frontend Transport; Tue,
+ 20 Oct 2026 09:09:10 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 192.176.1.74) smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ AM2PEPF00070CF7.mail.protection.outlook.com (10.167.242.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.522.6 via Frontend Transport; Tue, 20 Oct 2026 09:09:10 +0000
+Received: from seroius18814.sero.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.60) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Tue, 20 Oct 2026 11:09:09 +0200
+Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
+	by seroius18814.sero.gic.ericsson.se (Postfix) with ESMTP id B4B8B4020C02;
+	Tue, 20 Oct 2026 11:09:07 +0200 (CEST)
+Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
+	id 795CE700CF34; Tue, 20 Oct 2026 11:09:07 +0200 (CEST)
+From: <daniel.turull@ericsson.com>
+To: <yocto-patches@lists.yoctoproject.org>
+CC: <alex.kanavin@gmail.com>, Daniel Turull <daniel.turull@ericsson.com>
+Subject: [AUH][PATCH] steps: add changelog_skip_recipes option
+Date: Tue, 20 Oct 2026 11:08:31 +0200
+Message-ID: <20261020090831.3132131-1-daniel.turull@ericsson.com>
+X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
-References: <20260929081349.3858049-1-martin.jansa@gmail.com>
- <CA+chaQejuGizpQ7q0UPaLvPsc8PZhEYAanhwUPbS9=LJBmfDkQ@mail.gmail.com> <CAMKF1sp31EN0ZeKGfRzAmto4N4=hv42xSs_XcMqzV=_vczh2Mw@mail.gmail.com>
-In-Reply-To: <CAMKF1sp31EN0ZeKGfRzAmto4N4=hv42xSs_XcMqzV=_vczh2Mw@mail.gmail.com>
-From: Martin Jansa <martin.jansa@gmail.com>
-Date: Tue, 20 Oct 2026 08:06:53 +0200
-X-Gm-Features: AclHuK8xlJDBDSKSfEed9LYNUF9TXEkoGxHkMUMI9eozv79BTVaAOaM-JALNIN0
-Message-ID: <CA+chaQcDE7T2iyA4Dc_gYCA_-DOK=sa4M3MAvvBAULJCodTJLQ@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-tensorflow][PATCH] layer.conf: Update to
- blacksail release
-To: yocto-patches@lists.yoctoproject.org
-Cc: hongxujia83@gmail.com, jiahongxujia@163.com, jiahongxu_hycx@cetc.com.cn, 
-	hongxu.jia@windriver.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Return-Path: edaturu@ericsson.com
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM2PEPF00070CF7:EE_|PAVPR07MB9213:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55c243b2-acd8-4bca-baf6-08df2e89cdcd
+X-SMTP-Server: smtp-central.internal.ericsson.com
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|23010399003|36860700016|82310400026|56012099006|11063799006|261009223027099003|10067099003|18002099003|6133799003;
+X-Microsoft-Antispam-Message-Info: HSSgoCrE+2v32/3ROWJUiCCpKdJO43e65pp6XIOIiW8QkwINxXkmM12Zgeyf5zojLdw6D1WPHzzSdUdH3R7qH0b7OdnoMpe8rkSsriKaLUC+S0KhBRV/ZkpF5vao/zmbkJOf/Z5UlJG4/LqRZfhDS9X32w/LVSAwcyTeutw09hlvCch2iRw/gnQhU7psoQpMBmrw8QAF4VjZeQLyf4tfD7qfVBkdASxEzVdmRGeyCz8jW5Ux7M7osTWNBhMBUvTo2KWJD4Yo+Vo5aAJWb/1Jh0UxDkskFsj7hSTyg/whZli2iuPTDgJLYW0+G4CchvURuy8zaY00/f76viaroYPDmwgsKbo0Fwez2ksPicptt/7AY1YQO1ujOCUlcZwjfUKQbRfNFbIUp52cQDjI4F6CpUOGhTEiKfcNaaS+0S5j60qmpbKTswid93bBjadEOEQM2M+tOfluKARDotJjN0SDVU1jEQdQSsAdO+ynuD4PWEpCAjYFvyxx81ijfGdgh3etwTnNfE9RH2fimQqNeKzHFdY7NEvq7/+LOSgYmFUSNBI06qeLYHd2TEbn3oaDcCnFh1fAUdJhQN5SHgdn8+jeF80p4y7ITDwODP7MMCGcEADkyupOMHTunFFF0gXIaLGEgSTgHaxKbAA1RpyDXB8qwQEl2I33VAF5sHJ2BrM2ad9UF0aMsJhurK2Nui0Ymu1UmCwHzxJDggFGWa7XivLB0Q==
+X-Forefront-Antispam-Report: CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(36860700016)(82310400026)(56012099006)(11063799006)(261009223027099003)(10067099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: cpCgQgniiFSETGNOW+wjPkftihy+UOhR0MGYK2e5ZtEQw91cICgs6h5YKovJGbEeiWe6uyL2ca89XVzxCIbak74mMIKRhkIJNS1XS4GCZAFu2C32N5p4Z1XRbjiWhRNKdistqfYZRzgVI9FcWxQkF/S307unLcfnAwhgAAt8+u8TytSZ+9IAZfxb0n5BveuK+DZLOBfuY4YzzvGdnSsMGv6XOW7DSzzyXZ/TvhaG397eY0AoqQjnMMku2OedtuS0WFzh1keWgw26yVO7GhthL8+8qeSS5MIa9lXfXRmFAT2wPpazP51KCz01+qCL1RtPBuQ5gGrUFeGXQQaFeRGsqxjO2RHYXO2YXjpBdQ9h94V2K9VOk/Ca4euFe3OA2MB2+uEQ3ionQ7zmfUmvN5O9vJzq3RSuYwfNxHPIrAABOzW6NBYL4dhSdsvi4u6nyG8K
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 09:09:10.7306
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55c243b2-acd8-4bca-baf6-08df2e89cdcd
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: AM2PEPF00070CF7.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR07MB9213
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 06:07:11 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5106
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 09:09:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5107
+Content-Type: text/plain; charset="utf-8"
 
-Hi Khem,
+From: Daniel Turull <daniel.turull@ericsson.com>
 
-I think it's just gmail showing it in a wrong thread (I've sent very
-similar change to both meta-security and meta-tensorflow at the same
-time, but in patchwork and my sent e-mail has right meta-tensorflow
-tag in subject:
-https://patchwork.yoctoproject.org/project/yocto/patch/20260929081349.38580=
-49-1-martin.jansa@gmail.com/
-and already applied (through your change) meta-security:
-https://patchwork.yoctoproject.org/project/yocto/patch/20260929081259.38560=
-73-1-martin.jansa@gmail.com/
+Some upstream changelogs are badly formed or too long for a commit
+message (e.g. mesa, gstreamer release notes, raw git log dumps).
+Add a changelog_skip_recipes setting: a space-separated list of
+recipe names (shell globs allowed) whose changelog is not added to
+the commit message. The changelog file is still attached to the AUH
+email. Default is empty, so behaviour is unchanged.
 
-I've used older windriver e-mail in Cc, so I've added the 3 e-mails
-hogxujia83 currently uses in meta-tensorflow (and updated in the
-README there recently).
+Assisted-by: kiro:claude-opus-5.5
+Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
+---
+ modules/steps.py    | 5 +++++
+ upgrade-helper.conf | 5 +++++
+ upgrade-helper.py   | 1 +
+ 3 files changed, 11 insertions(+)
 
-Cheers,
-
-On Tue, Oct 20, 2026 at 3:26=E2=80=AFAM Khem Raj via lists.yoctoproject.org
-<raj.khem=3Dgmail.com@lists.yoctoproject.org> wrote:
->
-> Martin, a small nit, subject says meta-security, changing it to meta-tens=
-orflow might help catching maintainer's attention
->
-> On Mon, Oct 19, 2026 at 7:24=E2=80=AFAM Martin Jansa via lists.yoctoproje=
-ct.org <martin.jansa=3Dgmail.com@lists.yoctoproject.org> wrote:
->>
->> ping
->>
->> On Tue, Sep 29, 2026 at 10:13=E2=80=AFAM <martin.jansa@gmail.com> wrote:
->> >
->> > From: Martin Jansa <martin.jansa@gmail.com>
->> >
->> > Changed in:
->> > https://git.openembedded.org/openembedded-core/commit/?h=3Dblacksail&i=
-d=3D37623ffbdd34a5c6b3e12ee33195f8e82343f198
->> >
->> > Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
->> > ---
->> >  conf/layer.conf | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/conf/layer.conf b/conf/layer.conf
->> > index c3bd464..bad8eb1 100644
->> > --- a/conf/layer.conf
->> > +++ b/conf/layer.conf
->> > @@ -11,7 +11,7 @@ BBFILE_PRIORITY_meta-tensorflow =3D "10"
->> >
->> >  LAYERVERSION_meta-tensorflow =3D "1"
->> >
->> > -LAYERSERIES_COMPAT_meta-tensorflow =3D "wrynose"
->> > +LAYERSERIES_COMPAT_meta-tensorflow =3D "blacksail"
->> >
->> >  LAYERDEPENDS_meta-tensorflow =3D " \
->> >      core \
->>
->>
->>
->>
->>
-> _._,_._,_
-> ________________________________
-> Links:
->
-> You receive all messages sent to this group.
->
-> View/Reply Online (#5105) | Reply to Group | Reply to Sender | Mute This =
-Topic | New Topic
-> Your Subscription | Contact Group Owner | Unsubscribe [martin.jansa@gmail=
-.com]
->
-> _._,_._,_
+diff --git a/modules/steps.py b/modules/steps.py
+index e678a4b..7dcc614 100644
+--- a/modules/steps.py
++++ b/modules/steps.py
+@@ -19,6 +19,7 @@
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-130=
+1, USA.
+ #
+=20
++import fnmatch
+ import os
+ import shutil
+ import re
+@@ -102,6 +103,10 @@ def _append_changelog_to_commit_msg(group, opts):
+     for p in group['pkgs']:
+         if 'changelog_text' not in p:
+             continue
++        # Changelog stays attached to the email, only the commit message s=
+kips it
++        if any(fnmatch.fnmatchcase(p['PN'], pat) for pat in opts['changelo=
+g_skip_recipes']):
++            I(" %s: changelog not added to commit message (changelog_skip_=
+recipes)" % p['PN'])
++            continue
+         text =3D p['changelog_text'].strip()
+         # Group recipes may share a source and produce identical changelog=
+s
+         # (e.g. mesa, mesa-native); skip proven duplicates, keep the rest.
+diff --git a/upgrade-helper.conf b/upgrade-helper.conf
+index 26db0c5..d3f5eed 100644
+--- a/upgrade-helper.conf
++++ b/upgrade-helper.conf
+@@ -145,3 +145,8 @@
+ # commit message. Longer changelogs are truncated. The full changelog
+ # is always available as an attachment.
+ #changelog_max_len=3D5000
++
++# Space separated list of recipes (shell globs allowed) whose changelog
++# is not included in the commit message. The changelog is still attached
++# to the AUH email.
++#changelog_skip_recipes=3Dmesa* gstreamer1.0* gst-* cmake*
+diff --git a/upgrade-helper.py b/upgrade-helper.py
+index 56b1f02..a6b2e29 100755
+--- a/upgrade-helper.py
++++ b/upgrade-helper.py
+@@ -220,6 +220,7 @@ class Updater(object):
+         self.opts['buildhistory'] =3D self._buildhistory_is_enabled()
+         self.opts['testimage'] =3D self._testimage_is_enabled()
+         self.opts['changelog_max_len'] =3D settings.get('changelog_max_len=
+', '5000')
++        self.opts['changelog_skip_recipes'] =3D settings.get('changelog_sk=
+ip_recipes', '').split()
+=20
+     def _make_dirs(self, build_dir):
+         self.uh_dir =3D os.path.join(build_dir, "upgrade-helper")
