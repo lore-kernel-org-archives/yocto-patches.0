@@ -1,214 +1,239 @@
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3323.1792521089472955308
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2012.1792529862688144959
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 20 Oct 2026 11:31:29 -0700
+ Tue, 20 Oct 2026 13:57:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=B49oFKd6;
- spf=pass (domain: gmail.com, ip: 209.85.215.172, mailfrom: ticotimo@gmail.com)
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-cc751eddf25so1924360a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 11:31:29 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=S2MUroWk;
+ spf=pass (domain: gmail.com, ip: 209.85.215.169, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-cc7e79c1eaaso1555753a12.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 13:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792521089; x=1793125889; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=UNUA2+9BfE7j/gSEwYyHFQyF7czRh05JK3pG0kloHxA=;
-        b=B49oFKd6afpiA9lWLPYroXQVdhA18hItpHa76ElPhZhLIkvrRnSfcJQmHp/71uR//x
-         6qbLiX0nLhJ5H4xidnZbkv3itFN3OjzeuebSlOy4bUi/Lv31Skecr7euBeLEqASnUi7O
-         YGO+8wbjgWU7w1ktkClkkl/mt3lugmumVXaUhsEuIYjdPZrhCHWnRcQKjBMnREFt39FS
-         Aio9/7vQ86Vd6mPdADOqlI4TIieimcc/BzXaC9r+eJ5BoqyHsY5fKaB/kJEO+FqWnUE8
-         yoZgWzvkuEA+IGs4G1ddCGzvv0F+k1wsvCH4KodthlcsDGJDbTLbkmJ73Q/V8u6Ds+bN
-         1opw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792521089; x=1793125889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792529862; x=1793134662; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=UNUA2+9BfE7j/gSEwYyHFQyF7czRh05JK3pG0kloHxA=;
-        b=Cm5o6ltmgIgOdrS+fqkELWTE2bET1fJ+Qo/nWnToMNVey8j48Q6hcxKcIX8/qKiKjm
-         RJObmlZn2mG6Y0LoKa+ZHKGMCiG9dYrFOkC1yd7aukzV/vwX2xKmIrro+XhhchOD0Rmf
-         tVtydLGq2qtrIIBu1zPOIK0Q5DnMNMOlKLvS6y/54yyl2Sgouwe+lU0/QI5tl52jyzTI
-         Lb0Ju+EAVzVfY+kL4uzgFN9JAj2hm4IwtTO1CPynfFCdOsGhqqeAMt6OJ/sp3rINh1hH
-         dm+94KwAstTRK3tLnYCXt/4RzwVTRi8WK/lpuXWcTz3hx/pblZNfMZLHhv22TWCj0FSD
-         zB9Q==
-X-Gm-Message-State: AFq9FYLkVzCVPeVX7qh6ahij2OzZ2KdwmLIkLzup7aOrOJBZoB97WHXG
-	wBaoYb10H4N+9BM37W857mkaoDOfapoBBCDN74zEzSM7HyGifvo73pPBaK142iD+
-X-Gm-Gg: AYBFou2MPOkOSa6lHhSxvzkdIezoPfYWBuf8IDU5YzIl0sKRKNAHj2d83VP1ZB7frbF
-	Igg28uK1DlbMVoCtLqPBk7EHktJa8aJ5S0q2KSYIruNLTYNF0SJ2Mro4iQRIHppGoD+nqRsX4/J
-	BWe815sFA8kXwGZUoFewJzogHJe9AJ36SGG36dKJA2PMWSBzxQ9Vlgy0NuFZemrz1NETM0ubJC3
-	BelYR66ZSafEveCU9q8G7mouZwVI5TYymqXZv/EktBOC7YsCibDsPmUgOuvMsBpHDD3t+qTS0br
-	6iqn3RnwRwmy/9gnT25AOxhEaRNCTXVRExs2IRtfDK+55gAfh2ea8D6Ezgd3vA97NIj4xGj7ZlB
-	bmG491ohQdfd9/ONNRzHHNOwWbhJl0+TrDLu8tygUlOQwk1sBhd4Xl0XbxT2RKtutqZtjpScY+F
-	OqwXAQbodwTgJuZ9bzmGQmBrYM0J4tWJnCq2igojKSOo1qEeQutrMjSP6+mN9RYQYCAupMxirLu
-	SQz8NV3kH40qtjGUC3IafDmzlQAujI=
-X-Received: by 2002:a17:90b:56cc:b0:3ac:af8b:6f4 with SMTP id 98e67ed59e1d1-3acef4e1328mr9737140a91.37.1792521088723;
-        Tue, 20 Oct 2026 11:31:28 -0700 (PDT)
+        bh=hmlF5MMSRg1UtPpvJ8QuTjientNnF2dIuppmOsR+fA0=;
+        b=S2MUroWkcunmFPVolL0URPTojYWGVICZFeJyL5SAm1s6SuPOs3SeA1A3yU6L0pk8Ox
+         emw/K+FMKfiERV8PeMBBef89T4EjpiSO0LiV48Ye+v35jl9n0HG3VaGIpOnoU8h7p4si
+         t0fsIlGAgNw2aI3VJz86HqMxy9RirndLdgEcp+sSa6VMCq11P/Q03d/+HtfT51T0iTae
+         DOeLn5KD3lrQ7EZo8p8jogXugT2EPkUkU0tK8q5V4u5dE+yda/EODYSPprwv3CbPnZBT
+         oKz3qvhbMXkhiGBXBOo3fXhb9uV7+/crEBXzvxqH6KIVJdqxmnQ8g3MCsj8XLOHu3WaM
+         4xbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792529862; x=1793134662;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=hmlF5MMSRg1UtPpvJ8QuTjientNnF2dIuppmOsR+fA0=;
+        b=KflyDivS1jUHaSIabrP2f9Sq4DdPL8OBtvMlu/ruJS9Ovlq71MnC8u467BOvlwgFQE
+         uKgA0ePq5cfIcgz8cHEjZCMjh7Ax2CDtvuOxuTEiA9d7ebX6vpIH2+9foftRWm3qkYn/
+         Tgf6GbgO6wdoj0sek5wwgZuVs/Y7+8MMSpLKIejoJEriRZ5pC2nFX2gVen/ayz+ZVVZM
+         +pK4kaNB8vNGpGwEqopyCvjbKxsjdkpBVDqZCPZHfHDLoSeGCGxXuY1RYgqvDSrw8YZy
+         Q6EiTbgH6FmzmsV71ohMiW6MfOEQ/WRaOqY2/oj5vaW+HldLAtUD3x42BhVeHExgg8SB
+         gGWw==
+X-Gm-Message-State: AFq9FYKogle0lEsJrOyUcswaTF1t8uaVgpj8/pfeiP7Coiv6rwEDq0vX
+	CIbsJ4wwXkycFjm3A0f4cnS5AK49Humbt+wqtFcUcMiTZ2IAkBMUWRQE5Hive3ih
+X-Gm-Gg: AYBFou3jS/v1Fjp98jQEk0CJgAZ710CrCaes5xpyGV3zZDRXswr3/1plMHSOWYkGfwd
+	1epQVlB7KNCz3d5WwF6nxmjbS9NyAX3FFkEv2K0dYTOjErcYvs/Y3XJbE0x/bmFRA+On/xv5+Qv
+	sCMm4u44Tc9bzl7JXcS+Wpdc+zqnLDTcG0rZ/00VILgSGqUxlvW15ntcxQkUCJCXyBw/rOeUNiW
+	QBmixOS17dDR6Zrx9WJmwECQV2iwqJPlShepC8zRAeAo3rYnj6zvEGaH9U0NGqIOI7ErmGa7fgS
+	FtBqZzMaStrSIVF+anxif8ARKdyMuzDncTCxuDgB4OGY1tlXYhyByXwsrRqZJD2RWSyrmMgjNXr
+	dPWRzmpoDDWam8VKuVXF9njkzcSVUKLQX31unkK46XGPOAGADk31kyhz3Mj717NbE46oCBsBQef
+	OsF44s1W4ugWeOLK92DIgC+xIMXH6XCfgsjxeOTKPNlbVYnfTaO2FAVD1TXcc2X5WSS8Dkec9Jn
+	RJUJjCYnUv7OQe7ycGXN+lYGFIeyQw=
+X-Received: by 2002:a17:90b:2b4f:b0:3ab:c80:9365 with SMTP id 98e67ed59e1d1-3ad86d5066dmr97810a91.42.1792529861923;
+        Tue, 20 Oct 2026 13:57:41 -0700 (PDT)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ad80cbe295sm526810a91.5.2026.10.20.11.31.27
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ad8029765fsm1039115a91.10.2026.10.20.13.57.40
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 20 Oct 2026 11:31:27 -0700 (PDT)
+        Tue, 20 Oct 2026 13:57:40 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [error-report-web][PATCH] Use MariaDB instead of MySQL.
-Date: Tue, 20 Oct 2026 11:31:00 -0700
-Message-ID: <20261020183059.9361-2-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 2/4] layerindex: restrict bulk changes to their owner
+Date: Tue, 20 Oct 2026 13:57:28 -0700
+Message-ID: <20261020205730.53370-3-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261020205730.53370-1-tim.orling@konsulko.com>
+References: <20261020205730.53370-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 18:31:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5112
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 20:57:45 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5115
 Content-Type: text/plain; charset="utf-8"
 
-errors.yoctoproject.org runs MariaDB, and layerindex-web uses
-mariadb:lts too, so its dumps import as they are. Django and mysqlclient
-support both. The MariaDB image has no mysqladmin, so use its
-healthcheck.sh.
+The bulk change search and delete views only allow the user who owns
+the changeset, but the edit, review and patch views did not check
+ownership or require a login. Anyone could view or edit another user's
+bulk change, or start patch generation for it.
+
+Require a login for all of these views and look the changeset up by
+owner, so other users' changesets return 404 as the delete view
+already does. Also require a login for the delete view, which
+otherwise failed for anonymous users.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- .devcontainer/devcontainer.json      | 4 ++--
- .devcontainer/docker-compose.dev.yml | 2 +-
- README                               | 2 +-
- docker-compose.prod.yaml             | 4 ++--
- docker-compose.staging.yaml          | 4 ++--
- docker-compose.yaml                  | 5 ++---
- docker/run-tests.sh                  | 6 +++---
- 7 files changed, 13 insertions(+), 14 deletions(-)
+ layerindex/urls.py              | 10 +++----
+ layerindex/views.py             | 23 ++++++++++++--
+ tests/test_bulkchange_access.py | 53 +++++++++++++++++++++++++++++++++
+ 3 files changed, 78 insertions(+), 8 deletions(-)
+ create mode 100644 tests/test_bulkchange_access.py
 
-diff --git a/.devcontainer/devcontainer.json b/.devcontainer/devcontainer.json
-index 9d8ef1e..5b2f1c6 100644
---- a/.devcontainer/devcontainer.json
-+++ b/.devcontainer/devcontainer.json
-@@ -1,5 +1,5 @@
- {
--  "name": "error-report-web (Django + MySQL)",
-+  "name": "error-report-web (Django + MariaDB)",
-   "dockerComposeFile": [
-     "../docker-compose.yaml",
-     "docker-compose.dev.yml"
-@@ -41,7 +41,7 @@
-             "previewLimit": 50,
-             "server": "db",
-             "port": 3306,
--            "driver": "MySQL",
-+            "driver": "MariaDB",
-             "name": "errorreport",
-             "database": "errorreport",
-             "username": "errorreport",
-diff --git a/.devcontainer/docker-compose.dev.yml b/.devcontainer/docker-compose.dev.yml
-index 32aa685..6b73bd3 100644
---- a/.devcontainer/docker-compose.dev.yml
-+++ b/.devcontainer/docker-compose.dev.yml
-@@ -1,5 +1,5 @@
- # Devcontainer override for docker-compose.yaml: runserver on the mounted
--# workspace, MySQL port unpublished (no clash with other dev DBs), no nginx.
-+# workspace, MariaDB port unpublished (no clash with other dev DBs), no nginx.
- services:
-   backend:
-     command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
-diff --git a/README b/README
-index 7539329..63f3776 100644
---- a/README
-+++ b/README
-@@ -44,7 +44,7 @@ For more information on error reporting and log collection see: http://www.yocto
- Docker
- ------
- 
--docker-compose.yaml runs a development setup: MySQL, the application in
-+docker-compose.yaml runs a development setup: MariaDB, the application in
- gunicorn, and nginx serving it on http://localhost:8080. Its settings are in
- .env.dev.app and .env.dev.db, which hold development-only values.
- 
-diff --git a/docker-compose.prod.yaml b/docker-compose.prod.yaml
-index 582f76c..576590d 100644
---- a/docker-compose.prod.yaml
-+++ b/docker-compose.prod.yaml
-@@ -1,14 +1,14 @@
- # Prod: nginx with Let's Encrypt TLS in front of gunicorn. See README.
- services:
-   db:
--    image: mysql:8.4
-+    image: mariadb:lts
-     restart: unless-stopped
-     volumes:
-       - data:/var/lib/mysql
-     env_file:
-       - .env.prod.db
-     healthcheck:
--      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
-+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-       timeout: 20s
-       retries: 10
- 
-diff --git a/docker-compose.staging.yaml b/docker-compose.staging.yaml
-index 908bbb7..704fcf0 100644
---- a/docker-compose.staging.yaml
-+++ b/docker-compose.staging.yaml
-@@ -1,14 +1,14 @@
- # Staging: nginx with Let's Encrypt TLS in front of gunicorn. See README.
- services:
-   db:
--    image: mysql:8.4
-+    image: mariadb:lts
-     restart: unless-stopped
-     volumes:
-       - data:/var/lib/mysql
-     env_file:
-       - .env.staging.db
-     healthcheck:
--      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
-+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-       timeout: 20s
-       retries: 10
- 
-diff --git a/docker-compose.yaml b/docker-compose.yaml
-index 9f0a735..d5339ab 100644
---- a/docker-compose.yaml
-+++ b/docker-compose.yaml
-@@ -1,6 +1,6 @@
- services:
-   db:
--    image: mysql:8.4
-+    image: mariadb:lts
-     container_name: error_report_web_db
-     restart: always
-     volumes:
-@@ -10,8 +10,7 @@ services:
-     ports:
-       - "3306:3306"
-     healthcheck:
--      # TCP: MySQL's init-time server only listens on the socket.
--      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
-+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-       timeout: 20s
-       retries: 10
-   
-diff --git a/docker/run-tests.sh b/docker/run-tests.sh
-index be1faeb..4e7913b 100755
---- a/docker/run-tests.sh
-+++ b/docker/run-tests.sh
-@@ -1,5 +1,5 @@
- #!/bin/sh
--# Run the tests in the app image against a throwaway MySQL. Used by CI.
-+# Run the tests in the app image against a throwaway MariaDB. Used by CI.
+diff --git a/layerindex/urls.py b/layerindex/urls.py
+index 51a832d..92f419f 100644
+--- a/layerindex/urls.py
++++ b/layerindex/urls.py
+@@ -6,18 +6,18 @@
  #
  # SPDX-License-Identifier: MIT
  
-@@ -17,8 +17,8 @@ trap 'docker rm -f $DB >/dev/null; docker network rm $NET >/dev/null' EXIT
- # Root so Django can create the test database; testingpw isn't a secret.
- docker run -d --name $DB --network $NET --network-alias db \
-     -e MYSQL_ROOT_PASSWORD=testingpw -e MYSQL_DATABASE=errorreport \
--    mysql:8.4 >/dev/null
--until docker exec $DB mysql -h127.0.0.1 -uroot -ptestingpw -e 'SELECT 1' >/dev/null 2>&1; do
-+    mariadb:lts >/dev/null
-+until docker exec $DB healthcheck.sh --connect --innodb_initialized >/dev/null 2>&1; do
-     if [ "$(docker inspect -f '{{.State.Running}}' $DB)" != true ]; then
-         docker logs $DB | tail -5; exit 1
-     fi
+-from django.views.generic import TemplateView, DetailView, ListView, RedirectView
++from django.views.generic import TemplateView, ListView, RedirectView
+ from django.views.defaults import page_not_found
+ from django.urls import include, re_path, reverse_lazy
+ from layerindex.views import LayerListView, LayerReviewListView, LayerReviewDetailView, RecipeSearchView, \
+     MachineSearchView, LayerDetailView, edit_layer_view, delete_layer_view, edit_layernote_view, delete_layernote_view, \
+     HistoryListView, EditProfileFormView, AdvancedRecipeSearchView, BulkChangeView, BulkChangeSearchView, \
+-    bulk_change_edit_view, bulk_change_patch_view, BulkChangeDeleteView, RecipeDetailView, RedirectParamsView, \
++    bulk_change_edit_view, bulk_change_patch_view, BulkChangeReviewView, BulkChangeDeleteView, RecipeDetailView, RedirectParamsView, \
+     ClassicRecipeSearchView, ClassicRecipeDetailView, ClassicRecipeStatsView, LayerUpdateDetailView, UpdateListView, \
+     UpdateDetailView, StatsView, publish_view, LayerCheckListView, BBClassCheckListView, TaskStatusView, \
+     ComparisonRecipeSelectView, ComparisonRecipeSelectDetailView, task_log_view, task_stop_view, email_test_view, \
+     BranchCompareView, RecipeDependenciesView, update_layer_view
+-from layerindex.models import LayerItem, Recipe, RecipeChangeset
++from layerindex.models import LayerItem, Recipe
+ from rest_framework import routers
+ from . import restviews
+ 
+@@ -97,9 +97,7 @@ urlpatterns = [
+     re_path(r'^bulkchange/(?P<pk>\d+)/edit/$',
+         bulk_change_edit_view, {'template_name': 'layerindex/bulkchangeedit.html'}, name="bulk_change_edit"),
+     re_path(r'^bulkchange/(?P<pk>\d+)/review/$',
+-        DetailView.as_view(
+-            model=RecipeChangeset,
+-            context_object_name='changeset',
++        BulkChangeReviewView.as_view(
+             template_name='layerindex/bulkchangereview.html'),
+         name="bulk_change_review"),
+     re_path(r'^bulkchange/(?P<pk>\d+)/patches/$',
+diff --git a/layerindex/views.py b/layerindex/views.py
+index c030ae1..42722bf 100644
+--- a/layerindex/views.py
++++ b/layerindex/views.py
+@@ -307,8 +307,9 @@ def edit_layer_view(request, template_name, branch='master', slug=None):
+         'return_url': return_url,
+     })
+ 
++@login_required
+ def bulk_change_edit_view(request, template_name, pk):
+-    changeset = get_object_or_404(RecipeChangeset, pk=pk)
++    changeset = get_object_or_404(RecipeChangeset, pk=pk, user=request.user)
+ 
+     if request.method == 'POST':
+         formset = BulkChangeEditFormSet(request.POST, queryset=changeset.recipechange_set.all())
+@@ -322,8 +323,9 @@ def bulk_change_edit_view(request, template_name, pk):
+         'formset': formset,
+     })
+ 
++@login_required
+ def bulk_change_patch_view(request, pk):
+-    changeset = get_object_or_404(RecipeChangeset, pk=pk)
++    changeset = get_object_or_404(RecipeChangeset, pk=pk, user=request.user)
+     # FIXME this couples the web server and machine running the update script together,
+     # but given that it's a separate script the way is open to decouple them in future
+     try:
+@@ -855,10 +857,27 @@ class BaseDeleteView(DeleteView):
+         return context
+ 
+ 
++class BulkChangeReviewView(DetailView):
++    model = RecipeChangeset
++    context_object_name = 'changeset'
++
++    @method_decorator(login_required)
++    def dispatch(self, request, *args, **kwargs):
++        return super(BulkChangeReviewView, self).dispatch(request, *args, **kwargs)
++
++    def get_queryset(self):
++        qs = super(BulkChangeReviewView, self).get_queryset()
++        return qs.filter(user=self.request.user)
++
++
+ class BulkChangeDeleteView(BaseDeleteView):
+     model = RecipeChangeset
+     success_url = reverse_lazy('bulk_change')
+ 
++    @method_decorator(login_required)
++    def dispatch(self, request, *args, **kwargs):
++        return super(BulkChangeDeleteView, self).dispatch(request, *args, **kwargs)
++
+     def get_queryset(self):
+         qs = super(BulkChangeDeleteView, self).get_queryset()
+         return qs.filter(user=self.request.user)
+diff --git a/tests/test_bulkchange_access.py b/tests/test_bulkchange_access.py
+new file mode 100644
+index 0000000..e85451d
+--- /dev/null
++++ b/tests/test_bulkchange_access.py
+@@ -0,0 +1,53 @@
++# layerindex-web - tests for bulk change access control
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
++
++import pytest
++from django.contrib.auth.models import User
++from django.test import TestCase
++from django.urls import reverse
++
++from layerindex.models import RecipeChangeset
++
++
++@pytest.mark.django_db
++class TestBulkChangeAccess(TestCase):
++
++    def setUp(self):
++        self.owner = User.objects.create_user('owner', 'owner@example.com', 'pw')
++        self.other = User.objects.create_user('other', 'other@example.com', 'pw')
++        self.changeset = RecipeChangeset.objects.create(user=self.owner, name='mine')
++
++    def _url(self, name):
++        return reverse(name, args=(self.changeset.pk,))
++
++    def test_anonymous_redirected_to_login(self):
++        for name in ('bulk_change_edit', 'bulk_change_review', 'bulk_change_patches', 'bulk_change_delete'):
++            response = self.client.get(self._url(name))
++            self.assertEqual(response.status_code, 302, name)
++            self.assertIn('login', response['Location'], name)
++
++    def test_other_user_gets_404(self):
++        self.client.force_login(self.other)
++        for name in ('bulk_change_edit', 'bulk_change_review', 'bulk_change_patches', 'bulk_change_delete'):
++            response = self.client.get(self._url(name))
++            self.assertEqual(response.status_code, 404, name)
++        response = self.client.post(self._url('bulk_change_delete'))
++        self.assertEqual(response.status_code, 404)
++        self.assertTrue(RecipeChangeset.objects.filter(pk=self.changeset.pk).exists())
++
++    def test_other_user_cannot_post_edits(self):
++        self.client.force_login(self.other)
++        # A valid (empty) edit formset, which would be saved and redirect
++        # to the review page if the changeset were found
++        data = {'form-TOTAL_FORMS': '0', 'form-INITIAL_FORMS': '0'}
++        response = self.client.post(self._url('bulk_change_edit'), data)
++        self.assertEqual(response.status_code, 404)
++
++    def test_owner_can_access(self):
++        self.client.force_login(self.owner)
++        for name in ('bulk_change_edit', 'bulk_change_review'):
++            response = self.client.get(self._url(name))
++            self.assertEqual(response.status_code, 200, name)
 -- 
 2.56.0
 
