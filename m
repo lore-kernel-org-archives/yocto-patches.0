@@ -1,257 +1,212 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5914.1792445732011318932
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.9709.1792459599982632316
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 Oct 2026 14:35:32 -0700
+ Mon, 19 Oct 2026 18:26:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=RvU/1USi;
- spf=pass (domain: gmail.com, ip: 209.85.215.180, mailfrom: ticotimo@gmail.com)
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-cd69954c755so16100a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 14:35:31 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=fB1kniot;
+ spf=pass (domain: gmail.com, ip: 209.85.128.180, mailfrom: raj.khem@gmail.com)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-8b06c0794cfso23538377b3.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 18:26:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792459599; cv=none;
+        d=google.com; s=arc-20260327;
+        b=d8tAqpEgzhfJHXY7J+eiZnW/j5Z/aTE9Ka0EX/dg5FkByPgBmjRk7j7RTckO0EbPB3
+         soOlnLfq+yy0DmJvriMKDJ7pRUCrCT50bBWepI0xyaxRNvNzngUJnxTkYl42xyIgQl15
+         vD6YXtDIwk6RHGlsAyYMHnueKRZ2koWfEzxtT0F+QQ7RbMISrhwtSNXvLtI0jhmjsRc4
+         hqO8p5O4nnt54wsGDrhJVenznjm7DzDzN9Bhc+tSgtXWZrON1KECdNCoaz2SmHdpnaCC
+         HMLA8VjU+rlck7hAr+U/8dWGUagnFJqD4aPqlftoqy2NBtx4RCEiQ6IryQUSuYcuYOdH
+         pTSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=RQMsB8LN+mBh9EMtXgoScYc07am4nxZW7+FvJecMOYM=;
+        fh=5n1l9ClUU2n8NCvynOdAYuW3ZfEeOx0UqsUvFizfswc=;
+        b=cG43CPfySdHQuiPbtjCw75PDn9Am1k6R6DNRPK9S9zUhB5WK5TN89bqYxf8rgzmauB
+         LcTdacfySdjLeOHcvBmTNp1P6y42TyC/9aTFXzSOMYh2Yrha363Cyr6fji/brjKoPbWl
+         AIeSGm/kPB4Uj2cq4cZD5EboPPK1RpdH6XTmOQd0xqKSsWaYOxcSrjzlCufGcjGYAhC0
+         VzNIKXy/O5YYc43Tj76bfmkOiAmAI1iOk0Tpwkp1MUKLMcjmJXVe35dTyc3LxcBmor8r
+         r70r/ifxxOZbXFx4trTxdSZkxWwfNKVi1JSYqyBNVZkKr7H/OPVhp39fzkyZfySOLaj9
+         THoA==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792445731; x=1793050531; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=YA1gg6BoUoVKTH8l6gbRE0hIecZchtZ78EYq2sP4l78=;
-        b=RvU/1USiHD2Suu58zyzmY8zli43RGUyf0yYdoCeINADdFJ6VDKCjt1CZg5LQTaKffn
-         qFQGzJj/M0kOgOpvE6eyUvnLFG4Yqjc1LuOfcUEO6n3ogr/JKG8MBSt9vVpQZD7ljy/6
-         69B8EDJ4nkOSSU7GhieJ3P/1MF18mJ93CYZQkqKALJR2lUKBqPQ+txzT79VwbmYZDkuS
-         I/D6AOQSOm+XSFT+XTZsNAaXOxLrkcnI78kGDT8x/Cxk0gtiXDtXMfhnlPuDq4AMNRmz
-         zdnl4uyeGLQIcT0g6S8ox+vDCPUTXuJNVvGi2s1rStWtVDQTe+YuPLMih/Ly9Tz3WWPy
-         CwbA==
+        d=gmail.com; s=20251104; t=1792459599; x=1793064399; darn=lists.yoctoproject.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RQMsB8LN+mBh9EMtXgoScYc07am4nxZW7+FvJecMOYM=;
+        b=fB1kniotn3yWzcLZXkf18jYnMwVOwPY6LR+JBTKUnym4YYTxQnA7bd+dhv5gUMqy/s
+         Ricg3JV3r5LYefr61atqSA9oa0o7taKFd1iS83xoSA/yIll0qkh/t2WesqIZk+xw1ih7
+         UPiiLereEY+MLv60C6rZhffB0tQYAHnmqsAxgS7DZ94wTcbn4x9MuP4/HSMRbHhqe2NZ
+         RSku4xvN3Hsj+RO1UvjatSHU70yZ/UXwxjgfwB7LyeWG2coW1NcWY4S6V+pVCjQ0+O6O
+         H84CMWABYKOGg2vC8BxxzXTCMT21Fmdc39wBEqroTsQsYQdY46DoDurD9egg7jfjZfqV
+         aVZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792445731; x=1793050531;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=YA1gg6BoUoVKTH8l6gbRE0hIecZchtZ78EYq2sP4l78=;
-        b=FeSpoIE5zqUjSaPWmsEsZQ7xOeAHYfkAdNdyDQiFyKWX4lhYTETVDtX9sl9Rw+wa3a
-         vbLS/BX54MSld1F7ZkW+rBob00bR0iNYQ5AI7XL/S+hlx5tVGSJRdCcj+8m66VycO+RN
-         tKQORPm8P5jDlTYKaBqgZ4Y9xEj+uc7kiKML72Aef+2PRHRuBGRDqnlKnViEBmHYrcG9
-         lAntM2VpFQXBwHsj7zMoKICq40PxR524zwhpxlj/LFOq2p0i7WmjvWYuD7GZ1UPiv32q
-         y/IpfhRAoVwQ4/rvxXErwH+SxVmLzORgw41i9LxHH6IlY1oDqUftz7prdi6TkSSIRJ5D
-         mNeA==
-X-Gm-Message-State: AFq9FYIZ7QCJXmaEPoWa+d79ex+plaVTaXs+XcS07yCLa72YBkWsPzj4
-	5sg3FIORG92M4YK34oqq1pZ/4auOLvitbK+2jQzrwgaTZ20cXFZVlSqb1rpweKUj
-X-Gm-Gg: AYBFou0Ubnay4G1FYi3r/U3LEvZOAAPvW/RBBX48Gv+alGhtL2ED4agMJU7g6SNlq+R
-	Mk+Dpzh3yVZ03Jvb0ghQLhCfkYGHAwSOw1N5JvWER4THYl/mSc24OW12imtuD7E3tuQ4uzkSC2G
-	zB1gQTemuKT7BNrmbZRIAbaxa6CVaSd0bs+B/+2etJ9GefVdZepmRtnJIEYgzalnMMFIvm3yxRz
-	LCaoxhKhS03vvfuUYZ+O2w/tzx2jsb0Vyi5FMrYjAtJXJdaWqVZ7+bhH4FZtn7RQaGQpxVEJgcO
-	fpfS195HhIBB9uUvU6pZvYrHUtFV0HpEuQSA/XIPu0KcBL+K5e8qgmylgIer3zACVMxgbTkFbHK
-	7csDM9VB9v6fhPibbkj6l/SMDBvzTHK2SXYz08Q/dxCGEk4nojxS2lo4OjnIRcNRC/Em+7aFWnC
-	T6Nt3sH3zI6JL22LiqItLCwYikRs4K02tIRxUSEQSAUbl8ytlfIWBpv0r6poq12C7rQevSvHC/q
-	payt4DChuCO3xmSylBxFgNfdNaau2I=
-X-Received: by 2002:a05:6a20:918b:b0:3e2:6b5a:fea3 with SMTP id adf61e73a8af0-3e26b5b095fmr658991637.71.1792445731357;
-        Mon, 19 Oct 2026 14:35:31 -0700 (PDT)
-Return-Path: <ticotimo@gmail.com>
-Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89f5820b344sm4307747b3a.53.2026.10.19.14.35.29
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 19 Oct 2026 14:35:29 -0700 (PDT)
-From: Tim Orling <ticotimo@gmail.com>
-X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 4/4] layerindex/models.py: store long recipe values without truncating
-Date: Mon, 19 Oct 2026 14:35:10 -0700
-Message-ID: <20261019213510.4384-5-tim.orling@konsulko.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261019213510.4384-1-tim.orling@konsulko.com>
-References: <20261019213510.4384-1-tim.orling@konsulko.com>
+        d=1e100.net; s=20260707; t=1792459599; x=1793064399;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=RQMsB8LN+mBh9EMtXgoScYc07am4nxZW7+FvJecMOYM=;
+        b=p5L4eh/jZIzf2f07NqVVC4oOWn6qm2LKmbaAA/F0RPorUQsT3UTY2zDnPp2i706+Ce
+         5I0VoPQS38VMoFfcnWPSvYtQRRscdbWUjm9DIMtcVEGcyrdh3uJ/G4NUChvvTN2uleTR
+         Dtq3baOVIzYuPIltLjFh0mr8ktOwEhKT4zZUIr/vqAjGyznUtsJlKOTHXSrKGZ0l28pO
+         e/TznSfivMjvZBp4qLJQZnxXyp+INY3imeSIot8jpDaYV7sfCyu0Gh/cL5I07g0I0SpN
+         GUzCFMuE6QQzFYX/qLdukCW7Pu2Y7cLeAanY3fz1Kk+ySiF2zDV7aMilFRuHeNpZnqP7
+         k4AQ==
+X-Gm-Message-State: AFq9FYI9ioijw/0J26zBQ8xLoql9zrd0KSbjvHZwxMR1turEcfQ3xCkJ
+	Nb7eJnwwYrZcdvticKovGqo2ZEk6+ykLMN/6avp75pWVbC7RJOZIeeiberq7SO9ahKtBNcDwjwC
+	pI9r18s+T0nhKKKG5fHCggGi2u3C5xDKtOQ==
+X-Gm-Gg: AYBFou2b0zQTCr91IzpKmhiAxxMAX8FYUsWhEhI25DYfqllIkZLZApeKR9ivRfL6ymB
+	2IKoOA4/p1CoyHsGYM7FdSci1fL2cWdsdZatf8Ekllao2OvPvga+s8ba6t/u6unbBQRqfLAb7hB
+	plykCwrlSc4CtfAaJyhM6KOL/oB9PnlritMuxC+8NCOeqhNKAG9wHVI65Lbxdyy0qwsfQT5XfSf
+	6Ak/WGvyh8Cwp0L3/LIYQSF9lNVuy3PBeJ4iR3qZyHyOjyxyb/iV9hhoDhmyxsebqHxoe51CvJl
+	iv1cQxiuVYIVASHaSkbJtp4zggB34+mucybp7prZi/vYFbVSRoWzInaUQVKdfXNbpPQVs/U9v4y
+	1lXdc83gU1LUSECUQ7FCaFcSVZjSekMwnJ8/nwUW73o8e/k44zknCDdSsUQvpQ5zq3ECLjzYBH3
+	gb8v5rpoMhm4PHf1lK+namVOCvAc2zYmZ6wivUJuHY/5b65tMo8G0LEOMENJL2i00bkuKZjtnNj
+	InBFw6/IwmoGMmCo3cXZIuz/PZAvEUKsSLYmAbaMA1gZ/R000+IYdqAPS6WEajcg8iz6W2juHZp
+	w2Q54A8K3TsvnqfnUJqMvKC3xYtRVis1N219bvw=
+X-Received: by 2002:a05:690c:788:b0:8a8:8456:a970 with SMTP id
+ 00721157ae682-8b0f21e9dbemr34658927b3.68.1792459598996; Mon, 19 Oct 2026
+ 18:26:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260929081349.3858049-1-martin.jansa@gmail.com> <CA+chaQejuGizpQ7q0UPaLvPsc8PZhEYAanhwUPbS9=LJBmfDkQ@mail.gmail.com>
+In-Reply-To: <CA+chaQejuGizpQ7q0UPaLvPsc8PZhEYAanhwUPbS9=LJBmfDkQ@mail.gmail.com>
+From: Khem Raj <raj.khem@gmail.com>
+Date: Mon, 19 Oct 2026 18:26:13 -0700
+X-Gm-Features: AclHuK_mDlJZfkvaHZgmuctaGXmmIZ67Oj2HgLpDZBt2EDH5OK8aH_nqJ7soRjc
+Message-ID: <CAMKF1sp31EN0ZeKGfRzAmto4N4=hv42xSs_XcMqzV=_vczh2Mw@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-tensorflow][PATCH] layer.conf: Update to
+ blacksail release
+To: yocto-patches@lists.yoctoproject.org
+Cc: hongxujia83@gmail.com, jiahongxujia@163.com, jiahongxu_hycx@cetc.com.cn, 
+	hongxu.jia@windriver.com
+Content-Type: multipart/alternative; boundary="000000000000ac27f7065e3b85af"
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Oct 2026 21:35:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5104
-Content-Type: text/plain; charset="utf-8"
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 01:26:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5105
 
-Several Recipe fields hold free-form values from the metadata with no
-real length limit, and the update script kept truncating them (e.g.
-linux-firmware's LICENSE at 4688 characters). Raising CharField limits
-again only moves the problem and runs into MariaDB's per-row VARCHAR
-limit, so make Recipe.summary, license, provides, bbclassextend,
-inherits and configopts, and PackageConfig.with_option and
-without_option, TextFields. Recipe.pn is indexed, so raise it to 255
-characters instead.
+--000000000000ac27f7065e3b85af
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-AI-Generated: Claude Opus 5.5
-Signed-off-by: Tim Orling <tim.orling@konsulko.com>
----
- .../migrations/0055_recipe_text_fields.py     | 58 +++++++++++++++++++
- layerindex/models.py                          | 18 +++---
- tests/test_recipe_fields.py                   | 53 +++++++++++++++++
- 3 files changed, 120 insertions(+), 9 deletions(-)
- create mode 100644 layerindex/migrations/0055_recipe_text_fields.py
- create mode 100644 tests/test_recipe_fields.py
+Martin, a small nit, subject says meta-security, changing it to
+meta-tensorflow might help catching maintainer's attention
 
-diff --git a/layerindex/migrations/0055_recipe_text_fields.py b/layerindex/migrations/0055_recipe_text_fields.py
-new file mode 100644
-index 0000000..0714623
---- /dev/null
-+++ b/layerindex/migrations/0055_recipe_text_fields.py
-@@ -0,0 +1,58 @@
-+# Generated by Django 5.2.18 on 2026-10-19 03:19
-+
-+from django.db import migrations, models
-+
-+
-+class Migration(migrations.Migration):
-+
-+    dependencies = [
-+        ('layerindex', '0054_alter_sitenotice_expires'),
-+    ]
-+
-+    operations = [
-+        migrations.AlterField(
-+            model_name='packageconfig',
-+            name='with_option',
-+            field=models.TextField(blank=True),
-+        ),
-+        migrations.AlterField(
-+            model_name='packageconfig',
-+            name='without_option',
-+            field=models.TextField(blank=True),
-+        ),
-+        migrations.AlterField(
-+            model_name='recipe',
-+            name='bbclassextend',
-+            field=models.TextField(blank=True),
-+        ),
-+        migrations.AlterField(
-+            model_name='recipe',
-+            name='configopts',
-+            field=models.TextField(blank=True),
-+        ),
-+        migrations.AlterField(
-+            model_name='recipe',
-+            name='inherits',
-+            field=models.TextField(blank=True),
-+        ),
-+        migrations.AlterField(
-+            model_name='recipe',
-+            name='license',
-+            field=models.TextField(blank=True),
-+        ),
-+        migrations.AlterField(
-+            model_name='recipe',
-+            name='pn',
-+            field=models.CharField(blank=True, max_length=255),
-+        ),
-+        migrations.AlterField(
-+            model_name='recipe',
-+            name='provides',
-+            field=models.TextField(blank=True),
-+        ),
-+        migrations.AlterField(
-+            model_name='recipe',
-+            name='summary',
-+            field=models.TextField(blank=True),
-+        ),
-+    ]
-diff --git a/layerindex/models.py b/layerindex/models.py
-index a9e9bdf..425af53 100644
---- a/layerindex/models.py
-+++ b/layerindex/models.py
-@@ -469,22 +469,22 @@ class Recipe(models.Model):
-     layerbranch = models.ForeignKey(LayerBranch, on_delete=models.CASCADE)
-     filename = models.CharField(max_length=255)
-     filepath = models.CharField(max_length=255, blank=True)
--    pn = models.CharField(max_length=100, blank=True)
-+    pn = models.CharField(max_length=255, blank=True)
-     pv = models.CharField(max_length=100, blank=True)
-     pr = models.CharField(max_length=100, blank=True)
-     pe = models.CharField(max_length=100, blank=True)
--    summary = models.CharField(max_length=200, blank=True)
-+    summary = models.TextField(blank=True)
-     description = models.TextField(blank=True)
-     section = models.CharField(max_length=100, blank=True)
--    license = models.CharField(max_length=3072, blank=True)
-+    license = models.TextField(blank=True)
-     homepage = models.URLField(blank=True)
-     bugtracker = models.URLField(blank=True)
--    provides = models.CharField(max_length=2048, blank=True)
--    bbclassextend = models.CharField(max_length=100, blank=True)
--    inherits = models.CharField(max_length=383, blank=True)
-+    provides = models.TextField(blank=True)
-+    bbclassextend = models.TextField(blank=True)
-+    inherits = models.TextField(blank=True)
-     updated = models.DateTimeField(auto_now=True)
-     blacklisted = models.CharField(max_length=255, blank=True)
--    configopts = models.CharField(max_length=4096, blank=True)
-+    configopts = models.TextField(blank=True)
-     srcrev = models.CharField(max_length=64, blank=True)
- 
-     class Meta:
-@@ -639,8 +639,8 @@ class Patch(models.Model):
- class PackageConfig(models.Model):
-     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-     feature = models.CharField(max_length=255)
--    with_option = models.CharField(max_length=255, blank=True)
--    without_option = models.CharField(max_length=255, blank=True)
-+    with_option = models.TextField(blank=True)
-+    without_option = models.TextField(blank=True)
-     build_deps = models.CharField(max_length=255, blank=True)
- 
-     def __str__(self):
-diff --git a/tests/test_recipe_fields.py b/tests/test_recipe_fields.py
-new file mode 100644
-index 0000000..8b8dc42
---- /dev/null
-+++ b/tests/test_recipe_fields.py
-@@ -0,0 +1,53 @@
-+# layerindex-web - tests for storing long recipe values
-+#
-+# Licensed under the MIT license, see COPYING.MIT for details
-+#
-+# SPDX-License-Identifier: MIT
-+
-+import pytest
-+from django.test import TestCase
-+
-+from layerindex.models import Branch, LayerBranch, LayerItem, PackageConfig, Recipe
-+
-+
-+@pytest.mark.django_db
-+class TestLongRecipeValues(TestCase):
-+    """Values longer than the old field limits, as seen in real layers
-+    (e.g. linux-firmware's LICENSE, nativesdk recipes' inherits), must be
-+    stored in full rather than truncated."""
-+
-+    def setUp(self):
-+        branch = Branch.objects.create(name='master', bitbake_branch='master')
-+        layer = LayerItem.objects.create(name='meta-test', status='P', layer_type='A',
-+                                         summary='test', description='test',
-+                                         vcs_url='git://example.com/meta-test.git')
-+        self.layerbranch = LayerBranch.objects.create(layer=layer, branch=branch)
-+
-+    def test_long_values_are_not_truncated(self):
-+        values = {
-+            'pn': 'p' * 112,
-+            'summary': 's' * 264,
-+            'license': ' & '.join(['LicenseRef-Firmware-%d' % i for i in range(250)]),
-+            'provides': 'virtual/x ' * 270,
-+            # As generated by core-image-ptest.bb: one multiconfig variant per ptest
-+            'bbclassextend': 'native nativesdk ' + ' '.join(['mcextend:python3-ptest-%d' % i for i in range(150)]),
-+            'inherits': 'class ' * 110,
-+            'configopts': '--enable-thing ' * 290,
-+        }
-+        with self.assertNoLogs('LayerIndexModels', 'WARNING'):
-+            recipe = Recipe.objects.create(layerbranch=self.layerbranch, filename='test_1.0.bb', **values)
-+            pc = PackageConfig.objects.create(recipe=recipe, feature='tests',
-+                                              with_option='--with-x ' * 45, without_option='--without-x ' * 30)
-+        recipe.refresh_from_db()
-+        pc.refresh_from_db()
-+        for field, value in values.items():
-+            self.assertEqual(getattr(recipe, field), value, field)
-+        self.assertEqual(pc.with_option, '--with-x ' * 45)
-+        self.assertEqual(pc.without_option, '--without-x ' * 30)
-+
-+    def test_short_fields_are_still_truncated(self):
-+        # Fields that keep a length limit are still truncated, with a warning
-+        with self.assertLogs('LayerIndexModels', 'WARNING'):
-+            recipe = Recipe.objects.create(layerbranch=self.layerbranch, filename='test_1.0.bb', pv='1' * 150)
-+        recipe.refresh_from_db()
-+        self.assertEqual(len(recipe.pv), 100)
--- 
-2.56.0
+On Mon, Oct 19, 2026 at 7:24=E2=80=AFAM Martin Jansa via lists.yoctoproject=
+.org
+<martin.jansa=3Dgmail.com@lists.yoctoproject.org> wrote:
 
+> ping
+>
+> On Tue, Sep 29, 2026 at 10:13=E2=80=AFAM <martin.jansa@gmail.com> wrote:
+> >
+> > From: Martin Jansa <martin.jansa@gmail.com>
+> >
+> > Changed in:
+> >
+> https://git.openembedded.org/openembedded-core/commit/?h=3Dblacksail&id=
+=3D37623ffbdd34a5c6b3e12ee33195f8e82343f198
+> >
+> > Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+> > ---
+> >  conf/layer.conf | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/conf/layer.conf b/conf/layer.conf
+> > index c3bd464..bad8eb1 100644
+> > --- a/conf/layer.conf
+> > +++ b/conf/layer.conf
+> > @@ -11,7 +11,7 @@ BBFILE_PRIORITY_meta-tensorflow =3D "10"
+> >
+> >  LAYERVERSION_meta-tensorflow =3D "1"
+> >
+> > -LAYERSERIES_COMPAT_meta-tensorflow =3D "wrynose"
+> > +LAYERSERIES_COMPAT_meta-tensorflow =3D "blacksail"
+> >
+> >  LAYERDEPENDS_meta-tensorflow =3D " \
+> >      core \
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#5097):
+> https://lists.yoctoproject.org/g/yocto-patches/message/5097
+> Mute This Topic: https://lists.yoctoproject.org/mt/121486933/1997914
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe:
+> https://lists.yoctoproject.org/g/yocto-patches/leave/13340786/1997914/645=
+821814/xyzzy
+> [raj.khem@gmail.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
+>
+
+--000000000000ac27f7065e3b85af
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Martin, a small nit, subject says meta-security, changing =
+it to meta-tensorflow might help catching maintainer&#39;s attention=C2=A0<=
+/div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" =
+class=3D"gmail_attr">On Mon, Oct 19, 2026 at 7:24=E2=80=AFAM Martin Jansa v=
+ia <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt=
+;martin.jansa=3D<a href=3D"mailto:gmail.com@lists.yoctoproject.org">gmail.c=
+om@lists.yoctoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,20=
+4,204);padding-left:1ex">ping<br>
+<br>
+On Tue, Sep 29, 2026 at 10:13=E2=80=AFAM &lt;<a href=3D"mailto:martin.jansa=
+@gmail.com" target=3D"_blank">martin.jansa@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; From: Martin Jansa &lt;<a href=3D"mailto:martin.jansa@gmail.com" targe=
+t=3D"_blank">martin.jansa@gmail.com</a>&gt;<br>
+&gt;<br>
+&gt; Changed in:<br>
+&gt; <a href=3D"https://git.openembedded.org/openembedded-core/commit/?h=3D=
+blacksail&amp;id=3D37623ffbdd34a5c6b3e12ee33195f8e82343f198" rel=3D"norefer=
+rer" target=3D"_blank">https://git.openembedded.org/openembedded-core/commi=
+t/?h=3Dblacksail&amp;id=3D37623ffbdd34a5c6b3e12ee33195f8e82343f198</a><br>
+&gt;<br>
+&gt; Signed-off-by: Martin Jansa &lt;<a href=3D"mailto:martin.jansa@gmail.c=
+om" target=3D"_blank">martin.jansa@gmail.com</a>&gt;<br>
+&gt; ---<br>
+&gt;=C2=A0 conf/layer.conf | 2 +-<br>
+&gt;=C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)<br>
+&gt;<br>
+&gt; diff --git a/conf/layer.conf b/conf/layer.conf<br>
+&gt; index c3bd464..bad8eb1 100644<br>
+&gt; --- a/conf/layer.conf<br>
+&gt; +++ b/conf/layer.conf<br>
+&gt; @@ -11,7 +11,7 @@ BBFILE_PRIORITY_meta-tensorflow =3D &quot;10&quot;<b=
+r>
+&gt;<br>
+&gt;=C2=A0 LAYERVERSION_meta-tensorflow =3D &quot;1&quot;<br>
+&gt;<br>
+&gt; -LAYERSERIES_COMPAT_meta-tensorflow =3D &quot;wrynose&quot;<br>
+&gt; +LAYERSERIES_COMPAT_meta-tensorflow =3D &quot;blacksail&quot;<br>
+&gt;<br>
+&gt;=C2=A0 LAYERDEPENDS_meta-tensorflow =3D &quot; \<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 core \<br>
+<br>
+<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+Links: You receive all messages sent to this group.<br>
+View/Reply Online (#5097): <a href=3D"https://lists.yoctoproject.org/g/yoct=
+o-patches/message/5097" rel=3D"noreferrer" target=3D"_blank">https://lists.=
+yoctoproject.org/g/yocto-patches/message/5097</a><br>
+Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/121486933/199=
+7914" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
+t/121486933/1997914</a><br>
+Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
+" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
+Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
+e/13340786/1997914/645821814/xyzzy" rel=3D"noreferrer" target=3D"_blank">ht=
+tps://lists.yoctoproject.org/g/yocto-patches/leave/13340786/1997914/6458218=
+14/xyzzy</a> [<a href=3D"mailto:raj.khem@gmail.com" target=3D"_blank">raj.k=
+hem@gmail.com</a>]<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+<br>
+<br>
+</blockquote></div>
+
+--000000000000ac27f7065e3b85af--
