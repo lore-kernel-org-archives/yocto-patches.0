@@ -1,143 +1,158 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2013.1792529865606792319
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2045.1792529868875142558
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 20 Oct 2026 13:57:45 -0700
+ Tue, 20 Oct 2026 13:57:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=Sx5ty3gv;
- spf=pass (domain: gmail.com, ip: 209.85.214.175, mailfrom: ticotimo@gmail.com)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2e831e86ebfso40075ad.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 13:57:45 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=bKgw+e5C;
+ spf=pass (domain: gmail.com, ip: 209.85.214.170, mailfrom: ticotimo@gmail.com)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2e977109392so254065ad.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 13:57:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792529865; x=1793134665; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1792529868; x=1793134668; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=WPcE02lrZfWwY+OCoO1LnUwR3P3XVsUx+DNDWxOCV3s=;
-        b=Sx5ty3gvGi5mDBoyphinG7HrTRSG8tB2lboI35VvAaqtZJTOCEFyQumjdMVnnLaBWY
-         EzC3bt4EddkjKKSAPTBkCepfnlxfx7tap2YuA/1O1WGMRGUUPcwV16RpkzaHgbwVLvGf
-         h28vTdq0IgBrm97MZexZdwzKcmyqFxhhH07DL7C0SxdoLlyPaX+UWsbQ2qWHamYPmLNW
-         bihoILqNED6UJ0SsZEm3Osu2pfHK9D3e2L87QjKN2c1Lc+qQGp7U/YoIhIujhfDtADB2
-         KsW1uPgnRC6IzbLfsDaTmSQKYD287LdYhuD8zQyJ+s3nSQoX47C3Aqa9/JB1BZSFGS/W
-         f8Vw==
+        bh=P6+ltMe/m1TVuW6FT7wcTh3/jF8QyOA0hPVWyXIcBlE=;
+        b=bKgw+e5Cg8GPFdQ6aw2FC+m2Cr8vpV0sN6sept7B6fAWhFzCnxX5x1aMxlDHBRvF7o
+         MMOGORTw/SacNhw4jKqYNNhSnumISwB0lSumw5iD/mk7X1O+DHlLmDLUpY2t5PA/4aed
+         sujXShEu3ROaUIQcBGM2xxA0VRMVuha6s998wrr8NoBw6bZHwp7nMT+9lci/iD8bics1
+         jYIfH3VgOGDv7mqYkkXIjCpTwx7lOnt+RRB29O+D8l0bKf9NFd1qmTR7g7j88c6WaFZo
+         whpr62oKsdnORbcjcDzWk82eWoyjKBX/nFTRTi+wWbzCBLpVk2qg9Ot2bOQZKE338Su4
+         Zorw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792529865; x=1793134665;
+        d=1e100.net; s=20260707; t=1792529868; x=1793134668;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=WPcE02lrZfWwY+OCoO1LnUwR3P3XVsUx+DNDWxOCV3s=;
-        b=AP3cIBaoeqyiRJ8iWlFAZ80N4wD3e+YkmufhYJiRuky3/uObS/RIp6h8JZ2/qiZcS9
-         uhTZZVZsEdfzG0gQnPIAJa90CMkI62A8Z91AP74tEkwTNCrTTOH0hvSl72qXIbEAOGR0
-         fVdYsM09FhUoXeFXj6WAH6fldhgdI3y9Jjb7MAA9zA/h212seoFpHliDNmq/ONQnqWjL
-         JbxbspSUam0aZMPSstd26ByIvfa5X1eKNITRrdhkjOrEehk15LpvpyIWa6KmBOhcsa/x
-         wlggXpbq+8p/xFaYBU4hJi4Hzx40w7Dtnzl5NpHDqfSpXrbXZIOvO5Q468ImoW92cjM4
-         Firg==
-X-Gm-Message-State: AFq9FYI+0KNOb6xKmv/MGhi+NiP44K98tQCJfTR7TFlkeo4fYbpKNWhq
-	Vmf/Tqt+32QA98AmxtESQaD95x0GmRi2JNdx+sL982mg2+dMIVbk0aaf8QvxF9Sc
-X-Gm-Gg: AYBFou2fWCqrWjflmBjTragNIsJMQBldPAuhOiaGn9Bq28W47jFoCd7RZJYxCxm+lFS
-	ysrewttDpDV4mmMG79pdiskaVUrWD5dydBNxlPb7i6XnFeIDCTQELXdNxoUE7RBgf6yiFyn2ilH
-	+eoy2PAottg0mybcvxQXFYzwxrR7DU5ibV9cF6ufD0m3F6i9sZp+e1bQ4P+drlWA2PrWJVCyPxx
-	Q4JKcWVRhl4jxV8k6fxoDwOLwC/6jBZi4NJYOqOe0DjRaOkOiEj7adWvZcbEbmgxvoZd1WIGQnr
-	+WOgT1LF8IeedGZN+uUBFkfAQ9uIj4cQcGEhutUFb4BQ9Ofz20kW71SlApAZxP7jgQjRCpbxyv7
-	Y842dmG5NWnhhrokbTPj7awjYWUykrKPVMB7bajOkprZGkG4FoKRysnkLIi+m0ae6GRbhJS0ZHR
-	Z4wLn/3g41W3ED0BvLOBcg1CJ+ZUBCv4NQd9ASayDiGdUEdE5JExm46bnYijbldT/TshqETRPAF
-	yQoRpehr8g7BRe8RFeY8yAPZSzkYJlu
-X-Received: by 2002:a17:90b:6cc:b0:3a8:5fd6:cb6 with SMTP id 98e67ed59e1d1-3ad86a402ebmr169502a91.0.1792529864848;
-        Tue, 20 Oct 2026 13:57:44 -0700 (PDT)
+        bh=P6+ltMe/m1TVuW6FT7wcTh3/jF8QyOA0hPVWyXIcBlE=;
+        b=D4PbwMEYGAABuj51yugs22Y8MT0/VSGB7rxumlT0M+JzmxEXGxuZx+TqYjTvmw5sDq
+         w5wGYtFWyPBE5EoG7RTmFARU5dvjSwOegOb36tFVjuHPXAc1h5c/FV9TseX7UYDuLfPA
+         g8sCStPlrQm1kS9vvOGSQcii0lrKJo8jmFmRanplRoGcoJb6hOK+aCe93fBtdFio1JJn
+         hl8pVd4B6AqvdrSNJ6+e9wIH9eYYx8SfqmK7uwgpqZdXhCJR8XG2cv5MBVWTDFtKiyiT
+         Fm+1lggSbCZhtLQw/z+yamD7Ng+moUL+Kox+KezKGy/ejIwJr5vhkXqLLAuDm7YkFUT8
+         64vQ==
+X-Gm-Message-State: AFq9FYJ54i3TXUjhV3pENmSFVn7+O0XBIjoDhPKJY7Hy6zHgyTRXJQW+
+	/N47naMAvg+Ub9EW1rN8jStzcLAm5s/2t5pbnprqPViPJ8KbuKZ8L1F/6D4dL/zu
+X-Gm-Gg: AYBFou0+WyhNEeuijUYMZ3NLv/Aeqzue/mFSX7Hb63gff3zG0pvlIPblluAzVjY0PQM
+	D0IUZplSj0ExJAKLgLV9qR5wdoh6EjQLY5ekgkdA69dbWYlrQjJZF/cMPRXmUuTeshBnEYk54u4
+	NlV0CBOEwvB5RCW0tCbMYdADQPhFcRlS7ASAcbBgRqQhMvvBfC+jKqobcDRKZkSeG3pAo/2p0Zp
+	//bAoQ4A6JB3q+LuR5pFmW2MkLJwG02bvSGIkJtBJTQH4qOHlW8VnxPSJlJj6JlwuD3ii3TA2qr
+	x4JC2sby4RqOn91DuQu3KMLtkU/U0SiMjnax2KdDIWyI1Eq3XsCRPhNn1y7mziAKZXNgxoWPh0w
+	1wTQp1ukgORC2R9g7bySiQsUm2KTMaYZ4ks1TASk3C/08uh/fhQaGUDRXFbasgJaG1uMSmgakDg
+	JHV81qW6V4qm8yHf3arombyr+2dCupnyXCuXXvGU01OFE+v93IsJJ1B2Jdz3kI+0u4l9her4Ck8
+	5SX2Kabdvfxa+WhhbgHP+nA+IqBHcuJ2i5RkWVX821+oX/t/fa4epK/CgnODFoKajXau0bSv7X7
+	DACPKE7FzC6v
+X-Received: by 2002:a17:90b:4d09:b0:3ab:2c2b:1030 with SMTP id 98e67ed59e1d1-3ad86e9e4f4mr90264a91.22.1792529868192;
+        Tue, 20 Oct 2026 13:57:48 -0700 (PDT)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ad8029765fsm1039115a91.10.2026.10.20.13.57.43
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ad8029765fsm1039115a91.10.2026.10.20.13.57.45
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 20 Oct 2026 13:57:43 -0700 (PDT)
+        Tue, 20 Oct 2026 13:57:46 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 3/4] layerindex/views: don't expose patch generation errors to users
-Date: Tue, 20 Oct 2026 13:57:29 -0700
-Message-ID: <20261020205730.53370-4-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 4/4] tests: check that changing the profile email requires reactivation
+Date: Tue, 20 Oct 2026 13:57:30 -0700
+Message-ID: <20261020205730.53370-5-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261020205730.53370-1-tim.orling@konsulko.com>
 References: <20261020205730.53370-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 20:57:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5116
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 20:57:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5117
 Content-Type: text/plain; charset="utf-8"
 
-bulk_change_patch_view returned the output of the failing bulkchange.py
-run, or the exception text, in the HTTP response. That can include
-tracebacks, server paths and bitbake output. Log the details instead
-and return a generic error with status 500. The lock timeout message
-is kept, since it tells the user what to do and reveals nothing.
-
-Reported by CodeQL (py/stack-trace-exposure).
+Layer edit rights are granted by matching a user's email address against
+the layer's maintainer emails, which are public. Changing the email on
+the profile page therefore must not take effect until the new address is
+confirmed: the user is logged out and deactivated, and the activation
+link is sent only to the new address. Add a test so this protection
+cannot be removed without notice.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/views.py             | 14 ++++++++------
- tests/test_bulkchange_access.py | 11 +++++++++++
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ tests/test_profile_email.py | 67 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 tests/test_profile_email.py
 
-diff --git a/layerindex/views.py b/layerindex/views.py
-index 42722bf..592311f 100644
---- a/layerindex/views.py
-+++ b/layerindex/views.py
-@@ -6,6 +6,7 @@
- #
- # SPDX-License-Identifier: MIT
- 
-+import logging
- import os
- import sys
- import re
-@@ -63,6 +64,8 @@ from layerindex.models import (BBAppend, BBClass, BBClassGlobal, BBClassRecipe,
- 
- from . import tasks, utils
- 
-+logger = logging.getLogger(__name__)
+diff --git a/tests/test_profile_email.py b/tests/test_profile_email.py
+new file mode 100644
+index 0000000..79e4adf
+--- /dev/null
++++ b/tests/test_profile_email.py
+@@ -0,0 +1,67 @@
++# layerindex-web - tests for changing the email address on the profile page
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
 +
- def edit_layernote_view(request, template_name, slug, pk=None):
-     layeritem = get_object_or_404(LayerItem, name=slug)
-     if layeritem.comparison:
-@@ -347,12 +350,11 @@ def bulk_change_patch_view(request, pk):
-         return HttpResponse('No patch data generated', content_type='text/plain')
-     except Exception as e:
-         output = getattr(e, 'output', None)
--        if output:
--            if 'timeout' in output:
--                return HttpResponse('Failed to generate patches: timed out waiting for lock. Please try again shortly.', content_type='text/plain')
--            else:
--                return HttpResponse('Failed to generate patches: %s' % output, content_type='text/plain')
--        return HttpResponse('Failed to generate patches: %s' % e, content_type='text/plain')
-+        if output and 'timeout' in output:
-+            return HttpResponse('Failed to generate patches: timed out waiting for lock. Please try again shortly.', content_type='text/plain')
-+        # Details can include paths and bitbake output, so keep them in the server log
-+        logger.exception('Failed to generate patches for bulk change %s: %s', pk, output)
-+        return HttpResponse('Failed to generate patches, please contact the site administrator.', content_type='text/plain', status=500)
-     # FIXME better error handling
- 
- 
-diff --git a/tests/test_bulkchange_access.py b/tests/test_bulkchange_access.py
-index e85451d..914493c 100644
---- a/tests/test_bulkchange_access.py
-+++ b/tests/test_bulkchange_access.py
-@@ -51,3 +51,14 @@ class TestBulkChangeAccess(TestCase):
-         for name in ('bulk_change_edit', 'bulk_change_review'):
-             response = self.client.get(self._url(name))
-             self.assertEqual(response.status_code, 200, name)
++import pytest
++from captcha.models import CaptchaStore
++from django.contrib.auth import authenticate
++from django.contrib.auth.models import User
++from django.core import mail
++from django.test import RequestFactory, TestCase
++from django.urls import reverse
 +
-+    def test_patch_error_details_not_exposed(self):
-+        import subprocess
-+        from unittest import mock
-+        self.client.force_login(self.owner)
-+        err = subprocess.CalledProcessError(1, 'bulkchange.py', output='Traceback: /opt/secret/path')
-+        with mock.patch('layerindex.views.utils.runcmd', side_effect=err), \
-+                self.assertLogs('layerindex.views', 'ERROR'):
-+            response = self.client.get(self._url('bulk_change_patches'))
-+        self.assertEqual(response.status_code, 500)
-+        self.assertNotIn(b'/opt/secret/path', response.content)
++from layerindex.models import SecurityQuestion, SecurityQuestionAnswer, UserProfile
++
++
++@pytest.mark.django_db
++class TestProfileEmailChange(TestCase):
++    """Changing the email address must not take effect without proving
++    ownership of the new address, since layer edit rights are granted by
++    matching the user's email against (public) maintainer emails."""
++
++    def setUp(self):
++        self.user = User.objects.create_user('someone', 'old@example.com', 'pw')
++        profile = UserProfile.objects.create(user=self.user)
++        self.questions = [SecurityQuestion.objects.create(question='Question %d' % i) for i in range(3)]
++        for question in self.questions:
++            SecurityQuestionAnswer.objects.create(user=profile, security_question=question, answer='x')
++        self.client.force_login(self.user)
++
++    def _post_profile(self, email):
++        hashkey = CaptchaStore.generate_key()
++        data = {
++            'username': 'someone',
++            'first_name': '',
++            'last_name': '',
++            'email': email,
++            'captcha_0': hashkey,
++            'captcha_1': CaptchaStore.objects.get(hashkey=hashkey).response,
++            'answer_1': '*****',
++            'answer_2': '*****',
++            'answer_3': '*****',
++        }
++        for i, question in enumerate(self.questions, 1):
++            data['security_question_%d' % i] = question.pk
++        return self.client.post(reverse('profile'), data)
++
++    def test_email_change_requires_reactivation(self):
++        response = self._post_profile('maintainer@example.com')
++        self.assertRedirects(response, reverse('reregister'), fetch_redirect_response=False)
++
++        self.user.refresh_from_db()
++        self.assertFalse(self.user.is_active)
++        # Logged out, and an inactive account cannot log back in
++        self.assertNotIn('_auth_user_id', self.client.session)
++        self.assertIsNone(authenticate(RequestFactory().post('/'), username='someone', password='pw'))
++        # The activation link only goes to the new address
++        self.assertEqual(len(mail.outbox), 1)
++        self.assertEqual(mail.outbox[0].to, ['maintainer@example.com'])
++
++    def test_unchanged_email_keeps_account_active(self):
++        response = self._post_profile('old@example.com')
++        self.assertEqual(response.status_code, 302)
++        self.user.refresh_from_db()
++        self.assertTrue(self.user.is_active)
++        self.assertEqual(len(mail.outbox), 0)
 -- 
 2.56.0
 
