@@ -1,101 +1,84 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6085.1792498687936635140
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.9890.1792508738756318131
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 20 Oct 2026 05:18:08 -0700
+ Tue, 20 Oct 2026 08:05:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=zw9WzcC3;
- spf=pass (domain: smile.fr, ip: 209.85.128.42, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a1df146015so18922235e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 05:18:07 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=Gmu2DD0q;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.46, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a1fa22006cso3813885e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 08:05:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1792498686; x=1793103486; darn=lists.yoctoproject.org;
-        h=in-reply-to:references:to:cc:from:subject:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=aZkTyglaVuV3omFISLHAPpcvu8fluZnDRGhNnm2ygZY=;
-        b=zw9WzcC30ndwZqAWmlsOMVNvuIu1UvHoVGk/RthZ1qjDiOpucD+Sz76CJNaLp7njIZ
-         QCH0GjDoTcpg9QLIo/bDBDCzSpBHnTng3l0TqV6mMiEcd6JkX3Acnx08xtZI03G8bd9h
-         XI54vEHOYklsyNKJXHNEtYmz/7FUuTj7W5FFU=
+        d=linuxfoundation.org; s=google; t=1792508737; x=1793113537; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=NDO6zIwOQSguiV3BTsdtDwledkz4JeznmBoa6gMTpC0=;
+        b=Gmu2DD0qK44oaPro795BSIRUTWAZJGWpFx2ZRebhWbv47Y9RsySZmXd5JEEoVPYu9i
+         Kq0We7GfgEbin7AK9bz2+zoP7tDqmKKKiJOiZP8c9BSLmuimr1j0ywCuVCB3mCWjzm5i
+         +PWBZbQdFWVAPT5wcsoPNtnxQVZs7GFZ5UzzQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792498686; x=1793103486;
-        h=in-reply-to:references:to:cc:from:subject:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=aZkTyglaVuV3omFISLHAPpcvu8fluZnDRGhNnm2ygZY=;
-        b=UkHwsOZ4EKLRiU5QWOdnFTMSTMC9yeLpZ7Dgi00RR6+acTKRPoVyphtEswLgMrSP+L
-         VOH0O0wHAadhj3VXOtDQcjj2xg354U8Q85iGVTEOW2XEj2jErbD4W/ls/ZIbUBPKM+6d
-         VER48vT5NPgSF3q6ASEfMFujqlXLbB7O9ewwFQRGGL5OxsWXeyy6idhP4GghF/cyUQJx
-         Ajrcmc96O/7ZPu0D67PuO1XV6IbW2X3/g8AJZaKspAygppsGkpCqICg/xOdfsNR8IKUG
-         hjIXRtjm9AFn2m/L0DwebZjfXmaoZIGaixBbTtDpWrzUpinq+qC29DqfPx97tQNtUu6G
-         rW8A==
-X-Gm-Message-State: AFq9FYIm4fEZFxELu2ioGwnOf6wC2dvbqUdmGNMSdEm4DXMJa0+cvHun
-	jTEqPtwTjFvNC6u3tUWcTjkpkR1ONnBqg+103eB0HJZC4+lSKfjf0zh+skdb3ULC4m7Liqp5bDd
-	Xo/D9Nv4=
-X-Gm-Gg: AYBFou1ztjMTbpk1rVuoXdJtsvVDLD2TzLawiiDcDzgvl7bP3hzeohZ6GfVYVmlGXGU
-	HqtVuO5ay6sUas57dO67jWn3Nr/WPIOQm6l3+9YdmXoPLemXqvLFlAQlvCNeIsFQ7S3FOeN3r9x
-	FPXZVgHqHxclB1ZV1qNyzSHRwZuC0LwPlWk4Xm66L7HkwSO7Uh+0BGjOFp0IXj981ehYIsp7FEs
-	Mz5QOXZIvCi/4Fw736QSLD9si+dqUtnu2mm3h4UmWKMwWC3thzzdRwWK4G/k0lk6uPNdBIP7O/G
-	vSCT9Bi+W2ez7YyjVfwS3CTknOHq3Qjg48BqvglyfW4CAE7IQGehs+S2jB/BEZpZXjkQb85zny+
-	1r701SmyA8v/ki6JQBlocJsq4ZzaaOTlH4iG7z1oEeLKpJOlsCtQJj44azQeat0lJem8a0+YwSq
-	m+ZUbfcTMsbWmRH5S7vT3dimEZu4GRggB5Lc5rQWQkn/qZxIWy7SL7VrfA+DiMPYvURWI3o7q9Z
-	6m9c92HDXmegkF6VocNqWmon/1VSx1Uu6fZBls/7CHk0S91HAIGvATLMOA=
-X-Received: by 2002:a05:600d:4447:20b0:4a1:d483:559b with SMTP id 5b1f17b1804b1-4a1d7612bbdmr166875985e9.24.1792498685461;
-        Tue, 20 Oct 2026 05:18:05 -0700 (PDT)
-Return-Path: <yoann.congal@smile.fr>
-Received: from localhost (static-css-ccs-204145.business.bouyguestelecom.com. [176.157.204.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1f2ce1479sm68902825e9.14.2026.10.20.05.18.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Oct 2026 05:18:05 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 Oct 2026 14:18:04 +0200
-Message-Id: <DM9NR3QJDKUO.22INDNPCK9Q4K@smile.fr>
-Subject: Re: [yocto-patches] [PATCH yocto-autobuilder2] schedulers: Fix
- meta-meta-agl branch for wrynose
-From: "Yoann Congal" <yoann.congal@smile.fr>
-Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Jan-Simon Moeller"
- <jsmoeller@linuxfoundation.org>, "Mathieu Dubois-Briand"
- <mathieu.dubois-briand@bootlin.com>
-To: <yocto-patches@lists.yoctoproject.org>
-X-Mailer: aerc 0.20.0
-References: <20261020-mathieu-agl-wrynose-v1-1-f1bc4f908055@bootlin.com>
-In-Reply-To: <20261020-mathieu-agl-wrynose-v1-1-f1bc4f908055@bootlin.com>
+        d=1e100.net; s=20260707; t=1792508737; x=1793113537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=NDO6zIwOQSguiV3BTsdtDwledkz4JeznmBoa6gMTpC0=;
+        b=TmtNXC/R2rZssEHMBovAVpQkvjPX4XyxDlRQeahzY0F+0hRMr7OUMnl4ry92Gxg7s+
+         GvC6bTyVzgW5WwEeIsSAJlkgl2AEKQSYmCLumH+IRFL9UyCaAX5/ZhzOpNeHd6Cu07CI
+         3mFeZMVIoJjyT8EtP10BFAbF9XjNdHH1m4YM20IC6fd/TMMUlQNKQMLNQPjepgrDyuC+
+         /kXXUINBTLgjgmKST/h0OWJWymv2zpbrZcp+pROcNMHdZdsAufp6vazNB4YEoukAlvYB
+         n2ZAFmdkSy8AnOfosl+9vtJX4dY14xYdGe1mPv0vxFAbvSAPQADhqGQ8vBP4kowMQcTf
+         qV9w==
+X-Gm-Message-State: AFq9FYKuDcdWA9ZQghGkBQPkdeyWT2TFBEWFYBJx2JlXIY5UmkOImuay
+	qQZ1K1t/tB1JwXJNVrE3+WELpdzCBM43p6jNUpvhtNy7Hyk1t3xLQkw7aaYhyh1lE8zUxtgI/BH
+	3PLArU5c=
+X-Gm-Gg: AYBFou1/MIv3xUvf6OE7MUD6fe2+y8FHeXTMxy6w7Z1yaAvh/Ao4hVCfCAWch7Ex216
+	3h0OyJYj4724XquK1EB65E1GYqyI9fDFjl+jaCUoEvIRDEg1Sg9y057ne7VYjEMo/Iiexvef4Uf
+	c5oR51IPhGgutJgcVy7qxDAtBITuRWvDNkJkvzEZhTsHms2/YtghvPGltFUh8i5qL6Lkp++TEcu
+	IR8JpOqpE95n4lWsBV2JXbuyAX81MoVT+xj9teMEs67XkvMQQEMmW1H/WdFXaSRi9G4TgRNv2eM
+	2eF9L8moVkLgVyQknmQKumu860rCzGaI7aJ+xED6VrrlNeL5RIcTYikq3yydehiV+UKtmUT9OFX
+	RnyTo1GV8Eif25Eb2Te/g6NJtxzTxi/4GftxY9yBiTx/Tj12qJ2PRxSEkEVYnQIvPis0dWJDG06
+	vbqdpyCcL+rZOentBRNVQ3OjcQNh+s4FUKVbB1QqwLPKUIr/Xqhar/Qi0PnQVbgNUfnlwCqAu1n
+	kLaAHgbYXLSVWXqYQdP6bQrE7w=
+X-Received: by 2002:a05:600c:19cb:b0:49f:c199:e1e2 with SMTP id 5b1f17b1804b1-4a1d7612042mr229604585e9.28.1792508735828;
+        Tue, 20 Oct 2026 08:05:35 -0700 (PDT)
+Return-Path: <richard.purdie@linuxfoundation.org>
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:afe4:94a7:60b4:8f6e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e1d8214cbsm6567635f8f.43.2026.10.20.08.05.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Oct 2026 08:05:35 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org
+Cc: seebs@seebs.net,
+	mark.hatle@kernel.crashing.org
+Subject: [pseudo] [PATCH] ports/linux: Add missing header
+Date: Tue, 20 Oct 2026 16:05:33 +0100
+Message-ID: <20261020150533.1838141-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.55.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 12:18:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5110
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 20 Oct 2026 15:05:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5111
+Content-Type: text/plain; charset="utf-8"
 
-On Tue Oct 20, 2026 at 1:46 PM CEST, Mathieu Dubois-Briand via lists.yoctop=
-roject.org wrote:
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> ---
->  schedulers.py | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/schedulers.py b/schedulers.py
-> index 5577f5b6fbe2..2bfc36ed4439 100644
-> --- a/schedulers.py
-> +++ b/schedulers.py
-> @@ -94,6 +94,7 @@ branchdefaults =3D {
->      'wrynose': {
->          'branch': 'wrynose',
->          'branch_bitbake': '2.18',
-> +        'branch_meta-agl': 'master',
->          'branch_meta-arm': 'wrynose',
->          'branch_meta-aws': 'wrynose',
->          'branch_meta-clang': 'wrynose',
->
-> ---
-> base-commit: 8cc2acaac17df5a15f7c58a330cf30e4a7132d7b
-> change-id: 20261020-mathieu-agl-wrynose-fe466d82d3bc
->
-> Best regards,
+The opentree* calls that were recently added need linux/mount.h on older verisons
+of Linux, e.g. on Ubuntu 22.04.
 
-Nitpick: Small typo in title meta-meta-agl -> meta-agl
+Add the missing header.
 
-Regards,
---=20
-Yoann Congal
-Smile ECS
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ ports/linux/portdefs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/ports/linux/portdefs.h b/ports/linux/portdefs.h
+index 6cece4e..ca96d06 100644
+--- a/ports/linux/portdefs.h
++++ b/ports/linux/portdefs.h
+@@ -34,6 +34,7 @@ GLIBC_COMPAT_SYMBOL(memcpy,2.0);
+ #include <sys/syscall.h>
+ #include <sys/prctl.h>
+ #include <linux/seccomp.h>
++#include <linux/mount.h>
+ 
+ /* close_range()'s flags, and unshare(), are only declared by glibc under
+  * _GNU_SOURCE, which pseudo does not build with. <linux/close_range.h> is
