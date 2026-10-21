@@ -1,197 +1,122 @@
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7288.1792573416380423184
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.8453.1792579182442946491
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 21 Oct 2026 02:03:36 -0700
+ Wed, 21 Oct 2026 03:39:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm1 header.b=r9sbv3BO;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=jXVoFD8E;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.152, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 96E267A00FD
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 21 Oct 2026 05:03:35 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Wed, 21 Oct 2026 05:03:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1792573415;
-	 x=1792659815; bh=q7YQ8EhPyjWDvShyLCrHoFXN+w71swCX0uBoqdGC29w=; b=
-	r9sbv3BOc6SQtrLkVY6iN6Y4J8uXSOUVfZ/CByCL8u6Ei3DhWj/p4hMCh2G+0sYp
-	ccH31MldhRTrw20OIQUomiC0agXQHhQjXQTqDJ+bxBrwsu6HZsIxbt6PszvEfN0b
-	PpERQlh1TRTS/O/V+NfNe870QJ4rQVGdrkqVkJnWQK14Q5d6pxysA7R3pmkaqd75
-	UYyKo87f5zfbnry37t/+R1VuYBB68jOSXueVznIyHqJzpCoTd6pYDddk6J/OR6vh
-	ML85Op1Bm7w6GniJZh3TwxGlSotilZhMNUBHPgkvklyABAaD/QGcPPxugJz9FXUB
-	+2RD8poOUktZ12fQhjzHNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792573415; x=
-	1792659815; bh=q7YQ8EhPyjWDvShyLCrHoFXN+w71swCX0uBoqdGC29w=; b=j
-	XVoFD8EA/qPXk7RXbD5RnavU0I04MgLkVZ4/gsgclFJEYMxkUrE5X9r1vk3H5V0E
-	84fCXOd6ffGPwAUdGHf0+gh/wx7V2qsfHRWboDinc5vsOJjADUB9yY7NhazV5etJ
-	7nlm5u2HUwX17a1NvPGN7nQmmNDzCFatMQB2fbbJx5pIhYdiaFMpExwCbMfPMuMT
-	ilVkdz8BeS6fzTr9w1BGbIAx02IVVKwpsUjOBnFLsmqylQaGNC4D215xdZHjUCS0
-	rMUVgmn2nuq5MyVBCTyHin8n5hMStV7VsdLai/wRSXhqrzTTb17JkSY+aTW8wEvL
-	+gBvXZeJN/IYLEdQNlHdw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-07;
-	repo=github.com/dkim2wg/interop; date=2026-10-18; sw=lmtpprox;
-	action=sign d=pbarker.dev a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792573415; d=pbarker.dev;
-	mf=PHBhdWxAcGJhcmtlci5kZXY+;
-	rt=PHlvY3RvLXBhdGNoZXNAbGlzdHMueW9jdG9wcm9qZWN0Lm9yZz4=;
-	s=fm1:rsa-sha256:QQUNqkTS4ALKHXyMPtxCBKAEqVs9kVF5TiUu5TxVsRidygl
-	VUt9xYG81hSU1sWoVJ0SMU6JNo6ZRrtZn4gGW19mX+ZpdoIWGWmBs9ZNqFwB9Rz1
-	WT57t+NOoczFbJLpeiJVkGRqxDTHve+c3QQccojKLdPNUYrohp/Su06sx/Y0wNhC
-	eDi84PsAW6UfoOCTAt1yt4mF2QBdByBtBrnWhBDe6tKOVo4YRk9roy8UixCbIe/6
-	qRpCdoWoZillFTXBL8QsbFFkTmgrfv3+HlA+vsJMheOzXuqhozZBlDjc6C94E6OK
-	JbKBxVQM8wKttkhn25oPi8pryoUv3UvVxQt2veg==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-07;
-	repo=github.com/dkim2wg/interop; date=2026-10-18; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to,
-	user-agent;
-Message-Instance: m=1; h=sha256:icGg9ik+MvHY+DpmnTuncgYxYgOsTSR7cGEpfytgfBE=:Rha9Gg11HEvoZAJXfkxBinl37WuWjMMF5fghMuUS7gg=;
-X-ME-Sender: <xms:53_YarqpITwqvgoiMSt0aMI8VaavHbef8LYfDhlp79z-4Ofq1bTSvw>
-    <xme:53_YatFXHE62MkfH9GWhUrEtGeF3Nw3O8NNrQoP5l_hqjP9SJE52piolD1ca9TbOP
-    24KFsw3xak8vab4mMvDzN4-nywVLDdACSEfm9jtJKSachdv42vcJUiA>
-X-ME-Received: <xmr:53_YalkyISDwB3BD3F6AZXsz2DZ0Wu_iGTKtQ0WfL289MRuSetzA5hYLw85ZYfTsxAsYanJWJ9Rz08tuhiGk7XSPs0eTl_FL8g4tJ3o>
-X-ME-Proxy-Cause: dmFkZTFfjeGnf++BNDIA5C434pwekk/kI/WbzPAI3CrpSETr1UlirTpCOGEdq6LhNI7+X2
-    3gmzTc6r0NlPVTGN/2Yu4EhZfP5+RuGXz2wSCWZWOOmgfeFqepfD9nRspNRr2XC2IpFrty
-    JIlZhnpZjwlECumWS9bAHj2Eu1k/VaoQp6oUaUgA1eR5b10ppcZBsOF7EXTpwO2wfRhT+8
-    J8tA114ed6+jInJsvk1xWB0IPeb6DLODOjlJ+/tUNWjyIsSSrevmftQIuMg68kvhPTAZ8L
-    08zIHypPIx92znJhKgCaYqBJAx3JtKPqQztL5KUgGE6xb+QvhC/inahJX8kji7BZfmZqtf
-    00CA+XmCcWjIy471rY9iOsLMh8dQu/AMjjIlNkos4DMAtwkDGtCA4wgABHYKL2g8U++A+6
-    IuLfvougcAUWav+4A13hk0yrY2VJ4A50jgXfWlp4k7t2SDGlmWEne/5DRXAA1sLAbPBTn/
-    IuhbQDApSfyR4j7R1WkOdWulTx1/soCwzjVTemZHTrXjZLHMjshg8ep5k3u6V7cLXr6DcH
-    SOFj/SCHbxFqyUgBMDUAm9+IForFXJstrytTHMAF6Z4i66FEq14Apqt7fo4CD8KpYFJM1j
-    njQ6QWA96ikkoVnN47fCwmDdp3DCb7a9ttRX6J9G+9xNy/oKRJmnMmWGs6uA
-X-ME-Proxy: <xmx:53_YaonpNALcajNv98fDgIhHDIJBJlpAX_7vUJ8EUBBu-mw5kE4tfA>
-    <xmx:53_YausABv3ohuoLy8sH8fejXajck1_C2xVadsKEUsxzcpzw86AlMA>
-    <xmx:53_YajkHl838mAjDVj6Px8H9BPWGyaU4NX9RBou8EBsUO-mcAyR8SA>
-    <xmx:53_YahtTKr6ruD5tXJB_r1JfH3sQLh6wEzHXo2k2fE0jiyUayBXdJg>
-    <xmx:53_YanakIS9YWEl_qsFNMrYsFXpEnkZIfzjbP2DAeACa1hILoEZxXSOL>
-Feedback-ID: i51494658:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 Oct 2026 05:03:34 -0400 (EDT)
-Message-ID: <b791c7d9759e55e3c6b75c2c4270398cc9f4a1ba.camel@pbarker.dev>
-Subject: Re: [pseudo] [PATCH v4 1/6] ports/linux/guts: Add open_tree wrapper
-From: Paul Barker <paul@pbarker.dev>
-To: frezidok1@gmail.com, yocto-patches@lists.yoctoproject.org
-Cc: Richard Purdie <richard.purdie@linuxfoundation.org>
-Date: Wed, 21 Oct 2026 10:03:33 +0100
-In-Reply-To: <20261005081127.107126-2-frezidok1@gmail.com>
-References: <20261005081127.107126-1-frezidok1@gmail.com>
-	 <20261005081127.107126-2-frezidok1@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1.1 
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=QHAIY8vk;
+ spf=pass (domain: gmail.com, ip: 209.85.222.180, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-93f2493c28bso43348785a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 21 Oct 2026 03:39:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792579181; cv=none;
+        d=google.com; s=arc-20260327;
+        b=rIDNT1lBuF0RYC8JRkatWjUInj/5UwHFkCYyb1Bi8i9NBZJYyhcKegnA7nN1wY4Aco
+         8I5JenDc8nNV0mpu77fhudwyjh+jft44YGz//9X/HdcTR486ELmzbZgGfAUK3XgzF57t
+         O0ybX77vR0AEz3S+XtSpxLW48+zgxLy16rVHtvT17Y/tFlJTPnb/H71cSm1Sro9IVWKt
+         5a30B74bqbkurn4mfKF8/83W9xrVRT4SWBH+s4D0IrYPuHznUp2NgTRS/dbm/kUB6tJv
+         q371FGixdGpxadBp92VgEg1wbP4CTETZH6P6/iNUQ47pE1hJKtLciPiZy0f9Jy0La8ba
+         6Jnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=v4wjmL5OuncSPQ/FHQZfqoXdQSnosul2d+V4ILonRmQ=;
+        fh=28JQhdK5h5mLF5DLv2fLR8YFHEF0yTvH5opUNnJ6Zzo=;
+        b=W7V7yALjPveJ4Mvn+Fkq23hqwwzCbDC37krUaqxu0NZjVXNVrWz2xvUDvFdiURw5SW
+         AsBI27jbZkkqe9GO6c73lfi6i0i0iJUPhTKekXSPf3J9FgshaLzxheZSjYb8Q04G5RdH
+         yabH+9XpXKLqYBBGijvHdH7Jjb6GrN6E0z9ZQnmYgB/yxj4bACTHoc16NpveRMQt7+oy
+         PQ6Kw8TfEzz7kAHGCXxfgz66v9v0eYGpJTKPMQRzWtspGvIAVvBQ6+QZ6AJkMTwsIUPp
+         D9gdiHxJwWN98pL6KMO3CXqUl5xL+eOobf3CFBL+zW7dSflU3dY1BHrMF3ROc6gCXzD+
+         ghFg==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792579181; x=1793183981; darn=lists.yoctoproject.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=v4wjmL5OuncSPQ/FHQZfqoXdQSnosul2d+V4ILonRmQ=;
+        b=QHAIY8vk5+3auGDyMXxIUPPtwLpRcOt0mLnAEeyEKpn3MlcOv6ERPCn/ql0Ale2hj3
+         rSxmA0tmnLnIvdBVIxIDAb4aim1jIFkdnJ5HMcIRsGLL+T2TuxuuLk28LnQXZ+DRYItD
+         VRUn6R38IuqeiXnTIkDhTPc9WkanWSml9+BSQVYfH8CiAC5Lx9H927jDeGUx7VAGXeKK
+         ZCwvVYA6x8+CoCAmmquIMz37VYmf2ovl+zz+y7dDCQf37afY2YBcNzYD8Ngjal58xQLx
+         Uch7WpKfF3lBQeCbH1sUKLVAM93r5yPJuCLX2+5TeaP1koYDluuw8jvv72hK/nTHnTOG
+         Sq4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792579181; x=1793183981;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=v4wjmL5OuncSPQ/FHQZfqoXdQSnosul2d+V4ILonRmQ=;
+        b=aNKb4gqEtLlfluEm0wRck4TfBgPTCBhkpEZR0DxzucYi//F7Sw4BNPNBdcvsKfM0PU
+         lf52UoxFZKk3Cj0Nxx1Z1raVsQoChXsAn7j9zkgaeTa8wq88iPJZOANsVO9TKUl4clYG
+         GGHvUbG5b+5JyuFBhj/F+rBK7EIOiR5ye52BGnhO1Mc7pTGmWku9GS9+x6pKz2ysCH2U
+         TE9gi2dGchBwj6hyAUniJhQe5R2KCkvhjJybxY83cA4ToVKgqvQON5/TvGVgygFLT9nk
+         /15iAh9Zz1KAQI/53Dqq0iAhneNE63+rKHzTYCqBKG+HLyHwkZ8xs6aX4yYdvG/CnUDX
+         qnSg==
+X-Gm-Message-State: AFq9FYIS7foBAjRzG+/n/oN8f+qQLVsMMZmQsKT6Ex0LbX1Wb/oWH+E4
+	f1sBkstzNqVQGahw1PLjqo4S4Zn48gmjxPMYawSCdxwjspZ9g/ycMq3c9zqfhnDn+SMCRLCRzBL
+	iobybmjFwkleLQLj1JdnCWIK3XKvfcP0=
+X-Gm-Gg: AYBFou0eCAScGKNp0RU2v4jlpK+KYmLx/bdU4xv8lJx70GerOJsNBMF1QvYE5ZaL5+z
+	s+axD9uWou1rJSRoQmq3FZeIDACAYZ/7/N0i+ybHqeTzrlSlEfCt4zURpz+KbBTw9+OHVaZvGvX
+	djjt1DJk/6RMz3vnCRTj/fHHrImquj+2ebLPN8U0xkfdt/Mb6m+wJ+tR1LXI8cEIJaZ8HFT34b3
+	3Z/C08GJmXwilxX88XRFmtkNyr9r6wVx1PItzJPQ1t+Z5LqW3/XSE46LvKtU9sEIE1StqRAgtDb
+	FfV0+AUUYYc2PM1Pzn98RNKeiIXnR9/m7mkYR/Swj5cPRFwDnS3hXSl0I+C2rI7O8fOJ3/PgWZT
+	h1849Ss1WgUC0aSaNl4CcdbGf3wMQ2LW1c/BnsXLjV5gpz0QM7TKHqOMZ/E4SuR190BAfKm4zt+
+	Tcmi2qUBVY1fz48FjZ
+X-Received: by 2002:a05:620a:a8d9:20b0:93f:5892:e5fd with SMTP id
+ af79cd13be357-93f5892e67fmr180917685a.1.1792579181348; Wed, 21 Oct 2026
+ 03:39:41 -0700 (PDT)
 MIME-Version: 1.0
+References: <20261020090917.3132154-1-daniel.turull@ericsson.com>
+In-Reply-To: <20261020090917.3132154-1-daniel.turull@ericsson.com>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Wed, 21 Oct 2026 12:39:31 +0200
+X-Gm-Features: AclHuK9-2mIRUkGAIqvkLCD-TsFczCo495WGKcG2RTAI5y8QvUg9pfE6PxqZ7Gg
+Message-ID: <CANNYZj9P-15TVaO5fb3AD9Xa1mrMpt9aP7GApTDGombuGNe6oA@mail.gmail.com>
+Subject: Re: [yocto-autobuilder-helper][PATCH] auh-config: skip changelog in
+ commit message for noisy recipes
+To: daniel.turull@ericsson.com
+Cc: yocto-patches@lists.yoctoproject.org
+Content-Type: multipart/alternative; boundary="000000000000560c53065e575d3f"
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 21 Oct 2026 09:03:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5119
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 21 Oct 2026 10:39:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5120
 
-On Mon, 2026-10-05 at 11:11 +0300, frezidok1@gmail.com wrote:
-> From: Dmitry Sakhonchik <frezidok1@gmail.com>
->=20
-> [YOCTO #16379]
->=20
-> OPEN_TREE_CLONE is not handled since it requires CAP_SYS_ADMIN and is out=
-side the common pseudo use case.
->=20
-> Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
+--000000000000560c53065e575d3f
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dmitry,
+On Tue, 20 Oct 2026 at 11:09, <daniel.turull@ericsson.com> wrote:
 
-This patch has now merged to master but I've spotted a problem... Please
-could you send a follow-up patch to address this? A similar change is
-also needed in open_tree_attr().
+> These recipes produce changelogs that are badly formed for a commit
+> message: whole release notes documents (mesa, gstreamer, cmake,
+> python3), raw git log dumps (u-boot, openssh, acpica, freetype,
+> vulkan-validation-layers, parted) or markup banners (expat).
 
-> ---
->  ports/linux/guts/open_tree.c | 59 ++++++++++++++++++++++++++++++++++++
->  ports/linux/portdefs.h       | 16 ++++++++++
->  ports/linux/wrapfuncs.in     |  1 +
->  3 files changed, 76 insertions(+)
->  create mode 100644 ports/linux/guts/open_tree.c
->=20
-> diff --git a/ports/linux/guts/open_tree.c b/ports/linux/guts/open_tree.c
-> new file mode 100644
-> index 0000000..ca299a1
-> --- /dev/null
-> +++ b/ports/linux/guts/open_tree.c
-> @@ -0,0 +1,59 @@
-> +/*
-> + * Copyright (c) 2026 Yocto Project
-> + * guts/COPYRIGHT for information.
-> + *
-> + * SPDX-License-Identifier: LGPL-2.1-only
-> + *
-> + * int open_tree(int dirfd, const char *path, unsigned int flags)
-> + *	int rc =3D -1;
-> + */
-> +
-> +	struct stat64 buf;
-> +	int save_errno;
-> +	char *pseudo_path;
-> +
-> +	if (flags & OPEN_TREE_CLONE) {
-> +		pseudo_diag("ERROR: OPEN_TREE_CLONE is not supported\n");
-> +	}
-> +
-> +	if (path && path[0] =3D=3D '/') {
-> +		/* If the path is absolute, we should account for a potential chroot *=
-/
-> +		path =3D pseudo_path;
 
-pseudo_path is uninitialised here.
+This creates an additional maintenance burden. Someone has to manage this
+list, adding and removing entries.
 
-I think we're missing the comment and call that's present in the
-openat2() wrapper:
+I'd rather figure out a way to detect 'badly formed' changelogs
+programmatically in devtool.
 
-    /* This wrapper is not called with modified paths, therefore we have to=
- handle this ourselves.
-       We can't use the standard mappings since the function needs relative=
- paths to be preserved,
-       they can't be our usual absolute paths. An example difference:
-       openat2(AT_FDCWD, "/tmp/testdir/dir1/dir2/", {flags=3DO_RDONLY|O_NOF=
-OLLOW|O_CLOEXEC|O_PATH|O_DIRECTORY, resolve=3DRESOLVE_BENEATH}, 24) =3D -1 =
-EXDEV (Invalid cross-device link)
-       vs.
-       openat2(AT_FDCWD, "dir1/dir2/", {flags=3DO_RDONLY|O_NOFOLLOW|O_CLOEX=
-EC|O_PATH|O_DIRECTORY, resolve=3DRESOLVE_BENEATH}, 24) =3D 4
-       FIXME - we don't handle chroot for relative paths
-    */
-    pseudo_path =3D pseudo_root_path(__func__, __LINE__, dirfd, path, 0);
+Alex
 
-The openat2() examples there need replacing with open_tree() examples.
+--000000000000560c53065e575d3f
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +	}
-> +
-> +	/*
-> +	* Older libc versions do not provide open_tree(), so call the syscall
-> +	* directly when the libc wrapper is not available.
-> +	*/
-> +	if (real_open_tree) {
-> +		pseudo_debug(PDBGF_SYSCALL, "open_tree, calling open_tree.\n");
-> +		rc =3D real_open_tree(dirfd, path, flags);
-> +	} else {
-> +		pseudo_debug(PDBGF_SYSCALL, "open_tree, calling syscall.\n");
-> +		rc =3D real_syscall(SYS_open_tree, dirfd, path, flags);
-> +	}
-> +
-> +	if (rc !=3D -1) {
-> +		save_errno =3D errno;
-> +		int stat_rc;
-> +
-> +		pseudo_path =3D pseudo_root_path(__func__, __LINE__, dirfd, path, 0);
+<div dir=3D"ltr"><div dir=3D"ltr">On Tue, 20 Oct 2026 at 11:09, &lt;<a href=
+=3D"mailto:daniel.turull@ericsson.com">daniel.turull@ericsson.com</a>&gt; w=
+rote:</div><div class=3D"gmail_quote gmail_quote_container"><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
+rgb(204,204,204);padding-left:1ex">
+These recipes produce changelogs that are badly formed for a commit<br>
+message: whole release notes documents (mesa, gstreamer, cmake,<br>
+python3), raw git log dumps (u-boot, openssh, acpica, freetype,<br>
+vulkan-validation-layers, parted) or markup banners (expat).</blockquote><d=
+iv><br></div><div>This creates an additional maintenance burden. Someone ha=
+s to manage this list, adding and removing entries.</div><div><br></div><di=
+v>I&#39;d rather figure out a way to detect &#39;badly formed&#39; changelo=
+gs programmatically in devtool.</div><div><br></div><div>Alex=C2=A0</div></=
+div></div>
 
-This won't be needed here once pseudo_path is initialised at the top of
-the function.
-
-Best regards,
-
---=20
-Paul Barker
-
+--000000000000560c53065e575d3f--
