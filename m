@@ -1,126 +1,92 @@
-Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1776.1792707531600433987
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1940.1792708057627374415
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 22 Oct 2026 15:18:51 -0700
+ Thu, 22 Oct 2026 15:27:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=KA0Xv7Vb;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-256628-20261022221849fc93f0b4a500020761-jigflq@rts-flowmailer.siemens.com)
-Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20261022221849fc93f0b4a500020761
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=dvfdhNG7;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-256628-202610222227352cfd1fc58800020765-wrv3wg@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202610222227352cfd1fc58800020765
         for <yocto-patches@lists.yoctoproject.org>;
-        Fri, 23 Oct 2026 00:18:49 +0200
+        Fri, 23 Oct 2026 00:27:35 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=nWvAj/dAKqokC9ePymyh9PGaAGqo1gcBRUHRvLzFcgg=;
- b=KA0Xv7Vbo0M/0awPHD814MYg5f8z3BSk7a7LhxHFdBZAGydG6bzVJGmPB2qOB9kL8ICo5N
- N9Ir6SJrTHxj9JpnM/YQ0QJZzNiRjaZX6TRI4HQ6VjcR8JVq8uyrZZwwz5A8/mOXcduaO8Yq
- hVZTbZUXqe7pjyoI2IQUovJagsuAOlUR50k9naiNgABS+s52hAfNDTd/lI8SK9uiMQ8UvLGI
- IxcnsrSsCh1+q+RcJabRj7O1nyil+BJeQUpmnJ3z7DLgf9Q6IaFA9C7eELlmC9MF0d2HcTKz
- aamTVDOwguGl024CXyRoT2ZksBoaSqteG9jUKllm//Dv0KKnYnfXaLqQ==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=/eRMJ26Fj5gQg26Il2tmvclfCV52ydgjJejBGCE8uWY=;
+ b=dvfdhNG7lSAp+HSbQtqe/iF7rqa8faHJQmipRlRlCRtxcZopPaHXAm5DjrigKlksztstv5
+ xCKnpkjgmwCo5dqXFVUmWyKQe+PK1dCs5D4prgImgq/e1/1SGPkIE+nfIUctuqDbzEBbxdrR
+ Assvzar7UCtD0Y/IKfABxm3bcJ70ECXQ90crVcFdgypBf3vnYGixaHEDJcR4Q8H7/qKNooLr
+ YbJZUG6QgABzO96b5K51K+5tNCpzWXOPxv2dxQMxNynEVl40AjFlGsnHTK2S9rxaNKMzvj2I
+ MZdI39NprJwQA3TrYUWPir1Vghz6oGE9idSYKvQ1zlYktSyLevrQ4rcA==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Peter Marko <peter.marko@siemens.com>,
-	jose.quaresma@foundries.io
-Subject: [meta-lts-mixins][scarthgap/go][PATCH 3/3] go: upgrade 1.27.2 -> 1.27.3
-Date: Fri, 23 Oct 2026 00:17:58 +0200
-Message-ID: <20261022221758.3539336-3-peter.marko@siemens.com>
-In-Reply-To: <20261022221758.3539336-1-peter.marko@siemens.com>
-References: <20261022221758.3539336-1-peter.marko@siemens.com>
+Cc: Richard Purdie <richard.purdie@linuxfoundation.org>,
+	Peter Marko <peter.marko@siemens.com>
+Subject: [yocto-metrics][PATCH] patch-status: add blacksail
+Date: Fri, 23 Oct 2026 00:27:15 +0200
+Message-ID: <20261022222715.3775519-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 22 Oct 2026 22:18:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5139
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 22 Oct 2026 22:27:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5140
 Content-Type: text/plain; charset="utf-8"
 
 From: Peter Marko <peter.marko@siemens.com>
 
-Upgrade to latest 1.27.x release [1]:
+See https://lists.yoctoproject.org/g/yocto-announce/message/397
 
-$ git --no-pager log --oneline go1.27.2..go1.27.3
-2aae1000ea (tag: go1.27.3) [release-branch.go1.27] go1.27.3
-90617fb7ce [release-branch.go1.27] crypto/x509: distrust a handful of intermediates
-
-Fixes CVE-2026-111943
-
-Release information: [2]
-
-[1] https://github.com/golang/go/compare/go1.27.2...go1.27.3
-[2] https://groups.google.com/g/golang-announce/c/66pojueaQek
-
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(From OE-Core rev: c21ed25472ea3b29dc10d4c5500d880c36477c3e)
 Signed-off-by: Peter Marko <peter.marko@siemens.com>
 ---
- recipes-devtools/go/{go-1.27.2.inc => go-1.27.3.inc}        | 2 +-
- ...o-binary-native_1.27.2.bb => go-binary-native_1.27.3.bb} | 6 +++---
- ...cross-canadian_1.27.2.bb => go-cross-canadian_1.27.3.bb} | 0
- .../go/{go-cross_1.27.2.bb => go-cross_1.27.3.bb}           | 0
- .../go/{go-crosssdk_1.27.2.bb => go-crosssdk_1.27.3.bb}     | 0
- .../go/{go-runtime_1.27.2.bb => go-runtime_1.27.3.bb}       | 0
- recipes-devtools/go/{go_1.27.2.bb => go_1.27.3.bb}          | 0
- 7 files changed, 4 insertions(+), 4 deletions(-)
- rename recipes-devtools/go/{go-1.27.2.inc => go-1.27.3.inc} (91%)
- rename recipes-devtools/go/{go-binary-native_1.27.2.bb => go-binary-native_1.27.3.bb} (80%)
- rename recipes-devtools/go/{go-cross-canadian_1.27.2.bb => go-cross-canadian_1.27.3.bb} (100%)
- rename recipes-devtools/go/{go-cross_1.27.2.bb => go-cross_1.27.3.bb} (100%)
- rename recipes-devtools/go/{go-crosssdk_1.27.2.bb => go-crosssdk_1.27.3.bb} (100%)
- rename recipes-devtools/go/{go-runtime_1.27.2.bb => go-runtime_1.27.3.bb} (100%)
- rename recipes-devtools/go/{go_1.27.2.bb => go_1.27.3.bb} (100%)
+ patch-status/index.html   | 12 +++++++++++-
+ patch-status/releases.csv |  1 +
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/go/go-1.27.2.inc b/recipes-devtools/go/go-1.27.3.inc
-similarity index 91%
-rename from recipes-devtools/go/go-1.27.2.inc
-rename to recipes-devtools/go/go-1.27.3.inc
-index 86598ad..7c906e8 100644
---- a/recipes-devtools/go/go-1.27.2.inc
-+++ b/recipes-devtools/go/go-1.27.3.inc
-@@ -17,4 +17,4 @@ SRC_URI += "\
-     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
-     file://0011-internal-cgrouptest-skip-when-cpu.max-is-not-availab.patch \
- "
--SRC_URI[main.sha256sum] = "03495da2ba64894d40f5c4992e49454fa78b50690604ff92b6afff5081b76e62"
-+SRC_URI[main.sha256sum] = "6e7749035cf360f06b2575d162ea79df9fda8ef671889e5c375f8e50777f26bb"
-diff --git a/recipes-devtools/go/go-binary-native_1.27.2.bb b/recipes-devtools/go/go-binary-native_1.27.3.bb
-similarity index 80%
-rename from recipes-devtools/go/go-binary-native_1.27.2.bb
-rename to recipes-devtools/go/go-binary-native_1.27.3.bb
-index d4cb9f3..cc4664e 100644
---- a/recipes-devtools/go/go-binary-native_1.27.2.bb
-+++ b/recipes-devtools/go/go-binary-native_1.27.3.bb
-@@ -9,9 +9,9 @@ PROVIDES = "go-native"
+diff --git a/patch-status/index.html b/patch-status/index.html
+index 9d0ebac6..ef5c009d 100644
+--- a/patch-status/index.html
++++ b/patch-status/index.html
+@@ -170,6 +170,10 @@ SPDX-License-Identifier: MIT
+           <summary>master</summary>
+           <div id="cve_status_master"></div>
+         </details>
++        <details>
++          <summary>blacksail</summary>
++          <div id="cve_status_blacksail"></div>
++        </details>
+         <details>
+           <summary>wrynose</summary>
+           <div id="cve_status_wrynose"></div>
+@@ -377,6 +381,12 @@ SPDX-License-Identifier: MIT
+         createCVEList('cve_status_master', data);
+       })
  
- # Checksums available at https://go.dev/dl/
- SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
--SRC_URI[go_linux_amd64.sha256sum] = "ecbadb99091a3f46e31f5f934b068b1864eafa7995211b39eaddf76996045fe5"
--SRC_URI[go_linux_arm64.sha256sum] = "94f3e30b8e374bc285e7dadc11e0865726b9bc6e85b841ccceaabc0214c6b7c8"
--SRC_URI[go_linux_ppc64le.sha256sum] = "059d5f01b1607a724ea5ae87c5589041a51c577a6f3f20099e49d00f31c803fa"
-+SRC_URI[go_linux_amd64.sha256sum] = "65efbc80fdc1fa2cd2631cad5b481777a68e8725f34e89f50fc6ac714e379b40"
-+SRC_URI[go_linux_arm64.sha256sum] = "a06e99309dbcbdca1a8ccd2282c3ee146e55930886e26b4f1193269587165f49"
-+SRC_URI[go_linux_ppc64le.sha256sum] = "f180f01943865b7942ab3b4acbab6da6f0f669b61da999d004d16c537a49f7b5"
++    fetch('cve-status-blacksail.txt')
++      .then(response => response.text())
++      .then(data => {
++        createCVEList('cve_status_blacksail', data);
++      })
++
+     fetch('cve-status-wrynose.txt')
+       .then(response => response.text())
+       .then(data => {
+@@ -471,7 +481,7 @@ SPDX-License-Identifier: MIT
+       upstream_status: 'Malformed Upstream-Status',
+       inactive_upstream: 'Inactive-Upstream'
+     };
+-    const branches = ['master', 'wrynose', 'whinlatter', 'walnascar', 'styhead', 'scarthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'honister', 'hardknott', 'gatesgarth', 'dunfell']
++    const branches = ['master', 'blacksail', 'wrynose', 'whinlatter', 'walnascar', 'styhead', 'scarthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'honister', 'hardknott', 'gatesgarth', 'dunfell']
  
- UPSTREAM_CHECK_URI = "https://golang.org/dl/"
- UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
-diff --git a/recipes-devtools/go/go-cross-canadian_1.27.2.bb b/recipes-devtools/go/go-cross-canadian_1.27.3.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross-canadian_1.27.2.bb
-rename to recipes-devtools/go/go-cross-canadian_1.27.3.bb
-diff --git a/recipes-devtools/go/go-cross_1.27.2.bb b/recipes-devtools/go/go-cross_1.27.3.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross_1.27.2.bb
-rename to recipes-devtools/go/go-cross_1.27.3.bb
-diff --git a/recipes-devtools/go/go-crosssdk_1.27.2.bb b/recipes-devtools/go/go-crosssdk_1.27.3.bb
-similarity index 100%
-rename from recipes-devtools/go/go-crosssdk_1.27.2.bb
-rename to recipes-devtools/go/go-crosssdk_1.27.3.bb
-diff --git a/recipes-devtools/go/go-runtime_1.27.2.bb b/recipes-devtools/go/go-runtime_1.27.3.bb
-similarity index 100%
-rename from recipes-devtools/go/go-runtime_1.27.2.bb
-rename to recipes-devtools/go/go-runtime_1.27.3.bb
-diff --git a/recipes-devtools/go/go_1.27.2.bb b/recipes-devtools/go/go_1.27.3.bb
-similarity index 100%
-rename from recipes-devtools/go/go_1.27.2.bb
-rename to recipes-devtools/go/go_1.27.3.bb
+     const general_options = {
+       tooltip: {
+diff --git a/patch-status/releases.csv b/patch-status/releases.csv
+index 48368ed5..324d4a0d 100644
+--- a/patch-status/releases.csv
++++ b/patch-status/releases.csv
+@@ -1,4 +1,5 @@
+ Name,Date
++6.1 (Blacksail),2026-10-21
+ 6.0 (Wrynose),2026-05-13
+ 5.3 (Whinlatter),2025-12-16
+ 5.2 (Walnascar),2025-05-08
