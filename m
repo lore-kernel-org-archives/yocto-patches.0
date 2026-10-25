@@ -1,94 +1,140 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14291.1792880802652296549
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16905.1792894016958512482
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 24 Oct 2026 15:26:42 -0700
+ Sat, 24 Oct 2026 19:06:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=VIMbNTMi;
- spf=pass (domain: gmail.com, ip: 209.85.216.46, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3ac6794fe45so1612944a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 24 Oct 2026 15:26:42 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=AK7f1NiZ;
+ spf=pass (domain: gmail.com, ip: 209.85.216.44, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-398a4dcf289so1058791a91.2
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 24 Oct 2026 19:06:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792880802; x=1793485602; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ugmmp2iKNsff+YZnydw9rsSH+z3ZQIXtO09HHk8HoSo=;
-        b=VIMbNTMilRKneYH5Fs9mcY2QOc+ZEJei31iBb1HM93Ph8IK3Sx+kdvpvUDUFELBEGw
-         iG0ENM5SD4t6TY0bK/icgwK7USl+6xgbled1cX/7qAAyDNh/YkbffUmvH1kLjXp+uEDg
-         FgPptSEbWcSTFwGPe9VJzrBz9fQbx+RO0p9bC8G6Y+Yd6DOE8ZPSGwbHNO+xP5YxHIgZ
-         XDWvPjVKmnYLIIFitMhdZHYoZvBB2RaeoMOM1Pvem9Y/LMfE5kc0sqzTRrF4pFay1p/z
-         nF+tGL7Yy1/2Bmoz9Fp4lnz4Aza5w4UpuJ8W/+12nYjPuFTdoSqv+jzA++FdytKlhOLk
-         Z3hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792880802; x=1793485602;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792894016; x=1793498816; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=ugmmp2iKNsff+YZnydw9rsSH+z3ZQIXtO09HHk8HoSo=;
-        b=aXbYUq0cjMAYXB0U8ua6tZ9M1cJmZJ8PS8T/N7KXEvYcL/Tr7iPKFU9C4W0/L+aBmv
-         pIAKEwcTXO7TYFWzeQm04GhCt1cR9ns/1ZHGPinkwQrQ3i+06/At/pYNrqfk5/lWVttc
-         nwaxya37Xfd81/tahS8qc87MPFtRsalPuCSKhE/o7GSdB6ZSjK40Rd4iuPIr04PzIgeq
-         S2WLgVnffc/qysz1dGQQxMkwuSt6a5CuQjPxOsB71b4n/W+4UJPRdAKh66BPca853P/R
-         /VCqlxVp1OLOovsNqCb4WylAaKx+3bnu+MYYE50F5IXfyINQLUA5jPbcuO+zG76Svz0n
-         SwmA==
-X-Gm-Message-State: AFq9FYIbzz55XVg8CHFyA+OnuW8nKo6C7AjNqLeNycuzmboQIc4aX/qr
-	LR3d7g7CUHzv2/88FwQpeBNBdZpfClRzHZ8i0O+u2XHdCzvkZ7uyut4zLKIZcth5
-X-Gm-Gg: AYBFou2/nq5S55k9cSVBcEvv4WqnrxYbEOTqgU93GoXwsDBFhnNlZyaYX74IEWy/mrV
-	eIvT2yPcpdR2KDZcd9tqCbYPgg6ZHvn5nysi2MxVNk6bGKQECvbbra40274DMdWB/Ojjgrv5kSR
-	7e8jksOMoGaQw+yt4iE6qFygyt3DMBgTkB59WMu9wZks57Mppgxq/UG+H1UgqkHl8NBCKjQoO7y
-	a9IgTENuHytaV867swlxTDbFyUM2lEe9KFZAKqmBqTHb27fnlvIV8c+zBdxDhXBU9V1oW2uMk2S
-	r44MXQUBiRrrWIlE7+0VmfRqwhu/rdS2Z42GIUpeLnuySB/rspn/M5ir/mZEtEKWgoSCaJB8wju
-	buL8GIRK3AAjsMEXdD1m+QaVAb4cvNAme5CvlRPk5VY7mB7/D+MYlAEzMPoEUem1DEXLoIhLanN
-	GeNe/rmkj/dW8GdCvR1+GB5ihD/xIFOReTadEVYEKk9QOUTeEBk96XUfztN5GaMTm32UkQqjhgE
-	3mr5UUTK2vQYlFC9RzMKkxOuHJt1gpWUpXVhDCBfGsRWJWSFqqZAVNwuGKWu1aF684WWS9CD9bX
-	NVWPmyua4j8l
-X-Received: by 2002:a17:90b:2891:b0:3ab:24b2:9016 with SMTP id 98e67ed59e1d1-3adead488d1mr2790844a91.25.1792880801818;
-        Sat, 24 Oct 2026 15:26:41 -0700 (PDT)
+        bh=0fTWnuvX0BR5ApweuBk7769Co0yLukKOXak7JH2wXD8=;
+        b=AK7f1NiZpDmE/NK8z3eRBvTKPGlpdfXbv4voMSC6gUO4nE/HovoRIiYGl4yjtHhx7/
+         g61jAYxR5xlIBaWfKaZTDdEpaK6t9zEJi94A+W8hT/AU8jyIgxvRg+QoboaZ40a7FC/V
+         HFacLozKled+MV70hQPGcLzcZ9ToW8NB6jpOLZjbWepVJWwcnzIueWfu3ccylp4OTDJc
+         ka0rxXNnWKjmCbRoSXKEfO8mPErmWxFbiIKZh2ArsKCm5oukh7D+jKBfrLeOUfBcVCNN
+         Qgv9IPz/0yJyjsrdQQ2jGji6DNig0kA0kL3CApfcMtXp1aNaAL6f35GIWuInFaT7rZun
+         xzkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792894016; x=1793498816;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=0fTWnuvX0BR5ApweuBk7769Co0yLukKOXak7JH2wXD8=;
+        b=OzD2RWdnckp0Uy6twhWfUKMYbYgngwsSAf54ZfYQHUvYpV1lqASm5pJyljcsvtfLyZ
+         9KHADfZqtXJIgFTb9DyqjplkaleZu/ReDTfCxco48iZtMGoT4eFs5W2gwBEOZFAVMR4V
+         oM/vyC62Aqf5VAf34yAmMI3wleDdvDVUQmhH8bdeup872tLusptJmFrqj0Q1zR4JiVYb
+         KoHMwLHo+GzkZEaJN493B9mBq6Nk8/FKiA7LetlsfNlF1+sB75OZ8NohlxzbHWBsXGb1
+         vrL0scrjLXaFIg/XFsXM26XXEJ3TnOu72b0dQES+XEnpeu28Hvq/QxCLwwPEcAKFY2fH
+         g0VQ==
+X-Gm-Message-State: AFq9FYJFGWl5YsmjnqucxnKgFFEkcxkvKGBRywrV0cW01mzNU5ddUiar
+	zAK/GbtQGZBAwpsR8aaGMHLTdXpG1TY0JqE8xcIKK25X5uMhnUKlX4Ga1dGlfw==
+X-Gm-Gg: AYBFou0E8Hbq59n5FMv8VBM7T+gtmjlj6IkGG3sYpGn9+KsbnCRNK2SLO+7C1jHEEM6
+	vpu+oclglNcAIzQ74omcqdP5FrODbSBwJWZPjX1OPSn7E9WbmkvJKv3dw8BrWZJmIVLtbEmrYb6
+	bZ/yL2pQIOoK0ExNIypRrJaecHm/TB8JVgKCA1iImdKEYc3RHouE0HFH8IMkz3lKT8XnxckTVgl
+	1K37h8muqXHYy8Y2UcemUU+gAYY4c3RHdAjC11OnMNAU6q+drXU0Rp0WUFaeNiit9ALYqUu82ID
+	YiaLGitLumUo+GBoozeSrkPCHviEg2Hb3uK8xXs4f4oAh9FH6Rf0+CxmjDjQQ+8S9+o4ZHMT5+P
+	IuQNrxiFmli5CFyMIujtF6qmpw/VOZDp/npZZujeaXvhQZxQRmJqehtyeylr5h0mU2jBFEuGQGQ
+	HPAMrkNCeCFiauIhDFyxNrOKLqzoLk1lKtmMEzkxDZQ31TpbZVYN5PBVPeKChoiVOaDsNDT0m/T
+	T3ysbqg3C6WpbOp/RH5wJtkSrwghs5278f4SHGu01zJJyrxdFt6b1+McgaDz4s6rnW+kM6X+r34
+	Ip2rhhe2lI+e
+X-Received: by 2002:a17:90b:224b:b0:3ac:d19e:85f1 with SMTP id 98e67ed59e1d1-3adeafd6bc7mr2581579a91.53.1792894016212;
+        Sat, 24 Oct 2026 19:06:56 -0700 (PDT)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3adebe9078asm3725209a91.10.2026.10.24.15.26.39
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3adebb0718esm3966914a91.11.2026.10.24.19.06.53
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 24 Oct 2026 15:26:39 -0700 (PDT)
+        Sat, 24 Oct 2026 19:06:55 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/3] requirements.txt: fix djangorestframework and GitPython vulnerabilities
-Date: Sat, 24 Oct 2026 15:26:31 -0700
-Message-ID: <20261024222633.84011-1-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 2/2] templates: link to Bugzilla for reporting bugs
+Date: Sat, 24 Oct 2026 19:06:46 -0700
+Message-ID: <20261025020646.89376-2-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261025020646.89376-1-tim.orling@konsulko.com>
+References: <20261025020646.89376-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 24 Oct 2026 22:26:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5146
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 25 Oct 2026 02:07:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5150
 Content-Type: text/plain; charset="utf-8"
 
-Upgrade djangorestframework to 3.18.2 and GitPython to 3.2.1 to fix the
-advisories reported against 3.18.0 and 3.1.62. Pillow is left at 12.3.0:
-the fixed 13.0.0 needs Python 3.11 or later.
+The site gave no hint of where to report problems with it. Add a
+"report a bug" link to the footer and a line on the About page, both
+pointing to the Layer Index product in the Yocto Project Bugzilla.
+
+[YOCTO #15039]
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- requirements.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ templates/base.html             |  1 +
+ templates/layerindex/about.html |  2 ++
+ tests/test_bug_report_link.py   | 23 +++++++++++++++++++++++
+ 3 files changed, 26 insertions(+)
+ create mode 100644 tests/test_bug_report_link.py
 
-diff --git a/requirements.txt b/requirements.txt
-index 4bfcd7f..a0d32c2 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -20,9 +20,9 @@ django-registration==5.2.1
- django-reversion==6.3.0
- django-reversion-compare==0.17.0
- django-simple-captcha==0.7.0
--djangorestframework==3.18.0
-+djangorestframework==3.18.2
- gitdb==4.0.12
--GitPython==3.1.62
-+GitPython==3.2.1
- kombu==5.6.2
- mysqlclient==2.2.8
- packaging_legacy==23.0.post0
+diff --git a/templates/base.html b/templates/base.html
+index e31238c..acf0a9f 100644
+--- a/templates/base.html
++++ b/templates/base.html
+@@ -130,6 +130,7 @@
+             <a href="{% url 'history_list' %}">change history</a>
+             &bull; <a href="{% url 'about' %}">about this site</a>
+             &bull; <a href="https://www.openembedded.org/wiki/Layers_FAQ">FAQ</a>
++            &bull; <a href="https://bugzilla.yoctoproject.org/enter_bug.cgi?product=Layer%20Index">report a bug</a>
+         </div>
+ 
+         {% endblock %}
+diff --git a/templates/layerindex/about.html b/templates/layerindex/about.html
+index a2055fb..5acba08 100644
+--- a/templates/layerindex/about.html
++++ b/templates/layerindex/about.html
+@@ -57,6 +57,8 @@
+ 
+ <p>The code is Open Source and can be found on <a href="https://git.yoctoproject.org/layerindex-web/">git.yoctoproject.org</a>. Patches welcome!</p>
+ 
++<p>If you find a problem with this site, please <a href="https://bugzilla.yoctoproject.org/enter_bug.cgi?product=Layer%20Index">report it</a> in the Yocto Project Bugzilla under the "Layer Index" product.</p>
++
+ {% endautoescape %}
+ {% endblock %}
+ 
+diff --git a/tests/test_bug_report_link.py b/tests/test_bug_report_link.py
+new file mode 100644
+index 0000000..d4d1027
+--- /dev/null
++++ b/tests/test_bug_report_link.py
+@@ -0,0 +1,23 @@
++# layerindex-web - tests for the bug report link
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
++
++import pytest
++from django.test import TestCase
++from django.urls import reverse
++
++BUG_URL = 'https://bugzilla.yoctoproject.org/enter_bug.cgi?product=Layer%20Index'
++
++
++@pytest.mark.django_db
++class TestBugReportLink(TestCase):
++
++    def test_footer_links_to_bugzilla(self):
++        response = self.client.get(reverse('history_list'))
++        self.assertContains(response, '<a href="%s">report a bug</a>' % BUG_URL)
++
++    def test_about_page_links_to_bugzilla(self):
++        response = self.client.get(reverse('about'))
++        self.assertContains(response, '<a href="%s">report it</a>' % BUG_URL)
 -- 
 2.56.0
 
