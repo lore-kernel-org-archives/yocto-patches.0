@@ -1,148 +1,194 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13302.1793083149368953451
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.7])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18839.1793107879225737328
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 26 Oct 2026 23:39:09 -0700
+ Tue, 27 Oct 2026 06:31:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@ericsson.com header.s=selector2 header.b=mNAHz090;
- spf=pass (domain: ericsson.com, ip: 52.101.65.56, mailfrom: daniel.turull@ericsson.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector2 header.b=B+UzwGsj;
+ spf=pass (domain: ericsson.com, ip: 52.101.69.7, mailfrom: edaturu@ericsson.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y095NuokNiTD/2B1DeMP1rUQPcO8HoUDmX4CJ4fq9BmwoTgjJrQKpCx53/oE4pLCDv0hD1ilf6wUsYi7gUgYECh42PUWKmxPzPJa7K2KH9pFt+w1zHGvpXDXROU4de4wYOcplxZ+TyHJxZBbD+jjF6lZqZOwe0WUXLD+X8bpxiI9ANhL4WASogsnbHH/H06OMochjZerK6DNYSJ824bYT7i+udU5thcbKUpx/VfUIl7zJT0ckdD6fc1h4fwNOBxGJWSFv1YlkC+rtdEM36biVFpkFVmoiKzJwkO/2pn9QYdME3dT70jC/ne4beThjuwCqkramfGjQpTcpwm5V/Z69g==
+ b=LXhph3Iip7mRiVedC+wph7R5ARmiHKa7TjvFUd8t//stCd7VDqiH1g/A/m/tVBATbCTRTQw5t9NnzA75xOqviDnF7JnBuZ5fSA6e9TE3U4cFrj4RDZyBLnIMX3Dcg3Pv+esXMDGK701Q15ZTkjIKFGqBbiPGpqFZNYK9YE5sBv0vM8fbWLtNq0mHwuLtr7DGfmb/xrGJCwmDGw5crYmErTcsHNYMI4Uw1IjyYhbE67uqWH13yARTX9PcB+vZa4nE1TQ7HUsTPnzj8nscJj1WcC8kq7PnjIThO8BGGv/PSYZXj0t4F+m+6r46qiULH0DXlhnaJ+R+PCIlnivtTZD7nA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/LyOn78n0ltfynoOuBF51eeXMzUNV9nyXMinVoyZSag=;
- b=TTjOmn7herArI+xLkGx1rnW8vEkeTF5OSdjpHU1S9s+99nJbGgbtHHQmty1QSFL8UYpFju44o2/EZqI2Md+XfXE3fIB99mSn9MPc58gGrZoGtQtdmiA24LB2yZQvTNKH4xx1i5NgWuXEJ1K2yk4c9tXQZTam/2bkoDnmKb4miVdeoyXu2PXSNj4A1qcRi9cyWg14AY5cioqYHai8Zvrs/4FrLir0kY10Mhol6OXX4+wlEjC+8cWgrBHuaTCWjZWhP+2pCzWqzHAab28QC8vKSyDZlrir6nWgt5hZeCt7Z1nk36UOvTGEs+dkMKs2XQqefi8hyt4Eq7tx9MumBlPz+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ericsson.com; dmarc=pass action=none header.from=ericsson.com;
- dkim=pass header.d=ericsson.com; arc=none
+ bh=4gfSKTsfDr2yYVtw/LpQCOS/+0517BTc/SRmDrOmQIM=;
+ b=vqY/AyfH3/j/rVTrLiG/Iulg3dqZ5MlBtuNy7EfvEceKVUPL37ndmkYMKWpCu4olIl5iMnXlNJJUFJpWxR4r3xdFn60EdkrmF3TV69QhOGRv8UKBMw4YA0WbHXZ+m60QFU2Tx6ldKFx4ZostZyoFxNaXMMFwQqod/R0moNDy0g6/BOYrdJrrxhwnlIDVW2r7NgXEYDYN1xOYoKwCVAneLzYakNJ0gEFWNlXIjLbjQpBg4sp/ru0IwsS7D+mvw+pP4sURumgZTAETAcNiAskvPZ4EXCBsLNLzaNW3XqvMjx6na9V266t9Du0HuqpznCt4k3EpkOSspGdd96sC0Dmfwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=gmail.com smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/LyOn78n0ltfynoOuBF51eeXMzUNV9nyXMinVoyZSag=;
- b=mNAHz090fOU3LEPUaJ/577THokTfDwsAnct9bhpz9O0DSz4H2jJn6wuGW5rgL67Bj9Jkg6IoLzPM0HWFla3X0CV4O3CAA99Yz3ciHiS2hyBqLaiQpbvgp7kINkp4/XJEZ5fZiBjBuYBEdX2pV8E9qgAlo8tnVKXb+k84yjUAwzwrIu1IErWoVX7ZdLRdhm00DuaFka8yLlIl2Oh/qEEgaOZlItjWHicQNOcf8qbqmwDBt9TZPu4U0nxI+xWb77ygaVdw+9OBVv1TZGpH3nFoZ+Kz7bhFBaoNS5UwKvCJIA0RJcFKEsZurDYQBK4+j31I5Y8WUatrq8ATw5F+GrVb1Q==
-Received: from AM7PR07MB6437.eurprd07.prod.outlook.com (2603:10a6:20b:140::11)
- by GV2PR07MB650701.eurprd07.prod.outlook.com (2603:10a6:150:3b9::13) with
+ bh=4gfSKTsfDr2yYVtw/LpQCOS/+0517BTc/SRmDrOmQIM=;
+ b=B+UzwGsj5CFORcYYQ0SugG9tY1VzlmL/SUNizkhY710t8rDq5IZWBQ7m6J/7lD0oUgYTTDB7ROhr2pYOpdWjsbuTKhlyyvus89TFjyIrBb9mQWs8HWjRU2rBOyyA9V/qIfOyEqAdkaBDXFUujYnCsVf96tyo0iWy8dc3H/rI2FZboRFs8uYUbKKFn895iM5sQ1EbA3+GxSsv7q8CkXSdSvvPHaZ2rwQofH4x15NHfdD5Fd0Zx3oPFrZeoZXqmD2uN3C8GVnxdAKSHCWkh1Dmjcg0tBdezD4C5jBM0E6KZyy48Qb/cVAMMCLPlvG+2cEGRImiIONB0VKr02OiAnUuaw==
+Received: from DB8PR06CA0042.eurprd06.prod.outlook.com (2603:10a6:10:120::16)
+ by DU4PR07MB10230.eurprd07.prod.outlook.com (2603:10a6:10:587::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Tue, 27 Oct
- 2026 06:39:05 +0000
-Received: from AM7PR07MB6437.eurprd07.prod.outlook.com
- ([fe80::fb9c:237c:ec12:2db0]) by AM7PR07MB6437.eurprd07.prod.outlook.com
- ([fe80::fb9c:237c:ec12:2db0%5]) with mapi id 15.21.0546.021; Tue, 27 Oct 2026
- 06:39:04 +0000
-From: Daniel Turull <daniel.turull@ericsson.com>
-To: "alex.kanavin@gmail.com" <alex.kanavin@gmail.com>
-CC: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-Subject: Re: [AUH][PATCH v3 1/2] steps: refactor _get_changelog to update
- pkg_ctx
-Thread-Topic: [AUH][PATCH v3 1/2] steps: refactor _get_changelog to update
- pkg_ctx
-Thread-Index: AQHdZVGD7W8u7MSsmEajJV2TYvGqILcQFuMAgADaMIA=
-Date: Tue, 27 Oct 2026 06:39:04 +0000
-Message-ID: <3254ceddc86ebc299f78190d04176be037d1fba9.camel@ericsson.com>
-References: <20261026135414.3796371-1-daniel.turull@ericsson.com>
-	 <CANNYZj_LbDRhghETUXXVYWfLzvjOLV5GY4ZZ19tXz8J_vFoJyw@mail.gmail.com>
-In-Reply-To: <CANNYZj_LbDRhghETUXXVYWfLzvjOLV5GY4ZZ19tXz8J_vFoJyw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.52.3-0ubuntu1.1 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ericsson.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM7PR07MB6437:EE_|GV2PR07MB650701:EE_
-x-ms-office365-filtering-correlation-id: 045748b8-2cf8-4cf2-5ff3-08df33f4fe9b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|23010399003|366016|1800799024|10070799003|376014|261022105027099003|10067099003|56012099006|18002099003|22082099003|11063799006|4143699003|261026140227099003|38070700021;
-x-microsoft-antispam-message-info: FrCxR0mi8uVWoPRRf2DvPvT1+sbuL5JsAjvD0R5bXMmUt+DX/doqIAoBFFXxMWSPBUFegCEZ5y8wbT9/mVexczvQ+BySKtB4DHrkZriSp3C30rPBV3fCXByhZ3pjF2dLSXv6f9SnEh5gw0O8devYrWWqNB7CIvLW4QGMA0Z92ze2y9e28DKlYG04tfK8YcN+kxUkgaWdCJY0TlwOlbqYXE9UReKFGW0P98vqaVrhgxqD+9kiEUraMRNbqWtHBRX59oFwmOSkGTpsdX2FxJHWdjxa8DIKJA+PONF9jhWqDLGZluQaFUAflkHTvlelpHN23RN8NCYibZcK21BLBVttrE3Jx5ROFFMiMl3JP82ru5l75X7kQvLOMpJ/cCUMPCCNzYY+A1aRsV1Lk6MLldP9LjQsfFOBBgj6CJHBQk/QrbFvWO0Xaxc/xjvKEznTOS/WjKj9/6wU4M1sY0QYsSYhWL5cCqR1Y/yhfi01slFdxXTuV2UsribzBu8FwF/Y6mORjLfJXb29lwyLIkzuhkF3xm+K/4IjPf7+05dwMaVCz0QnU0rCa7wFAcJKrTr8sSX6rdPGHiMF4gzKXCXu2LI25/zKL05Br4Y6adtR6L06yMUBOhw2QoNGuFcwITRQz+czKBcewGqDTnfWiiGn/o60yc9tDt7ug7tVz1zZV+3Ujvp/69Z48iEoyC5lYRmDwKpoq+SWmc5/Fb9XjjA79Ki0H1XFvcAaUSJQUGzXO2YoGDU=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR07MB6437.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(10070799003)(376014)(261022105027099003)(10067099003)(56012099006)(18002099003)(22082099003)(11063799006)(4143699003)(261026140227099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 2
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YVlLT3lIZHVMMzhWbnF1UlN4TG9oOHAvMWNtbUF3dm1aZi9wdUd1VTlRRXhp?=
- =?utf-8?B?NGFvUXo5Z2d1U24wdlhXYlZ6dXlFNVVVdmVRZUQ3V3E3ejcyVDNlYXNFVFhk?=
- =?utf-8?B?TEJ2aEVBN0RvUW5XNXExdjhFR2JpYUg3cE1JMHdKekZmb0VrWjk4dTc3eGQ1?=
- =?utf-8?B?TUx0aFpqWkZrNHBnMUdwZldLdEtFc0xmdTFRQVZhK3JaU01YM1NlVkoyYW9n?=
- =?utf-8?B?ME5lWFhOSGRGZ1ZDdG02aC9WSGFXcDk5dTkzMG9wMStIeUxBUGVKVE16T2xq?=
- =?utf-8?B?Q2p6NkJhWmpGOWxmakdhMGdLTFI2andSOUFJUjRiOGZRTUVnSzlFb3FaTStx?=
- =?utf-8?B?MU13K3l4Ri91enRTNzJXazUyL1FNc0pBYnNYSkFsWDR4dFMxQnd0WVkrVlJk?=
- =?utf-8?B?UmVKdG9FcHBCSUpXZ2hxUGJMM0IrVUw3L080b0p0RjdQTjhPNnVydkQyT3NW?=
- =?utf-8?B?NWtoUjQ4OGZZSlR0ak55dExEamVXeVorNVpVYU50L2RqMVVKYmNReUNMUWlq?=
- =?utf-8?B?Vm9VSjJxQ0FCVVBzY0RJZWdNblQ3ems4d2xEUWJidjFvdlpaNW9RQXorZzQx?=
- =?utf-8?B?MXhxUXhUazlZT3p5OHM0MVo2Vkd2ZTZPRzF3SWs0dW9lRWJhaU5OUlVueXhs?=
- =?utf-8?B?ZSsvVURzTnBYSFMveDBpZlNjeFZ6Q3RkajgwM1RFUTZkR1hqeCt3QlBFMXZ6?=
- =?utf-8?B?MEc3QmNINEZLK2gwTmZoUUpvd1h3Z0txUHNVZklxNjJpZHNET2REaDVWcVRv?=
- =?utf-8?B?Qlg1RDMvU2lwQUpXVDVXaTdkOUlRZDBPVlBPek8wUTNtUnNqcGpIc25MTCt4?=
- =?utf-8?B?WUFEd0Z3b1VQN3dCbHdrRGNzNE1SRFo1Q0FBaUhvMXcvK3lCc2NUZ1RMVy8x?=
- =?utf-8?B?ck9RQno3blZTN01uZ0JQYmROY2VSOWtSQXlOMzdTYkVQa0JXTVB5Q2RqYmJM?=
- =?utf-8?B?UFYvcWF5NVBNejBReGFrN3ZXMjgrZFZ2YkkveCt3QnVMcHFMcTBnODlFY21W?=
- =?utf-8?B?UmgyWi9NVGphcE9QUjcweDVoK0tvSE9mVUhIcmVORE9BOFJydktsWDZNWUNm?=
- =?utf-8?B?VDlCUnJySEx1RVhGNWltNUVtaTdOdmhsaTZBdnRTaXNINTIxdTlhMVJJb29t?=
- =?utf-8?B?R2hFN3BGMXdBcytzaEd5Y3BTSlR5VnlVbk5zcTdGSGRPZzlwcmZGNlNDc3FL?=
- =?utf-8?B?TUkyQzI4RW5wMHB3N01GdEUzNzVvbEduRnJDYmVIOHdBekdzSys3U1cweUdO?=
- =?utf-8?B?MEQwbU4zSDFrWU1UTHVrZUFTN3NkY2VXNW5HaXFHVmlJZkFFYnk0eG1PTjla?=
- =?utf-8?B?d2JJTmtiMFUraEIwUkQwckRIbGVwaXRzYTBiM0dxdUthVlRSYlhRdXZCd01E?=
- =?utf-8?B?eXd4ZUFPZUFmeDR1MG51ZDBxMEg3b3Flb2xaMGp0RkxQMzdZY1d3dG5MWjdE?=
- =?utf-8?B?U3pndmRGSXRiNTZpUm9yZk9zZldxZ0VMWFY5SjMxbHU5NXBQcTdVQndpNDB6?=
- =?utf-8?B?dTNMVHZqYWRuK3kwZjJaZ0JydXgzV3M5NDZpUURKMDVTdjdYTnFPamp3OFlX?=
- =?utf-8?B?Wjd3dm9VaEJyL3JEdmp4a3BwdGhJb1VTMVFVWU5Qa1J0YlV6NUxmOTdMLzRK?=
- =?utf-8?B?Ri9NT05WK3NVT3hNTTdBRWNTaStkTmdEM0hrOXJ0czBLSzlyRnFvL0NWTjln?=
- =?utf-8?B?TU5oMU44WGFFMVA2ajU1bnptUGd2ckliNjNvbkhhLzFCdVprWkNhZ3FpQ2xj?=
- =?utf-8?B?VkhUMThXS2ZmaUh3TVNoK2wwTm96cm5oU1c0c0tsQVZpam5TSGlIdU95WGkx?=
- =?utf-8?B?Z1hSNWlaZEcvVk9zNEJFRlI1VS9rZlhRYkNYelgxUjBLNWQ5SHptNjN5NmY2?=
- =?utf-8?B?ZEJBUlRJL1QyOHBBVTVVOU12OWh6clNhcmpYWkpCaWQvRjgyK0RZSmZ2clBW?=
- =?utf-8?B?M1RsZnFObSt6ZjZVcXkvQmpQSXl5TWtVQWM2WjNlVHQ1UEI0VkdSVGpCa0p0?=
- =?utf-8?B?MTlyTC9wYkZVTnJ4TWV3Y3V4SjA3T3REL0xWN3ZxSUp5VmlNeUxiSE9mS3R2?=
- =?utf-8?B?M3JLZGliQ3cwa21kUXhnUXF2NmJHVkpFUEJhbWJ3a3RZZkt1MjVSK0RlWHZ5?=
- =?utf-8?B?WTNCVUJDVUJGYk45SmJ3NVh4SGZ1L20wUjh2d0RqMnJzL3V5YkpldEtLNFk3?=
- =?utf-8?B?cllrS2JzQm9CUWhJU1pqZ3FOTllpUGlQelI0MUg1ZWxaUkVYY0VBTVFsWmNX?=
- =?utf-8?B?b21QWTZYaGpaMC9wMDV6ZFIzdytVdFE0aGZRWFZCL1NjZnZ3N3M5dldhTDVy?=
- =?utf-8?B?SDVJZlk2ek50QlFXQ2ZaVW4rTW84a3c0NlVDdFRNbE1IZW9XVXZqZ09YMnhU?=
- =?utf-8?Q?hd1lIkChqSBX7De11J5KcDcdrbEEhiY5ng2zOZV1YzNpl?=
-x-ms-exchange-antispam-messagedata-1: KW0Zz4YFbLPsPpjxbSl3G/vBvype5W/ZSjI=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6FFACE2A5D35A942B5E84A6A8542E577@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ 2026 13:31:10 +0000
+Received: from MAD0EPF000008BF.eurprd04.prod.outlook.com
+ (2603:10a6:10:120:cafe::a3) by DB8PR06CA0042.outlook.office365.com
+ (2603:10a6:10:120::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.22 via Frontend Transport; Tue,
+ 27 Oct 2026 13:31:10 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 192.176.1.74) smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ MAD0EPF000008BF.mail.protection.outlook.com (10.167.241.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.569.4 via Frontend Transport; Tue, 27 Oct 2026 13:31:10 +0000
+Received: from seroius18814.sero.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.65) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Tue, 27 Oct 2026 14:30:49 +0100
+Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
+	by seroius18814.sero.gic.ericsson.se (Postfix) with ESMTP id 4C7AA4020C1E;
+	Tue, 27 Oct 2026 14:30:49 +0100 (CET)
+Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
+	id 0EC9B707231C; Tue, 27 Oct 2026 14:30:49 +0100 (CET)
+From: <daniel.turull@ericsson.com>
+To: <yocto-patches@lists.yoctoproject.org>
+CC: <alex.kanavin@gmail.com>, Daniel Turull <daniel.turull@ericsson.com>
+Subject: [AUH][PATCH v4 1/2] steps: read changelog through devtool's metadata file
+Date: Tue, 27 Oct 2026 14:30:42 +0100
+Message-ID: <20261027133046.300849-1-daniel.turull@ericsson.com>
+X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-Path: edaturu@ericsson.com
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MAD0EPF000008BF:EE_|DU4PR07MB10230:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50aac36f-cd15-45cd-7e7e-08df342e9073
+X-SMTP-Server: smtp-central.internal.ericsson.com
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|1800799024|376014|36860700016|82310400026|261026140227099003|56012099006|11063799006|261009223027099003|261022105027099003|261021123027099003|261021121427099003|261022075727099003|10067099003|18002099003|261026121527099003|6133799003|3023799007;
+X-Microsoft-Antispam-Message-Info: 2gSTDvgxSRbZhrvwXZpoA/4VhbGushdUYYSNbesZ30t9h0A62hBhdeJsC0OaOMOQwwOS62LCxcyWkxfzGEGNCNfynfuqLJtJHMBdigfVxhMU64conbPqGfNwChdYgd8QiFZE0oxgdrMr9UpN/xnRir59s5Z57ePYGvTlyQnblJ53OMgNXlPthY4Rev6JLoR3SA9IeaWzkOsUxIDaGD3mAwmDrtrVHE/OB5MbAG+uPs1UdpPylJ1G66+euM7rgv7LLNrZlm0k6zLCsIDq5yRddzPXj2UjNKhLxgow63msYOWJQ/EC4x/0grdRkCOw9BhOus2wocQTZbBjtBt7NHqsaX1UaElDowOs9PiKQ/ub0/9sxis+coVUg5Shj8Nz3WljH5HhbXeV3k9NIU1q8tfI3+WM1/KUfEcnTwYbDuvJZvlk7VeHGJg2ACieolaxwsj34KOLhKZ05gYxG0YhS6F5XzvdhEbY9TXZpDWGeVyStepmYEz8Mz9hNZG+1ZBshr9qVUhpyGJZZfXymabzK/bdfNpLYWkCOpxtns2Jjk6/9XQ2PBB3ol4i9Tsiu1ia0aGKDIK1R0HGwm+ffJLeb19VTo3NSCmcBejz/V6NF1heFQHxSU+Lo+eA6LkvSaYIoYK3Wm88IO3BIDIad9dLV2Gkzn/MREHUxKM3EDwJDwC24K7grCWOckEk8CYsy9U0teIRYaxvZ+oZLOk3VBkb+z+bPQ==
+X-Forefront-Antispam-Report: CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(36860700016)(82310400026)(261026140227099003)(56012099006)(11063799006)(261009223027099003)(261022105027099003)(261021123027099003)(261021121427099003)(261022075727099003)(10067099003)(18002099003)(261026121527099003)(6133799003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: zoU0YqSNjQN1M8HaJAz7xy5zhKtoAI6QktemKn4P6eOCRTkq9LvIfCt2MK0qK3aoXS9qxZIPzgKC3ib/ZQQt776K+h2QD7fmw5HblMYLSNQVnZ8tj2KGoNrHkD0+y6W39WgESEv6WV8ujCWeaVHEWpZawBVN/VGgYpwR81EFtBxmaT0IZwVtpvLsgIqHouRESWttSf5eQedfO7kgDV7EK2X6R5FMHnEzZIoL8bNRPtzNAMjTjMoIQjHy/qE14yil8KKv2Uq4FLZ69kDl9j5aTTg68Dlls/gQnV1P/B9xUN6qKB1Aw8KFQhFWFURtz/SG9XPqcJmRNCX4vyS1O0lJ8Zr9qXXLOnAFF1yOSMjtFuC/4wVXSyM/xYVKUpfTCstyGYy15yy3ttmhkHvaVdIkM0qCm+NeUxu9FAULTsLf518YNlSQIx2PRahnQbmktWsc
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR07MB6437.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 045748b8-2cf8-4cf2-5ff3-08df33f4fe9b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Oct 2026 06:39:04.6429
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2026 13:31:10.5344
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: eXpeEUZ9t9blCVYtU6i8Q7hxNmZoIto+IwyJJ4gy65SS4CMs/QO91AxdYhqcxVE8JdbKK1gIRoNH1QI/5fFQqENG0TpnBbkTzZ5LB2SyBzA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR07MB650701
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50aac36f-cd15-45cd-7e7e-08df342e9073
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: MAD0EPF000008BF.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR07MB10230
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 27 Oct 2026 06:39:19 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5161
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 27 Oct 2026 13:31:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5162
 
-T24gTW9uLCAyMDI2LTEwLTI2IGF0IDE4OjM4ICswMTAwLCBBbGV4YW5kZXIgS2FuYXZpbiB3cm90
-ZToNCj4gPiArZGVmIF9nZXRfY2hhbmdlbG9nKHBrZ19jdHgsIHdvcmtkaXIpOg0KPiA+ICvCoCDC
-oCAiIiJDb3B5IHRoZSBjaGFuZ2Vsb2cgZ2VuZXJhdGVkIGJ5IGRldnRvb2wgdXBncmFkZSB0byB3
-b3JrZGlyIGFuZA0KPiA+ICvCoCDCoCBzdG9yZSB0aGUgY2hhbmdlbG9nIGRhdGEgaW4gcGtnX2N0
-eC4iIiINCj4gPiArwqAgwqAgcG4gPSBwa2dfY3R4WydQTiddDQo+ID4gK8KgIMKgIGJhc2VfcGF0
-aCA9IG9zLnBhdGguam9pbihvcy5lbnZpcm9uLmdldCgnQlVJTERESVInLCAnJyksDQo+ID4gK8Kg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJ3dvcmtzcGFjZScsICdj
-aGFuZ2Vsb2dzJywgcG4pDQo+ID4gK8KgIMKgIGNoYW5nZWxvZ19wYXRoID0gYmFzZV9wYXRoICsg
-Jy50eHQnDQo+ID4gwqAgwqAgwqBpZiBvcy5wYXRoLmlzZmlsZShjaGFuZ2Vsb2dfcGF0aCk6DQo+
-ID4gwqAgwqAgwqAgwqAgwqB0cnk6DQo+ID4gwqAgwqAgwqAgwqAgwqAgwqAgwqB3aXRoIG9wZW4o
-Y2hhbmdlbG9nX3BhdGgsICdyJywgZW5jb2Rpbmc9J3V0Zi04JywgZXJyb3JzPSdyZXBsYWNlJykg
-YXMgZjoNCj4gPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHRleHQgPSBmLnJlYWQoKQ0KPiA+
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgc2h1dGlsLmNvcHkyKGNoYW5nZWxvZ19wYXRoLCBvcy5wYXRo
-LmpvaW4od29ya2RpciwgJ3t9LWNoYW5nZWxvZy50eHQnLmZvcm1hdChwbikpKQ0KPiA+IC3CoCDC
-oCDCoCDCoCDCoCDCoCByZXR1cm4gdGV4dA0KPiA+IMKgIMKgIMKgIMKgIMKgZXhjZXB0IE9TRXJy
-b3IgYXMgZToNCj4gPiDCoCDCoCDCoCDCoCDCoCDCoCDCoFcoJ0ZhaWxlZCB0byBjb3B5IGNoYW5n
-ZWxvZyBmb3Ige306IHt9Jy5mb3JtYXQocG4sIGUpKQ0KPiA+IC3CoCDCoCByZXR1cm4gTm9uZQ0K
-PiA+ICvCoCDCoCDCoCDCoCDCoCDCoCByZXR1cm4NCj4gPiArwqAgwqAgwqAgwqAgaWYgdGV4dDoN
-Cj4gPiArwqAgwqAgwqAgwqAgwqAgwqAgcGtnX2N0eFsnY2hhbmdlbG9nX3RleHQnXSA9IHRleHQN
-Cj4gPiANCj4gPiANCj4gDQo+IA0KPiBBcG9sb2dpZXMsIHRoYXQncyBub3QgcXVpdGUgd2hhdCBJ
-IGhhZCBpbiBtaW5kLiBUaGUgaW50ZW5kZWQgc3VnZ2VzdGlvbiB3YXMgdG8gcmVhZCB0aGUganNv
-biBvbmNlLCBhbmQgYXNzaWduIGFsbCBvZiBpdHMgZmllbGRzIGFzIGEgcHJvcGVydHkgb2YgcGtn
-X2N0eC4gVGhlbiB3aGVuIHRoZSBhY3R1YWwgY2hhbmdlbG9nIGNvbnRlbnQgaXMgbmVlZGVkLCBp
-dCB3b3VsZCBiZSBvYnRhaW5lZCB0aHJvdWdoIGZpZWxkcyBvZiB0aGF0IHByb3BlcnR5LCBzaW5j
-ZSBpdCBhbHJlYWR5IGNvbnRhaW5zIHRoZSBmaWxlbmFtZSBvZiB0aGUgYWN0dWFsIHRleHQuDQo+
-IA0KTm8gd29ycmllcy4gSSdsbCBzZW5kIGEgdjQgcmVhZGluZyB0aGUganNvbiBhdCB0aGUgYmVn
-aW5pbmcgb2YgcHJvY2Vzc2luZyB0aGUNCnJlY2lwZS4NCg0KRGFuaWVsDQo=
+From: Daniel Turull <daniel.turull@ericsson.com>
+
+devtool upgrade describes the changelog it extracted in
+workspace/changelogs/<pn>.json, including the name of the changelog
+file. Load that once per recipe and expose its fields in pkg_ctx with a
+devtool_ prefix, so AUH relies on what devtool reports instead of
+guessing the changelog file name, and the rest of the metadata is
+available without reading it again.
+
+Assisted-by: kiro:claude-sonnet-5.5
+Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
+---
+Changes in v4:
+- Load <pn>.json once, expose its fields in pkg_ctx with a devtool_
+  prefix and get the changelog through the changelog_file field
+Changes in v3:
+- New patch: refactor split out of "steps: skip changelog in commit
+  message when devtool flags it"
+---
+ modules/steps.py | 44 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
+
+diff --git a/modules/steps.py b/modules/steps.py
+index e678a4b..a68dec4 100644
+--- a/modules/steps.py
++++ b/modules/steps.py
+@@ -19,6 +19,7 @@
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-130=
+1, USA.
+ #
+=20
++import json
+ import os
+ import shutil
+ import re
+@@ -80,20 +81,31 @@ def _make_commit_msg(group):
+     versions =3D list(dict.fromkeys(_get_version(p) for p in group['pkgs']=
+))
+     return "{}: upgrade {}".format(pn, ",".join(versions))
+=20
+-def _get_changelog(pn, workdir):
+-    """Read the changelog generated by devtool upgrade and copy it to work=
+dir.
+-    Returns the changelog text or None."""
+-    changelog_path =3D os.path.join(os.environ.get('BUILDDIR', ''),
+-                                  'workspace', 'changelogs', '{}.txt'.form=
+at(pn))
+-    if os.path.isfile(changelog_path):
+-        try:
+-            with open(changelog_path, 'r', encoding=3D'utf-8', errors=3D'r=
+eplace') as f:
+-                text =3D f.read()
+-            shutil.copy2(changelog_path, os.path.join(workdir, '{}-changel=
+og.txt'.format(pn)))
+-            return text
+-        except OSError as e:
+-            W('Failed to copy changelog for {}: {}'.format(pn, e))
+-    return None
++def _get_changelog(pkg_ctx, workdir):
++    """Load the changelog and its metadata written by devtool upgrade into
++    pkg_ctx and copy the changelog to workdir."""
++    pn =3D pkg_ctx['PN']
++    changelog_dir =3D os.path.join(os.environ.get('BUILDDIR', ''),
++                                 'workspace', 'changelogs')
++    metadata_path =3D os.path.join(changelog_dir, '{}.json'.format(pn))
++    try:
++        with open(metadata_path, 'r', encoding=3D'utf-8') as f:
++            metadata =3D json.load(f)
++    except (OSError, ValueError):
++        # devtool writes no metadata when there is no changelog
++        return
++    for key, value in metadata.items():
++        pkg_ctx['devtool_' + key] =3D value
++    changelog_path =3D os.path.join(changelog_dir, metadata['changelog_fil=
+e'])
++    try:
++        with open(changelog_path, 'r', encoding=3D'utf-8', errors=3D'repla=
+ce') as f:
++            text =3D f.read()
++        shutil.copy2(changelog_path, os.path.join(workdir, '{}-changelog.t=
+xt'.format(pn)))
++    except OSError as e:
++        W('Failed to copy changelog for {}: {}'.format(pn, e))
++        return
++    if text:
++        pkg_ctx['changelog_text'] =3D text
+=20
+=20
+ def _append_changelog_to_commit_msg(group, opts):
+@@ -119,9 +131,7 @@ def _devtool_upgrade(devtool, bb, git, opts, pkg_ctx, w=
+orkdir):
+         devtool_output =3D devtool.upgrade(pkg_ctx['PN'], pkg_ctx['NPV'], =
+pkg_ctx['NSRCREV'])
+         D(" 'devtool upgrade' printed:\n%s" %(devtool_output))
+         # Copy changelog before checking for conflicts =E2=80=94 it's usef=
+ul even on failure
+-        changelog_text =3D _get_changelog(pkg_ctx['PN'], workdir)
+-        if changelog_text:
+-            pkg_ctx['changelog_text'] =3D changelog_text
++        _get_changelog(pkg_ctx, workdir)
+         # If devtool failed to rebase patches, it does not fail, but we sh=
+ould
+         if 'conflict' in devtool_output:
+             raise DevtoolError("Running 'devtool upgrade' for recipe %s fa=
+iled." %(pkg_ctx['PN']), devtool_output)
