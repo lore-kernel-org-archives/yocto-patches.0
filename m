@@ -1,103 +1,84 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.34707.1793153901646507478
+Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.37021.1793168514236429486
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 27 Oct 2026 19:18:21 -0700
+ Tue, 27 Oct 2026 23:21:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@intel.com header.s=Intel header.b=GQ1+yG5b;
- spf=pass (domain: intel.com, ip: 192.198.163.7, mailfrom: chee.yang.lee@intel.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793153902; x=1824689902;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0R25vOQoq9LwaCoHPQ9vqciS+m0d8/vZDkYewEdLfdo=;
-  b=GQ1+yG5bOImekNnecGMwq3lkqVxlWsS6FqGu4RGb0zs7IB24bPLrsuTq
-   eI0Ah1ugYGO7Mv+EVXZ1PpwyeyB2aignF0KR9M5c70PTru/7670FjxdG6
-   M+pdD40XVulRebIZN/Goyn5tGmhiVddv3sBA+y3HDDPLuQyf4+NR2QtWu
-   6R3l1SPWKcDkNITd8wUA/jWEQY0/OA1ACZG0tC2oM4AwejYQZ6HcindxK
-   +HmexTNF7bByefz0NPqGmoOE5jOLBhSCZ0gc98BYZvAvv+1t2dAGxbXvo
-   IBnkynHMsxRHF3XfSlbcrdFFTby5loc2E5Jn4lXHkTOvtkwQzVqlSHXCJ
-   Q==;
-X-CSE-ConnectionGUID: eAYR1K4ITQ6J9q0h+vxn5Q==
-X-CSE-MsgGUID: Lw5749E3RI+a9vhv3RVslg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11948"; a="1754650"
-X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="1754650"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2026 19:18:21 -0700
-X-CSE-ConnectionGUID: pRYTk6A4TK2i+FizbS4hWQ==
-X-CSE-MsgGUID: 2aeiwOOaS7q8kF2nb4Wq+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="5068433"
-Received: from cheeyang-desk4.png.intel.com ([10.107.249.123])
-  by fmviesa009.fm.intel.com with ESMTP; 27 Oct 2026 19:18:20 -0700
-From: chee.yang.lee@intel.com
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [123.125.172.206])
+	by mtasvr (Coremail) with SMTP id _____wBXTnQWlOFqsCQAAA--.391S3;
+	Wed, 28 Oct 2026 14:20:06 +0800 (CST)
+Received: from chenqi-Redmi.. (unknown [123.125.172.206])
+	by front01 (Coremail) with SMTP id C6CowACXKWqzk+FqpjMmAA--.21753S3;
+	Wed, 28 Oct 2026 14:18:41 +0800 (CST)
+From: chenqi_hycx@cetc.com.cn
 To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH][meta-zephyr] zephyrtargetcontrol: fix unexpected ignore_ssh_fails
-Date: Wed, 28 Oct 2026 10:17:22 +0800
-Message-ID: <20261028021722.326062-1-chee.yang.lee@intel.com>
+Cc: chen_q07@163.com
+Subject: [meta-selinux][PATCH 2/2] MAINTAINERS: update information
+Date: Wed, 28 Oct 2026 14:21:21 +0800
+Message-ID: <20261028062121.1753730-2-chenqi_hycx@cetc.com.cn>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261028062121.1753730-1-chenqi_hycx@cetc.com.cn>
+References: <20261028062121.1753730-1-chenqi_hycx@cetc.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C6CowACXKWqzk+FqpjMmAA--.21753S3
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYOCmrgqJISyQAAsr
+X-CM-DELIVERINFO: =?B?JYDLHqc9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
+	PoOF0BZZGk50lASsqm66SY1oe0O2mVM/UrUMwWE+L/92zBR4zjMGzBXAxRusLkU7ANw4+/
+	ToeCgrLaSnBSam53MKugih1JYiPKx5aqylVbYb/OHt0cFOWiCweCl52B4KJX+w==
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw4rKry7XF4fZrWxWry3Awc_yoW3KFc_C3
+	9rGayDWFyUCFyIkayIgF9IkrZYkrW7GFnrX3Z2q3ZxA34DAr90qrWkKFn3u345JFW7KF4Y
+	ga45Xayakr4j9osvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjgY5I8CrVACY4xI64kE6c02F40Ex7xfMxkIecxEwVAFwVW8AbIjqfuFe4nv
+	WSU5nxnvy29KBjDU0xBIdaVrnRJUUUvlb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20V
+	C2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2
+	F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E
+	87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWU
+	XwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JM4kE6xkIj40Ew7xC0wCY02Avz4vE14v_GF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC
+	6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+	C2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
+	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBI
+	daVFxhVjvjDU0xZFpf9x07jOsqXUUUUU=
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Oct 2026 02:18:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5164
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Oct 2026 06:22:01 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5166
 Content-Type: text/plain; charset="utf-8"
 
-From: Lee Chee Yang <chee.yang.lee@intel.com>
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-fix unexpected keyword argument for QemuTargetZephyr
+I'll be maintaining meta-selinux for all active branches.
+Update this MAINTAINERS file to include this information.
 
-File: '/data/blacksail/openembedded-core/meta/lib/oeqa/utils/postactions.py', lineno: 88, function: run_coredumpctl_info
-     0084:    # message ID for coredumps, so it shows all of the coredumps that are in the
-     0085:    # journal.
-     0086:    output_file = d.expand("${localstatedir}/log/coredumps.txt")
-     0087:    cmd = f"coredumpctl info MESSAGE_ID=fc2e22bc6ee647b6b90729ab34a250b1 | tee {output_file}"
- *** 0088:    tc.target.run(cmd, ignore_ssh_fails=True)
-     0089:
-     0090:
-     0091:##################################################################
-     0092:# General post actions runner
-Exception: TypeError: OETarget.run() got an unexpected keyword argument 'ignore_ssh_fails'
-
-Signed-off-by: Lee Chee Yang <chee.yang.lee@intel.com>
+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
 ---
- .../lib/oeqa/controllers/zephyrtargetcontrol.py | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/meta-zephyr-core/lib/oeqa/controllers/zephyrtargetcontrol.py b/meta-zephyr-core/lib/oeqa/controllers/zephyrtargetcontrol.py
-index e9bc6bb..a557a5c 100644
---- a/meta-zephyr-core/lib/oeqa/controllers/zephyrtargetcontrol.py
-+++ b/meta-zephyr-core/lib/oeqa/controllers/zephyrtargetcontrol.py
-@@ -15,7 +15,8 @@ class QemuTargetZephyr(OETarget):
-             machine='', rootfs='', tmpdir ='',dir_image ='',display=None,
-             kernel='',boottime=60,bootlog='',kvm=False,slirp=False,
-             dump_dir='',serial_ports=0,ovmf=None,tmpfsdir='' ,target_modules_path='',powercontrol_cmd='',powercontrol_extra_args='',
--            serialcontrol_cmd=None,serialcontrol_extra_args='',testimage_dump_target='',testimage_dump_monitor='',native_sysroot=None):
-+            serialcontrol_cmd=None,serialcontrol_extra_args='',testimage_dump_target='',testimage_dump_monitor='',native_sysroot=None,
-+            ignore_ssh_fails=True):
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 42a85e2..2933168 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25,6 +25,16 @@ Please keep this list in alphabetical order.
  
-         timeout =  300
-         user = 'root'
-@@ -60,3 +61,17 @@ class QemuTargetZephyr(OETarget):
+ Maintainers List (try to look for most precise areas first)
  
-     def serial_readline(self):
-         return self.runner.serial_readline()
++COMMON
++M:	Chen Qi <chenqi_hycx@cetc.com.cn>
++L:	yocto-patches@lists.yoctoproject.org
++Q:	https://patchwork.yoctoproject.org/project/yocto/
++S:	Maintained
++F:	conf
++F:	classes
++F:	dynamic-layers
++F:	recipes-*
 +
-+    def run(self, cmd, timeout=None, ignore_status=True, raw=False, ignore_ssh_fails=False):
-+        """
-+        QemuTargetZephyr has no SSH (or other remote shell) support, only
-+        a serial console. Treat every call as an SSH failure (status 255),
-+        matching OESSHTarget's convention, so that callers written for
-+        SSH-capable targets (e.g. testimage's post-failure actions) degrade
-+        gracefully instead of raising a TypeError.
-+        """
-+        status, output = 255, "QemuTargetZephyr has no SSH support; only serial console access is available"
-+        if not ignore_ssh_fails:
-+            raise AssertionError(output)
-+        return (status, output)
-+
+ COMMON
+ M:	Joe MacDonald <joe.macdonald@siemens.com>
+ F:	conf
 -- 
 2.43.0
 
