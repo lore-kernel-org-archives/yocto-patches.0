@@ -1,288 +1,373 @@
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19048.1793386637257096884
+Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4203.1793444097346063742
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 30 Oct 2026 11:57:17 -0700
+ Sat, 31 Oct 2026 03:54:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=HADSsB8H;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=57637de7c6=sunilkumar.dora@windriver.com)
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69UIujnT2899701;
-	Fri, 30 Oct 2026 18:57:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=vO6fA+Q2j
-	LQjauUvljvznt/Gr72QYmuUivdZCmce7ew=; b=HADSsB8HaGoPhLvPCiRJEUdWX
-	Q/VHIdqORxiBCvVq963QKrqJUYnpqXIlUWo4Qj1SmNKyRUgfCuRAK6V6KUk8eVmn
-	LfXXFU+OBO702UNU2nCEGl/xDov0CZ7Kpzo3pcF3bTNFhbNT/Npywhzplgj3laNu
-	kQ14O3IQBXYDJxs4jq1NU1i6LFgIMzLdZB6uwLonyYdvHEo4vPcTeycN+TsRFjOE
-	PLRkeVRIiuTk5dF9jeOMNnNjrSGmoOoTkpq3nYJvWHwSLjfWAeAycC1pISf9SSMf
-	2ygXSLcHcaurK4tPP+B1bg2vnWHYrd4tfG0q6rDpUzhLFJ+tJGQXMfD/QSZJw==
-Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11022127.outbound.protection.outlook.com [40.93.195.127])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4hme7f9gk5-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 30 Oct 2026 18:57:10 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xMgyHO5iR9d2mAQMFUQSyxSnk0k7ohLm/fwbEAuktlJPRfj9B2a6FmMGq2Q5Ds5A1S1h71DOf4DAyVB3rfYO8hfdwnOJa1V8I0HNFoILtEAQlLGMe+m1DZEhlyEjX2SymiQ4DNt5KwllZoeWo0M7GoQROOIOgs7XBY0Z2XcYhrEiy+ry66yYvPT4BZpkZAIl5A7UthQPouHehktkUqEhwuyYykVtld0DG3hw1WIxGVBD5HEMdYGqBNtQQ2aPsf55itDMFqHpQiG+BrEB0/xdXSZ5CF5CbsZOXaXoyKwmj1Alq8bcTbA0/JP32ZRQdNbkU8DPoDRsNaM04LPPqqZ2zQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vO6fA+Q2jLQjauUvljvznt/Gr72QYmuUivdZCmce7ew=;
- b=TTSl2isfuXW6Rdfast7BYG4d9Pg94w1OGaq7LRm9+/fmHNiRA9l8O9hgHivdTuLhrw32iBYpVP2a/lRTZT5S9lPoPMr534wEw3p0xRSJDiVpCkEabxVet3Fq8KP4SRBSzH6x9XteFFdveiVa7V5Gf16RJzsULPlss7yuziMbSG2I9xo/aiptaX6LnM7b+LosRL+t34kVHSqCsUAX345thidAQuFi5UA0PwbBod4X9GiS51pANMyyisGS2CJ/a+taLuKRH9UXUc57iCNpYs5AAFi1XsFa1KN5EUdtC2CMRE4t9L+j4WPbZDBkNImvIMqxUze/xl2S8gxKCSb84zbUKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=windriver.com;
-Received: from DS0PR11MB7901.namprd11.prod.outlook.com (2603:10b6:8:f4::20) by
- MW4PR11MB7128.namprd11.prod.outlook.com (2603:10b6:303:22b::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.569.8; Fri, 30 Oct 2026 18:57:05 +0000
-Received: from DS0PR11MB7901.namprd11.prod.outlook.com
- ([fe80::4293:7c4b:a0b5:eb5f]) by DS0PR11MB7901.namprd11.prod.outlook.com
- ([fe80::4293:7c4b:a0b5:eb5f%3]) with mapi id 15.21.0569.009; Fri, 30 Oct 2026
- 18:57:04 +0000
-From: sunilkumar.dora@windriver.com
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [123.125.172.206])
+	by mtasvr (Coremail) with SMTP id _____wDnatyTyOVqEokAAA--.3174S3;
+	Sat, 31 Oct 2026 18:53:07 +0800 (CST)
+Received: from chenqi-Redmi.. (unknown [123.125.172.206])
+	by front01 (Coremail) with SMTP id C6CowADnd2g5yOVqwUUpAA--.12327S3;
+	Sat, 31 Oct 2026 18:51:44 +0800 (CST)
+From: chenqi_hycx@cetc.com.cn
 To: yocto-patches@lists.yoctoproject.org
-Cc: mark.hatle@kernel.crashing.org, richard.purdie@linuxfoundation.org,
-        liezhi.yang@windriver.com, sundeep.kokkonda@windriver.com
-Subject: [pseudo][PATCH v3] makewrappers: Allow the wrapper architecture to be set for cross builds
-Date: Fri, 30 Oct 2026 11:56:45 -0700
-Message-ID: <20261030185645.765144-1-sunilkumar.dora@windriver.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0154.namprd05.prod.outlook.com
- (2603:10b6:a03:339::9) To DS0PR11MB7901.namprd11.prod.outlook.com
- (2603:10b6:8:f4::20)
+Cc: chen_q07@163.com
+Subject: [meta-selinux][PATCH 2/2] oeqa: reach sysadm_r through newrole in the SELinux tests
+Date: Sat, 31 Oct 2026 18:54:43 +0800
+Message-ID: <20261031105443.1845695-2-chenqi_hycx@cetc.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261031105443.1845695-1-chenqi_hycx@cetc.com.cn>
+References: <20261031105443.1845695-1-chenqi_hycx@cetc.com.cn>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7901:EE_|MW4PR11MB7128:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f6750e1-6318-4152-20ee-08df36b79668
-X-LD-Processed: 8ddb2873-a1ad-4a18-ae4e-4644631433be,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|52116014|261028144727099003|38350700014|56012099006|261021121427099003|11063799006|261022105027099003|261026121527099003|261022075727099003|261021123027099003|261026140227099003|10067099003|18002099003|6133799003|3023799007;
-X-Microsoft-Antispam-Message-Info: IqbfGAWEu8vGFVGHFA3oO+E7d7lKVZkiF9ohKDWcJ6uSrXb+AkugxhfQHVINJhtV09Kmha/joCMxYsJ/0WsNUGSoGaOjWBqZMxgkqzoGSC5QRlLoXs/gmVjVKNCUX6rV1FBNVCc4dLTx2h9J9EadlPPa7MhdS+ujKdxdTxva3JVL20cV7h90ndh7lY1CEIHvPSZjE9PAgSys0xdYzgr/WWpwOn5VGxunoXZ7RIzL4JIQnoL7rQgpFbU1bcfkc/4z/RELFf0z3ufidEzxVDXv/OSJzB6agMv2FTGTckwQpgKBCOrvvI19KV8PHaHeZrGfNyvUhz7/lx8f0G3My/8dhJwUcyPigJu4o++CXztg7Djy4SANxKlFjPhrtUUIqEF20rfo6evM2WsENHoCoW1vGHTqiKiJ3y8Fc97oGlqvuKVyQ+ENWwOD3zVWY8k7M+38Egb4POm37Uy6rh0W8u9JRsxpjvgL6SuCo/ofWQfI2u8zBG+OHPaz4b9/uGbAeG/WWpyJLULH5NAvVA2nzUo5U1sd2Q7YXY9dJZxQNrLTo+AMeVvlESEcpSgc1/jvuHNoASQPGNlhpwXqRCgfntsRAexQygaNCcQxbuLkxDUBqz96hxYukuKK9iqAc3Kjp6xUCGCVNwdb1UDTcSxtqKSvtHwPrh/a0xr54o6evujUbGCe/t3rzbGQDPXrMogAGhU2nrV7fXO6JUqhiPekZkA3olsB/G3IZTYQF9tZo1rOYfs=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7901.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(52116014)(261028144727099003)(38350700014)(56012099006)(261021121427099003)(11063799006)(261022105027099003)(261026121527099003)(261022075727099003)(261021123027099003)(261026140227099003)(10067099003)(18002099003)(6133799003)(3023799007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5DHzOktu97M53H6415H5RjfPStkRH20Gj2oQEUV5L3+9cpPD5FaRINJEpqDU?=
- =?us-ascii?Q?DvEl1RiSqg0Pxuaa441nmVFZeDv79ZrFlvmT56D69IzmuG20RdFvTUOHggTu?=
- =?us-ascii?Q?Lp4KortiDMRtB/7eN2bMzjy6aXRBqldn49egHyRq3NskLTPS7K7Bny+vTp5H?=
- =?us-ascii?Q?Z/1HGgQ1CiQZhRNIs0atwrnMODhuOHcQ4gC2vLJYLPeWOydCh2pA6ZS/QRO3?=
- =?us-ascii?Q?X5MOvOOIpJPjpXaAui5QRKG6Ys7xh8+o70OhewRr6gT5XksnUiQfOhmlCAQo?=
- =?us-ascii?Q?qKQLmqhWgiyeX7cGyTfU9qX/0bYFmwSIS28/U+aK9h8o978b4Psxto24Tuzi?=
- =?us-ascii?Q?EaqIaxu4UzGZEEE4edkqelmVDShz9UNAId1Fw5jJjeincuQQzdjmRRTQRoAN?=
- =?us-ascii?Q?bYC1gfexEiuLCX71TQEKLzc45S1y1m/gSCyIByI5QFTm7+Kquc412kw2GI7Q?=
- =?us-ascii?Q?idlUfV7/rT81iw+8/vgWdUPfPwffo4Y2Z5/Y7WW/5T4oEh+6fRKVobwtbft4?=
- =?us-ascii?Q?C0zBbSPbv3mcmrgU9/B96XKu4XRVtjnsATb7cNhvFXii6GxF2FXHABKoRjIZ?=
- =?us-ascii?Q?wCBxgb3a+M80Um3yrq14xBXhRgois49eaXQZRm3hWQhloo/oaJuyPye4A/zA?=
- =?us-ascii?Q?KRD4cP2mk6mPmjOardIvKOR4wMOysW2IDZKQf4yiwutei87nuxO4EvxMBEav?=
- =?us-ascii?Q?uEXBqA9j1TV3NZHHeQksZpe5nG7V0ExS9v6gtboyyRyKHJRPp5MVZ7ak6SNi?=
- =?us-ascii?Q?yvjU1EAAHP0YF63g+lNMv1dbgRvoLD+BiLmmx1r4zv4KxhgkJGa0KuhR0Fwq?=
- =?us-ascii?Q?FuLPwNzadn6B64FVCqTOFI2Ga3OHQdAW8whO/ZyaxK9jS85BvNBRJJ61qbZT?=
- =?us-ascii?Q?3N8+l2ezQT4mjy3nuUWNLsUku/QQ0VBv6oWObo41/h5rQTt5MsBdm26Wq+Pg?=
- =?us-ascii?Q?zrRUTHJFtBFqY5LNrwy1Rw9TOi27+t1Dgx/LbQKWcVN7fDgirmcraK0jdS3v?=
- =?us-ascii?Q?dtrnkwk3Oj4Qkz6rNiz3OV9fpLpakIVfgSjeiDypUN59DStIuq8XCdQNdbHv?=
- =?us-ascii?Q?XrdRC1JqrTzFWApPTscL10J2plF3xrgiTHVEHAVRD9DPi0FjeZz1s6ZW1rrt?=
- =?us-ascii?Q?Fsns8dLKsZYff9H7n9cUDKbaPLvcvH1co0uiE67Rh5//FfvtTqM1dpt7bFqu?=
- =?us-ascii?Q?vqEiIaJPT+WqnXq/SxG8L2fGWJI4ymV9py3tYVtw9nnncwnD3njKNHLvAABV?=
- =?us-ascii?Q?BvlnxMteREpZ+vQ8qN7l0tUo/sET8mwcf24EVs0uZdB3uF8UHOHhvSubdAuf?=
- =?us-ascii?Q?uXQiDRM2S6K4sFe+UemE59coFsMSSb/yWJaB9ydgmUlj+sYJzZoA2RDu8JEY?=
- =?us-ascii?Q?TOpQsTVTYYHTxWTxaodOENlJJRZchGcmLF25h7e3mQC4V5MkUlPxkyah/c1m?=
- =?us-ascii?Q?CdHCb5wxDUb2B736LG4/Xq+lJ2DMz8OZ2dH+vRlumOExdSyJT8C8LC+JTCOo?=
- =?us-ascii?Q?8LZazOx/XEh56BGpLnTmblAliPNDoUC6Qzf5K/41XPYA+5fn6wg55WormqB5?=
- =?us-ascii?Q?kztV90zI/TgksL41KSwvNdCe1WWoEJ3xQbI5PYgq4/ZgT/1qs1jCSWD9g8D3?=
- =?us-ascii?Q?KVJoA3cHWCEF0dTxyBGR5wghiBnC9RlKFQIKb0JAUmOBSEaG8mrlmG5wTJOP?=
- =?us-ascii?Q?2Z0KJOjwCfIslIiE0XqPzyCwNW5otCNYM4Ui9erZjVU/29pJV8fn18yZ4/7v?=
- =?us-ascii?Q?Vt7ljo3Tlf+/88t+rZCvk8/vfmimx7k=3D?=
-X-Exchange-RoutingPolicyChecked: IZkMIqON9179jIjNM1k+64jYLQ6WSiECMvCOc1hgSYGrm51Qk9sPFoVGXW5UVmvYWnxWQwFyFvLc1P0RUdsRAmfbZqdqBWoscZdGM5pkPUQcdMkt73wngT4pHgizV1Gw0vnPXZ6tI4xNal59vRYMf73EYtgbzi44++WP72GQwcNKsP+e29B1OQxqTgV8LOBaWOOfEUoz4nMVmzN1GbiWSaW+2Z3SAIRm3YG3RScKEtXVZj26vaGc6569/PaViO0E1FO+9lH9Z9zxYkIj3CgNq9r2g2OtBmfn3WqOrBOZsazisoiRRHVTWkaz/XuDVZiN+GiVm3lhvYjvoXW6UBuXgA==
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f6750e1-6318-4152-20ee-08df36b79668
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7901.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2026 18:57:04.2559
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RZ3ZB7mpAuRoj5YLUG9XhZkDtEItuk2j+mvXX+Lc7EY0fvBeczBIoQRRG1DQLgQes+e4jAoiflRs1cM81tynUzOMWPhyn2wm4TYMg6/mLxU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7128
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDMwMDA3NSBTYWx0ZWRfX8x9x/6Wj0QF8
- cnJXIhfgI+7/7KVvGVEmOMrJo9ptXzR8tnL+ic2wwJaJIhEG+Awb1a/UNAbHfTojvpkxqa03rCR
- fnIXkZHvhWd3ekvu6ojejJg5t3If/e0bKDD0vz+gzZ3syzL5gaAA/wfgr89gVwX0As7r7QRPUSi
- LiRjdtI5k8kh/oLkZa0Of5ehy4ID7jVxTgIZMvVe5byghCSDKhWbHvxkp53b1PGV1F6BQVwUDxQ
- XQ3Lbsniysw2VoZGYRHHGjCjf0qJOieXhkPrfMTX19iU602z27foKXERhK5OrBCrx6DMyfxUiiU
- a9ZJUooOtsq4s1IcBa+WViyBLiJFbCMyoDZHQYcEulIvnnfgGju5x1turAnLdLwDWYaYKa3smiW
- VikPbZgrfIs4BvE3diZrq5WyzDbTcKElNmJ6xya2A1iqH2340+VT/fm7VU1fd36g5AKuijyzxTP
- XrNYhL1JAT4+wbUWLfg==
-X-Proofpoint-ORIG-GUID: 5skeTWLDHUVZZSNpXU76rJaQzOBTnBih
-X-Proofpoint-GUID: 5skeTWLDHUVZZSNpXU76rJaQzOBTnBih
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDMwMDA3NSBTYWx0ZWRfXwGtP+3EZKtus
- P2vOu5JszGwh5Sd+jjS+XS0CKYvOUMIMYK68MgbCzEWHx0eBWS2KY2QazqcvGJTSioBs7xD+Bit
- R4CrgtNnKpP8C4bfY3ERWS9Jmj/MWQIgkCy3FfYNMefvO/ERnkaU
-X-Authority-Analysis: v=2.4 cv=AKC+DP5v c=1 sm=1 tr=0 ts=6ae4e886 cx=c_pps
- a=4J2h7sJdpVYe1tCXGSmzzw==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=bi6dqmuHe4P4UrxVR6um:22 a=klDOsUkWDRETUCZYPvoE:22 a=t7CeM3EgAAAA:8
- a=HQp09vvjJnJxfHRkxWAA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-30_06,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 bulkscore=0 malwarescore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
- definitions=main-2610300075
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C6CowADnd2g5yOVqwUUpAA--.12327S3
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYRCmrkntAG-QAEsj
+X-CM-DELIVERINFO: =?B?g+Cf66c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
+	PoOKTjTTQ5s7jdRVG0VsmhYxzONdRJZIhK10Xt2dOtq/nh83XIB7hhH+zLRupPhb0PNCRk
+	u3JMGF2BMHtxSqX5RJ/hFsFzZ6HwMcgNdv09dTj1VAQePamXF9DTFfXWQkMlNQ==
+X-Coremail-Antispam: 1Uk129KBj9fXoWfJF13KFW7Gr4kXF1UXry3WrX_yoW8Gr4xAo
+	Z5Aw4kZ3WkJ3y3Cr1UKan8GrZxXF4F9F1fAws5tF4rKa4aqr1Utay8Aw15Ja43ta4xKw4D
+	Xa1rGan7Jr4fJFn3l-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn5kqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6r4DYxn0WfAS
+	r-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI
+	8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJ
+	M28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
+	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
+	JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
+	0EwIxGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6r4DMxAIw28IcxkI7VAKI48JMxC20s02
+	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
+	I_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
+	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
+	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
+	UjIFyTuYvjxUFCzuDUUUU
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Fri, 30 Oct 2026 18:57:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5191
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 10:55:06 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5192
 Content-Type: text/plain; charset="utf-8"
 
-From: Sunil Dora <sunilkumar.dora@windriver.com>
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-Architecture specific modifiers in wrapfuncs.in, such as
-version-aarch64="GLIBC_2.17" on the xattr wrappers, are selected with
-platform.machine(), so they follow the machine running the script
-rather than the one pseudo is built for. An aarch64 pseudo cross built
-on x86_64 ends up with GLIBC_2.3 and the reverse with GLIBC_2.17, which
-shows up as pseudo not being reproducible between x86_64 and aarch64
-builders.
+An ssh login as root lands in staff_t with refpolicy-mcs, which cannot read
+the policy store, the audit log or the kernel ring buffer, so the cases that
+need those used to skip.  Run them in sysadm_r via newrole instead.
 
-Add a --target option to configure and pass it on to makewrappers,
-which uses the cpu part of the triplet for these modifiers. Without
---target the build machine is used as before.
-
-[YOCTO #16376]
-
-Signed-off-by: Sunil Dora <sunilkumar.dora@windriver.com>
+Assisted-by: Codewhale:deepseek-v4-flash
+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
 ---
-v3: I missed the [pseudo] tag in the subject.
+ lib/oeqa/runtime/cases/selinux.py | 169 +++++++++++++++++++++++-------
+ 1 file changed, 129 insertions(+), 40 deletions(-)
 
-v2: use a configure --target option and a makewrappers --target argument
-    instead of the MAKEWRAPPERS_ARCH environment variable, as suggested by
-    Mark. Without --target the generated wrapper table is unchanged.
-
- Makefile.in  |  3 ++-
- configure    |  6 ++++++
- makewrappers | 17 +++++++++++++++--
- 3 files changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/Makefile.in b/Makefile.in
-index 6640a73..9c6da77 100644
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -34,6 +34,7 @@ BITS=@BITS@
- ARCH_FLAGS=@ARCH_FLAGS@
- MARK64=@MARK64@
- RPATH=@RPATH@
-+TARGET=@TARGET@
- VERSION=1.99.0
+diff --git a/lib/oeqa/runtime/cases/selinux.py b/lib/oeqa/runtime/cases/selinux.py
+index 2559c31..af79b39 100644
+--- a/lib/oeqa/runtime/cases/selinux.py
++++ b/lib/oeqa/runtime/cases/selinux.py
+@@ -18,15 +18,20 @@
+ # The cases that inspect or change system state need an administrative domain
+ # (sysadm_t, unconfined_t, secadm_t).  With refpolicy-mcs an ssh login as root
+ # lands in staff_t, which cannot read the policy store, the audit log or the
+-# kernel ring buffer, so those cases skip.  A console login as root gets
+-# sysadm_r:sysadm_t; to get the same over ssh, uncomment the system_r:sshd_t
+-# line in the policy's contexts/users/root.
++# kernel ring buffer, so those cases run their commands through newrole:
++#
++#     newrole -r sysadm_r -t sysadm_t -- -c '<command>'
++#
++# The '--' arguments are the arguments of the login shell newrole execs, hence
++# the -c.  This needs a root account PAM can authenticate without a prompt,
++# i.e. IMAGE_FEATURES "empty-root-password"; without that the cases skip.
+ #
+ # The denial, module and AVC cases additionally need a policy that confines
+ # administrators (the mcs and mls variants).  The targeted and minimum variants
+ # run admins as unconfined_t on purpose, so those cases skip there.
  
- LIB=@LIB@
-@@ -146,7 +147,7 @@ tables: enums/*.in maketables templatefile.py $(TABLES)
- 	./maketables enums/*.in
+ import re
++import shlex
+ import time
  
- wrappers: makewrappers templatefile.py $(TEMPLATES) ports/*/wrapfuncs.in
--	CC="$(CC) $(CFLAGS) $(CFLAGS_PSEUDO)" ./makewrappers "xattr=$(XATTR)"
-+	CC="$(CC) $(CFLAGS) $(CFLAGS_PSEUDO)" ./makewrappers --target="$(TARGET)" "xattr=$(XATTR)"
+ from oeqa.runtime.case import OERuntimeTestCase
+@@ -35,7 +40,9 @@ from oeqa.core.decorator.data import skipIfNotFeature
+ from oeqa.runtime.decorator.package import OEHasPackage
  
- .SECONDARY: tables wrappers
  
-diff --git a/configure b/configure
-index 68c9962..b43809e 100755
---- a/configure
-+++ b/configure
-@@ -10,6 +10,7 @@
- opt_prefix=
- opt_libdir=
- opt_suffix=
-+opt_target=
- opt_arch=x86
- opt_bits=
- opt_sqlite=/usr
-@@ -32,6 +33,7 @@ usage()
-     echo >&2 "  configure --prefix=..."
-     echo >&2 "           [--libdir=...]"
-     echo >&2 "           [--suffix=...]"
-+    echo >&2 "           [--target=...]"
-     echo >&2 "           [--enable-memory-db]"
-     echo >&2 "           [--enable-epoll]"
-     echo >&2 "           [--enable-xattr]"
-@@ -153,6 +155,9 @@ do
-     --suffix=*)
-         opt_suffix=${arg#--suffix=}
-         ;;
-+    --target=*)
-+        opt_target=${arg#--target=}
-+        ;;
-     --arch=*)
-         echo >&2 "WARNING: The --arch option is now deprecated. Use --cflags."
-         opt_arch=${arg#--arch=}
-@@ -341,6 +346,7 @@ sed -e '
-   s,@LIBDIR@,'"$opt_libdir"',g
-   s,@LIB@,'"$opt_lib"',g
-   s,@SUFFIX@,'"$opt_suffix"',g
-+  s,@TARGET@,'"$opt_target"',g
-   s,@SQLITE@,'"$opt_sqlite"',g
-   s,@ARCH_FLAGS@,'"$arch_flags"',g
-   s,@DEFAULT_SQLITE@,'"$default_sqlite"',g
-diff --git a/makewrappers b/makewrappers
-index 19508fa..7cf2862 100755
---- a/makewrappers
-+++ b/makewrappers
-@@ -15,6 +15,13 @@ import platform
- import subprocess
- from templatefile import TemplateFile
+-# Domains that are allowed to administer the SELinux configuration.
++# Domains that may administer SELinux.  With refpolicy-mcs an ssh login as
++# root lands in staff_t, but newrole can assume sysadm_r from there, which is
++# how the cases below reach an administrative domain on a stock image.
+ ADMIN_DOMAINS = ('sysadm_t', 'unconfined_t', 'secadm_t')
  
-+# Set from --target=, empty means the machine running this script
-+target_arch = ""
+ # Policy variants in which refpolicy confines administrators.  The targeted and
+@@ -47,9 +54,14 @@ CONFINING_POLICIES = ('mcs', 'mls')
+ # Name of the policy module built by SELinuxModuleTest.
+ TEST_MODULE_NAME = 'oeqa-local'
+ 
+-# Scratch directory for the policy module sources on the target.
++# Directory on the target used for scratch files and for the output files of
++# commands run through newrole.
+ TEST_MODULE_DIR = '/tmp/oeqa-selinux'
+ 
++# newrole execs the login shell, so the command has to be given as the shell's
++# own arguments: 'newrole ... -- -c <command>', not 'newrole ... -- <command>'.
++NEWROLE = 'newrole -r sysadm_r -t sysadm_t -- -c '
 +
-+def wrapper_arch():
-+    """Architecture the wrappers are built for: the --target cpu or the build machine."""
-+    return target_arch or platform.machine()
+ # Source of the test module.  It grants the administrative domain the access
+ # refpolicy withholds by default, so loading and removing the module can be
+ # observed with an existing file instead of needing a reboot or a relabel.
+@@ -87,6 +99,10 @@ def parse_sestatus(output):
+ class SELinuxTest(OERuntimeTestCase):
+     """Helpers shared by the SELinux runtime cases."""
+ 
++    # Cached result of probing whether newrole reaches an admin domain; None
++    # until the first test asks.  Shared by all the cases.
++    _admin_domain = None
 +
- class ArgumentList:
-     """A (possibly empty) list of arguments"""
+     def run_cmd(self, command, timeout=None):
+         status, output = self.target.run(command, timeout=timeout)
+         self.logger.debug('%s\n-> %d\n%s' % (command, status, output))
+@@ -117,23 +133,92 @@ class SELinuxTest(OERuntimeTestCase):
  
-@@ -319,11 +326,11 @@ class Function:
-             # Strip all leading/trailing whitespace
-             modifiers = {k.strip():v.strip() for k, v in modifiers.items()}
+     def require_admin(self):
+         """
+-        Skip unless the session runs in a domain that may administer SELinux.
++        Return the domain administrative commands run in, or skip.
  
--            arch = "-" + platform.machine()
-+            arch = "-" + wrapper_arch()
-             # Sorted so that versions-foo appear after versions, so overrides are easy
-             for key in sorted(modifiers):
-                 value = modifiers[key].replace('<equals>', '==')
--                # If the key is version-arm64 and we're on arm64 then rename this to version
-+                # If the key is version-arm64 and we're building for arm64 then rename this to version
-                 if key.endswith(arch):
-                     key = key.replace(arch, "")
-                 setattr(self, key, value)
-@@ -669,10 +676,15 @@ def process_wrapfuncs(port):
+-        staff_t and user_t can query some of the configuration, but they cannot
+-        write the policy store, read the audit log or read the kernel ring
+-        buffer, so tests that poke at those cannot be meaningful.
++        The session itself may already be administrative; if it is not, the
++        commands are run through newrole, which needs the root password to be
++        empty so that PAM can authenticate without a prompt.
+         """
+-        domain = self.selinux_domain()
+-        if domain not in ADMIN_DOMAINS:
++        domain = self.admin_domain()
++        if not domain:
+             self.skipTest(
+                 'This test needs an administrative SELinux domain, but the '
+-                'session runs as %r.  With refpolicy-mcs an ssh login as root '
+-                'lands in staff_t because contexts/users/root has no '
+-                'system_r:sshd_t entry; a console login gets '
+-                'sysadm_r:sysadm_t.'
+-                % (domain or self.process_context()))
++                'session runs as %r and newrole cannot assume sysadm_r.  '
++                'The command then needs policycoreutils-newrole installed and '
++                'a root account PAM authenticates without a prompt, i.e. '
++                'IMAGE_FEATURES "empty-root-password"'
++                % (self.selinux_domain() or self.process_context()))
+         return domain
  
- def main(argv):
-     """Read in function definitions, write out files based on templates."""
-+    global target_arch
-     funcs = []
-     sources = []
++    def admin_domain(self):
++        """
++        Return the domain the administrative commands end up in, or ''.
++
++        Probed once per class, because the probe costs a command round trip.
++        """
++        if self.selinux_domain() in ADMIN_DOMAINS:
++            return self.selinux_domain()
++
++        cls = type(self)
++        if cls._admin_domain is None:
++            status, output = self.run_admin('cat /proc/self/attr/current')
++            domain = ''
++            if status == 0:
++                parts = output.replace('\x00', '').strip().split(':')
++                if len(parts) > 2 and parts[2] in ADMIN_DOMAINS:
++                    domain = parts[2]
++            cls._admin_domain = domain
++            self.logger.info('newrole gives domain %r' % domain)
++        return cls._admin_domain
++
++    def _newrole(self, command):
++        """
++        Build a shell command line running `command' through newrole.
++
++        newrole's child inherits the ssh pipes, but its output is not reliably
++        readable from them, and some of the tools used here (auditctl,
++        semanage, semodule) print nothing when their stdout is a regular file.
++        So the command's output is piped through cat into a file, and the exit
++        status of the left-hand side of the pipeline is recorded with
++        PIPESTATUS.
++        """
++        redirect = ('{ %s ; } 2>&1 | cat > %s/out; echo "${PIPESTATUS[0]}" > %s/rc'
++                    % (command, TEST_MODULE_DIR, TEST_MODULE_DIR))
++        return 'mkdir -p %s; %s%s' % (TEST_MODULE_DIR, NEWROLE,
++                                      shlex.quote(redirect))
++
++    def run_admin(self, command, timeout=None):
++        """Run `command' in an administrative domain, return (status, output)."""
++        if self.selinux_domain() in ADMIN_DOMAINS:
++            return self.run_cmd(command, timeout)
++
++        self.run_cmd(self._newrole(command), timeout)
++        # The output file may not end in a newline, so emit one before the
++        # marker or the marker would be glued onto the last output line.
++        status, output = self.run_cmd(
++            "cat %s/out 2>/dev/null; echo; echo OEQA-RC; cat %s/rc 2>/dev/null"
++            % (TEST_MODULE_DIR, TEST_MODULE_DIR))
++        body, _, tail = output.rpartition('\nOEQA-RC\n')
++        body = body.replace('\x00', '')
++        try:
++            rc = int(tail.strip())
++        except ValueError:
++            # newrole itself did not run, e.g. policycoreutils-newrole is not
++            # installed; report no status rather than failing here, so that
++            # require_admin() can turn it into a skip.
++            self.logger.info('newrole did not run %r; it printed:\n%s'
++                             % (command, output))
++            return None, ''
++        self.logger.debug('newrole: %s\n-> %d\n%s' % (command, rc, body))
++        return rc, body
++
++    def run_admin_ok(self, command, timeout=None):
++        status, output = self.run_admin(command, timeout)
++        self.assertEqual(status, 0,
++                         "Command '%s' failed in the admin domain with status "
++                         "%s:\n%s" % (command, status, output))
++        return output
++
+     def require_confining_policy(self):
+         """
+         Skip unless the loaded policy confines administrative domains.
+@@ -260,7 +345,7 @@ class SELinuxToolTest(SELinuxTest):
+         # domains only.
+         self.require_admin()
  
-     for arg in argv:
-+        if arg.startswith('--target='):
-+            # A GNU triplet such as aarch64-poky-linux, only the cpu part is used
-+            target_arch = arg[len('--target='):].split('-')[0]
-+            continue
-         if '=' not in arg:
-             print("Invalid argument '%s', must be of the form name=value" % arg)
-             exit(1)
-@@ -702,6 +714,7 @@ def main(argv):
-     port = Port('common', sources)
+-        status, output = self.run_cmd('setenforce 0')
++        status, output = self.run_admin('setenforce 0')
+         self.assertEqual(status, 0,
+                          'setenforce 0 failed:\n%s' % output)
+         try:
+@@ -271,7 +356,7 @@ class SELinuxToolTest(SELinuxTest):
+                 'setenforce 0 did not reach the kernel')
+         finally:
+             # Never leave the target permissive behind us.
+-            self.run_ok('setenforce 1')
++            self.run_admin_ok('setenforce 1')
  
-     # the per-function stuff
-+    print("Architecture for wrapper modifiers: %s" % wrapper_arch())
-     print("Writing functions...")
-     all_funcs = port.functions()
-     for name in sorted(all_funcs.keys()):
+         self.assertEqual(self.run_ok('getenforce').strip(), 'Enforcing',
+                          'setenforce 1 did not switch back to enforcing mode')
+@@ -294,7 +379,7 @@ class SELinuxToolTest(SELinuxTest):
+     def test_matchpathcon_verify(self):
+         # Needs getattr on shadow_t, which only the admin domains have.
+         self.require_admin()
+-        output = self.run_ok('matchpathcon -V /etc/shadow')
++        output = self.run_admin_ok('matchpathcon -V /etc/shadow')
+         # Success is exactly "<path> verified."; a mismatch prints
+         # "<path> has context ..., should be ...", so anchor the whole line
+         # rather than looking for a word that other messages may contain.
+@@ -309,30 +394,32 @@ class SELinuxToolTest(SELinuxTest):
+         self.require_admin()
+ 
+         # Queries.
+-        output = self.run_ok('semanage login -l')
++        output = self.run_admin_ok('semanage login -l')
+         self.assertIn('__default__', output,
+                       'semanage login -l did not list the default mapping:\n%s'
+                       % output)
+-        self.run_ok('semanage boolean -l')
+-        self.run_ok('semanage fcontext -l')
++        self.run_admin_ok('semanage boolean -l')
++        self.run_admin_ok('semanage fcontext -l')
+ 
+         # Add/list/remove round trip.  -N keeps the running policy untouched;
+         # the rule is committed to the local store and listed from there.
+         fcontext = TEST_MODULE_DIR + '/alt(/.*)?'
+         token = TEST_MODULE_DIR + '/alt'
+         try:
+-            self.run_ok("semanage fcontext -N -a -t tmp_t '%s'" % fcontext)
+-            output = self.run_ok("semanage fcontext -l | grep -F '%s'" % token)
++            self.run_admin_ok("semanage fcontext -N -a -t tmp_t '%s'"
++                              % fcontext)
++            output = self.run_admin_ok("semanage fcontext -l | grep -F '%s'"
++                                       % token)
+             self.assertIn(fcontext, output,
+                           'Added fcontext rule is missing from the listing:\n%s'
+                           % output)
+         finally:
+             # Ignore failures here so that a failed add does not mask itself
+             # with a failed delete.
+-            self.run_cmd("semanage fcontext -N -d '%s'" % fcontext)
++            self.run_admin("semanage fcontext -N -d '%s'" % fcontext)
+ 
+-        status, output = self.run_cmd("semanage fcontext -l | grep -F '%s'"
+-                                     % token)
++        status, output = self.run_admin("semanage fcontext -l | grep -F '%s'"
++                                        % token)
+         self.assertNotEqual(status, 0,
+                             'Removed fcontext rule is still listed:\n%s'
+                             % output)
+@@ -369,26 +456,28 @@ class SELinuxToolTest(SELinuxTest):
+             self.run_ok(checkmodule)
+             self.run_ok('semodule_package -o %s -m %s' % (pp, mod))
+ 
+-            self.run_ok('semodule -i %s' % pp)
+-            self.assertIn(TEST_MODULE_NAME, self.run_ok('semodule -l'),
++            self.run_admin_ok('semodule -i %s' % pp)
++            self.assertIn(TEST_MODULE_NAME, self.run_admin_ok('semodule -l'),
+                           'Installed module is not listed by semodule -l')
+ 
+             # The new rule allows the domain to read /etc/shadow.
+-            status, output = self.run_cmd('cat /etc/shadow')
++            status, output = self.run_admin('cat /etc/shadow')
+             self.assertEqual(status, 0,
+                              'Reading /etc/shadow is still denied after loading '
+                              '%s for %s:\n%s'
+                              % (TEST_MODULE_NAME, domain, output))
+         finally:
+-            self.run_cmd('semodule -r %s' % TEST_MODULE_NAME)
++            self.run_admin('semodule -r %s' % TEST_MODULE_NAME)
+ 
+-        output = self.run_ok('semodule -l')
++        output = self.run_admin_ok('semodule -l')
+         self.assertNotIn(TEST_MODULE_NAME, output,
+                          'Removed module is still listed by semodule -l:\n%s'
+                          % output)
+-        self.assertTrue(self.shadow_read_denied(),
+-                        'Reading /etc/shadow is still allowed after removing '
+-                        '%s' % TEST_MODULE_NAME)
++        status, output = self.run_admin('cat /etc/shadow')
++        self.assertNotEqual(status, 0,
++                            'Reading /etc/shadow is still allowed after '
++                            'removing %s:\n%s'
++                            % (TEST_MODULE_NAME, output))
+ 
+ 
+ class SELinuxAuditTest(SELinuxTest):
+@@ -418,18 +507,18 @@ class SELinuxAuditTest(SELinuxTest):
+         self.require_admin()
+ 
+         if 'systemd' in self.td.get('VIRTUAL-RUNTIME_init_manager', ''):
+-            status, output = self.run_cmd('systemctl is-active auditd.service')
++            status, output = self.run_admin('systemctl is-active auditd.service')
+             self.assertEqual(status, 0,
+                              'auditd.service is not active:\n%s' % output)
+         else:
+-            self.run_ok('pidof auditd')
++            self.run_admin_ok('pidof auditd')
+ 
+     @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
+     @OEHasPackage('auditd')
+     @OETestDepends(['selinux.SELinuxAuditTest.test_auditd_running'])
+     def test_auditctl_status(self):
+         self.require_admin()
+-        output = self.run_ok('auditctl -s')
++        output = self.run_admin_ok('auditctl -s')
+ 
+         # 'enabled' is the kernel audit state: 0 = off, 1 = on,
+         # 2 = on and locked until reboot.
+@@ -453,8 +542,8 @@ class SELinuxAuditTest(SELinuxTest):
+         # moment to flush the record it just received.
+         deadline = time.time() + 15
+         while True:
+-            status, ausearch = self.run_cmd('ausearch -m AVC -ts recent')
+-            status, dmesg = self.run_cmd('dmesg')
++            status, ausearch = self.run_admin('ausearch -m AVC -ts recent')
++            status, dmesg = self.run_admin('dmesg')
+             records = '%s\n%s' % (ausearch, dmesg)
+             if re.search(r'avc:\s+denied', records) and 'shadow' in records:
+                 self.logger.info('AVC record found in the audit log:\n%s'
 -- 
-2.49.0
+2.43.0
 
