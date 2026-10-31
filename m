@@ -1,540 +1,232 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4202.1793444095992327645
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.522.1793465157676747834
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 31 Oct 2026 03:54:59 -0700
+ Sat, 31 Oct 2026 09:45:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wDXMtaQyOVqEYkAAA--.3141S3;
-	Sat, 31 Oct 2026 18:53:05 +0800 (CST)
-Received: from chenqi-Redmi.. (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowADnd2g5yOVqwUUpAA--.12327S2;
-	Sat, 31 Oct 2026 18:51:38 +0800 (CST)
-From: chenqi_hycx@cetc.com.cn
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=Q1ty03Cm;
+ dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=RGf1WOxw;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.180.131, mailfrom: jose.quaresma@oss.qualcomm.com)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69VGUMtJ2279682
+	for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 16:45:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=6MzDULewmP0
+	uybDlNerkEqKlBmxTU0GHXtqkmYapV10=; b=Q1ty03CmeGNlha1Uum2utY0J0QY
+	rVK8KtGNjjBlTu7qRgeEH4zj9lkJo0lFUgT9QQn2d5pvONkx8rfFgTc8Tj3FLfT9
+	RnH1mdE1UDmVzbRoUHt8cjNRnkgZITR9t0aaDofRKDFXsyjfDVsQYKT1G8S18Pv1
+	EF3pXGGCbUwIDsY1yjmwzHKSta6Pg5unoCw3m24M+6ZKVUIwT/si3UihWC/L5Meh
+	IAChxBSZsrtEIfUyQH/qN6qnTdSR2vJp6IpG38dXqTRmn2HWaWNGJ3Da95C8afsy
+	GVs9nUmYw6kRP7V8tkFzRLmewWkSMzzVcgDrsWR0TKqdg2aoh7HAbjmfHaQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hn7nfsnyr-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 16:45:56 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93e92aad34aso349005185a.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 09:45:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793465155; x=1794069955; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6MzDULewmP0uybDlNerkEqKlBmxTU0GHXtqkmYapV10=;
+        b=RGf1WOxwzkTDK58sJIHC3ErJ2F7XlbLjXBaugTgjkclrP4AS9dxNlcHQsmjjMG61Wo
+         hqWFRw/na3rnFwT4SlFLzjMeeq5Z4v4w7MUMNOvFQx0hHU2Id79EmFjBXJMMU1AHBvUx
+         0tF2cBADTv5VmSUThJU+tE4KHDCioDQnxJDJ4RWpVHDbteF5eLkaX0BvYTZDJQxNBBTd
+         yd4NwHdvVlzY4CFWnK3m+/zoKRwF22HnEijmLg1AuFJB9OXJCjfMXVRoGn9kcA8tKT7h
+         GLkSALs4hf33R+Kce+ZVclhKOsNgr/HJYcC2W/YpmmLUogNC3J7jFLSjD1hjE3oYfb1L
+         ++pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793465155; x=1794069955;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6MzDULewmP0uybDlNerkEqKlBmxTU0GHXtqkmYapV10=;
+        b=nZAQ9qGopR4bbZuL/lRuI4OtaY7NbbCFfdVmKaa3pOrNWBzJr8n6uK9UpX9kk3Q91G
+         yLBwOXoFq6FlQ9KuFOHfZjZkxuT8YC2/7IMCBN0HVojFCybwevORA0aqCzpH4W/zbJRR
+         zmCnod0AytgXh0w2S2aHaKNoInqoHk1v5bZQx1wWkLqQhVxLbD7N9Ntr8Cia+Of4Lwi2
+         5B8xeZyiNgcF5JRD/K/CSHihR2ZS6RlF9mIWdmf5ZpIF4vl/UsnAZo7fTB/ZNeGROlJs
+         pvYDyVFEj3DJX/MmztfBIjXibhC7FzEQ/RYj0Sch/b6zofzN8BCdiNqYMYwxGxAEI6wx
+         m6hQ==
+X-Gm-Message-State: AFq9FYLf8EE/+kICc9JhIlxHSpNGrPqg8NgIpdZcdHXtHlwKi7p9Qtpc
+	/5+EYEPo1i8INx27HMd7JaRyfeSZBBjhtdv4wy76X4itK1MKGvzPl7BDixdlgYIY/KB1Nk/5cwQ
+	FMOlTzF1N+zNIgQ63aPyB2F3SWlRLBtl2CPN00T4V1EN4kX0S6oy5pv1dgjvkCoYjSiPyQ/gjd5
+	WwRYTGgUWopQ==
+X-Gm-Gg: AYBFou3DzrbeynhsP0ioTQzZA6IEDyoXKFlf0u8bBGpqf051omh8ju+LCVq+uct2ZT3
+	MrJDQC158iU2CM96gAgwkhyTublqKnF0E9xxWg5nVdZVVoZFk3effL5R/n76eUU4Hbs4Urfxv9A
+	A5IJ2WN9inL8uVTdglkZ8PVUECPVsYGsUNVx4+TbhM6rCNc27DS8QKRrxw/3DSKXXpc+KR9lmba
+	2m61BkcQCrP/nvjP+tfNc18DxNosIXy30rLN38p4ID9BCE0jgdoGtGUxXq11BBgG4k2mjV0VxWn
+	wZ3J2/O5J6E8IttH8D5Yi8Dlf/ug2sLTyCmCUsNgO2IxNMY0ez5ftaIIfpPaaquVS1sxx5nUe6w
+	MGHtxNQGjvVRSn5fDGDXLm0lHrxktKo/5545ih3PoaAzGuWh9Ac5J1dZP67fOnqk=
+X-Received: by 2002:a05:620a:6009:b0:93f:1936:b1fc with SMTP id af79cd13be357-9442172adb8mr886690685a.78.1793465155276;
+        Sat, 31 Oct 2026 09:45:55 -0700 (PDT)
+X-Received: by 2002:a05:620a:6009:b0:93f:1936:b1fc with SMTP id af79cd13be357-9442172adb8mr886686785a.78.1793465154532;
+        Sat, 31 Oct 2026 09:45:54 -0700 (PDT)
+Received: from toster.lan ([185.228.162.222])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4abe885d91esm103398055e9.0.2026.10.31.09.45.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Oct 2026 09:45:53 -0700 (PDT)
+From: Jose Quaresma <jose.quaresma@oss.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: chen_q07@163.com
-Subject: [meta-selinux][PATCH 1/2] oeqa: add SELinux runtime test cases
-Date: Sat, 31 Oct 2026 18:54:42 +0800
-Message-ID: <20261031105443.1845695-1-chenqi_hycx@cetc.com.cn>
-X-Mailer: git-send-email 2.43.0
+Cc: Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>,
+        Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+        Richard Purdie <richard.purdie@linuxfoundation.org>,
+        Jose Quaresma <jose.quaresma@oss.qualcomm.com>
+Subject: [meta-lts-mixins][wrynose/linux-firmware][PATCH 03/10]  linux-firmware: package qcom-shikra-wifi firmware
+Date: Sat, 31 Oct 2026 16:45:36 +0000
+Message-ID: <20261031164543.1668-3-jose.quaresma@oss.qualcomm.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261031164543.1668-1-jose.quaresma@oss.qualcomm.com>
+References: <20261031164543.1668-1-jose.quaresma@oss.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C6CowADnd2g5yOVqwUUpAA--.12327S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYRCmrkntAG-QADsk
-X-CM-DELIVERINFO: =?B?qKsgyKc9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoOKTjTTQ5s7jdRVG0VsmhYxwpcoBO6tZ/1l2GVV9q0zeqMZS9h82yBwCG4sfp8ff7HI+I
-	8PxCuGkvCesBsd7+W1ThFsFzZ6HwMcgNdv09dTj1dfjq3UppUqY4cGobdZ0MPg==
-X-Coremail-Antispam: 1Uk129KBj9fXoW3CF1rGr18JF47Xr4rCrWDWrX_yoW8ZrW5Ao
-	Z3Gw48J3W8Jr43WryDKan8A39YqFW5uF4fAwsYyrs5ta9xXr17GayxZw45JasIy3WIk3sI
-	qan3Gr4xZr4ftr1fl-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn5kqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6r4DYxn0WfAS
-	r-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI
-	8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJ
-	M28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
-	0EwIxGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6r4DMxAIw28IcxkI7VAKI48JMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
-	I_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
-	UjIFyTuYvjxU75fHUUUUU
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDMxMDA2NiBTYWx0ZWRfX1eG4AG/Mh1sK
+ LsnUvr2o4N8zgwh+ihQzdP3iI1PNtqczLObllQ8Wg+8De2hl/xrqpRqgT2p85s/kCdyi4KLsfGJ
+ PKd2iPQbdk0zXJbtqrs792yKduRlJe0=
+X-Proofpoint-GUID: D88Ev5ut1ZSupdK9c9q5zmh5d4_3t_oT
+X-Authority-Analysis: v=2.4 cv=FJ2OVOos c=1 sm=1 tr=0 ts=6ae61b44 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=qOKIifoFPMYe9XV0Ag7/Dg==:17
+ a=Ii1caJqkCqkA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=p0WdMEafAAAA:8 a=EUspDBNiAAAA:8 a=P-IC7800AAAA:8 a=ag1SF4gXAAAA:8
+ a=2WMO_5KSFBI97C4CKOIA:9 a=PEH46H7Ffwr30OY-TuGO:22 a=d3PnA9EDa4IxuAV0gXij:22
+ a=Yupwre4RP9_Eg_Bd0iYG:22
+X-Proofpoint-ORIG-GUID: D88Ev5ut1ZSupdK9c9q5zmh5d4_3t_oT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDMxMDA2NiBTYWx0ZWRfXwXSVTB1a9Gq0
+ Bf/IztexApkJ/QmGl/Oi4V9KOprIQA08a1Iy2KfTVEm/5B9/5g6OniwoEDwKDzYzk2eZDDKp/Nr
+ MIpO+V9Jrm5MQsZaL7qlJnrdRr/evky/G1Fpd1GzFLG1iXfrc9PSnx2/hqAudcXJNXJH30I1oH/
+ hLM1zYn5xHTF5P7EnRCvyvXevKZFKMrod1rnnOJkW9XTWDmMM7SEE/6OzFZkzq/O1xgTs9p5p2l
+ vTaJeOdisITU9OhgVsAD/29bn7Zlk4hMDbU1bVEELsBLe0bOY3l63OwR5hjzk5yENFbS8LMcKJY
+ KjMugnhKpe5iRQdlHcYT6mkJuPpBw/RMQqMAC+dQstAfeuReMCgV4VbYKDwL9L5R6EWsA9K6kv+
+ R0LZ700sJ0SDLYRw7QU5a03vZjXtPj9MdImT/hw3NeJrIeSG8lJbJr6kAFYPcE0/p2NWdNgRblc
+ IT8VdWYHedh3lNX647g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-31_04,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 impostorscore=0 adultscore=0 suspectscore=0
+ spamscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2610310066
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 10:55:07 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5193
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 16:45:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5196
 Content-Type: text/plain; charset="utf-8"
 
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
+From: Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>
 
-Add runtime test cases covering four areas of the SELinux support in this
-layer: system status, access denial, the SELinux userspace tools and the
-audit subsystem.
+Split the Shikra-specific ath10k WCN3990 hw1.0 WiFi firmware out
+of the generic linux-firmware-ath10k-wcn3990 package into its own
+linux-firmware-qcom-shikra-wifi package, matching the existing
+per-board split already done for QCM2290/QRB4210.
 
-Assisted-by: Codewhale:deepseek-v4-flash
-Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
+The current linux-firmware snapshot consumed by OE-Core also lacks
+the qcom/shikra/wlanmdsp.mbn symlink expected by tqftpserv, which
+loads WiFi firmware from the same directory as other DSP firmware.
+Backport upstream commit 837ae0e5becc ("qcom/shikra: link WiFi
+firmware from the ath10k subdir") so the packaged firmware can be
+loaded from the expected location.
+
+This patch can be dropped once the linux-firmware version used by
+OE-Core includes commit 837ae0e5becc.
+
+Signed-off-by: Viswanath Kraleti <viswanath.kraleti@oss.qualcomm.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Jose Quaresma <jose.quaresma@oss.qualcomm.com>
 ---
- lib/oeqa/runtime/cases/selinux.py | 470 ++++++++++++++++++++++++++++++
- 1 file changed, 470 insertions(+)
- create mode 100644 lib/oeqa/runtime/cases/selinux.py
+ ...-WiFi-firmware-from-the-ath10k-subdi.patch | 28 +++++++++++++++++++
+ .../linux-firmware/linux-firmware_20260916.bb |  7 ++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+ create mode 100644 recipes-kernel/linux-firmware/linux-firmware/0001-qcom-shikra-link-WiFi-firmware-from-the-ath10k-subdi.patch
 
-diff --git a/lib/oeqa/runtime/cases/selinux.py b/lib/oeqa/runtime/cases/selinux.py
+diff --git a/recipes-kernel/linux-firmware/linux-firmware/0001-qcom-shikra-link-WiFi-firmware-from-the-ath10k-subdi.patch b/recipes-kernel/linux-firmware/linux-firmware/0001-qcom-shikra-link-WiFi-firmware-from-the-ath10k-subdi.patch
 new file mode 100644
-index 0000000..2559c31
+index 0000000..010121d
 --- /dev/null
-+++ b/lib/oeqa/runtime/cases/selinux.py
-@@ -0,0 +1,470 @@
-+#
-+# Copyright OpenEmbedded Contributors
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+# Runtime (testimage) cases for the SELinux support provided by meta-selinux.
-+#
-+# Enable them by adding the module name to TEST_SUITES, e.g.
-+#
-+#     TEST_SUITES:append = " selinux"
-+#
-+# Every case skips itself (instead of failing) when the image does not provide
-+# the packages, kernel features, SELinux domain or policy variant it needs, so
-+# the module is safe to enable for any image.  An image that installs
-+# packagegroup-core-selinux (as core-image-selinux does) satisfies the package,
-+# feature and kernel requirements of all of them.
-+#
-+# The cases that inspect or change system state need an administrative domain
-+# (sysadm_t, unconfined_t, secadm_t).  With refpolicy-mcs an ssh login as root
-+# lands in staff_t, which cannot read the policy store, the audit log or the
-+# kernel ring buffer, so those cases skip.  A console login as root gets
-+# sysadm_r:sysadm_t; to get the same over ssh, uncomment the system_r:sshd_t
-+# line in the policy's contexts/users/root.
-+#
-+# The denial, module and AVC cases additionally need a policy that confines
-+# administrators (the mcs and mls variants).  The targeted and minimum variants
-+# run admins as unconfined_t on purpose, so those cases skip there.
-+
-+import re
-+import time
-+
-+from oeqa.runtime.case import OERuntimeTestCase
-+from oeqa.core.decorator.depends import OETestDepends
-+from oeqa.core.decorator.data import skipIfNotFeature
-+from oeqa.runtime.decorator.package import OEHasPackage
-+
-+
-+# Domains that are allowed to administer the SELinux configuration.
-+ADMIN_DOMAINS = ('sysadm_t', 'unconfined_t', 'secadm_t')
-+
-+# Policy variants in which refpolicy confines administrators.  The targeted and
-+# minimum variants deliberately run administrators as unconfined_t, with the
-+# same access as if SELinux were disabled (see refpolicy-targeted_git.bb), so
-+# the checks below that rely on an access being denied only apply here.
-+CONFINING_POLICIES = ('mcs', 'mls')
-+
-+# Name of the policy module built by SELinuxModuleTest.
-+TEST_MODULE_NAME = 'oeqa-local'
-+
-+# Scratch directory for the policy module sources on the target.
-+TEST_MODULE_DIR = '/tmp/oeqa-selinux'
-+
-+# Source of the test module.  It grants the administrative domain the access
-+# refpolicy withholds by default, so loading and removing the module can be
-+# observed with an existing file instead of needing a reboot or a relabel.
-+TEST_MODULE_TE = """\
-+module %(module)s 1.0;
-+
-+require {
-+    type %(domain)s;
-+    type shadow_t;
-+    class file { getattr open read };
-+}
-+
-+allow %(domain)s shadow_t:file { getattr open read };
-+"""
-+
-+
-+def parse_sestatus(output):
-+    """
-+    Return the key/value pairs of the `sestatus -v` header as a dict.
-+
-+    `sestatus -v` prints a header block of "Key: value" lines followed by
-+    indented sections describing processes, booleans and file contexts; only
-+    the header is of interest here, so parsing stops at the first blank line.
-+    """
-+    info = {}
-+    for line in output.splitlines():
-+        if not line.strip():
-+            break
-+        key, sep, value = line.partition(':')
-+        if sep and key.strip():
-+            info[key.strip()] = value.strip()
-+    return info
-+
-+
-+class SELinuxTest(OERuntimeTestCase):
-+    """Helpers shared by the SELinux runtime cases."""
-+
-+    def run_cmd(self, command, timeout=None):
-+        status, output = self.target.run(command, timeout=timeout)
-+        self.logger.debug('%s\n-> %d\n%s' % (command, status, output))
-+        return status, output
-+
-+    def run_ok(self, command, timeout=None):
-+        status, output = self.run_cmd(command, timeout=timeout)
-+        self.assertEqual(status, 0, "Command '%s' failed with status %d:\n%s"
-+                         % (command, status, output))
-+        return output
-+
-+    def sestatus(self):
-+        """Return the parsed `sestatus -v` header."""
-+        return parse_sestatus(self.run_ok('sestatus -v'))
-+
-+    def process_context(self):
-+        """Return the SELinux context of the session, or '' if unavailable."""
-+        status, output = self.run_cmd('cat /proc/self/attr/current')
-+        if status != 0:
-+            return ''
-+        # The file is not NUL terminated for all readers.
-+        return output.replace('\x00', '').strip()
-+
-+    def selinux_domain(self):
-+        """Return the type component of the session's SELinux context."""
-+        parts = self.process_context().split(':')
-+        return parts[2] if len(parts) > 2 else ''
-+
-+    def require_admin(self):
-+        """
-+        Skip unless the session runs in a domain that may administer SELinux.
-+
-+        staff_t and user_t can query some of the configuration, but they cannot
-+        write the policy store, read the audit log or read the kernel ring
-+        buffer, so tests that poke at those cannot be meaningful.
-+        """
-+        domain = self.selinux_domain()
-+        if domain not in ADMIN_DOMAINS:
-+            self.skipTest(
-+                'This test needs an administrative SELinux domain, but the '
-+                'session runs as %r.  With refpolicy-mcs an ssh login as root '
-+                'lands in staff_t because contexts/users/root has no '
-+                'system_r:sshd_t entry; a console login gets '
-+                'sysadm_r:sysadm_t.'
-+                % (domain or self.process_context()))
-+        return domain
-+
-+    def require_confining_policy(self):
-+        """
-+        Skip unless the loaded policy confines administrative domains.
-+
-+        The refpolicy-targeted and -minimum variants explicitly give admins
-+        unconfined_t, so on those images an access such as reading /etc/shadow
-+        is deliberately allowed and cannot be tested for denial.
-+        """
-+        info = self.sestatus()
-+        policy = info.get('Loaded policy name')
-+        if policy not in CONFINING_POLICIES:
-+            self.skipTest('Test expects a confining policy (%s), but %r is '
-+                          'loaded; targeted and minimum run administrators '
-+                          'unconfined on purpose'
-+                          % ('/'.join(CONFINING_POLICIES), policy))
-+
-+    def write_file(self, path, content):
-+        self.run_ok('mkdir -p %s' % path.rsplit('/', 1)[0])
-+        self.run_ok("cat > %s << 'OEQA_EOF'\n%sOEQA_EOF" % (path, content))
-+
-+    def shadow_read_denied(self):
-+        """Return True when reading /etc/shadow is blocked by SELinux."""
-+        status, output = self.run_cmd('cat /etc/shadow')
-+        return status != 0 and 'Permission denied' in output
-+
-+    def require_shadow_denial(self):
-+        """Skip unless reading /etc/shadow is blocked, as this test needs it."""
-+        if not self.shadow_read_denied():
-+            self.skipTest('Reading /etc/shadow is allowed, so this test has '
-+                          'no denied access to work with')
-+
-+    def memtotal_mb(self):
-+        """Return the target's total RAM in MB, or None if it cannot tell."""
-+        status, output = self.run_cmd(
-+            "awk '/^MemTotal:/ {print int($2/1024)}' /proc/meminfo")
-+        if status != 0:
-+            return None
-+        try:
-+            return int(output.strip())
-+        except ValueError:
-+            return None
-+
-+
-+class SELinuxStatusTest(SELinuxTest):
-+    """The system must report SELinux as enabled and enforcing."""
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('policycoreutils-sestatus')
-+    @OETestDepends(['ssh.SSHTest.test_ssh'])
-+    def test_sestatus(self):
-+        output = self.run_ok('sestatus -v')
-+        info = parse_sestatus(output)
-+
-+        self.assertEqual(info.get('SELinux status'), 'enabled',
-+                         'SELinux is not enabled:\n%s' % output)
-+        self.assertEqual(info.get('Current mode'), 'enforcing',
-+                         'SELinux is not enforcing:\n%s' % output)
-+        self.logger.info('SELinux enabled with policy %r, MLS %r, session '
-+                         'context %r'
-+                         % (info.get('Loaded policy name'),
-+                            info.get('Policy MLS status'),
-+                            self.process_context()))
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OETestDepends(['selinux.SELinuxStatusTest.test_sestatus'])
-+    def test_kernel_enforcing(self):
-+        # sestatus is userspace; /sys/fs/selinux/enforce is what the kernel
-+        # actually enforces.
-+        output = self.run_ok('cat /sys/fs/selinux/enforce')
-+        self.assertEqual(output.strip(), '1',
-+                         'The kernel is not enforcing SELinux (enforce=%r)'
-+                         % output.strip())
-+
-+
-+class SELinuxDenialTest(SELinuxTest):
-+    """Access that the policy denies must be denied."""
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('policycoreutils-sestatus')
-+    @OETestDepends(['selinux.SELinuxStatusTest.test_kernel_enforcing'])
-+    def test_read_shadow_denied(self):
-+        # /etc/shadow is readable by root alone, so a failure to read it cannot
-+        # be a plain permission problem: it is the policy withholding
-+        # shadow_t:file from the confined session domain.  staff_t is confined
-+        # just as sysadm_t is, so this runs for either.
-+        self.require_confining_policy()
-+        context = self.process_context()
-+
-+        status, output = self.run_cmd('cat /etc/shadow')
-+        self.assertNotEqual(
-+            status, 0,
-+            'Reading /etc/shadow as %s was allowed; the policy no longer '
-+            'denies it:\n%s' % (context, output))
-+        self.assertIn(
-+            'Permission denied', output,
-+            'Reading /etc/shadow as %s failed for a reason other than an '
-+            'SELinux denial:\n%s' % (context, output))
-+
-+
-+class SELinuxToolTest(SELinuxTest):
-+    """The SELinux userspace tools must work."""
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('libselinux-bin')
-+    @OETestDepends(['selinux.SELinuxStatusTest.test_kernel_enforcing'])
-+    def test_getenforce(self):
-+        self.assertEqual(self.run_ok('getenforce').strip(), 'Enforcing',
-+                         'getenforce does not report enforcing mode')
-+
-+        # Writing the value the kernel already has is not a privilege check:
-+        # sel_write_enforce() only asks for SECURITY__SETENFORCE inside
-+        # 'if (new_value != old_value)' (security/selinux/selinuxfs.c), so this
-+        # exercises setenforce and libselinux in any domain.
-+        self.run_ok('setenforce 1')
-+        self.assertEqual(self.run_ok('getenforce').strip(), 'Enforcing',
-+                         'setenforce 1 left the system in the wrong mode')
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('libselinux-bin')
-+    @OETestDepends(['selinux.SELinuxStatusTest.test_kernel_enforcing'])
-+    def test_setenforce_roundtrip(self):
-+        # Leaving enforcing mode is the operation that needs the
-+        # security:setenforce permission; refpolicy grants it to the admin
-+        # domains only.
-+        self.require_admin()
-+
-+        status, output = self.run_cmd('setenforce 0')
-+        self.assertEqual(status, 0,
-+                         'setenforce 0 failed:\n%s' % output)
-+        try:
-+            self.assertEqual(self.run_ok('getenforce').strip(), 'Permissive',
-+                             'setenforce 0 did not switch to permissive mode')
-+            self.assertEqual(
-+                self.run_ok('cat /sys/fs/selinux/enforce').strip(), '0',
-+                'setenforce 0 did not reach the kernel')
-+        finally:
-+            # Never leave the target permissive behind us.
-+            self.run_ok('setenforce 1')
-+
-+        self.assertEqual(self.run_ok('getenforce').strip(), 'Enforcing',
-+                         'setenforce 1 did not switch back to enforcing mode')
-+        self.assertEqual(
-+            self.run_ok('cat /sys/fs/selinux/enforce').strip(), '1',
-+            'setenforce 1 did not reach the kernel')
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('libselinux-bin')
-+    @OETestDepends(['selinux.SELinuxStatusTest.test_kernel_enforcing'])
-+    def test_matchpathcon(self):
-+        output = self.run_ok('matchpathcon /etc/shadow')
-+        self.assertIn('shadow_t', output,
-+                      'matchpathcon did not map /etc/shadow to shadow_t:\n%s'
-+                      % output)
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('libselinux-bin')
-+    @OETestDepends(['selinux.SELinuxToolTest.test_matchpathcon'])
-+    def test_matchpathcon_verify(self):
-+        # Needs getattr on shadow_t, which only the admin domains have.
-+        self.require_admin()
-+        output = self.run_ok('matchpathcon -V /etc/shadow')
-+        # Success is exactly "<path> verified."; a mismatch prints
-+        # "<path> has context ..., should be ...", so anchor the whole line
-+        # rather than looking for a word that other messages may contain.
-+        self.assertRegex(output, r'^/etc/shadow verified\.$',
-+                         'matchpathcon -V did not confirm the label of '
-+                         '/etc/shadow:\n%s' % output)
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('selinux-python-semanage')
-+    @OETestDepends(['selinux.SELinuxToolTest.test_matchpathcon'])
-+    def test_semanage(self):
-+        self.require_admin()
-+
-+        # Queries.
-+        output = self.run_ok('semanage login -l')
-+        self.assertIn('__default__', output,
-+                      'semanage login -l did not list the default mapping:\n%s'
-+                      % output)
-+        self.run_ok('semanage boolean -l')
-+        self.run_ok('semanage fcontext -l')
-+
-+        # Add/list/remove round trip.  -N keeps the running policy untouched;
-+        # the rule is committed to the local store and listed from there.
-+        fcontext = TEST_MODULE_DIR + '/alt(/.*)?'
-+        token = TEST_MODULE_DIR + '/alt'
-+        try:
-+            self.run_ok("semanage fcontext -N -a -t tmp_t '%s'" % fcontext)
-+            output = self.run_ok("semanage fcontext -l | grep -F '%s'" % token)
-+            self.assertIn(fcontext, output,
-+                          'Added fcontext rule is missing from the listing:\n%s'
-+                          % output)
-+        finally:
-+            # Ignore failures here so that a failed add does not mask itself
-+            # with a failed delete.
-+            self.run_cmd("semanage fcontext -N -d '%s'" % fcontext)
-+
-+        status, output = self.run_cmd("semanage fcontext -l | grep -F '%s'"
-+                                     % token)
-+        self.assertNotEqual(status, 0,
-+                            'Removed fcontext rule is still listed:\n%s'
-+                            % output)
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('policycoreutils-semodule')
-+    @OEHasPackage('checkpolicy')
-+    @OEHasPackage('semodule-utils-semodule-package')
-+    @OETestDepends(['selinux.SELinuxToolTest.test_matchpathcon'])
-+    def test_semodule_load_remove(self):
-+        self.require_confining_policy()
-+        domain = self.require_admin()
-+        self.require_shadow_denial()
-+
-+        # semodule re-expands the whole policy, which does not fit on a small
-+        # qemu guest: it gets OOM-killed rather than reporting an error.
-+        memtotal = self.memtotal_mb()
-+        if memtotal is not None and memtotal < 512:
-+            self.skipTest('Loading a policy module needs more memory than this '
-+                          'target has (%d MB); raise it, e.g. with '
-+                          'TEST_QEMUPARAMS = "-m 1024"' % memtotal)
-+
-+        te = '%s/%s.te' % (TEST_MODULE_DIR, TEST_MODULE_NAME)
-+        mod = '%s/%s.mod' % (TEST_MODULE_DIR, TEST_MODULE_NAME)
-+        pp = '%s/%s.pp' % (TEST_MODULE_DIR, TEST_MODULE_NAME)
-+
-+        # checkmodule needs -M when the policy has MLS/MCS enabled.
-+        mls = self.sestatus().get('Policy MLS status', '').lower() == 'enabled'
-+        checkmodule = 'checkmodule -m %s-o %s %s' % ('-M ' if mls else '', mod, te)
-+
-+        self.write_file(te, TEST_MODULE_TE % {'module': TEST_MODULE_NAME,
-+                                              'domain': domain})
-+        try:
-+            self.run_ok(checkmodule)
-+            self.run_ok('semodule_package -o %s -m %s' % (pp, mod))
-+
-+            self.run_ok('semodule -i %s' % pp)
-+            self.assertIn(TEST_MODULE_NAME, self.run_ok('semodule -l'),
-+                          'Installed module is not listed by semodule -l')
-+
-+            # The new rule allows the domain to read /etc/shadow.
-+            status, output = self.run_cmd('cat /etc/shadow')
-+            self.assertEqual(status, 0,
-+                             'Reading /etc/shadow is still denied after loading '
-+                             '%s for %s:\n%s'
-+                             % (TEST_MODULE_NAME, domain, output))
-+        finally:
-+            self.run_cmd('semodule -r %s' % TEST_MODULE_NAME)
-+
-+        output = self.run_ok('semodule -l')
-+        self.assertNotIn(TEST_MODULE_NAME, output,
-+                         'Removed module is still listed by semodule -l:\n%s'
-+                         % output)
-+        self.assertTrue(self.shadow_read_denied(),
-+                        'Reading /etc/shadow is still allowed after removing '
-+                        '%s' % TEST_MODULE_NAME)
-+
-+
-+class SELinuxAuditTest(SELinuxTest):
-+    """The kernel audit subsystem must work and record SELinux denials."""
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OETestDepends(['selinux.SELinuxStatusTest.test_kernel_enforcing'])
-+    def test_kernel_config(self):
-+        status, output = self.run_cmd('test -r /proc/config.gz')
-+        if status != 0:
-+            self.skipTest('No /proc/config.gz on the target; the kernel needs '
-+                          'CONFIG_IKCONFIG and CONFIG_IKCONFIG_PROC to make the '
-+                          'configuration readable at runtime')
-+
-+        output = self.run_ok("zcat /proc/config.gz | grep -E '^CONFIG_"
-+                             "(AUDIT|AUDITSYSCALL|SECURITY_SELINUX)=y$'")
-+        for option in ('CONFIG_AUDIT=y', 'CONFIG_AUDITSYSCALL=y',
-+                       'CONFIG_SECURITY_SELINUX=y'):
-+            self.assertIn(option, output,
-+                          '%s is not set in the running kernel:\n%s'
-+                          % (option, output))
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('auditd')
-+    @OETestDepends(['selinux.SELinuxAuditTest.test_kernel_config'])
-+    def test_auditd_running(self):
-+        self.require_admin()
-+
-+        if 'systemd' in self.td.get('VIRTUAL-RUNTIME_init_manager', ''):
-+            status, output = self.run_cmd('systemctl is-active auditd.service')
-+            self.assertEqual(status, 0,
-+                             'auditd.service is not active:\n%s' % output)
-+        else:
-+            self.run_ok('pidof auditd')
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('auditd')
-+    @OETestDepends(['selinux.SELinuxAuditTest.test_auditd_running'])
-+    def test_auditctl_status(self):
-+        self.require_admin()
-+        output = self.run_ok('auditctl -s')
-+
-+        # 'enabled' is the kernel audit state: 0 = off, 1 = on,
-+        # 2 = on and locked until reboot.
-+        match = re.search(r'^enabled\s+(\d+)', output, re.MULTILINE)
-+        self.assertIsNotNone(match,
-+                             'auditctl -s reported no state:\n%s' % output)
-+        self.assertIn(match.group(1), ('1', '2'),
-+                      'Kernel auditing is disabled:\n%s' % output)
-+
-+    @skipIfNotFeature('selinux', 'Test requires selinux in DISTRO_FEATURES')
-+    @OEHasPackage('auditd')
-+    @OETestDepends(['selinux.SELinuxDenialTest.test_read_shadow_denied'])
-+    def test_avc_recorded(self):
-+        self.require_admin()
-+
-+        # The denied read of /etc/shadow, asserted by the test this depends on,
-+        # is the event whose record is looked for below.
-+
-+        # AVC records reach the audit log when auditd is consuming them and
-+        # the kernel ring buffer otherwise; accept either, but give auditd a
-+        # moment to flush the record it just received.
-+        deadline = time.time() + 15
-+        while True:
-+            status, ausearch = self.run_cmd('ausearch -m AVC -ts recent')
-+            status, dmesg = self.run_cmd('dmesg')
-+            records = '%s\n%s' % (ausearch, dmesg)
-+            if re.search(r'avc:\s+denied', records) and 'shadow' in records:
-+                self.logger.info('AVC record found in the audit log:\n%s'
-+                                 % ausearch.strip())
-+                return
-+            if time.time() >= deadline:
-+                break
-+            time.sleep(3)
-+
-+        self.fail('No AVC record for the denied read of /etc/shadow was found '
-+                  'in the audit log or the kernel ring buffer.\n'
-+                  'ausearch:\n%s\ndmesg (tail):\n%s'
-+                  % (ausearch, '\n'.join(dmesg.splitlines()[-20:])))
++++ b/recipes-kernel/linux-firmware/linux-firmware/0001-qcom-shikra-link-WiFi-firmware-from-the-ath10k-subdi.patch
+@@ -0,0 +1,28 @@
++From 837ae0e5beccc2f1e974afba56c22c3cf981fc4e Mon Sep 17 00:00:00 2001
++From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
++Date: Fri, 18 Sep 2026 17:52:15 +0300
++Subject: [PATCH] qcom/shikra: link WiFi firmware from the ath10k subdir
++
++On Qualcomm Shikra platform the WiFi firmware is loaded by the tqftpserv
++from the same location as the rest of the DSP firmware. Add symlink,
++pointing from the expected location to the actual WiFi firmware file.
++
++Fixes: f64d7db7d264 ("ath10k: WCN3990: hw1.0: add shikra firmware files")
++Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
++Upstream-Status: Backport [https://gitlab.com/kernel-firmware/linux-firmware/-/commit/837ae0e5beccc2f1e974afba56c22c3cf981fc4e]
++---
++ WHENCE | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/WHENCE b/WHENCE
++index a712978b..053640a0 100644
++--- a/WHENCE
+++++ b/WHENCE
++@@ -3825,6 +3825,7 @@ Version: WLAN.HL.2.0-01387-QCAHLSWMTPLZ-1
++ File: ath10k/WCN3990/hw1.0/notice.txt_wlanmdsp
++ File: ath10k/WCN3990/hw1.0/shikra/firmware-5.bin
++ File: ath10k/WCN3990/hw1.0/shikra/wlanmdsp.mbn
+++Link: qcom/shikra/wlanmdsp.mbn -> ../../ath10k/WCN3990/hw1.0/shikra/wlanmdsp.mbn
++ Version: WLAN.HL.3.3.7.c5-00093.2-QCAHLSWMTPL-1
++ File: ath10k/WCN3990/hw1.0/shikra/notice.txt_wlanmdsp
++ 
+diff --git a/recipes-kernel/linux-firmware/linux-firmware_20260916.bb b/recipes-kernel/linux-firmware/linux-firmware_20260916.bb
+index d09de7f..58bcebe 100644
+--- a/recipes-kernel/linux-firmware/linux-firmware_20260916.bb
++++ b/recipes-kernel/linux-firmware/linux-firmware_20260916.bb
+@@ -277,7 +277,7 @@ LIC_FILES_CHKSUM = "file://LICENSES/LICENCE.Abilis;md5=b5ee3f410780e56711ad48ead
+                     "
+ # WHENCE checksum is defined separately to ease overriding it if
+ # class-devupstream is selected.
+-WHENCE_CHKSUM  = "286b10e604dec1e5d49c4ac688f65a2e"
++WHENCE_CHKSUM  = "376a71c7f18efcb6e6688a73c2a548c7"
+ 
+ # These are not common licenses, set NO_GENERIC_LICENSE for them
+ # so that the license files will be copied from fetched source
+@@ -409,6 +409,7 @@ PE = "1"
+ 
+ SRC_URI = "\
+   ${KERNELORG_MIRROR}/linux/kernel/firmware/${BPN}-${PV}.tar.xz \
++  file://0001-qcom-shikra-link-WiFi-firmware-from-the-ath10k-subdi.patch \
+ "
+ 
+ BBCLASSEXTEND = "devupstream:target"
+@@ -584,6 +585,7 @@ PACKAGES =+ "${PN}-amphion-vpu-license ${PN}-amphion-vpu \
+              ${PN}-atheros-license ${PN}-ar5523 ${PN}-ar9170 ${PN}-ath6k ${PN}-ath9k ${PN}-ath3k \
+              ${PN}-carl9170 \
+              ${PN}-qcom-qcm2290-wifi ${PN}-qcom-qrb4210-wifi ${PN}-qcom-sdm845-modem \
++             ${PN}-qcom-shikra-wifi \
+              ${PN}-ar3k-license ${PN}-ar3k \
+              ${PN}-ath10k-license ${PN}-ath10k \
+              ${PN}-ath10k-qca4019 \
+@@ -2474,6 +2476,7 @@ LICENSE:${PN}-qcom-shikra-compute = "LicenseRef-Firmware-qcom-2"
+ LICENSE:${PN}-qcom-shikra-audio = "LicenseRef-Firmware-qcom-2"
+ LICENSE:${PN}-qcom-shikra-modem = "LicenseRef-Firmware-qcom-2"
+ LICENSE:${PN}-qcom-shikra-qupv3fw = "LicenseRef-Firmware-qcom"
++LICENSE:${PN}-qcom-shikra-wifi = "LicenseRef-Firmware-qualcommAthos-ath10k"
+ LICENSE:${PN}-qcom-sm8150-adreno = "LicenseRef-Firmware-qcom"
+ LICENSE:${PN}-qcom-sm8250-adreno = "LicenseRef-Firmware-qcom"
+ LICENSE:${PN}-qcom-sm8250-audio = "LicenseRef-Firmware-qcom"
+@@ -2654,6 +2657,7 @@ FILES:${PN}-qcom-shikra-compute = "${firmwaredir}/qcom/shikra/cdsp*.*"
+ FILES:${PN}-qcom-shikra-audio = "${nonarch_base_libdir}/firmware/qcom/shikra/lpaicp*.*"
+ FILES:${PN}-qcom-shikra-modem = "${nonarch_base_libdir}/firmware/qcom/shikra/cqs/qdsp6sw.mbn*"
+ FILES:${PN}-qcom-shikra-qupv3fw = "${firmwaredir}/qcom/shikra/qupv3fw.elf*"
++FILES:${PN}-qcom-shikra-wifi = "${firmwaredir}/qcom/shikra/wlanmdsp.mbn* ${firmwaredir}/ath10k/WCN3990/hw1.0/shikra/*"
+ FILES:${PN}-qcom-sm8150-adreno = "${firmwaredir}/qcom/sm8150/a640*.*"
+ FILES:${PN}-qcom-sm8250-adreno = "${firmwaredir}/qcom/sm8250/a650*.*"
+ FILES:${PN}-qcom-sm8250-audio = "${firmwaredir}/qcom/sm8250/adsp*.*"
+@@ -2835,6 +2839,7 @@ RDEPENDS:${PN}-qcom-shikra-compute = "${PN}-qcom-2-license"
+ RDEPENDS:${PN}-qcom-shikra-audio = "${PN}-qcom-2-license"
+ RDEPENDS:${PN}-qcom-shikra-modem = "${PN}-qcom-2-license"
+ RDEPENDS:${PN}-qcom-shikra-qupv3fw = "${PN}-qcom-license"
++RDEPENDS:${PN}-qcom-shikra-wifi = "${PN}-ath10k-license"
+ RDEPENDS:${PN}-qcom-sm8150-adreno = "${PN}-qcom-license"
+ RDEPENDS:${PN}-qcom-sm8250-adreno = "${PN}-qcom-license"
+ RDEPENDS:${PN}-qcom-sm8250-audio = "${PN}-qcom-license"
 -- 
-2.43.0
+2.56.0
 
