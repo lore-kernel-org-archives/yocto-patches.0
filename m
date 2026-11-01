@@ -1,2824 +1,617 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.431.1793465172479595410
+Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11002.1793517617599759634
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 31 Oct 2026 09:46:12 -0700
+ Sun, 01 Nov 2026 00:20:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=DngfPBpo;
- dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=J7yE6ct3;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.180.131, mailfrom: jose.quaresma@oss.qualcomm.com)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69VGUEB01553977
-	for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 16:46:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=5vD/xxZxLKo
-	hebzxNdCg1JTLcAIW2ZKtgQ5cfxwi7xA=; b=DngfPBpoDFjm9NAbhK9IQFofLz9
-	LpMaiXVNpq5BVAkcawEaW0JUAqiHPVh59tsH6pSI+5Ujt2y4ARVyV5/ocTQzdbnq
-	fQKbto5lhRAsJHwTx+W2uHJXN447Nzpk75p6eZ8NlFXxb5AthKYPyYoNy4moZMLi
-	OOh0p6uraVN+Pbtbz0xKRr7dWsdG0IMRN3Fy8CeyWfZ1qvefUsjRjDSS1zOyiNWv
-	7Fb0jqAlNdkPNJFb6x0k+TZtVTDPdhh7lQ7m4EXllFdIVIb/pflyCc5Qh6BHmd9e
-	podrHCih0I7YZBL2O3xa1sZ1L1frCe1YE7x0UklRBz8NzX/JSNcYuQP0s5g==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hn8q7she5-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 16:46:10 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-91c7bf2d734so11343666d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 09:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793465170; x=1794069970; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=5vD/xxZxLKohebzxNdCg1JTLcAIW2ZKtgQ5cfxwi7xA=;
-        b=J7yE6ct3s+PBGvlMGY0Itwc/8OjUAOjfwxYNQXGIcHI2Z7y3SHbgXmZG/lFghQ99KZ
-         iAP38cJ6YRuNQkvnNCV9eKq+9HD/rbDdhDxLwELyFuPzJ7krgGL1GX1WwR2p3OVuDCsx
-         0yIdLIkmQ4wcx5yUCfuqRHbGwzgyCElcoxn4nAQ4tZvcmvID1Z1RTn29SCs6HTUAUt8Q
-         OWdc7hWWA0STFP9bauhuVxswyTJzQAicUKVllMmkiE24fP29pw3z+ErvaJ+HGbqXkhBK
-         npUVAeNmv6QHgp8J+iVam8NA32qy/g1L4v6j3TMeUgRKQob6w3iYrMW/2fs9RRR8oMed
-         iVsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793465170; x=1794069970;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5vD/xxZxLKohebzxNdCg1JTLcAIW2ZKtgQ5cfxwi7xA=;
-        b=uF6igEgYrS4niWohSaAbJzokcvoiYglRfrf5SqUmoAP4yIrb73qlszldQzG8lgrSQh
-         ljnrv8HgD9SLXIoiyZYb9E8hNh0HzSURuQhb857eNCvzVlFtY2/5dJ3KNhS6C6wMFm5K
-         5VMIhXxgzhwWEiIctWhFlOsxiOwsL/yceVlCYlD2MmsT3AgKQawssM9WXLQ6zDCxFSlu
-         Nv7p8ggtHiZMOHcsPIqU/AlJl0hqLVjg4oX3gmn37VyaixZo3N1ej4oxG8h0NMIYldwh
-         K/EB2zZzDF58owbBHRdqcaIcXXSrzbM/7uCjSD5V4MMmFHAtCnOIYBwP+DzYqaQUzI+G
-         WcEQ==
-X-Gm-Message-State: AFq9FYImfBffLmaCYm7ebp8JRZ8KG6RCWl7R3TFoWMGAPDGBuBBMmKCB
-	O6kfKfeZYfYuNEKZOzYnTmhL/WX9LdSv2NZgVOgRsaTHhKYmQKrEeazhu1eSp7/zvQmDOIa12c4
-	sfb5um9IRh97V3FmPnMKwxHMWK902fTMPVoHGMF4KZuxRRXG2MW2jJJj2s+E8+Dkn7b6QyiLIfR
-	NW/MCrVJwyqA==
-X-Gm-Gg: AYBFou2U8ghMDUlQdiaOrts0YStmJmj9W5KJXr9mu1JtJ7oNWsaRc9gMXfAQOKcWC8B
-	e+G0JcV5EgLNsFoxPDYy2QV9xixsTSeH9H8Dekl08bg9Co3yzCCsjUa3CGyiu70Z0h5mYnNGFIA
-	VeXufBHq9UOXfOaFFCUsfajX+kRsGCRKJLQN/ElecR7xQ1+c7V3ESWH/gWGCwXFOk7Yh26c+vCW
-	N5TJ9/Dp9QYhrC7iuGYGRYlOZ368GRyIvkfd/yVnz+vgZoX1jJYsX4BcKT2Q3D1GbGE1qqyStkh
-	SqVjItqd2KBwG03GDFXMKTFxnG8wSM63uOQxDuLVF6EQlkFBkEWjISPBPudtRSzvfww9ykrzbSc
-	F6B9jEScCY72JtLzWdy4wAlK2T7dYK6B9FPWO+7rbINJLjnPfo3p3Qv0rGWkhA6A=
-X-Received: by 2002:a05:620a:414f:b0:93f:1e3c:4a3d with SMTP id af79cd13be357-944216ea174mr921854785a.46.1793465168564;
-        Sat, 31 Oct 2026 09:46:08 -0700 (PDT)
-X-Received: by 2002:a05:620a:414f:b0:93f:1e3c:4a3d with SMTP id af79cd13be357-944216ea174mr921842485a.46.1793465166000;
-        Sat, 31 Oct 2026 09:46:06 -0700 (PDT)
-Received: from toster.lan ([185.228.162.222])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4abe885d91esm103398055e9.0.2026.10.31.09.46.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Oct 2026 09:46:04 -0700 (PDT)
-From: Jose Quaresma <jose.quaresma@oss.qualcomm.com>
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [123.125.172.206])
+	by mtasvr (Coremail) with SMTP id _____wCnG9zA5+ZqENoAAA--.4653S3;
+	Sun, 01 Nov 2026 15:18:25 +0800 (CST)
+Received: from chenqi-Redmi.. (unknown [123.125.172.206])
+	by front01 (Coremail) with SMTP id C6CowABH2Ghq5+Zqq80pAA--.21820S2;
+	Sun, 01 Nov 2026 15:17:00 +0800 (CST)
+From: chenqi_hycx@cetc.com.cn
 To: yocto-patches@lists.yoctoproject.org
-Cc: Jose Quaresma <jose.quaresma@oss.qualcomm.com>
-Subject: [meta-lts-mixins][wrynose/linux-firmware][PATCH 10/10]  linux-firmware: fix license syntax
-Date: Sat, 31 Oct 2026 16:45:43 +0000
-Message-ID: <20261031164543.1668-10-jose.quaresma@oss.qualcomm.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261031164543.1668-1-jose.quaresma@oss.qualcomm.com>
-References: <20261031164543.1668-1-jose.quaresma@oss.qualcomm.com>
+Cc: chen_q07@163.com
+Subject: [meta-selinux][PATCH] selinux: upgrade 3.10 -> 3.11
+Date: Sun,  1 Nov 2026 15:20:05 +0800
+Message-ID: <20261101072005.762131-1-chenqi_hycx@cetc.com.cn>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: VPcaA7rhLmaeuUlFbZ0sHd5hMuPywQm1
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDMxMDA2NiBTYWx0ZWRfXxWqcKj7zApCY
- l1nTZMg6VPEbFMrJY02NM5v+XwAS87hWqUiG2or6A1jQbpDgBGn6NO7Q2YWGEcQN7AYSDoEbDWE
- UUSxsm9Hw8mE04CzTE6bD9P1BQVBx/0=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDMxMDA2NiBTYWx0ZWRfX4fRdYg/2/oB8
- NUDMtzHCKpBBHrvyu6Q33F34+3ju7rlHz6FYwvWHMeMY685/e9b7nSUghp+qF/kBk1HrIbHw7+a
- MVFEibb9F58gXZolpDu2oQeitl5jtMaURsznxHpHV7ZbyzhTnp5SE1ufU/D/ZXl8OdhwsX/VJvO
- f/IIJvOsbSeDyrPHJlajuiWrYNOWIg8x+suvL8DQzWMsUT/w+SWY5miiel01whw7jT5oplOZjuG
- yX5sOc+X2Jeio4j76lcyjRYv2C5GeWPI8RV4GeSpasXRtpWP2M4elhVnCGqyNg13vWWGgR6Vr/v
- J2bJXG5/XpMd92AjIGhmZHD9+btS60IOlpedSpP8SJ1RtW+aedGYcdmJSJUky0NeX+q7RehFR0E
- xLOstgRtvBXY3V8e57mcBmged8+vwLY73P5gcKDramFtMr8EdmnqF7SMQB0LzSapl/5uyqFnUzm
- O8lGkv5VBAcW01G1Huw==
-X-Proofpoint-GUID: VPcaA7rhLmaeuUlFbZ0sHd5hMuPywQm1
-X-Authority-Analysis: v=2.4 cv=PucG/AM3 c=1 sm=1 tr=0 ts=6ae61b53 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=qOKIifoFPMYe9XV0Ag7/Dg==:17
- a=Ii1caJqkCqkA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=E74mgnG8wS9FOacRSY8A:9 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-31_04,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2610310066
+X-CM-TRANSID: C6CowABH2Ghq5+Zqq80pAA--.21820S2
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYSCmrl8FED4AABsT
+X-CM-DELIVERINFO: =?B?vRqGK6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
+	PoODccrEFRh21h5V2HAX9q96e1522XSszx503648eB8n52dt4FAhYXn/vL+4pa8ZX8UCUT
+	zyUl651oRVmjIvU0BuaNppZfu/V0KvDXhnatrK135zYak/x82b0Sfic1aJUOnQ==
+X-Coremail-Antispam: 1Uk129KBj9fXoWfur17WryDtFWUtFW5Jr1rZrc_yoW5CFy8Zo
+	WSvw4Svw1UGr13G3yjyF47Zay7GFyFgF4fAFWSqr4DJw13JFyUKryvka13ZFWIvr4UGr97
+	WFy8Gry0qrs5KF15l-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn5kqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6r4xYxn0WfAS
+	r-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUUbsAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI
+	8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJ
+	M28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2I
+	x0cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vE
+	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j
+	6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41lw4CEc2x0rVAKj4xxMxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCF
+	s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r
+	1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
+	JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r
+	1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUv
+	cSsGvfC2KfnxnUUI43ZEXa7IU8oSoJUUUUU==
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Oct 2026 16:46:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5203
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 01 Nov 2026 07:20:22 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5204
 Content-Type: text/plain; charset="utf-8"
 
-Signed-off-by: Jose Quaresma <jose.quaresma@oss.qualcomm.com>
----
- .../linux-firmware/linux-firmware_20261019.bb | 1680 ++++++++---------
- 1 file changed, 840 insertions(+), 840 deletions(-)
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-diff --git a/recipes-kernel/linux-firmware/linux-firmware_20261019.bb b/recipes-kernel/linux-firmware/linux-firmware_20261019.bb
-index d9c8d68..6cd31c9 100644
---- a/recipes-kernel/linux-firmware/linux-firmware_20261019.bb
-+++ b/recipes-kernel/linux-firmware/linux-firmware_20261019.bb
-@@ -18,137 +18,137 @@ REMOVE_UNLICENSED += "yamaha/yss225_registers.bin"
+All recipes come from the same SELinuxProject/selinux checkout, so they
+are upgraded together.
+
+ChangeLog:
+https://github.com/SELinuxProject/selinux/releases/tag/3.11
+
+* Several security improvements in libselinux, dbus, gui, mcstrans and
+  sandbox
+* Rewrote libselinux selinux_restorecon(3) to eliminate TOCTOU issues in
+  file relabeling
+* Rewrote restorecond and sandbox/seunshare to eliminate TOCTOU issues on
+  their path-based operations
+* restorecon only logs an error on a read-only filesystem instead of
+  failing, allowing relabeling with read-only BTRFS subvolumes
+* Added setfiles -A option to disable SELINUX_RESTORECON_ADD_ASSOC
+* Added SELINUX_RESTORECON_SKIP_MULTILINK flag to selinux_restorecon(3)
+  and made restorecond always pass it to avoid mislabeling hard links
+* Improved restorecond.service to use the new restorecond -F option to
+  run in the foreground
+* Added secilcheck program to check CIL neverallows against binary
+  policies
+* Dropped legacy fscon statement support from checkpolicy
+* Fixed checkpolicy handling of out-of-range and complement at range
+  boundaries for xperm rules
+* Fixed sandbox/seunshare remounting of /tmp and /var/tmp within the
+  sandbox, its getopt flags and its interactive prompt for saving files
+* Dropped sandbox/seunshare -k/--kill support
+* Added a cache size cap, max client cap, receive timeout and maxbit cap
+  to mcstrans to reduce the risk of DoS from misbehaving clients
+* Fixed mcstrans UAF on SIGHUP reload of its configuration files
+* Fixed semanage audit fd creation to avoid hitting RLIMIT_NOFILE on
+  large semanage import operations
+* Fixed libsepol generation of constraint expressions with a list of
+  names when writing policy.conf from CIL
+* Fixed libsepol to generate constrain/validatetrans instead of
+  mlsconstrain/mlsvalidatetrans when converting a module to CIL
+* Fixed libsepol selection of tunableif or booleanif, CIL source file
+  info reporting, xperm rule permission linking and an off-by-one error
+  in cats_ebitmap_len()
+* Fixed libselinux constructor to not clobber errno
+* Fixed libselinux selabel_partial_match(3) to correctly find partial
+  matches
+* Fixed libselinux selinux_init_policy_load() to still try to mount
+  selinuxfs when the mount of sysfs on /sys fails
+* Dropped Python 2 support from audit2why
+* Reformatted entire tree based on .clang-format
+* Updated pywrap and sepolicy build targets to use the Python3 build
+  module
+* Fixed build errors with glibc 2.43, non-pthread and uclibc builds
+* Fixed multiple musl/llvm-based build issues
+* Bug fixes
+
+Recipe changes:
+
+* Drop the patches that are upstream now: the libselinux LSF
+  transitional API removal and the sepolicy releasever workaround.  The
+  libselinux recipe has no patches left, so its recipe-local
+  FILESEXTRAPATHS goes away too.
+* Refresh the remaining patches for the reformatted sources.  No
+  functional change.
+* pywrap and sepolicy now build wheels with "python3 -m build
+  --no-isolation", so libselinux-python and selinux-python depend on
+  python3-build-native and python3-wheel-native.
+
+Assisted-by: Codewhale:deepseek-v4-flash
+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
+---
+ ...heckpolicy_3.10.bb => checkpolicy_3.11.bb} |  0
+ ...thon_3.10.bb => libselinux-python_3.11.bb} |  4 +-
+ ...hon-modules-install-path-for-multili.patch | 11 ++--
+ ...T-and-rely-on-the-installed-file-nam.patch | 10 +--
+ ...re-drop-the-obsolete-LSF-transitiona.patch | 40 ------------
+ ...{libselinux_3.10.bb => libselinux_3.11.bb} |  5 --
+ ...anage-Fix-execve-segfaults-on-Ubuntu.patch |  9 +--
+ ...anage-allow-to-disable-audit-support.patch | 46 +++++++-------
+ ...ibsemanage_3.10.bb => libsemanage_3.11.bb} |  0
+ .../{libsepol_3.10.bb => libsepol_3.11.bb}    |  0
+ .../{mcstrans_3.10.bb => mcstrans_3.11.bb}    |  0
+ ...eutils_3.10.bb => policycoreutils_3.11.bb} |  0
+ ...estorecond_3.10.bb => restorecond_3.11.bb} |  0
+ .../{secilc_3.10.bb => secilc_3.11.bb}        |  0
+ ...inux-dbus_3.10.bb => selinux-dbus_3.11.bb} |  0
+ ...elinux-gui_3.10.bb => selinux-gui_3.11.bb} |  0
+ ...stall-path-for-new-pymodule-sepolicy.patch | 13 ++--
+ ...f.substitutions-releasever-to-empty-.patch | 61 -------------------
+ ...-python_3.10.bb => selinux-python_3.11.bb} |  4 +-
+ ...andbox_3.10.bb => selinux-sandbox_3.11.bb} |  0
+ recipes-security/selinux/selinux_common.inc   |  2 +-
+ ...e-utils_3.10.bb => semodule-utils_3.11.bb} |  0
+ 22 files changed, 41 insertions(+), 164 deletions(-)
+ rename recipes-security/selinux/{checkpolicy_3.10.bb => checkpolicy_3.11.bb} (100%)
+ rename recipes-security/selinux/{libselinux-python_3.10.bb => libselinux-python_3.11.bb} (94%)
+ delete mode 100644 recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch
+ rename recipes-security/selinux/{libselinux_3.10.bb => libselinux_3.11.bb} (86%)
+ rename recipes-security/selinux/{libsemanage_3.10.bb => libsemanage_3.11.bb} (100%)
+ rename recipes-security/selinux/{libsepol_3.10.bb => libsepol_3.11.bb} (100%)
+ rename recipes-security/selinux/{mcstrans_3.10.bb => mcstrans_3.11.bb} (100%)
+ rename recipes-security/selinux/{policycoreutils_3.10.bb => policycoreutils_3.11.bb} (100%)
+ rename recipes-security/selinux/{restorecond_3.10.bb => restorecond_3.11.bb} (100%)
+ rename recipes-security/selinux/{secilc_3.10.bb => secilc_3.11.bb} (100%)
+ rename recipes-security/selinux/{selinux-dbus_3.10.bb => selinux-dbus_3.11.bb} (100%)
+ rename recipes-security/selinux/{selinux-gui_3.10.bb => selinux-gui_3.11.bb} (100%)
+ delete mode 100644 recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch
+ rename recipes-security/selinux/{selinux-python_3.10.bb => selinux-python_3.11.bb} (96%)
+ rename recipes-security/selinux/{selinux-sandbox_3.10.bb => selinux-sandbox_3.11.bb} (100%)
+ rename recipes-security/selinux/{semodule-utils_3.10.bb => semodule-utils_3.11.bb} (100%)
+
+diff --git a/recipes-security/selinux/checkpolicy_3.10.bb b/recipes-security/selinux/checkpolicy_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/checkpolicy_3.10.bb
+rename to recipes-security/selinux/checkpolicy_3.11.bb
+diff --git a/recipes-security/selinux/libselinux-python_3.10.bb b/recipes-security/selinux/libselinux-python_3.11.bb
+similarity index 94%
+rename from recipes-security/selinux/libselinux-python_3.10.bb
+rename to recipes-security/selinux/libselinux-python_3.11.bb
+index 01b7b93..4ad16b8 100644
+--- a/recipes-security/selinux/libselinux-python_3.10.bb
++++ b/recipes-security/selinux/libselinux-python_3.11.bb
+@@ -14,13 +14,13 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/libselinux:"
+ SRC_URI += "\
+         file://0001-Makefile-fix-python-modules-install-path-for-multili.patch;patchdir=.. \
+         file://0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch;patchdir=.. \
+-        file://0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch;patchdir=.. \
+         file://0004-libselinux-Replace-PyString_FromString-with-PyUnicode.patch;patchdir=.. \
+         "
  
+ S = "${UNPACKDIR}/${BP}/libselinux"
  
- LICENSE = "\
--    LicenseRef-Firmware-Abilis \
--    AND LicenseRef-Firmware-adsp-sst \
--    AND LicenseRef-Firmware-advansys \
--    AND LicenseRef-Firmware-aeonsemi \
--    AND LicenseRef-Firmware-agere \
--    AND LicenseRef-Firmware-aic \
--    AND LicenseRef-Firmware-airoha \
--    AND LicenseRef-Firmware-alacritech \
--    AND LicenseRef-Firmware-amdgpu \
--    AND LicenseRef-Firmware-amdisp \
--    AND LicenseRef-Firmware-amdnpu \
--    AND LicenseRef-Firmware-amd-pmf \
--    AND LicenseRef-Firmware-amd-sev \
--    AND LicenseRef-Firmware-amd-ucode \
--    AND LicenseRef-Firmware-amlogic \
--    AND LicenseRef-Firmware-amlogic-vdec \
--    AND LicenseRef-Firmware-amphion-vpu \
--    AND LicenseRef-Firmware-atheros-firmware \
--    AND LicenseRef-Firmware-atmel \
--    AND LicenseRef-Firmware-bfa \
--    AND LicenseRef-Firmware-bmi260 \
--    AND LicenseRef-Firmware-bnx2 \
--    AND LicenseRef-Firmware-bnx2x \
--    AND LicenseRef-Firmware-broadcom-bcm43xx \
--    AND LicenseRef-Firmware-ca0132 \
--    AND LicenseRef-Firmware-cadence \
--    AND LicenseRef-Firmware-cavium \
--    AND LicenseRef-Firmware-chelsio-firmware \
--    AND LicenseRef-Firmware-cirrus \
--    AND LicenseRef-Firmware-cnm \
--    AND LicenseRef-Firmware-conexant \
--    AND LicenseRef-Firmware-cw1200 \
--    AND LicenseRef-Firmware-cw1200-sdd \
--    AND LicenseRef-Firmware-cxgb3 \
--    AND LicenseRef-Firmware-cypress \
--    AND LicenseRef-Firmware-dabusb \
--    AND LicenseRef-Firmware-dell \
--    AND LicenseRef-Firmware-dib0700 \
--    AND LicenseRef-Firmware-drxk \
--    AND LicenseRef-Firmware-e100 \
--    AND LicenseRef-Firmware-emi26 \
--    AND LicenseRef-Firmware-ene-firmware \
--    AND LicenseRef-Firmware-fw-sst-0f28 \
--    AND LicenseRef-Firmware-go7007 \
--    AND LicenseRef-Firmware-hfi1-firmware \
--    AND LicenseRef-Firmware-HP \
--    AND LicenseRef-Firmware-i915 \
--    AND LicenseRef-Firmware-ib-qib \
--    AND LicenseRef-Firmware-ibt-firmware \
--    AND LicenseRef-Firmware-ice \
--    AND LicenseRef-Firmware-ice-enhanced \
--    AND LicenseRef-Firmware-inside-secure \
--    AND LicenseRef-Firmware-intel \
--    AND LicenseRef-Firmware-intel-vpu \
--    AND LicenseRef-Firmware-ipu3-firmware \
--    AND LicenseRef-Firmware-it913x \
--    AND LicenseRef-Firmware-ivsc \
--    AND LicenseRef-Firmware-iwlwifi-firmware \
--    AND LicenseRef-Firmware-ixp4xx \
--    AND LicenseRef-Firmware-IntcSST2 \
--    AND LicenseRef-Firmware-kaweth \
--    AND LicenseRef-Firmware-keyspan \
--    AND LicenseRef-Firmware-lenovo \
--    AND LicenseRef-Firmware-linaro \
--    AND LicenseRef-Firmware-Lontium \
--    AND LicenseRef-Firmware-mali-csffw \
--    AND LicenseRef-Firmware-Marvell \
--    AND LicenseRef-Firmware-mediatek \
--    AND LicenseRef-Firmware-mellanox \
--    AND LicenseRef-Firmware-mga \
--    AND LicenseRef-Firmware-microchip \
--    AND LicenseRef-Firmware-montage \
--    AND LicenseRef-Firmware-morsemicro \
--    AND LicenseRef-Firmware-moxa \
--    AND LicenseRef-Firmware-myri10ge-firmware \
--    AND LicenseRef-Firmware-netronome \
--    AND LicenseRef-Firmware-nvidia \
--    AND LicenseRef-Firmware-nxp \
--    AND LicenseRef-Firmware-nxp-mc-firmware \
--    AND LicenseRef-Firmware-OLPC \
--    AND LicenseRef-Firmware-ath9k-htc \
--    AND LicenseRef-Firmware-phanfw \
--    AND LicenseRef-Firmware-powervr \
--    AND LicenseRef-Firmware-qat \
--    AND LicenseRef-Firmware-qcom \
--    AND LicenseRef-Firmware-qcom-2 \
--    AND LicenseRef-Firmware-qcom-yamato \
--    AND LicenseRef-Firmware-qed \
--    AND LicenseRef-Firmware-qla1280 \
--    AND LicenseRef-Firmware-qla2xxx \
--    AND LicenseRef-Firmware-qualcommAthos-ar3k \
--    AND LicenseRef-Firmware-qualcommAthos-ath10k \
--    AND LicenseRef-Firmware-r8169 \
--    AND LicenseRef-Firmware-r8a779x-usb3 \
--    AND LicenseRef-Firmware-radeon \
--    AND LicenseRef-Firmware-ralink-a-mediatek-company-firmware \
--    AND LicenseRef-Firmware-ralink-firmware \
--    AND LicenseRef-Firmware-r8a779g-pcie-phy \
--    AND LicenseRef-Firmware-rockchip \
--    AND LicenseRef-Firmware-rp2 \
--    AND LicenseRef-Firmware-rsi \
--    AND LicenseRef-Firmware-rt1320 \
--    AND LicenseRef-Firmware-rtlwifi-firmware \
--    AND LicenseRef-Firmware-imx-sdma-firmware \
--    AND LicenseRef-Firmware-s5p-mfc \
--    AND LicenseRef-Firmware-sensoray \
--    AND LicenseRef-Firmware-siano \
--    AND LicenseRef-Firmware-tehuti \
--    AND LicenseRef-Firmware-ti-connectivity \
--    AND LicenseRef-Firmware-ti-keystone \
--    AND LicenseRef-Firmware-ti-tspa \
--    AND LicenseRef-Firmware-tigon \
--    AND LicenseRef-Firmware-tlg2300 \
--    AND LicenseRef-Firmware-typhoon \
--    AND LicenseRef-Firmware-ueagle-atm4-firmware \
--    AND LicenseRef-Firmware-via-vt6656 \
--    AND LicenseRef-Firmware-vxge \
--    AND LicenseRef-Firmware-wfx \
--    AND LicenseRef-Firmware-wl1251 \
--    AND LicenseRef-Firmware-xc4000 \
--    AND LicenseRef-Firmware-xc5000 \
--    AND LicenseRef-Firmware-xc5000c \
--    AND LicenseRef-Firmware-xe \
--    AND LicenseRef-Firmware-WHENCE \
--    AND GPL-1.0-only \
--    AND GPL-2.0-or-later \
--    AND GPL-2.0-only \
--    AND GPL-3.0-only \
--    AND MPL-1.1 \
--    AND Apache-2.0 \
--    AND MIT \
-+    Firmware-Abilis \
-+    & Firmware-adsp-sst \
-+    & Firmware-advansys \
-+    & Firmware-aeonsemi \
-+    & Firmware-agere \
-+    & Firmware-aic \
-+    & Firmware-airoha \
-+    & Firmware-alacritech \
-+    & Firmware-amdgpu \
-+    & Firmware-amdisp \
-+    & Firmware-amdnpu \
-+    & Firmware-amd-pmf \
-+    & Firmware-amd-sev \
-+    & Firmware-amd-ucode \
-+    & Firmware-amlogic \
-+    & Firmware-amlogic-vdec \
-+    & Firmware-amphion-vpu \
-+    & Firmware-atheros-firmware \
-+    & Firmware-atmel \
-+    & Firmware-bfa \
-+    & Firmware-bmi260 \
-+    & Firmware-bnx2 \
-+    & Firmware-bnx2x \
-+    & Firmware-broadcom-bcm43xx \
-+    & Firmware-ca0132 \
-+    & Firmware-cadence \
-+    & Firmware-cavium \
-+    & Firmware-chelsio-firmware \
-+    & Firmware-cirrus \
-+    & Firmware-cnm \
-+    & Firmware-conexant \
-+    & Firmware-cw1200 \
-+    & Firmware-cw1200-sdd \
-+    & Firmware-cxgb3 \
-+    & Firmware-cypress \
-+    & Firmware-dabusb \
-+    & Firmware-dell \
-+    & Firmware-dib0700 \
-+    & Firmware-drxk \
-+    & Firmware-e100 \
-+    & Firmware-emi26 \
-+    & Firmware-ene-firmware \
-+    & Firmware-fw-sst-0f28 \
-+    & Firmware-go7007 \
-+    & Firmware-hfi1-firmware \
-+    & Firmware-HP \
-+    & Firmware-i915 \
-+    & Firmware-ib-qib \
-+    & Firmware-ibt-firmware \
-+    & Firmware-ice \
-+    & Firmware-ice-enhanced \
-+    & Firmware-inside-secure \
-+    & Firmware-intel \
-+    & Firmware-intel-vpu \
-+    & Firmware-ipu3-firmware \
-+    & Firmware-it913x \
-+    & Firmware-ivsc \
-+    & Firmware-iwlwifi-firmware \
-+    & Firmware-ixp4xx \
-+    & Firmware-IntcSST2 \
-+    & Firmware-kaweth \
-+    & Firmware-keyspan \
-+    & Firmware-lenovo \
-+    & Firmware-linaro \
-+    & Firmware-Lontium \
-+    & Firmware-mali-csffw \
-+    & Firmware-Marvell \
-+    & Firmware-mediatek \
-+    & Firmware-mellanox \
-+    & Firmware-mga \
-+    & Firmware-microchip \
-+    & Firmware-montage \
-+    & Firmware-morsemicro \
-+    & Firmware-moxa \
-+    & Firmware-myri10ge-firmware \
-+    & Firmware-netronome \
-+    & Firmware-nvidia \
-+    & Firmware-nxp \
-+    & Firmware-nxp-mc-firmware \
-+    & Firmware-OLPC \
-+    & Firmware-ath9k-htc \
-+    & Firmware-phanfw \
-+    & Firmware-powervr \
-+    & Firmware-qat \
-+    & Firmware-qcom \
-+    & Firmware-qcom-2 \
-+    & Firmware-qcom-yamato \
-+    & Firmware-qed \
-+    & Firmware-qla1280 \
-+    & Firmware-qla2xxx \
-+    & Firmware-qualcommAthos-ar3k \
-+    & Firmware-qualcommAthos-ath10k \
-+    & Firmware-r8169 \
-+    & Firmware-r8a779x-usb3 \
-+    & Firmware-radeon \
-+    & Firmware-ralink-a-mediatek-company-firmware \
-+    & Firmware-ralink-firmware \
-+    & Firmware-r8a779g-pcie-phy \
-+    & Firmware-rockchip \
-+    & Firmware-rp2 \
-+    & Firmware-rsi \
-+    & Firmware-rt1320 \
-+    & Firmware-rtlwifi-firmware \
-+    & Firmware-imx-sdma-firmware \
-+    & Firmware-s5p-mfc \
-+    & Firmware-sensoray \
-+    & Firmware-siano \
-+    & Firmware-tehuti \
-+    & Firmware-ti-connectivity \
-+    & Firmware-ti-keystone \
-+    & Firmware-ti-tspa \
-+    & Firmware-tigon \
-+    & Firmware-tlg2300 \
-+    & Firmware-typhoon \
-+    & Firmware-ueagle-atm4-firmware \
-+    & Firmware-via-vt6656 \
-+    & Firmware-vxge \
-+    & Firmware-wfx \
-+    & Firmware-wl1251 \
-+    & Firmware-xc4000 \
-+    & Firmware-xc5000 \
-+    & Firmware-xc5000c \
-+    & Firmware-xe \
-+    & Firmware-WHENCE \
-+    & GPL-1.0-only \
-+    & GPL-2.0-or-later \
-+    & GPL-2.0-only \
-+    & GPL-3.0-only \
-+    & MPL-1.1 \
-+    & Apache-2.0 \
-+    & MIT \
- "
+-DEPENDS = "libsepol libpcre2 swig-native python3-setuptools-scm-native python3-pip-native"
++DEPENDS = "libsepol libpcre2 swig-native python3-setuptools-scm-native python3-pip-native \
++           python3-build-native python3-wheel-native"
+ DEPENDS:append:libc-musl = " fts"
  
- LIC_FILES_CHKSUM = "file://LICENSES/LICENCE.Abilis;md5=b5ee3f410780e56711ad48eadc22b8bc \
-@@ -852,8 +852,8 @@ PACKAGES =+ "${PN}-amphion-vpu-license ${PN}-amphion-vpu \
-              "
+ RDEPENDS:${PN} = "libselinux python3-core python3-shell"
+diff --git a/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch b/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch
+index 8002149..0d0ebe6 100644
+--- a/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch
++++ b/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch
+@@ -11,18 +11,15 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+  1 file changed, 1 insertion(+), 1 deletion(-)
  
- # For Amphion VPU
--LICENSE:${PN}-amphion-vpu = "LicenseRef-Firmware-amphion-vpu"
--LICENSE:${PN}-amphion-vpu-license = "LicenseRef-Firmware-amphion-vpu"
-+LICENSE:${PN}-amphion-vpu = "Firmware-amphion-vpu"
-+LICENSE:${PN}-amphion-vpu-license = "Firmware-amphion-vpu"
- 
- FILES:${PN}-amphion-vpu = "${firmwaredir}/amphion/*"
- FILES:${PN}-amphion-vpu-license = " \
-@@ -862,8 +862,8 @@ FILES:${PN}-amphion-vpu-license = " \
- RDEPENDS:${PN}-amphion-vpu += "${PN}-amphion-vpu-license"
- 
- # For cw1200
--LICENSE:${PN}-cw1200 = "LicenseRef-Firmware-cw1200"
--LICENSE:${PN}-cw1200-license = "LicenseRef-Firmware-cw1200"
-+LICENSE:${PN}-cw1200 = "Firmware-cw1200"
-+LICENSE:${PN}-cw1200-license = "Firmware-cw1200"
- 
- FILES:${PN}-cw1200 = " \
-     ${firmwaredir}/sdd_sagrad_1091_1098.bin* \
-@@ -874,12 +874,12 @@ FILES:${PN}-cw1200-license = "${firmwaredir}/LICENCE.cw1200"
- RDEPENDS:${PN}-cw1200 += "${PN}-cw1200-license"
- 
- # For atheros
--LICENSE:${PN}-ar5523 = "LicenseRef-Firmware-atheros-firmware"
--LICENSE:${PN}-ar9170 = "LicenseRef-Firmware-atheros-firmware"
--LICENSE:${PN}-ath3k = "LicenseRef-Firmware-atheros-firmware"
--LICENSE:${PN}-ath6k = "LicenseRef-Firmware-atheros-firmware"
--LICENSE:${PN}-ath9k = "LicenseRef-Firmware-atheros-firmware"
--LICENSE:${PN}-atheros-license = "LicenseRef-Firmware-atheros-firmware"
-+LICENSE:${PN}-ar5523 = "Firmware-atheros-firmware"
-+LICENSE:${PN}-ar9170 = "Firmware-atheros-firmware"
-+LICENSE:${PN}-ath3k = "Firmware-atheros-firmware"
-+LICENSE:${PN}-ath6k = "Firmware-atheros-firmware"
-+LICENSE:${PN}-ath9k = "Firmware-atheros-firmware"
-+LICENSE:${PN}-atheros-license = "Firmware-atheros-firmware"
- 
- FILES:${PN}-atheros-license = "${firmwaredir}/LICENCE.atheros_firmware"
- FILES:${PN}-ar5523 = " \
-@@ -916,50 +916,50 @@ FILES:${PN}-carl9170 = " \
- LICENSE:${PN}-carl9170 = "GPL-2.0-or-later"
- 
- # For QualCommAthos
--LICENSE:${PN}-ar3k = "LicenseRef-Firmware-qualcommAthos-ar3k AND LicenseRef-Firmware-atheros-firmware"
--LICENSE:${PN}-ar3k-license = "LicenseRef-Firmware-qualcommAthos-ar3k"
--LICENSE:${PN}-ath10k = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca4019 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca6174 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca9377 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca9887 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca9888 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca988x = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca9984 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-qca99x0 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-wcn3990 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath10k-license = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-ipq5018 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-ipq6018 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-ipq8074 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-qca2066 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-qca6390 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-qca6698aq = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-qcn9074 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-wcn6750 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath11k-wcn6855 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath12k = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath12k-ipq5424 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath12k-qcc2072 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath12k-qcn9274 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-ath12k-wcn7850 = "LicenseRef-Firmware-qualcommAthos-ath10k"
+ diff --git a/libselinux/src/Makefile b/libselinux/src/Makefile
+-index 0dbba7f4..d8011c99 100644
++index 9ecdbd4d..5158959c 100644
+ --- a/libselinux/src/Makefile
+ +++ b/libselinux/src/Makefile
+-@@ -198,7 +198,7 @@ ifneq ($(DISABLE_SHARED),y)
++@@ -196,7 +196,7 @@ ifneq ($(DISABLE_SHARED),y)
+  endif
+  
+  install-pywrap: pywrap
+--	CFLAGS="$(CPPFLAGS) $(CFLAGS) $(SWIG_CFLAGS)" $(PYTHON) -m pip install --no-build-isolation --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` $(PYTHON_SETUP_ARGS) .
+-+	CFLAGS="$(CPPFLAGS) $(CFLAGS) $(SWIG_CFLAGS)" $(PYTHON) -m pip install --no-build-isolation --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps $(PYTHON_SETUP_ARGS) .
++-	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` dist/*.whl
+++	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps dist/*.whl
+  	install -m 644 $(SWIGPYOUT) $(DESTDIR)$(PYTHONLIBDIR)/selinux/__init__.py
+  	ln -sf --relative $(DESTDIR)$(PYTHONLIBDIR)/selinux/_selinux$(PYCEXT) $(DESTDIR)$(PYTHONLIBDIR)/_selinux$(PYCEXT)
+  
+--- 
+-2.34.1
 -
--LICENSE:${PN}-aic-license = "LicenseRef-Firmware-aic"
--LICENSE:${PN}-aic-aic8800d80 = "LicenseRef-Firmware-aic"
+diff --git a/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch b/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch
+index b6bd671..b9a54fe 100644
+--- a/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch
++++ b/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch
+@@ -27,10 +27,9 @@ Signed-off-by: Changqing Li <changqing.li@windriver.com>
+  1 file changed, 1 insertion(+), 2 deletions(-)
+ 
+ diff --git a/libselinux/src/Makefile b/libselinux/src/Makefile
+-index d8011c99..c611422d 100644
+ --- a/libselinux/src/Makefile
+ +++ b/libselinux/src/Makefile
+-@@ -15,7 +15,6 @@ INCLUDEDIR ?= $(PREFIX)/include
++@@ -18,7 +18,6 @@
+  PYINC ?= $(shell $(PKG_CONFIG) --cflags $(PYPREFIX))
+  PYLIBS ?= $(shell $(PKG_CONFIG) --libs $(PYPREFIX))
+  PYTHONLIBDIR ?= $(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_path('platlib', vars={'platbase': '$(PREFIX)', 'base': '$(PREFIX)'}))")
+@@ -38,15 +37,12 @@ index d8011c99..c611422d 100644
+  RUBYINC ?= $(shell $(RUBY) -e 'puts "-I" + RbConfig::CONFIG["rubyarchhdrdir"] + " -I" + RbConfig::CONFIG["rubyhdrdir"]')
+  RUBYLIBS ?= $(shell $(RUBY) -e 'puts "-L" + RbConfig::CONFIG["libdir"] + " -L" + RbConfig::CONFIG["archlibdir"] + " " + RbConfig::CONFIG["LIBRUBYARG_SHARED"]')
+  RUBYINSTALL ?= $(shell $(RUBY) -e 'puts RbConfig::CONFIG["vendorarchdir"]')
+-@@ -200,7 +199,7 @@ endif
++@@ -198,7 +197,7 @@
+  install-pywrap: pywrap
+- 	CFLAGS="$(CPPFLAGS) $(CFLAGS) $(SWIG_CFLAGS)" $(PYTHON) -m pip install --no-build-isolation --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps $(PYTHON_SETUP_ARGS) .
++ 	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps dist/*.whl
+  	install -m 644 $(SWIGPYOUT) $(DESTDIR)$(PYTHONLIBDIR)/selinux/__init__.py
+ -	ln -sf --relative $(DESTDIR)$(PYTHONLIBDIR)/selinux/_selinux$(PYCEXT) $(DESTDIR)$(PYTHONLIBDIR)/_selinux$(PYCEXT)
+ +	ln -sf --relative $(DESTDIR)$(PYTHONLIBDIR)/selinux/_selinux*.so $(DESTDIR)$(PYTHONLIBDIR)/
+  
+  install-rubywrap: rubywrap
+  	test -d $(DESTDIR)$(RUBYINSTALL) || install -m 755 -d $(DESTDIR)$(RUBYINSTALL) 
+--- 
+-2.34.1
 -
--LICENSE:${PN}-qca-qca2066 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-qca61x4-serial = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-qca61x4-usb = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-qca6390 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-qca6698 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-qcc2072 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-wcn3950 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qca-wcn3988 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qca-wcn399x = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-wcn6750 = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-wcn685x = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qca-wcn7850 = "LicenseRef-Firmware-qcom"
-+LICENSE:${PN}-ar3k = "Firmware-qualcommAthos-ar3k & Firmware-atheros-firmware"
-+LICENSE:${PN}-ar3k-license = "Firmware-qualcommAthos-ar3k"
-+LICENSE:${PN}-ath10k = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca4019 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca6174 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca9377 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca9887 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca9888 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca988x = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca9984 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-qca99x0 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-wcn3990 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath10k-license = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-ipq5018 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-ipq6018 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-ipq8074 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-qca2066 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-qca6390 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-qca6698aq = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-qcn9074 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-wcn6750 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath11k-wcn6855 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath12k = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath12k-ipq5424 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath12k-qcc2072 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath12k-qcn9274 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-ath12k-wcn7850 = "Firmware-qualcommAthos-ath10k"
-+
-+LICENSE:${PN}-aic-license = "Firmware-aic"
-+LICENSE:${PN}-aic-aic8800d80 = "Firmware-aic"
-+
-+LICENSE:${PN}-qca-qca2066 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-qca61x4-serial = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-qca61x4-usb = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-qca6390 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-qca6698 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-qcc2072 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-wcn3950 = "Firmware-qcom"
-+LICENSE:${PN}-qca-wcn3988 = "Firmware-qcom"
-+LICENSE:${PN}-qca-wcn399x = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-wcn6750 = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-wcn685x = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qca-wcn7850 = "Firmware-qcom"
- 
- FILES:${PN}-ar3k-license = "${firmwaredir}/LICENSE.QualcommAtheros_ar3k"
- FILES:${PN}-ar3k = " \
-@@ -1154,8 +1154,8 @@ RDEPENDS:${PN}-qca-wcn6750 += "${PN}-ath10k-license"
- RDEPENDS:${PN}-qca-wcn685x += "${PN}-ath10k-license"
- RDEPENDS:${PN}-qca-wcn7850 += "${PN}-qcom-license"
- # For ralink
--LICENSE:${PN}-ralink = "LicenseRef-Firmware-ralink-firmware"
--LICENSE:${PN}-ralink-license = "LicenseRef-Firmware-ralink-firmware"
-+LICENSE:${PN}-ralink = "Firmware-ralink-firmware"
-+LICENSE:${PN}-ralink-license = "Firmware-ralink-firmware"
- 
- FILES:${PN}-ralink-license = "${firmwaredir}/LICENCE.ralink-firmware.txt"
- FILES:${PN}-ralink = " \
-@@ -1165,10 +1165,10 @@ FILES:${PN}-ralink = " \
- RDEPENDS:${PN}-ralink += "${PN}-ralink-license"
- 
- # For mediatek MT7601U
--LICENSE:${PN}-mt76x-license = "LicenseRef-Firmware-ralink-a-mediatek-company-firmware"
-+LICENSE:${PN}-mt76x-license = "Firmware-ralink-a-mediatek-company-firmware"
- FILES:${PN}-mt76x-license = "${firmwaredir}/LICENCE.ralink_a_mediatek_company_firmware"
- 
--LICENSE:${PN}-mt7601u = "LicenseRef-Firmware-ralink-a-mediatek-company-firmware"
-+LICENSE:${PN}-mt7601u = "Firmware-ralink-a-mediatek-company-firmware"
- 
- FILES:${PN}-mt7601u = " \
-   ${firmwaredir}/mediatek/mt7601u.bin* \
-@@ -1177,7 +1177,7 @@ FILES:${PN}-mt7601u = " \
- RDEPENDS:${PN}-mt7601u += "${PN}-mt76x-license"
- 
- # For MediaTek Bluetooth USB driver 7650
--LICENSE:${PN}-mt7650 = "LicenseRef-Firmware-ralink-a-mediatek-company-firmware"
-+LICENSE:${PN}-mt7650 = "Firmware-ralink-a-mediatek-company-firmware"
- 
- FILES:${PN}-mt7650 = " \
-   ${firmwaredir}/mediatek/mt7650.bin* \
-@@ -1186,7 +1186,7 @@ FILES:${PN}-mt7650 = " \
- RDEPENDS:${PN}-mt7650 += "${PN}-mt76x-license"
- 
- # For MediaTek MT76x2 Wireless MACs
--LICENSE:${PN}-mt76x2 = "LicenseRef-Firmware-ralink-a-mediatek-company-firmware"
-+LICENSE:${PN}-mt76x2 = "Firmware-ralink-a-mediatek-company-firmware"
- 
- FILES:${PN}-mt76x2 = " \
-   ${firmwaredir}/mediatek/mt7662.bin* \
-@@ -1197,7 +1197,7 @@ FILES:${PN}-mt76x2 = " \
- RDEPENDS:${PN}-mt76x2 += "${PN}-mt76x-license"
- 
- # MediaTek MT7996/MT7992/MT7990 (mt7996e.ko)
--LICENSE:${PN}-mt7996 = "LicenseRef-Firmware-mediatek"
-+LICENSE:${PN}-mt7996 = "Firmware-mediatek"
- 
- FILES:${PN}-mt7996 = " \
-   ${firmwaredir}/mediatek/mt7996 \
-@@ -1205,8 +1205,8 @@ FILES:${PN}-mt7996 = " \
- RDEPENDS:${PN}-mt7996 += "${PN}-mediatek-license"
- 
- # For MediaTek
--LICENSE:${PN}-mediatek = "LicenseRef-Firmware-mediatek"
--LICENSE:${PN}-mediatek-license = "LicenseRef-Firmware-mediatek"
-+LICENSE:${PN}-mediatek = "Firmware-mediatek"
-+LICENSE:${PN}-mediatek-license = "Firmware-mediatek"
- 
- FILES:${PN}-mediatek = " \
-   ${firmwaredir}/mediatek/* \
-@@ -1219,8 +1219,8 @@ FILES:${PN}-mediatek-license = " \
- RDEPENDS:${PN}-mediatek += "${PN}-mediatek-license"
- 
- # For Microchip
--LICENSE:${PN}-microchip = "LicenseRef-Firmware-microchip"
--LICENSE:${PN}-microchip-license = "LicenseRef-Firmware-microchip"
-+LICENSE:${PN}-microchip = "Firmware-microchip"
-+LICENSE:${PN}-microchip-license = "Firmware-microchip"
- 
- FILES:${PN}-microchip = "${firmwaredir}/microchip/*"
- FILES:${PN}-microchip-license = " \
-@@ -1229,8 +1229,8 @@ FILES:${PN}-microchip-license = " \
- RDEPENDS:${PN}-microchip += "${PN}-microchip-license"
- 
- # For MOXA
--LICENSE:${PN}-moxa = "LicenseRef-Firmware-moxa"
--LICENSE:${PN}-moxa-license = "LicenseRef-Firmware-moxa"
-+LICENSE:${PN}-moxa = "Firmware-moxa"
-+LICENSE:${PN}-moxa-license = "Firmware-moxa"
- 
- FILES:${PN}-moxa = "${firmwaredir}/moxa"
- FILES:${PN}-moxa-license = "${firmwaredir}/LICENCE.moxa"
-@@ -1239,8 +1239,8 @@ RDEPENDS:${PN}-moxa += "${PN}-moxa-license"
- 
- # For radeon
- 
--LICENSE:${PN}-radeon = "LicenseRef-Firmware-radeon"
--LICENSE:${PN}-radeon-license = "LicenseRef-Firmware-radeon"
-+LICENSE:${PN}-radeon = "Firmware-radeon"
-+LICENSE:${PN}-radeon-license = "Firmware-radeon"
- 
- FILES:${PN}-radeon-license = "${firmwaredir}/LICENSE.radeon"
- FILES:${PN}-radeon = " \
-@@ -1250,34 +1250,34 @@ FILES:${PN}-radeon = " \
- RDEPENDS:${PN}-radeon += "${PN}-radeon-license"
- 
- # For amdgpu
--LICENSE:${PN}-amdgpu = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-license = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-aldebaran = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-carrizo = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-cezanne = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-fiji = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-hawaii = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi10 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi14 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi21 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi22 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi23 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi24 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi31 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-navi32 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-oland = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-polaris10 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-polaris11 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-polaris12 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-raven = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-rembrandt = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-renoir = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-stoney = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-tonga = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-topaz = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-vega10 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-vega12 = "LicenseRef-Firmware-amdgpu"
--LICENSE:${PN}-amdgpu-misc = "LicenseRef-Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-license = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-aldebaran = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-carrizo = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-cezanne = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-fiji = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-hawaii = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi10 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi14 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi21 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi22 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi23 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi24 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi31 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-navi32 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-oland = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-polaris10 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-polaris11 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-polaris12 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-raven = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-rembrandt = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-renoir = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-stoney = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-tonga = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-topaz = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-vega10 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-vega12 = "Firmware-amdgpu"
-+LICENSE:${PN}-amdgpu-misc = "Firmware-amdgpu"
- 
- FILES:${PN}-amdgpu-license = "${firmwaredir}/LICENSE.amdgpu"
- FILES:${PN}-amdgpu-aldebaran = "${firmwaredir}/amdgpu/aldebaran_*.bin*"
-@@ -1355,10 +1355,10 @@ RDEPENDS:${PN}-amdgpu-vega12 += "${PN}-amdgpu-license"
- RDEPENDS:${PN}-amdgpu-misc += "${PN}-amdgpu-license"
- 
- # For lontium
--LICENSE:${PN}-lt7911exc = "LicenseRef-Firmware-Lontium"
--LICENSE:${PN}-lt8713sx = "LicenseRef-Firmware-Lontium"
--LICENSE:${PN}-lt9611c = "LicenseRef-Firmware-Lontium"
--LICENSE:${PN}-lt9611uxc = "LicenseRef-Firmware-Lontium"
-+LICENSE:${PN}-lt7911exc = "Firmware-Lontium"
-+LICENSE:${PN}-lt8713sx = "Firmware-Lontium"
-+LICENSE:${PN}-lt9611c = "Firmware-Lontium"
-+LICENSE:${PN}-lt9611uxc = "Firmware-Lontium"
- 
- FILES:${PN}-lontium-license = "${firmwaredir}/LICENSE.Lontium"
- FILES:${PN}-lt7911exc = "${firmwaredir}/Lontium/lt7911exc_fw.bin*"
-@@ -1369,65 +1369,65 @@ FILES:${PN}-lt9611uxc = "${firmwaredir}/lt9611uxc_fw.bin* ${firmwaredir}/Lontium
- # For Arm Mali
- FILES:${PN}-mali-csffw-license = "${firmwaredir}/LICENCE.mali_csffw"
- 
--LICENSE:${PN}-mali-csffw-arch108 = "LicenseRef-Firmware-mali-csffw"
-+LICENSE:${PN}-mali-csffw-arch108 = "Firmware-mali-csffw"
- FILES:${PN}-mali-csffw-arch108 = "${firmwaredir}/arm/mali/arch10.8/mali_csffw.bin*"
- RDEPENDS:${PN}-mali-csffw-arch108 += "${PN}-mali-csffw-license"
- 
--LICENSE:${PN}-mali-csffw-arch1010 = "LicenseRef-Firmware-mali-csffw"
-+LICENSE:${PN}-mali-csffw-arch1010 = "Firmware-mali-csffw"
- FILES:${PN}-mali-csffw-arch1010 = "${firmwaredir}/arm/mali/arch10.10/mali_csffw.bin*"
- RDEPENDS:${PN}-mali-csffw-arch1010 += "${PN}-mali-csffw-license"
- 
--LICENSE:${PN}-mali-csffw-arch1012 = "LicenseRef-Firmware-mali-csffw"
-+LICENSE:${PN}-mali-csffw-arch1012 = "Firmware-mali-csffw"
- FILES:${PN}-mali-csffw-arch1012 = "${firmwaredir}/arm/mali/arch10.12/mali_csffw.bin*"
- RDEPENDS:${PN}-mali-csffw-arch1012 += "${PN}-mali-csffw-license"
- 
--LICENSE:${PN}-mali-csffw-arch118 = "LicenseRef-Firmware-mali-csffw"
-+LICENSE:${PN}-mali-csffw-arch118 = "Firmware-mali-csffw"
- FILES:${PN}-mali-csffw-arch118 = "${firmwaredir}/arm/mali/arch11.8/mali_csffw.bin*"
- RDEPENDS:${PN}-mali-csffw-arch118 += "${PN}-mali-csffw-license"
- 
--LICENSE:${PN}-mali-csffw-arch128 = "LicenseRef-Firmware-mali-csffw"
-+LICENSE:${PN}-mali-csffw-arch128 = "Firmware-mali-csffw"
- FILES:${PN}-mali-csffw-arch128 = "${firmwaredir}/arm/mali/arch12.8/mali_csffw.bin*"
- RDEPENDS:${PN}-mali-csffw-arch128 += "${PN}-mali-csffw-license"
- 
--LICENSE:${PN}-mali-csffw-arch138 = "LicenseRef-Firmware-mali-csffw"
-+LICENSE:${PN}-mali-csffw-arch138 = "Firmware-mali-csffw"
- FILES:${PN}-mali-csffw-arch138 = "${firmwaredir}/arm/mali/arch13.8/mali_csffw.bin*"
- RDEPENDS:${PN}-mali-csffw-arch138 += "${PN}-mali-csffw-license"
- 
--LICENSE:${PN}-mali-csffw-arch148 = "LicenseRef-Firmware-mali-csffw"
-+LICENSE:${PN}-mali-csffw-arch148 = "Firmware-mali-csffw"
- FILES:${PN}-mali-csffw-arch148 = "${firmwaredir}/arm/mali/arch14.8/mali_csffw.bin*"
- RDEPENDS:${PN}-mali-csffw-arch148 += "${PN}-mali-csffw-license"
- 
- # For marvell
--LICENSE:${PN}-pcie8897 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-pcie8997 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8686 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8688 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8787 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8797 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8801 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8887 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8897 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8997 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-usb8997 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-cf8381 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-cf8385 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-gspi8682 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-gspi8686 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-gspi8688 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd416 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8385 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8682 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-usb8388 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-usb8682 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-sd8977 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-usb8766 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-usb8797 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-usb8801 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-usb8897 = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-rvu-cptpf = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-mwl8k = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-mwlwifi = "LicenseRef-Firmware-Marvell"
--LICENSE:${PN}-marvell-license = "LicenseRef-Firmware-Marvell"
-+LICENSE:${PN}-pcie8897 = "Firmware-Marvell"
-+LICENSE:${PN}-pcie8997 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8686 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8688 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8787 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8797 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8801 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8887 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8897 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8997 = "Firmware-Marvell"
-+LICENSE:${PN}-usb8997 = "Firmware-Marvell"
-+LICENSE:${PN}-cf8381 = "Firmware-Marvell"
-+LICENSE:${PN}-cf8385 = "Firmware-Marvell"
-+LICENSE:${PN}-gspi8682 = "Firmware-Marvell"
-+LICENSE:${PN}-gspi8686 = "Firmware-Marvell"
-+LICENSE:${PN}-gspi8688 = "Firmware-Marvell"
-+LICENSE:${PN}-sd416 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8385 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8682 = "Firmware-Marvell"
-+LICENSE:${PN}-usb8388 = "Firmware-Marvell"
-+LICENSE:${PN}-usb8682 = "Firmware-Marvell"
-+LICENSE:${PN}-sd8977 = "Firmware-Marvell"
-+LICENSE:${PN}-usb8766 = "Firmware-Marvell"
-+LICENSE:${PN}-usb8797 = "Firmware-Marvell"
-+LICENSE:${PN}-usb8801 = "Firmware-Marvell"
-+LICENSE:${PN}-usb8897 = "Firmware-Marvell"
-+LICENSE:${PN}-rvu-cptpf = "Firmware-Marvell"
-+LICENSE:${PN}-mwl8k = "Firmware-Marvell"
-+LICENSE:${PN}-mwlwifi = "Firmware-Marvell"
-+LICENSE:${PN}-marvell-license = "Firmware-Marvell"
- 
- FILES:${PN}-marvell-license = "${firmwaredir}/LICENCE.Marvell"
- FILES:${PN}-pcie8897 = " \
-@@ -1520,7 +1520,7 @@ RDEPENDS:${PN}-mwl8k += "${PN}-marvell-license"
- RDEPENDS:${PN}-mwlwifi += "${PN}-marvell-license"
- 
- # For netronome
--LICENSE:${PN}-netronome = "LicenseRef-Firmware-netronome"
-+LICENSE:${PN}-netronome = "Firmware-netronome"
- 
- FILES:${PN}-netronome-license = " \
-   ${firmwaredir}/LICENCE.Netronome \
-@@ -1542,18 +1542,18 @@ FILES:${PN}-netronome = " \
- RDEPENDS:${PN}-netronome += "${PN}-netronome-license"
- 
- # For NXP
--LICENSE:${PN}-nxp8987-sdio = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp8997-common = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp8997-pcie = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp8997-sdio = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp9098-common = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp9098-pcie = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp9098-sdio = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxpiw416-sdio = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxpiw612-sdio = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxpiw61x-sdio = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp-sr1xx = "LicenseRef-Firmware-nxp"
--LICENSE:${PN}-nxp-license = "LicenseRef-Firmware-nxp"
-+LICENSE:${PN}-nxp8987-sdio = "Firmware-nxp"
-+LICENSE:${PN}-nxp8997-common = "Firmware-nxp"
-+LICENSE:${PN}-nxp8997-pcie = "Firmware-nxp"
-+LICENSE:${PN}-nxp8997-sdio = "Firmware-nxp"
-+LICENSE:${PN}-nxp9098-common = "Firmware-nxp"
-+LICENSE:${PN}-nxp9098-pcie = "Firmware-nxp"
-+LICENSE:${PN}-nxp9098-sdio = "Firmware-nxp"
-+LICENSE:${PN}-nxpiw416-sdio = "Firmware-nxp"
-+LICENSE:${PN}-nxpiw612-sdio = "Firmware-nxp"
-+LICENSE:${PN}-nxpiw61x-sdio = "Firmware-nxp"
-+LICENSE:${PN}-nxp-sr1xx = "Firmware-nxp"
-+LICENSE:${PN}-nxp-license = "Firmware-nxp"
- 
- FILES:${PN}-nxp8987-sdio = "${firmwaredir}/nxp/*8987*"
- FILES:${PN}-nxp8997-common = " \
-@@ -1584,8 +1584,8 @@ RDEPENDS:${PN}-nxpiw61x-sdio += "${PN}-nxp-license"
- RDEPENDS:${PN}-nxp-sr1xx += "${PN}-nxp-license"
- 
- # For nxp-mc
--LICENSE:${PN}-nxp-mc = "LicenseRef-Firmware-nxp-mc-firmware"
--LICENSE:${PN}-nxp-mc-license = "LicenseRef-Firmware-nxp-mc-firmware"
-+LICENSE:${PN}-nxp-mc = "Firmware-nxp-mc-firmware"
-+LICENSE:${PN}-nxp-mc-license = "Firmware-nxp-mc-firmware"
- 
- FILES:${PN}-nxp-mc = "${firmwaredir}/dpaa2/mc/*"
- FILES:${PN}-nxp-mc-license = " \
-@@ -1594,10 +1594,10 @@ FILES:${PN}-nxp-mc-license = " \
- RDEPENDS:${PN}-nxp-mc += "${PN}-nxp-mc-license"
- 
- # For Nvidia
--LICENSE:${PN}-nvidia-gpu = "LicenseRef-Firmware-nvidia"
--LICENSE:${PN}-nvidia-tegra = "LicenseRef-Firmware-nvidia"
--LICENSE:${PN}-nvidia-tegra-k1 = "LicenseRef-Firmware-nvidia"
--LICENSE:${PN}-nvidia-license = "LicenseRef-Firmware-nvidia"
-+LICENSE:${PN}-nvidia-gpu = "Firmware-nvidia"
-+LICENSE:${PN}-nvidia-tegra = "Firmware-nvidia"
-+LICENSE:${PN}-nvidia-tegra-k1 = "Firmware-nvidia"
-+LICENSE:${PN}-nvidia-license = "Firmware-nvidia"
- 
- FILES:${PN}-nvidia-gpu = "${firmwaredir}/nvidia"
- FILES:${PN}-nvidia-tegra = " \
-@@ -1616,8 +1616,8 @@ RDEPENDS:${PN}-nvidia-tegra += "${PN}-nvidia-license"
- RDEPENDS:${PN}-nvidia-tegra-k1 += "${PN}-nvidia-license"
- 
- # For OLPC
--LICENSE:${PN}-olpc = "LicenseRef-Firmware-OLPC"
--LICENSE:${PN}-olpc-license = "LicenseRef-Firmware-OLPC"
-+LICENSE:${PN}-olpc = "Firmware-OLPC"
-+LICENSE:${PN}-olpc-license = "Firmware-OLPC"
- 
- FILES:${PN}-olpc = " \
-   ${firmwaredir}/libertas/lbtf_sdio.bin*	\
-@@ -1629,8 +1629,8 @@ FILES:${PN}-olpc-license = "${firmwaredir}/LICENCE.OLPC"
- RDEPENDS:${PN}-olpc += "${PN}-olpc-license"
- 
- # For phanfw
--LICENSE:${PN}-phanfw = "LicenseRef-Firmware-phanfw"
--LICENSE:${PN}-phanfw-license = "LicenseRef-Firmware-phanfw"
-+LICENSE:${PN}-phanfw = "Firmware-phanfw"
-+LICENSE:${PN}-phanfw-license = "Firmware-phanfw"
- 
- FILES:${PN}-phanfw = "${firmwaredir}/phanfw.bin*"
- FILES:${PN}-phanfw-license = "${firmwaredir}/LICENCE.phanfw"
-@@ -1638,8 +1638,8 @@ FILES:${PN}-phanfw-license = "${firmwaredir}/LICENCE.phanfw"
- RDEPENDS:${PN}-phanfw += "${PN}-phanfw-license"
- 
- # For PowerVR
--LICENSE:${PN}-powervr = "LicenseRef-Firmware-powervr"
--LICENSE:${PN}-powervr-license = "LicenseRef-Firmware-powervr"
-+LICENSE:${PN}-powervr = "Firmware-powervr"
-+LICENSE:${PN}-powervr-license = "Firmware-powervr"
- 
- FILES:${PN}-powervr = "${firmwaredir}/powervr"
- FILES:${PN}-powervr-license = "${firmwaredir}/LICENSE.powervr"
-@@ -1647,8 +1647,8 @@ FILES:${PN}-powervr-license = "${firmwaredir}/LICENSE.powervr"
- RDEPENDS:${PN}-powervr += "${PN}-powervr-license"
- 
- # For qla2xxx
--LICENSE:${PN}-qla2xxx = "LicenseRef-Firmware-qla2xxx"
--LICENSE:${PN}-qla2xxx-license = "LicenseRef-Firmware-qla2xxx"
-+LICENSE:${PN}-qla2xxx = "Firmware-qla2xxx"
-+LICENSE:${PN}-qla2xxx-license = "Firmware-qla2xxx"
- 
- FILES:${PN}-qla2xxx = "${firmwaredir}/ql2*"
- FILES:${PN}-qla2xxx-license = "${firmwaredir}/LICENCE.qla2xxx"
-@@ -1656,9 +1656,9 @@ FILES:${PN}-qla2xxx-license = "${firmwaredir}/LICENCE.qla2xxx"
- RDEPENDS:${PN}-qla2xxx += "${PN}-qla2xxx-license"
- 
- # For RSI RS911x WiFi
--LICENSE:${PN}-rs9113 = "LicenseRef-Firmware-WHENCE"
--LICENSE:${PN}-rs9116 = "LicenseRef-Firmware-WHENCE"
--LICENSE:${PN}-rsi-91x = "LicenseRef-Firmware-WHENCE"
-+LICENSE:${PN}-rs9113 = "Firmware-WHENCE"
-+LICENSE:${PN}-rs9116 = "Firmware-WHENCE"
-+LICENSE:${PN}-rsi-91x = "Firmware-WHENCE"
- 
- FILES:${PN}-rs9113 = " ${firmwaredir}/rsi/rs9113*.rps* "
- FILES:${PN}-rs9116 = " ${firmwaredir}/rsi/rs9116*.rps* "
-@@ -1669,27 +1669,27 @@ RDEPENDS:${PN}-rs9116 += "${PN}-whence-license"
- RDEPENDS:${PN}-rsi-91x += "${PN}-whence-license"
- 
- # For rtl
--LICENSE:${PN}-rtl8188 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8192cu = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8192ce = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8192su = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8261c = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8261d = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8723 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8761 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8821 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8822 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8192 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8710 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8812 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8851 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8852 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8922 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8703 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl8814 = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl-license = "LicenseRef-Firmware-rtlwifi-firmware"
--LICENSE:${PN}-rtl-nic = "LicenseRef-Firmware-WHENCE"
--LICENSE:${PN}-rtl8168 = "LicenseRef-Firmware-WHENCE"
-+LICENSE:${PN}-rtl8188 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8192cu = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8192ce = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8192su = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8261c = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8261d = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8723 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8761 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8821 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8822 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8192 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8710 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8812 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8851 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8852 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8922 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8703 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl8814 = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl-license = "Firmware-rtlwifi-firmware"
-+LICENSE:${PN}-rtl-nic = "Firmware-WHENCE"
-+LICENSE:${PN}-rtl8168 = "Firmware-WHENCE"
- 
- FILES:${PN}-rtl-license = " \
-   ${firmwaredir}/LICENCE.rtlwifi_firmware.txt \
-@@ -1785,8 +1785,8 @@ RDEPENDS:${PN}-rtl8168 += "${PN}-whence-license"
- RDEPENDS:${PN}-rtl-nic += "${PN}-whence-license"
- 
- # For Silabs
--LICENSE:${PN}-wfx = "LicenseRef-Firmware-wfx"
--LICENSE:${PN}-wfx-license = "LicenseRef-Firmware-wfx"
-+LICENSE:${PN}-wfx = "Firmware-wfx"
-+LICENSE:${PN}-wfx-license = "Firmware-wfx"
- 
- FILES:${PN}-wfx = " \
-   ${firmwaredir}/wfx/*.pds*        \
-@@ -1797,8 +1797,8 @@ FILES:${PN}-wfx-license = "${firmwaredir}/LICENCE.wf200"
- RDEPENDS:${PN}-wfx += "${PN}-wfx-license"
- 
- # For TI wl1251
--LICENSE:${PN}-wl1251 = "LicenseRef-Firmware-wl1251"
--LICENSE:${PN}-wl1251-license = "LicenseRef-Firmware-wl1251"
-+LICENSE:${PN}-wl1251 = "Firmware-wl1251"
-+LICENSE:${PN}-wl1251-license = "Firmware-wl1251"
- 
- FILES:${PN}-wl1251 = " \
-   ${firmwaredir}/ti-connectivity/wl1251-fw.bin*         \
-@@ -1809,11 +1809,11 @@ FILES:${PN}-wl1251-license = "${firmwaredir}/LICENCE.wl1251"
- RDEPENDS:${PN}-wl1251 += "${PN}-wl1251-license"
- 
- # For ti-connectivity
--LICENSE:${PN}-wlcommon = "LicenseRef-Firmware-ti-connectivity"
--LICENSE:${PN}-wl12xx = "LicenseRef-Firmware-ti-connectivity"
--LICENSE:${PN}-wl18xx = "LicenseRef-Firmware-ti-connectivity"
--LICENSE:${PN}-cc33xx = "LicenseRef-Firmware-ti-connectivity"
--LICENSE:${PN}-ti-connectivity-license = "LicenseRef-Firmware-ti-connectivity"
-+LICENSE:${PN}-wlcommon = "Firmware-ti-connectivity"
-+LICENSE:${PN}-wl12xx = "Firmware-ti-connectivity"
-+LICENSE:${PN}-wl18xx = "Firmware-ti-connectivity"
-+LICENSE:${PN}-cc33xx = "Firmware-ti-connectivity"
-+LICENSE:${PN}-ti-connectivity-license = "Firmware-ti-connectivity"
- 
- FILES:${PN}-ti-connectivity-license = "${firmwaredir}/LICENCE.ti-connectivity"
- # wl18xx optionally needs wl1271-nvs.bin (which itself is a symlink to
-@@ -1844,8 +1844,8 @@ RDEPENDS:${PN}-wl18xx = "${PN}-ti-connectivity-license ${PN}-wlcommon"
- RDEPENDS:${PN}-cc33xx = "${PN}-ti-connectivity-license"
- 
- # For ti-keystone
--LICENSE:${PN}-ti-keystone = "LicenseRef-Firmware-ti-keystone"
--LICENSE:${PN}-ti-keystone-license = "LicenseRef-Firmware-ti-keystone"
-+LICENSE:${PN}-ti-keystone = "Firmware-ti-keystone"
-+LICENSE:${PN}-ti-keystone-license = "Firmware-ti-keystone"
- 
- FILES:${PN}-ti-keystone = "${firmwaredir}/ti-keystone/*"
- FILES:${PN}-ti-keystone-license = " \
-@@ -1854,11 +1854,11 @@ FILES:${PN}-ti-keystone-license = " \
- RDEPENDS:${PN}-ti-keystone += "${PN}-ti-keystone-license"
- 
- # For ti-tspa-license
--LICENSE:${PN}-ti-tspa-license = "LicenseRef-Firmware-ti-tspa"
-+LICENSE:${PN}-ti-tspa-license = "Firmware-ti-tspa"
- FILES:${PN}-ti-tspa-license = "${firmwaredir}/LICENCE.ti-tspa"
- 
- # For ti-tas2563 - tas2563 firmware
--LICENSE:${PN}-ti-tas2563 = "LicenseRef-Firmware-ti-tspa"
-+LICENSE:${PN}-ti-tas2563 = "Firmware-ti-tspa"
- FILES:${PN}-ti-tas2563 = "\
-     ${firmwaredir}/INT8866RCA2.bin* \
-     ${firmwaredir}/TAS2XXX3870.bin* \
-@@ -1867,7 +1867,7 @@ FILES:${PN}-ti-tas2563 = "\
- RDEPENDS:${PN}-ti-tas2563 = "${PN}-ti-tspa-license"
- 
- # For ti-tas257x - tas257x firmware
--LICENSE:${PN}-ti-tas257x = "LicenseRef-Firmware-ti-tspa"
-+LICENSE:${PN}-ti-tas257x = "Firmware-ti-tspa"
- FILES:${PN}-ti-tas257x = "\
-     ${firmwaredir}/tas257x-1amp-reg.bin*\
-     ${firmwaredir}/tas2572-1-1amp-reg.bin* \
-@@ -1880,14 +1880,14 @@ FILES:${PN}-ti-tas257x = "\
- RDEPENDS:${PN}-ti-tas257x = "${PN}-ti-tspa-license"
- 
- # For ti-pcm6240 - pcm6240 firmware
--LICENSE:${PN}-ti-pcm6240 = "LicenseRef-Firmware-ti-tspa"
-+LICENSE:${PN}-ti-pcm6240 = "Firmware-ti-tspa"
- FILES:${PN}-ti-pcm6240 = "\
-     ${firmwaredir}/ti/pcm6240/pcm6240-i2c-1-2dev.bin* \
- "
- RDEPENDS:${PN}-ti-pcm6240 = "${PN}-ti-tspa-license"
- 
- # For ti-tas2781 - tas2781 firmware
--LICENSE:${PN}-ti-tas2781 = "LicenseRef-Firmware-ti-tspa"
-+LICENSE:${PN}-ti-tas2781 = "Firmware-ti-tspa"
- FILES:${PN}-ti-tas2781 = "\
-     ${firmwaredir}/TAS2XXX*.bin* \
-     ${firmwaredir}/TIAS2781*.bin* \
-@@ -1897,7 +1897,7 @@ FILES:${PN}-ti-tas2781 = "\
- RDEPENDS:${PN}-ti-tas2781 = "${PN}-ti-tspa-license"
- 
- # For ti-tas2783 - tas2783 firmware
--LICENSE:${PN}-ti-tas2783 = "LicenseRef-Firmware-ti-tspa"
-+LICENSE:${PN}-ti-tas2783 = "Firmware-ti-tspa"
- FILES:${PN}-ti-tas2783 = "\
-     ${firmwaredir}/1534-2-*.bin* \
-     ${firmwaredir}/15E2-?-0x*.bin* \
-@@ -1920,7 +1920,7 @@ FILES:${PN}-ti-tas2783 = "\
- RDEPENDS:${PN}-ti-tas2781 = "${PN}-ti-tspa-license"
- 
- # For ti-vpe - Texas Instruments V4L2 driver for Video Processing Engine
--LICENSE:${PN}-ti-vpe = "LicenseRef-Firmware-ti-tspa"
-+LICENSE:${PN}-ti-vpe = "Firmware-ti-tspa"
- FILES:${PN}-ti-vpe = "${firmwaredir}/ti/vpdma-1b8.bin*"
- RDEPENDS:${PN}-ti-vpe = "${PN}-ti-tspa-license"
- 
-@@ -1932,8 +1932,8 @@ FILES:${PN}-ti-usb-3410-5052 = "\
- "
- 
- # For vt6656
--LICENSE:${PN}-vt6656 = "LicenseRef-Firmware-via-vt6656"
--LICENSE:${PN}-vt6656-license = "LicenseRef-Firmware-via-vt6656"
-+LICENSE:${PN}-vt6656 = "Firmware-via-vt6656"
-+LICENSE:${PN}-vt6656-license = "Firmware-via-vt6656"
- 
- FILES:${PN}-vt6656-license = "${firmwaredir}/LICENCE.via_vt6656"
- FILES:${PN}-vt6656 = " \
-@@ -1943,8 +1943,8 @@ FILES:${PN}-vt6656 = " \
- RDEPENDS:${PN}-vt6656 = "${PN}-vt6656-license"
- 
- # For xc4000
--LICENSE:${PN}-xc4000 = "LicenseRef-Firmware-xc4000"
--LICENSE:${PN}-xc4000-license = "LicenseRef-Firmware-xc4000"
-+LICENSE:${PN}-xc4000 = "Firmware-xc4000"
-+LICENSE:${PN}-xc4000-license = "Firmware-xc4000"
- 
- FILES:${PN}-xc4000 = "${firmwaredir}/dvb-fe-xc4000-1.4.1.fw*"
- FILES:${PN}-xc4000-license = "${firmwaredir}/LICENCE.xc4000"
-@@ -1952,8 +1952,8 @@ FILES:${PN}-xc4000-license = "${firmwaredir}/LICENCE.xc4000"
- RDEPENDS:${PN}-xc4000 += "${PN}-xc4000-license"
- 
- # For xc5000
--LICENSE:${PN}-xc5000 = "LicenseRef-Firmware-xc5000"
--LICENSE:${PN}-xc5000-license = "LicenseRef-Firmware-xc5000"
-+LICENSE:${PN}-xc5000 = "Firmware-xc5000"
-+LICENSE:${PN}-xc5000-license = "Firmware-xc5000"
- 
- FILES:${PN}-xc5000 = "${firmwaredir}/dvb-fe-xc5000-1.6.114.fw*"
- FILES:${PN}-xc5000-license = "${firmwaredir}/LICENCE.xc5000"
-@@ -1961,8 +1961,8 @@ FILES:${PN}-xc5000-license = "${firmwaredir}/LICENCE.xc5000"
- RDEPENDS:${PN}-xc5000 += "${PN}-xc5000-license"
- 
- # For xc5000c
--LICENSE:${PN}-xc5000c = "LicenseRef-Firmware-xc5000c"
--LICENSE:${PN}-xc5000c-license = "LicenseRef-Firmware-xc5000c"
-+LICENSE:${PN}-xc5000c = "Firmware-xc5000c"
-+LICENSE:${PN}-xc5000c-license = "Firmware-xc5000c"
- 
- FILES:${PN}-xc5000c = " \
-   ${firmwaredir}/dvb-fe-xc5000c-4.1.30.7.fw* \
-@@ -1975,7 +1975,7 @@ RDEPENDS:${PN}-xc5000c += "${PN}-xc5000c-license"
- 
- # for i in `grep brcm WHENCE  | grep ^File | sed 's/File: brcm.//g'`; do pkg=`echo $i | sed 's/-[sp40].*//g; s/\.bin//g; s/brcmfmac/bcm/g; s/_hdr/-hdr/g; s/BCM/bcm-0bb4-0306/g'`; echo -e "             \${PN}-$pkg \\"; done  | sort -u
- 
--LICENSE:${PN}-broadcom-license = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-broadcom-license = "Firmware-broadcom-bcm43xx"
- FILES:${PN}-broadcom-license = "${firmwaredir}/LICENCE.broadcom_bcm43xx"
- 
- # for i in `grep brcm WHENCE  | grep ^File | sed 's/File: brcm.//g'`; do pkg=`echo $i | sed 's/-[sp40].*//g; s/\.bin//g; s/brcmfmac/bcm/g; s/_hdr/-hdr/g; s/BCM/bcm-0bb4-0306/g'`; echo "$i - $pkg"; echo -e "FILES:\${PN}-$pkg = \"\${firmwaredir}/brcm/$i\""; done | grep ^FILES
-@@ -2029,66 +2029,66 @@ FILES:${PN}-bcm54591 = "${firmwaredir}/brcm/brcmfmac54591-pcie.* \
- # for i in `grep brcm WHENCE  | grep ^File | sed 's/File: brcm.//g'`; do pkg=`echo $i | sed 's/-[sp40].*//g; s/\.bin//g; s/brcmfmac/bcm/g; s/_hdr/-hdr/g; s/BCM/bcm-0bb4-0306/g'`; echo -e "LICENSE:\${PN}-$pkg = \"Firmware-broadcom-bcm43xx\"\nRDEPENDS_\${PN}-$pkg += \"\${PN}-broadcom-license\""; done
- # Currently 1st one and last 6 have cypress LICENSE
- 
--LICENSE:${PN}-bcm43xx = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43xx = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43xx += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43xx-hdr = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43xx-hdr = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43xx-hdr += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4329-fullmac = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4329-fullmac = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4329-fullmac += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43236b = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43236b = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43236b += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4329 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4329 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4329 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4330 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4330 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4330 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4334 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4334 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4334 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4335 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4335 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4335 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4339 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4339 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4339 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43241b0 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43241b0 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43241b0 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43241b4 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43241b4 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43241b4 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43241b5 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43241b5 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43241b5 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43242a = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43242a = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43242a += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43012 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43012 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43012 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43143 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43143 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43143 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43430a0 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43430a0 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43430a0 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43455 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43455 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43455 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4350c2 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4350c2 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4350c2 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4350 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4350 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4350 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4356 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4356 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4356 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43569 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43569 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43569 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43570 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43570 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43570 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4358 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4358 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4358 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm43602 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm43602 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm43602 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4366b = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4366b = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4366b += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4366c = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4366c = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4366c += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm4371 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm4371 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm4371 += "${PN}-broadcom-license"
--LICENSE:${PN}-bcm54591 = "LicenseRef-Firmware-broadcom-bcm43xx"
-+LICENSE:${PN}-bcm54591 = "Firmware-broadcom-bcm43xx"
- RDEPENDS:${PN}-bcm54591 += "${PN}-broadcom-license"
- 
- # For broadcom cypress
- 
--LICENSE:${PN}-cypress-license = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-cypress-license = "Firmware-cypress"
- FILES:${PN}-cypress-license = "${firmwaredir}/LICENCE.cypress"
- 
- FILES:${PN}-bcm-0bb4-0306 = "${firmwaredir}/brcm/BCM-0bb4-0306.hcd*"
-@@ -2112,21 +2112,21 @@ FILES:${PN}-bcm4373 = "${firmwaredir}/brcm/brcmfmac4373-sdio.bin* \
-   ${firmwaredir}/cypress/cyfmac4373-sdio.clm_blob* \
- "
- 
--LICENSE:${PN}-bcm-0bb4-0306 = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm-0bb4-0306 = "Firmware-cypress"
- RDEPENDS:${PN}-bcm-0bb4-0306 += "${PN}-cypress-license"
--LICENSE:${PN}-bcm-0a5c-6410 = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm-0a5c-6410 = "Firmware-cypress"
- RDEPENDS:${PN}-bcm-0a5c-6410 += "${PN}-bcm-0bb4-0306"
--LICENSE:${PN}-bcm43340 = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm43340 = "Firmware-cypress"
- RDEPENDS:${PN}-bcm43340 += "${PN}-cypress-license"
--LICENSE:${PN}-bcm43362 = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm43362 = "Firmware-cypress"
- RDEPENDS:${PN}-bcm43362 += "${PN}-cypress-license"
--LICENSE:${PN}-bcm43430 = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm43430 = "Firmware-cypress"
- RDEPENDS:${PN}-bcm43430 += "${PN}-cypress-license"
--LICENSE:${PN}-bcm4354 = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm4354 = "Firmware-cypress"
- RDEPENDS:${PN}-bcm4354 += "${PN}-cypress-license"
--LICENSE:${PN}-bcm4356-pcie = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm4356-pcie = "Firmware-cypress"
- RDEPENDS:${PN}-bcm4356-pcie += "${PN}-cypress-license"
--LICENSE:${PN}-bcm4373 = "LicenseRef-Firmware-cypress"
-+LICENSE:${PN}-bcm4373 = "Firmware-cypress"
- RDEPENDS:${PN}-bcm4373 += "${PN}-cypress-license"
- 
- # For Broadcom bnx2
-@@ -2134,8 +2134,8 @@ RDEPENDS:${PN}-bcm4373 += "${PN}-cypress-license"
- # which is a separate case to the other Broadcom firmwares since its
- # license is contained in the shared WHENCE file.
- 
--LICENSE:${PN}-bnx2 = "LicenseRef-Firmware-WHENCE"
--LICENSE:${PN}-whence-license = "LicenseRef-Firmware-WHENCE"
-+LICENSE:${PN}-bnx2 = "Firmware-WHENCE"
-+LICENSE:${PN}-whence-license = "Firmware-WHENCE"
- 
- FILES:${PN}-bnx2 = " \
-     ${firmwaredir}/bnx2/bnx2-mips*.fw* \
-@@ -2146,16 +2146,16 @@ FILES:${PN}-whence-license = "${firmwaredir}/WHENCE"
- RDEPENDS:${PN}-bnx2 += "${PN}-whence-license"
- RPROVIDES:${PN}-bnx2 = "${PN}-bnx2-mips"
- 
--LICENSE:${PN}-bnx2x = "LicenseRef-Firmware-WHENCE"
-+LICENSE:${PN}-bnx2x = "Firmware-WHENCE"
- 
- FILES:${PN}-bnx2x = "${firmwaredir}/bnx2x/bnx2x*.fw*"
- 
- RDEPENDS:${PN}-bnx2x += "${PN}-whence-license"
- 
- # For cirrus
--LICENSE:${PN}-cirrus = "LicenseRef-Firmware-cirrus"
--LICENSE:${PN}-cirrus-cs42l45 = "LicenseRef-Firmware-cirrus"
--LICENSE:${PN}-cirrus-license = "LicenseRef-Firmware-cirrus"
-+LICENSE:${PN}-cirrus = "Firmware-cirrus"
-+LICENSE:${PN}-cirrus-cs42l45 = "Firmware-cirrus"
-+LICENSE:${PN}-cirrus-license = "Firmware-cirrus"
- 
- FILES:${PN}-cirrus = " \
-     ${firmwaredir}/cs42l43.bin* \
-@@ -2173,8 +2173,8 @@ RDEPENDS:${PN}-cirrus += "${PN}-cirrus-license"
- RDEPENDS:${PN}-cirrus-cs42l45 += "${PN}-cirrus-license"
- 
- # For cnm
--LICENSE:${PN}-cnm = "LicenseRef-Firmware-cnm"
--LICENSE:${PN}-cnm-license = "LicenseRef-Firmware-cnm"
-+LICENSE:${PN}-cnm = "Firmware-cnm"
-+LICENSE:${PN}-cnm-license = "Firmware-cnm"
- 
- FILES:${PN}-cnm = "${firmwaredir}/cnm/*"
- FILES:${PN}-cnm-license = "${firmwaredir}/LICENCE.cnm"
-@@ -2182,9 +2182,9 @@ FILES:${PN}-cnm-license = "${firmwaredir}/LICENCE.cnm"
- RDEPENDS:${PN}-cnm += "${PN}-cnm-license"
- 
- # For imx-sdma
--LICENSE:${PN}-imx-sdma-imx6q       = "LicenseRef-Firmware-imx-sdma-firmware"
--LICENSE:${PN}-imx-sdma-imx7d       = "LicenseRef-Firmware-imx-sdma-firmware"
--LICENSE:${PN}-imx-sdma-license       = "LicenseRef-Firmware-imx-sdma-firmware"
-+LICENSE:${PN}-imx-sdma-imx6q       = "Firmware-imx-sdma-firmware"
-+LICENSE:${PN}-imx-sdma-imx7d       = "Firmware-imx-sdma-firmware"
-+LICENSE:${PN}-imx-sdma-license       = "Firmware-imx-sdma-firmware"
- 
- FILES:${PN}-imx-sdma-imx6q = "${firmwaredir}/imx/sdma/sdma-imx6q.bin*"
- 
-@@ -2200,34 +2200,34 @@ RDEPENDS:${PN}-imx-sdma-imx6q += "${PN}-imx-sdma-license"
- RDEPENDS:${PN}-imx-sdma-imx7d += "${PN}-imx-sdma-license"
- 
- # For iwlwifi
--LICENSE:${PN}-iwlwifi           = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-135-6     = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-7    = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-8    = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-9    = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-10   = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-12   = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-13   = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-16   = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-3160-17   = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-5000-5    = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-6000-4    = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-6000g2a-5 = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-6000g2a-6 = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-6000g2b-5 = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-6000g2b-6 = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-6050-4    = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-6050-5    = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-7260      = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-7265      = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-7265d     = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-8000c     = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-8265      = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-9000      = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-9260      = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-ty        = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-misc      = "LicenseRef-Firmware-iwlwifi-firmware"
--LICENSE:${PN}-iwlwifi-license   = "LicenseRef-Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi           = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-135-6     = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-7    = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-8    = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-9    = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-10   = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-12   = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-13   = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-16   = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-3160-17   = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-5000-5    = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-6000-4    = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-6000g2a-5 = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-6000g2a-6 = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-6000g2b-5 = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-6000g2b-6 = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-6050-4    = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-6050-5    = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-7260      = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-7265      = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-7265d     = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-8000c     = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-8265      = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-9000      = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-9260      = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-ty        = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-misc      = "Firmware-iwlwifi-firmware"
-+LICENSE:${PN}-iwlwifi-license   = "Firmware-iwlwifi-firmware"
- 
- FILES:${PN}-iwlwifi-license = "${firmwaredir}/LICENCE.iwlwifi_firmware"
- FILES:${PN}-iwlwifi-135-6 = "${firmwaredir}/iwlwifi-135-6.ucode* ${firmwaredir}/intel/iwlwifi/iwlwifi-135-6.ucode*"
-@@ -2308,15 +2308,15 @@ RREPLACES:${PN}-iwlwifi-7260 = "${PN}-iwlwifi-7260-7 ${PN}-iwlwifi-7260-8 ${PN}-
- RCONFLICTS:${PN}-iwlwifi-7260 = "${PN}-iwlwifi-7260-7 ${PN}-iwlwifi-7260-8 ${PN}-iwlwifi-7260-9"
- 
- # For ibt
--LICENSE:${PN}-ibt-license = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-hw-37-7 = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-hw-37-8 = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-11-5    = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-12-16   = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-17 = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-18    = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-20 = "LicenseRef-Firmware-ibt-firmware"
--LICENSE:${PN}-ibt-misc    = "LicenseRef-Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-license = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-hw-37-7 = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-hw-37-8 = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-11-5    = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-12-16   = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-17 = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-18    = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-20 = "Firmware-ibt-firmware"
-+LICENSE:${PN}-ibt-misc    = "Firmware-ibt-firmware"
- 
- FILES:${PN}-ibt-license = "${firmwaredir}/LICENCE.ibt_firmware"
- FILES:${PN}-ibt-hw-37-7 = "${firmwaredir}/intel/ibt-hw-37.7*.bseq*"
-@@ -2340,15 +2340,15 @@ RDEPENDS:${PN}-ibt-misc    = "${PN}-ibt-license"
- ALLOW_EMPTY:${PN}-ibt = "1"
- ALLOW_EMPTY:${PN}-ibt-misc = "1"
- 
--LICENSE:${PN}-i915       = "LicenseRef-Firmware-i915"
--LICENSE:${PN}-i915-license = "LicenseRef-Firmware-i915"
-+LICENSE:${PN}-i915       = "Firmware-i915"
-+LICENSE:${PN}-i915-license = "Firmware-i915"
- FILES:${PN}-i915-license = "${firmwaredir}/LICENSE.i915"
- FILES:${PN}-i915         = "${firmwaredir}/i915"
- RDEPENDS:${PN}-i915      = "${PN}-i915-license"
- 
- # For ice-enhanced
--LICENSE:${PN}-ice-enhanced         = "LicenseRef-Firmware-ice-enhanced"
--LICENSE:${PN}-ice-enhanced-license = "LicenseRef-Firmware-ice-enhanced"
-+LICENSE:${PN}-ice-enhanced         = "Firmware-ice-enhanced"
-+LICENSE:${PN}-ice-enhanced-license = "Firmware-ice-enhanced"
- 
- FILES:${PN}-ice-enhanced           = " \
-   ${firmwaredir}/intel/ice/ddp-comms/* \
-@@ -2359,8 +2359,8 @@ FILES:${PN}-ice-enhanced-license   = " \
- "
- RDEPENDS:${PN}-ice-enhanced        = "${PN}-ice-enhanced-license"
- 
--LICENSE:${PN}-ice       = "LicenseRef-Firmware-ice"
--LICENSE:${PN}-ice-license = "LicenseRef-Firmware-ice"
-+LICENSE:${PN}-ice       = "Firmware-ice"
-+LICENSE:${PN}-ice-license = "Firmware-ice"
- FILES:${PN}-ice-license = "${firmwaredir}/LICENSE.ice"
- FILES:${PN}-ice         = " \
-   ${firmwaredir}/intel/ice/ddp/* \
-@@ -2369,8 +2369,8 @@ FILES:${PN}-ice         = " \
- RDEPENDS:${PN}-ice      = "${PN}-ice-license"
- 
- FILES:${PN}-adsp-sst-license      = "${firmwaredir}/LICENCE.adsp_sst"
--LICENSE:${PN}-adsp-sst            = "LicenseRef-Firmware-adsp-sst"
--LICENSE:${PN}-adsp-sst-license    = "LicenseRef-Firmware-adsp-sst"
-+LICENSE:${PN}-adsp-sst            = "Firmware-adsp-sst"
-+LICENSE:${PN}-adsp-sst-license    = "Firmware-adsp-sst"
- FILES:${PN}-adsp-sst              = "\
-     ${firmwaredir}/intel/dsp_fw* \
-     ${firmwaredir}/intel/avs/*/dsp_basefw.bin \
-@@ -2383,167 +2383,167 @@ LICENSE:${PN}-snd-soc-avs = "Apache-2.0"
- FILES:${PN}-snd-soc-avs = "${firmwaredir}/intel/avs/*"
- 
- # For QAT
--LICENSE:${PN}-qat         = "LicenseRef-Firmware-qat"
--LICENSE:${PN}-qat-license = "LicenseRef-Firmware-qat"
-+LICENSE:${PN}-qat         = "Firmware-qat"
-+LICENSE:${PN}-qat-license = "Firmware-qat"
- FILES:${PN}-qat-license   = "${firmwaredir}/LICENCE.qat_firmware"
- FILES:${PN}-qat           = "${firmwaredir}/qat*.bin* ${firmwaredir}/intel/qat/qat*.bin*"
- RDEPENDS:${PN}-qat        = "${PN}-qat-license"
- 
--LICENSE:${PN}-qed         = "LicenseRef-Firmware-WHENCE"
-+LICENSE:${PN}-qed         = "Firmware-WHENCE"
- FILES:${PN}-qed           = "${firmwaredir}/qed/*"
- 
--LICENSE:${PN}-linaro-license = "LicenseRef-Firmware-linaro"
-+LICENSE:${PN}-linaro-license = "Firmware-linaro"
- FILES:${PN}-linaro-license   = "${firmwaredir}/LICENCE.linaro"
- 
- # For QCOM VPU/GPU and SDM845
--LICENSE:${PN}-qcom-license = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-2-license = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-yamato-license = "LicenseRef-Firmware-qcom-yamato"
--LICENSE:${PN}-qcom-aic100 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qdu100 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-venus-1.8 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-venus-4.2 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-venus-5.2 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-venus-5.4 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-venus-6.0 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-vpu = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a2xx = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-qcom-yamato"
--LICENSE:${PN}-qcom-adreno-a3xx = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a4xx = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a530 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a612 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a623 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a630 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a640 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a650 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a660 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a663 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a702 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a730 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-a740 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g705 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g709 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g715 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g717 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g800 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g801 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g802 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g811 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-adreno-g814 = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-apq8016-modem = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-apq8016-wifi = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-apq8096-audio = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-apq8096-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-apq8096-modem = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-eliza-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-eliza-audio = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-eliza-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-glymur-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-glymur-audio = "LicenseRef-Firmware-qcom-2 AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-glymur-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-hawi-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-hawi-audio = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-hawi-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-kaanapali-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-kaanapali-audio = "LicenseRef-Firmware-qcom-2 AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-kaanapali-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-kaanapali-soccp = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-maili-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-maili-audio = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-nord-audio = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-nord-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-nord-qupv3fw = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm2290-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm2290-audio = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm2290-modem = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm2290-wifi = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm6490-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm6490-audio = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-qcm6490-compute  = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm6490-ipa  = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm6490-wifi  = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcm6490-qupv3fw = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcs615-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcs615-audio = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-qcs615-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcs615-qupv3fw = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcs6490-radxa-dragon-q6a-audio = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-qcs6490-radxa-dragon-q6a-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcs6490-thundercomm-rubikpi3-audio = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-qcs8300-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qcs8300-audio = "LicenseRef-Firmware-qcom-2 AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-qcs8300-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-qcs8300-generalpurpose = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-qcs8300-qupv3fw = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qrb4210-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qrb4210-audio = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qrb4210-compute  = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qrb4210-modem = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-qrb4210-wifi = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sa8775p-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sa8775p-audio = "LicenseRef-Firmware-qcom-2 AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-sa8775p-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-sa8775p-generalpurpose = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-sa8775p-qupv3fw = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-audio = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-sensors = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-vpu = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sc8280xp-radxa-dragon-q8b-audio = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-audio = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-modem = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-shift6mq-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-shift6mq-modem = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-shift6mq-wifi = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdm845-thundercomm-db845c-sensors = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdx35-foxconn-firehose = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sdx61-foxconn-firehose = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-shikra-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-shikra-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-shikra-audio = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-shikra-modem = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-shikra-qupv3fw = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-shikra-wifi = "LicenseRef-Firmware-qualcommAthos-ath10k"
--LICENSE:${PN}-qcom-sm8150-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8250-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8250-audio = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8250-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8250-thundercomm-rb5-sensors = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8350-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8450-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8450-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-sm8550-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8550-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-sm8650-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8650-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-sm8750-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-sm8750-audio = "LicenseRef-Firmware-qcom-2 AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-sm8750-compute = "LicenseRef-Firmware-qcom-2"
--LICENSE:${PN}-qcom-x1e80100-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-audio = "LicenseRef-Firmware-qcom-2 AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-asus-vivobook-16-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-asus-vivobook-s15-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-asus-zenbook-a14-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-dell-inspiron-14-plus-7441-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-dell-latitude-7455-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-dell-xps13-9345-adreno = "LicenseRef-Firmware-dell"
--LICENSE:${PN}-qcom-x1e80100-dell-xps13-9345-audio = "LicenseRef-Firmware-dell AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-dell-xps13-9345-compute = "LicenseRef-Firmware-dell"
--LICENSE:${PN}-qcom-x1e80100-hp-omnibook-x14-audio-tplg = "LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-audio = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-vpu = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-adreno = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-audio = "LicenseRef-Firmware-qcom AND LicenseRef-Firmware-linaro"
--LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-compute = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-vpu = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1e80100-qupv3fw = "LicenseRef-Firmware-qcom"
--LICENSE:${PN}-qcom-x1p42100-adreno = "LicenseRef-Firmware-qcom"
-+LICENSE:${PN}-qcom-license = "Firmware-qcom"
-+LICENSE:${PN}-qcom-2-license = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-yamato-license = "Firmware-qcom-yamato"
-+LICENSE:${PN}-qcom-aic100 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qdu100 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-venus-1.8 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-venus-4.2 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-venus-5.2 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-venus-5.4 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-venus-6.0 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-vpu = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a2xx = "Firmware-qcom & Firmware-qcom-yamato"
-+LICENSE:${PN}-qcom-adreno-a3xx = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a4xx = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a530 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a612 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a623 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a630 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a640 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a650 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a660 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a663 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a702 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a730 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-a740 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g705 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g709 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g715 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g717 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g800 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g801 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g802 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g811 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-adreno-g814 = "Firmware-qcom"
-+LICENSE:${PN}-qcom-apq8016-modem = "Firmware-qcom"
-+LICENSE:${PN}-qcom-apq8016-wifi = "Firmware-qcom"
-+LICENSE:${PN}-qcom-apq8096-audio = "Firmware-qcom"
-+LICENSE:${PN}-qcom-apq8096-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-apq8096-modem = "Firmware-qcom"
-+LICENSE:${PN}-qcom-eliza-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-eliza-audio = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-eliza-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-glymur-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-glymur-audio = "Firmware-qcom-2 & Firmware-linaro"
-+LICENSE:${PN}-qcom-glymur-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-hawi-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-hawi-audio = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-hawi-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-kaanapali-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-kaanapali-audio = "Firmware-qcom-2 & Firmware-linaro"
-+LICENSE:${PN}-qcom-kaanapali-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-kaanapali-soccp = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-maili-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-maili-audio = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-nord-audio = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-nord-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-nord-qupv3fw = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm2290-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm2290-audio = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm2290-modem = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm2290-wifi = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm6490-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm6490-audio = "Firmware-qcom & Firmware-linaro"
-+LICENSE:${PN}-qcom-qcm6490-compute  = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm6490-ipa  = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm6490-wifi  = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcm6490-qupv3fw = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcs615-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcs615-audio = "Firmware-qcom & Firmware-linaro"
-+LICENSE:${PN}-qcom-qcs615-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcs615-qupv3fw = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcs6490-radxa-dragon-q6a-audio = "Firmware-qcom & Firmware-linaro"
-+LICENSE:${PN}-qcom-qcs6490-radxa-dragon-q6a-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcs6490-thundercomm-rubikpi3-audio = "Firmware-qcom & Firmware-linaro"
-+LICENSE:${PN}-qcom-qcs8300-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qcs8300-audio = "Firmware-qcom-2 & Firmware-linaro"
-+LICENSE:${PN}-qcom-qcs8300-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-qcs8300-generalpurpose = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-qcs8300-qupv3fw = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qrb4210-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qrb4210-audio = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qrb4210-compute  = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qrb4210-modem = "Firmware-qcom"
-+LICENSE:${PN}-qcom-qrb4210-wifi = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sa8775p-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sa8775p-audio = "Firmware-qcom-2 & Firmware-linaro"
-+LICENSE:${PN}-qcom-sa8775p-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-sa8775p-generalpurpose = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-sa8775p-qupv3fw = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-audio = "Firmware-qcom & Firmware-linaro"
-+LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-sensors = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sc8280xp-lenovo-x13s-vpu = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sc8280xp-radxa-dragon-q8b-audio = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-audio = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-modem = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-shift6mq-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-shift6mq-modem = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-shift6mq-wifi = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdm845-thundercomm-db845c-sensors = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdx35-foxconn-firehose = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sdx61-foxconn-firehose = "Firmware-qcom"
-+LICENSE:${PN}-qcom-shikra-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-shikra-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-shikra-audio = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-shikra-modem = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-shikra-qupv3fw = "Firmware-qcom"
-+LICENSE:${PN}-qcom-shikra-wifi = "Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-qcom-sm8150-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8250-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8250-audio = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8250-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8250-thundercomm-rb5-sensors = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8350-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8450-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8450-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-sm8550-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8550-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-sm8650-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8650-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-sm8750-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-sm8750-audio = "Firmware-qcom-2 & Firmware-linaro"
-+LICENSE:${PN}-qcom-sm8750-compute = "Firmware-qcom-2"
-+LICENSE:${PN}-qcom-x1e80100-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-audio = "Firmware-qcom-2 & Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-asus-vivobook-16-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-asus-vivobook-s15-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-asus-zenbook-a14-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-dell-inspiron-14-plus-7441-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-dell-latitude-7455-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-dell-xps13-9345-adreno = "Firmware-dell"
-+LICENSE:${PN}-qcom-x1e80100-dell-xps13-9345-audio = "Firmware-dell & Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-dell-xps13-9345-compute = "Firmware-dell"
-+LICENSE:${PN}-qcom-x1e80100-hp-omnibook-x14-audio-tplg = "Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-audio = "Firmware-qcom & Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-t14s-g6-vpu = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-adreno = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-audio = "Firmware-qcom & Firmware-linaro"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-compute = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-lenovo-yoga-slim7x-vpu = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1e80100-qupv3fw = "Firmware-qcom"
-+LICENSE:${PN}-qcom-x1p42100-adreno = "Firmware-qcom"
- 
- FILES:${PN}-qcom-license   = "${firmwaredir}/LICENSE.qcom ${firmwaredir}/qcom/NOTICE.txt"
- FILES:${PN}-qcom-2-license   = "${firmwaredir}/LICENSE.qcom-2"
-@@ -2925,70 +2925,70 @@ RRECOMMENDS:${PN}-qcom-sc8280xp-lenovo-x13s-compute = "${PN}-qcom-sc8280xp-lenov
- RRECOMMENDS:${PN}-qcom-sc8280xp-lenovo-x13s-sensors = "${PN}-qcom-sc8280xp-lenovo-x13s-compat"
- RRECOMMENDS:${PN}-qcom-sc8280xp-lenovo-x13s-vpu = "${PN}-qcom-sc8280xp-lenovo-x13s-compat"
- 
--LICENSE:${PN}-liquidui = "LicenseRef-Firmware-cavium-liquidio"
-+LICENSE:${PN}-liquidui = "Firmware-cavium-liquidio"
- FILES:${PN}-liquidio = "${firmwaredir}/liquidio"
- 
--LICENSE:${PN}-mellanox = "LicenseRef-Firmware-WHENCE"
-+LICENSE:${PN}-mellanox = "Firmware-WHENCE"
- FILES:${PN}-mellanox = "${firmwaredir}/mellanox"
- 
--LICENSE:${PN}-mm8108 = "LicenseRef-Firmware-morsemicro"
-+LICENSE:${PN}-mm8108 = "Firmware-morsemicro"
- FILES:${PN}-mm8108 = "${firmwaredir}/morsemicro/mm81x/v56/*"
- 
--LICENSE:${PN}-prestera = "LicenseRef-Firmware-Marvell"
-+LICENSE:${PN}-prestera = "Firmware-Marvell"
- FILES:${PN}-prestera = "${firmwaredir}/mrvl/prestera"
- RDEPENDS:${PN}-prestera = "${PN}-marvell-license"
- 
- # For Rockchip
--LICENSE:${PN}-rockchip-dptx = "LicenseRef-Firmware-rockchip"
-+LICENSE:${PN}-rockchip-dptx = "Firmware-rockchip"
- FILES:${PN}-rockchip-license = "${firmwaredir}/LICENCE.rockchip"
- FILES:${PN}-rockchip-dptx = "${firmwaredir}/rockchip/dptx.bin*"
- RDEPENDS:${PN}-rockchip-dptx = "${PN}-rockchip-license"
- 
--LICENSE:${PN}-rockchip-pcie = "LicenseRef-Firmware-rockchip"
-+LICENSE:${PN}-rockchip-pcie = "Firmware-rockchip"
- FILES:${PN}-rockchip-pcie = "${firmwaredir}/rockchip/pcie3-t22-c8g2-1.6.3-202a-p7.fw*"
- RDEPENDS:${PN}-rockchip-pcie = "${PN}-rockchip-license"
- 
- # For Amlogic VDEC
--LICENSE:${PN}-amlogic-vdec = "LicenseRef-Firmware-amlogic-vdec"
-+LICENSE:${PN}-amlogic-vdec = "Firmware-amlogic-vdec"
- FILES:${PN}-amlogic-vdec-license = "${firmwaredir}/LICENSE.amlogic_vdec"
- FILES:${PN}-amlogic-vdec = "${firmwaredir}/meson/vdec/*"
- RDEPENDS:${PN}-amlogic-vdec = "${PN}-amlogic-vdec-license"
- 
- # For 3com typhoon
--LICENSE:${PN}-typhoon-license = "LicenseRef-Firmware-typhoon"
--LICENSE:${PN}-typhoon = "LicenseRef-Firmware-typhoon"
-+LICENSE:${PN}-typhoon-license = "Firmware-typhoon"
-+LICENSE:${PN}-typhoon = "Firmware-typhoon"
- FILES:${PN}-typhoon-license = "${firmwaredir}/LICENCE.typhoon"
- FILES:${PN}-typhoon = "${firmwaredir}/3com/typhoon.bin*"
- RDEPENDS:${PN}-typhoon = "${PN}-typhoon-license"
- 
- # For ish - Intel Integrated Sensor Hub
--LICENSE:${PN}-intel-license = "LicenseRef-Firmware-intel"
-+LICENSE:${PN}-intel-license = "Firmware-intel"
- FILES:${PN}-intel-license = "${firmwaredir}/LICENSE.intel"
- 
--LICENSE:${PN}-ish-lnlm = "LicenseRef-Firmware-intel"
-+LICENSE:${PN}-ish-lnlm = "Firmware-intel"
- FILES:${PN}-ish-lnlm = "${firmwaredir}/intel/ish/ish_lnlm.bin*"
- RDEPENDS:${PN}-ish-lnlm = "${PN}-intel-license"
- 
--LICENSE:${PN}-ish-nvlh = "LicenseRef-Firmware-intel"
-+LICENSE:${PN}-ish-nvlh = "Firmware-intel"
- FILES:${PN}-ish-nvlh = "${firmwaredir}/intel/ish/ish_nvlh.bin*"
- RDEPENDS:${PN}-ish-nvlh = "${PN}-intel-license"
- 
--LICENSE:${PN}-ish-nvls = "LicenseRef-Firmware-intel"
-+LICENSE:${PN}-ish-nvls = "Firmware-intel"
- FILES:${PN}-ish-nvls = "${firmwaredir}/intel/ish/ish_nvls.bin*"
- RDEPENDS:${PN}-ish-nvls = "${PN}-intel-license"
- 
- # For Dell ish - Intel Integrated Sensor Hub
--LICENSE:${PN}-dell-license = "LicenseRef-Firmware-dell"
-+LICENSE:${PN}-dell-license = "Firmware-dell"
- FILES:${PN}-dell-license = "${firmwaredir}/LICENSE.dell"
- 
--LICENSE:${PN}-ish-lnlm-39ceeaf8 = "LicenseRef-Firmware-dell"
-+LICENSE:${PN}-ish-lnlm-39ceeaf8 = "Firmware-dell"
- FILES:${PN}-ish-lnlm-39ceeaf8 =  "\
-     ${firmwaredir}/intel/ish/ish_lnlm_39ceeaf8.bin* \
-     ${firmwaredir}/dell/ish/ish_lnlm_39ceeaf8_*.bin* \
- "
- RDEPENDS:${PN}-ish-lnlm-39ceeaf8 = "${PN}-dell-license"
- 
--LICENSE:${PN}-ish-ptl-39ceeaf8 = "LicenseRef-Firmware-dell"
-+LICENSE:${PN}-ish-ptl-39ceeaf8 = "Firmware-dell"
- FILES:${PN}-ish-ptl-39ceeaf8 =  "\
-     ${firmwaredir}/intel/ish/ish_ptl_39ceeaf8.bin* \
-     ${firmwaredir}/dell/ish/ish_ptl_39ceeaf8_*.bin* \
-@@ -2996,27 +2996,27 @@ FILES:${PN}-ish-ptl-39ceeaf8 =  "\
- RDEPENDS:${PN}-ish-ptl-39ceeaf8 = "${PN}-dell-license"
- 
- # For HP ish - Intel Integrated Sensor Hub
--LICENSE:${PN}-hp-license = "LicenseRef-Firmware-HP"
-+LICENSE:${PN}-hp-license = "Firmware-HP"
- FILES:${PN}-hp-license = "${firmwaredir}/LICENSE.HP"
- 
--LICENSE:${PN}-ish-lnlm-12128606 = "LicenseRef-Firmware-HP"
-+LICENSE:${PN}-ish-lnlm-12128606 = "Firmware-HP"
- FILES:${PN}-ish-lnlm-12128606 = " \
-     ${firmwaredir}/intel/ish/ish_lnlm_12128606_*.bin* \
-     ${firmwaredir}/HP/ish/ish_lnlm_12128606_*.bin* \
- "
- RDEPENDS:${PN}-ish-lnlm-12128606 = "${PN}-hp-license"
- 
--LICENSE:${PN}-ish-ptl-12128606 = "LicenseRef-Firmware-HP"
-+LICENSE:${PN}-ish-ptl-12128606 = "Firmware-HP"
- FILES:${PN}-ish-ptl-12128606 = " \
-     ${firmwaredir}/HP/ish/ish_ptl_12128606_*.bin* \
- "
- RDEPENDS:${PN}-ish-ptl-12128606 = "${PN}-hp-license"
- 
- # For LENOVO ish - Intel Integrated Sensor Hub
--LICENSE:${PN}-lenovo-license = "LicenseRef-Firmware-lenovo"
-+LICENSE:${PN}-lenovo-license = "Firmware-lenovo"
- FILES:${PN}-lenovo-license = "${firmwaredir}/LICENCE.lenovo"
- 
--LICENSE:${PN}-ish-lnlm-53c4ffad = "LicenseRef-Firmware-lenovo"
-+LICENSE:${PN}-ish-lnlm-53c4ffad = "Firmware-lenovo"
- FILES:${PN}-ish-lnlm-53c4ffad = "\
-     ${firmwaredir}/intel/ish/ish_lnlm_53c4ffad_*.bin* \
-     ${firmwaredir}/LENOVO/ish/ish_lnlm_lenovo_X1_2025_5.8.4.7720.bin* \
-@@ -3025,59 +3025,59 @@ FILES:${PN}-ish-lnlm-53c4ffad = "\
- "
- RDEPENDS:${PN}-ish-lnlm-53c4ffad = "${PN}-lenovo-license"
- 
--LICENSE:${PN}-ish-ptl = "LicenseRef-Firmware-intel"
-+LICENSE:${PN}-ish-ptl = "Firmware-intel"
- FILES:${PN}-ish-ptl = "${firmwaredir}/intel/ish/ish_ptl.bin*"
- RDEPENDS:${PN}-ish-ptl = "${PN}-intel-license"
- 
--LICENSE:${PN}-ish-ptl-53c4ffad = "LicenseRef-Firmware-lenovo"
-+LICENSE:${PN}-ish-ptl-53c4ffad = "Firmware-lenovo"
- FILES:${PN}-ish-ptl-53c4ffad = "\
-     ${firmwaredir}/intel/ish/ish_ptl_53c4ffad_*.bin* \
-     ${firmwaredir}/LENOVO/ish/ish_ptl_lenovo_X1_2026_5.8.1.7782.bin* \
- "
- RDEPENDS:${PN}-ish-ptl-53c4ffad = "${PN}-lenovo-license"
- 
--LICENSE:${PN}-ish-wcl = "LicenseRef-Firmware-intel"
-+LICENSE:${PN}-ish-wcl = "Firmware-intel"
- FILES:${PN}-ish-wcl = "${firmwaredir}/intel/ish/ish_wcl.bin*"
- RDEPENDS:${PN}-ish-wcl = "${PN}-intel-license"
- 
- # For advansys - AdvanSys SCSI
--LICENSE:${PN}-advansys-license = "LicenseRef-Firmware-advansys"
-+LICENSE:${PN}-advansys-license = "Firmware-advansys"
- FILES:${PN}-advansys-license = "${firmwaredir}/LICENCE.advansys"
- 
--LICENSE:${PN}-advansys = "LicenseRef-Firmware-advansys"
-+LICENSE:${PN}-advansys = "Firmware-advansys"
- FILES:${PN}-advansys = "${firmwaredir}/advansys/*"
- RDEPENDS:${PN}-advansys = "${PN}-advansys-license"
- 
- # For as21xxx
--LICENSE:${PN}-aeonsemi-license = "LicenseRef-Firmware-aeonsemi"
-+LICENSE:${PN}-aeonsemi-license = "Firmware-aeonsemi"
- FILES:${PN}-aeonsemi-license = "${firmwaredir}/LICENSE.aeonsemi"
- 
--LICENSE:${PN}-as21xxx = "LicenseRef-Firmware-aeonsemi"
-+LICENSE:${PN}-as21xxx = "Firmware-aeonsemi"
- FILES:${PN}-as21xxx = "${firmwaredir}/aeonsemi/*"
- RDEPENDS:${PN}-as21xxx = "${PN}-aeonsemi-license"
- 
- # For orinoco - Agere/Prism/Symbol Orinoco support
--LICENSE:${PN}-agere-license = "LicenseRef-Firmware-agere"
-+LICENSE:${PN}-agere-license = "Firmware-agere"
- FILES:${PN}-agere-license = "${firmwaredir}/LICENCE.agere"
- 
--LICENSE:${PN}-orinoco = "LicenseRef-Firmware-agere"
-+LICENSE:${PN}-orinoco = "Firmware-agere"
- FILES:${PN}-orinoco = "${firmwaredir}/agere_*"
- RDEPENDS:${PN}-orinoco = "${PN}-agere-license"
- 
- # For en8811h - Airoha 2.5G Ethernet Phy
--LICENSE:${PN}-airoha-license = "LicenseRef-Firmware-airoha"
-+LICENSE:${PN}-airoha-license = "Firmware-airoha"
- FILES:${PN}-airoha-license = "${firmwaredir}/LICENSE.airoha"
- 
--LICENSE:${PN}-an8811hb = "LicenseRef-Firmware-airoha"
-+LICENSE:${PN}-an8811hb = "Firmware-airoha"
- FILES:${PN}-an8811hb = "${firmwaredir}/airoha/an8811hb/EthMD32*"
- RDEPENDS:${PN}-an8811hb = "${PN}-airoha-license"
- 
--LICENSE:${PN}-en8811h = "LicenseRef-Firmware-airoha"
-+LICENSE:${PN}-en8811h = "Firmware-airoha"
- FILES:${PN}-en8811h = "${firmwaredir}/airoha/EthMD32*"
- RDEPENDS:${PN}-en8811h = "${PN}-airoha-license"
- 
- # For airoha-npu - Airoha Network Processor Unit driver
--LICENSE:${PN}-airoha-npu = "LicenseRef-Firmware-airoha"
-+LICENSE:${PN}-airoha-npu = "Firmware-airoha"
- FILES:${PN}-airoha-npu = " \
-     ${firmwaredir}/airoha/an7583_npu* \
-     ${firmwaredir}/airoha/en7581_npu* \
-@@ -3086,10 +3086,10 @@ FILES:${PN}-airoha-npu = " \
- RDEPENDS:${PN}-airoha-npu = "${PN}-airoha-license"
- 
- # For ccp - Platform Security Processor (PSP) device
--LICENSE:${PN}-amd-sev-license = "LicenseRef-Firmware-amd-sev"
-+LICENSE:${PN}-amd-sev-license = "Firmware-amd-sev"
- FILES:${PN}-amd-sev-license = "${firmwaredir}/LICENSE.amd-sev"
- 
--LICENSE:${PN}-ccp = "LicenseRef-Firmware-amd-sev"
-+LICENSE:${PN}-ccp = "Firmware-amd-sev"
- FILES:${PN}-ccp = " \
-     ${firmwaredir}/amd/amd_sev* \
-     ${firmwaredir}/amd/README* \
-@@ -3097,34 +3097,34 @@ FILES:${PN}-ccp = " \
- RDEPENDS:${PN}-ccp = "${PN}-amd-sev-license"
- 
- # For amdxdna - AMD Inference processor
--LICENSE:${PN}-amdnpu-license = "LicenseRef-Firmware-amdnpu"
-+LICENSE:${PN}-amdnpu-license = "Firmware-amdnpu"
- FILES:${PN}-amdnpu-license = "${firmwaredir}/LICENSE.amdnpu"
- 
--LICENSE:${PN}-amdxdna = "LicenseRef-Firmware-amdnpu"
-+LICENSE:${PN}-amdxdna = "Firmware-amdnpu"
- FILES:${PN}-amdxdna = "${firmwaredir}/amdnpu/*"
- RDEPENDS:${PN}-amdxdna = "${PN}-amdnpu-license"
- 
- # For amd_pmf - AMD Platform Management Framework TA
--LICENSE:${PN}-amd-pmf-license = "LicenseRef-Firmware-amd-pmf"
-+LICENSE:${PN}-amd-pmf-license = "Firmware-amd-pmf"
- FILES:${PN}-amd-pmf-license = "${firmwaredir}/LICENSE.amd_pmf"
- 
--LICENSE:${PN}-amd-pmf = "LicenseRef-Firmware-amd-pmf"
-+LICENSE:${PN}-amd-pmf = "Firmware-amd-pmf"
- FILES:${PN}-amd-pmf = "${firmwaredir}/amdtee/*"
- RDEPENDS:${PN}-amd-pmf = "${PN}-amd-pmf-license"
- 
- # For microcode_amd - AMD CPU Microcode Update Driver for Linux
--LICENSE:${PN}-amd-ucode-license = "LicenseRef-Firmware-amd-ucode"
-+LICENSE:${PN}-amd-ucode-license = "Firmware-amd-ucode"
- FILES:${PN}-amd-ucode-license = "${firmwaredir}/LICENSE.amd-ucode"
- 
--LICENSE:${PN}-microcode-amd = "LicenseRef-Firmware-amd-ucode"
-+LICENSE:${PN}-microcode-amd = "Firmware-amd-ucode"
- FILES:${PN}-microcode-amd = "${firmwaredir}/amd-ucode/*"
- RDEPENDS:${PN}-microcode-amd = "${PN}-amd-ucode-license"
- 
- # For amlogic - Amlogic SoC Firmware
--LICENSE:${PN}-amlogic-license = "LicenseRef-Firmware-amlogic"
-+LICENSE:${PN}-amlogic-license = "Firmware-amlogic"
- FILES:${PN}-amlogic-license = "${firmwaredir}/LICENSE.amlogic"
- 
--LICENSE:${PN}-amlogic = "LicenseRef-Firmware-amlogic"
-+LICENSE:${PN}-amlogic = "Firmware-amlogic"
- FILES:${PN}-amlogic = "${firmwaredir}/amlogic/aml_*"
- RDEPENDS:${PN}-amlogic = "${PN}-amlogic-license"
- 
-@@ -3133,22 +3133,22 @@ LICENSE:${PN}-starfire = "GPL-2.0-only"
- FILES:${PN}-starfire = "${firmwaredir}/adaptec/starfire*"
- 
- # For as102 - Abilis Systems Single DVB-T Receiver
--LICENSE:${PN}-abilis-license = "LicenseRef-Firmware-Abilis"
-+LICENSE:${PN}-abilis-license = "Firmware-Abilis"
- FILES:${PN}-abilis-license = "${firmwaredir}/LICENCE.Abilis"
- 
--LICENSE:${PN}-as102 = "LicenseRef-Firmware-Abilis"
-+LICENSE:${PN}-as102 = "Firmware-Abilis"
- FILES:${PN}-as102 = "${firmwaredir}/as102_data*_st.hex*"
- RDEPENDS:${PN}-as102 = "${PN}-abilis-license"
- 
- # For wilc1000 - Atmel 802.11n WLAN driver for WILC1000 & WILC3000
--LICENSE:${PN}-atmel-license = "LicenseRef-Firmware-atmel"
-+LICENSE:${PN}-atmel-license = "Firmware-atmel"
- FILES:${PN}-atmel-license = "${firmwaredir}/LICENSE.atmel"
- 
--LICENSE:${PN}-wilc1000 = "LicenseRef-Firmware-atmel"
-+LICENSE:${PN}-wilc1000 = "Firmware-atmel"
- FILES:${PN}-wilc1000 = "${firmwaredir}/atmel/wilc1000*"
- RDEPENDS:${PN}-wilc1000 = "${PN}-atmel-license"
- 
--LICENSE:${PN}-wilc3000 = "LicenseRef-Firmware-atmel"
-+LICENSE:${PN}-wilc3000 = "Firmware-atmel"
- FILES:${PN}-wilc3000 = "${firmwaredir}/atmel/wilc3000*"
- RDEPENDS:${PN}-wilc3000 = "${PN}-atmel-license"
- 
-@@ -3161,42 +3161,42 @@ FILES:${PN}-dvb-ttpci = "${firmwaredir}/av7110/*"
- LICENSE:${PN}-dvb-ttpci = "GPL-2.0-or-later"
- 
- # For bmi260 - Bosch BMI260 IMU configuration data
--LICENSE:${PN}-bmi260-license = "LicenseRef-Firmware-bmi260"
-+LICENSE:${PN}-bmi260-license = "Firmware-bmi260"
- FILES:${PN}-bmi260-license = "${firmwaredir}/LICENSE.bmi260"
- 
--LICENSE:${PN}-bmi260 = "LicenseRef-Firmware-bmi260"
-+LICENSE:${PN}-bmi260 = "Firmware-bmi260"
- FILES:${PN}-bmi260 = "${firmwaredir}/bmi260-init-data.fw*"
- RDEPENDS:${PN}-bmi260 = "${PN}-bmi260-license"
- 
- # For cdns-mhdp - Cadence MHDP8546 DP bridge
--LICENSE:${PN}-cadence-license = "LicenseRef-Firmware-cadence"
-+LICENSE:${PN}-cadence-license = "Firmware-cadence"
- FILES:${PN}-cadence-license = "${firmwaredir}/LICENCE.cadence"
- 
--LICENSE:${PN}-mhdp8546 = "LicenseRef-Firmware-cadence"
-+LICENSE:${PN}-mhdp8546 = "Firmware-cadence"
- FILES:${PN}-mhdp8546 = "${firmwaredir}/cadence/mhdp8546.bin*"
- RDEPENDS:${PN}-mhdp8546 = "${PN}-cadence-license"
- 
- # For nitrox - Cavium CNN55XX crypto driver
--LICENSE:${PN}-cavium-license = "LicenseRef-Firmware-cavium"
-+LICENSE:${PN}-cavium-license = "Firmware-cavium"
- FILES:${PN}-cavium-license = "${firmwaredir}/LICENCE.cavium"
- 
--LICENSE:${PN}-cnn55xx = "LicenseRef-Firmware-cavium"
-+LICENSE:${PN}-cnn55xx = "Firmware-cavium"
- FILES:${PN}-cnn55xx = "${firmwaredir}/cavium/cnn55xx*"
- RDEPENDS:${PN}-cnn55xx = "${PN}-cavium-license"
- 
- # For BFA/BNA - QLogic BR-series Adapter FC/FCOE drivers
--LICENSE:${PN}-bfa-license = "LicenseRef-Firmware-bfa"
-+LICENSE:${PN}-bfa-license = "Firmware-bfa"
- FILES:${PN}-bfa-license = "${firmwaredir}/LICENSE.bfa"
- 
--LICENSE:${PN}-cbfw = "LicenseRef-Firmware-bfa"
-+LICENSE:${PN}-cbfw = "Firmware-bfa"
- FILES:${PN}-cbfw = "${firmwaredir}/cbfw-3.2.5.1.bin*"
- RDEPENDS:${PN}-cbfw = "${PN}-bfa-license"
- 
--LICENSE:${PN}-ctfw = "LicenseRef-Firmware-bfa"
-+LICENSE:${PN}-ctfw = "Firmware-bfa"
- FILES:${PN}-ctfw = "${firmwaredir}/ctfw-3.2.5.1.bin*"
- RDEPENDS:${PN}-ctfw = "${PN}-bfa-license"
- 
--LICENSE:${PN}-ct2fw = "LicenseRef-Firmware-bfa"
-+LICENSE:${PN}-ct2fw = "Firmware-bfa"
- FILES:${PN}-ct2fw = "${firmwaredir}/ct2fw-3.2.5.1.bin*"
- RDEPENDS:${PN}-ct2fw = "${PN}-bfa-license"
- 
-@@ -3210,15 +3210,15 @@ FILES:${PN}-pcnet-cs = " \
-     ${firmwaredir}/cis/PE-200.cis* \
-     ${firmwaredir}/cis/PE520.cis* \
- "
--LICENSE:${PN}-pcnet-cs = "GPL-2.0-only AND MPL-1.1"
-+LICENSE:${PN}-pcnet-cs = "GPL-2.0-only & MPL-1.1"
- 
- # For 3c589_cs - 3Com PCMCIA adapter
- FILES:${PN}-3c589-cs = "${firmwaredir}/cis/3CXEM556.cis*"
--LICENSE:${PN}-3c589-cs = "GPL-2.0-only AND MPL-1.1"
-+LICENSE:${PN}-3c589-cs = "GPL-2.0-only & MPL-1.1"
- 
- # For 3c574-cs - 3Com PCMCIA adapter
- FILES:${PN}-3c574-cs = "${firmwaredir}/cis/3CCFEM556.cis*"
--LICENSE:${PN}-3c574-cs = "GPL-2.0-only AND MPL-1.1"
-+LICENSE:${PN}-3c574-cs = "GPL-2.0-only & MPL-1.1"
- 
- # For serial_cs - Serial PCMCIA adapter (pcmcia-cs project)
- FILES:${PN}-serial-cs = " \
-@@ -3227,7 +3227,7 @@ FILES:${PN}-serial-cs = " \
-     ${firmwaredir}/cis/COMpad2.cis* \
-     ${firmwaredir}/cis/COMpad4.cis* \
- "
--LICENSE:${PN}-serial-cs = "GPL-2.0-only AND MPL-1.1"
-+LICENSE:${PN}-serial-cs = "GPL-2.0-only & MPL-1.1"
- 
- # For Sierra Wireless serial_cs - Serial PCMCIA adapter
- FILES:${PN}-sw-serial = " \
-@@ -3238,10 +3238,10 @@ FILES:${PN}-sw-serial = " \
- LICENSE:${PN}-sw-serial = "GPL-3.0-only"
- 
- # For smsmdtv - Siano MDTV Core module
--LICENSE:${PN}-siano-license = "LicenseRef-Firmware-siano"
-+LICENSE:${PN}-siano-license = "Firmware-siano"
- FILES:${PN}-siano-license = "${firmwaredir}/LICENCE.siano"
- 
--LICENSE:${PN}-smsmdtv = "LicenseRef-Firmware-siano"
-+LICENSE:${PN}-smsmdtv = "Firmware-siano"
- FILES:${PN}-smsmdtv = " \
-     ${firmwaredir}/cmmb_vega_12mhz.inp* \
-     ${firmwaredir}/cmmb_venice_12mhz.inp* \
-@@ -3264,10 +3264,10 @@ FILES:${PN}-cpia2 = "${firmwaredir}/cpia2/*"
- LICENSE:${PN}-cpia2 = "GPL-2.0-or-later"
- 
- # For snd-hda-codec-ca0132 - Creative Sound Core3D codec
--LICENSE:${PN}-ca0132-license = "LicenseRef-Firmware-ca0132"
-+LICENSE:${PN}-ca0132-license = "Firmware-ca0132"
- FILES:${PN}-ca0132-license = "${firmwaredir}/LICENCE.ca0132"
- 
--LICENSE:${PN}-ca0132 = "LicenseRef-Firmware-ca0132"
-+LICENSE:${PN}-ca0132 = "Firmware-ca0132"
- FILES:${PN}-ca0132 = " \
-     ${firmwaredir}/ctefx.bin* \
-     ${firmwaredir}/ctspeq.bin* \
-@@ -3275,26 +3275,26 @@ FILES:${PN}-ca0132 = " \
- RDEPENDS:${PN}-ca0132 = "${PN}-ca0132-license"
- 
- # For cxgb3 - Chelsio Terminator 3 1G/10G Ethernet adapter
--LICENSE:${PN}-cxgb3-license = "LicenseRef-Firmware-cxgb3"
-+LICENSE:${PN}-cxgb3-license = "Firmware-cxgb3"
- FILES:${PN}-cxgb3-license = "${firmwaredir}/LICENCE.cxgb3"
- 
--LICENSE:${PN}-cxgb3 = "LicenseRef-Firmware-cxgb3 AND GPL-2.0-only"
-+LICENSE:${PN}-cxgb3 = "Firmware-cxgb3 & GPL-2.0-only"
- FILES:${PN}-cxgb3 = "${firmwaredir}/cxgb3/*"
- RDEPENDS:${PN}-cxgb3 = "${PN}-cxgb3-license"
- 
- # For cxgb4 - Chelsio Terminator 4/5/6 1/10/25/40/100G Ethernet adapter
--LICENSE:${PN}-chelsio-firmware-license = "LicenseRef-Firmware-chelsio-firmware"
-+LICENSE:${PN}-chelsio-firmware-license = "Firmware-chelsio-firmware"
- FILES:${PN}-chelsio-firmware-license = "${firmwaredir}/LICENCE.chelsio_firmware"
- 
--LICENSE:${PN}-cxgb4 = "LicenseRef-Firmware-chelsio-firmware"
-+LICENSE:${PN}-cxgb4 = "Firmware-chelsio-firmware"
- FILES:${PN}-cxgb4 = "${firmwaredir}/cxgb4/*"
- RDEPENDS:${PN}-cxgb4 = "${PN}-chelsio-firmware-license"
- 
- # For dabusb - Digital Audio Broadcasting (DAB) Receiver for USB and Linux
--LICENSE:${PN}-dabusb-license = "LicenseRef-Firmware-dabusb"
-+LICENSE:${PN}-dabusb-license = "Firmware-dabusb"
- FILES:${PN}-dabusb-license = "${firmwaredir}/LICENCE.dabusb"
- 
--LICENSE:${PN}-dabusb = "LicenseRef-Firmware-dabusb"
-+LICENSE:${PN}-dabusb = "Firmware-dabusb"
- FILES:${PN}-dabusb = "${firmwaredir}/dabusb/*"
- RDEPENDS:${PN}-dabusb = "${PN}-dabusb-license"
- 
-@@ -3303,34 +3303,34 @@ LICENSE:${PN}-dsp56k = "GPL-2.0-or-later"
- FILES:${PN}-dsp56k = "${firmwaredir}/dsp56k/*"
- 
- # For dib0700 - DiBcom dib0700 USB DVB bridge driver
--LICENSE:${PN}-dib0700-license = "LicenseRef-Firmware-dib0700"
-+LICENSE:${PN}-dib0700-license = "Firmware-dib0700"
- FILES:${PN}-dib0700-license = "${firmwaredir}/LICENSE.dib0700"
- 
--LICENSE:${PN}-dib0700 = "LicenseRef-Firmware-dib0700"
-+LICENSE:${PN}-dib0700 = "Firmware-dib0700"
- FILES:${PN}-dib0700 = "${firmwaredir}/dvb-usb-dib0700-1.20.fw*"
- RDEPENDS:${PN}-dib0700 = "${PN}-dib0700-license"
- 
- # For it9135 - ITEtech IT913x DVB-T USB driver
--LICENSE:${PN}-it913x-license = "LicenseRef-Firmware-it913x"
-+LICENSE:${PN}-it913x-license = "Firmware-it913x"
- FILES:${PN}-it913x-license = "${firmwaredir}/LICENCE.it913x"
- 
--LICENSE:${PN}-it9135 = "LicenseRef-Firmware-it913x"
-+LICENSE:${PN}-it9135 = "Firmware-it913x"
- FILES:${PN}-it9135 = "${firmwaredir}/dvb-usb-it9135*"
- RDEPENDS:${PN}-it9135 = "${PN}-it913x-license"
- 
- # For drxk - Micronas DRX-K demodulator driver
--LICENSE:${PN}-drxk-license = "LicenseRef-Firmware-drxk"
-+LICENSE:${PN}-drxk-license = "Firmware-drxk"
- FILES:${PN}-drxk-license = "${firmwaredir}/LICENSE.drxk"
- 
--LICENSE:${PN}-drxk = "LicenseRef-Firmware-drxk"
-+LICENSE:${PN}-drxk = "Firmware-drxk"
- FILES:${PN}-drxk = "${firmwaredir}/dvb-usb-terratec-h5-drxk.fw*"
- RDEPENDS:${PN}-drxk = "${PN}-drxk-license"
- 
- # For e100 - Intel PRO/100 Ethernet NIC
--LICENSE:${PN}-e100-license = "LicenseRef-Firmware-e100"
-+LICENSE:${PN}-e100-license = "Firmware-e100"
- FILES:${PN}-e100-license = "${firmwaredir}/LICENCE.e100"
- 
--LICENSE:${PN}-e100 = "LicenseRef-Firmware-e100"
-+LICENSE:${PN}-e100 = "Firmware-e100"
- FILES:${PN}-e100 = "${firmwaredir}/e100/*"
- RDEPENDS:${PN}-e100 = "${PN}-e100-license"
- 
-@@ -3343,26 +3343,26 @@ LICENSE:${PN}-io-edgeport = "GPL-2.0-or-later"
- FILES:${PN}-io-edgeport = "${firmwaredir}/edgeport/*"
- 
- # For emi26 - EMI 2|6 USB Audio interface
--LICENSE:${PN}-emi26-license = "LicenseRef-Firmware-emi26"
-+LICENSE:${PN}-emi26-license = "Firmware-emi26"
- FILES:${PN}-emi26-license = "${firmwaredir}/LICENCE.emi26"
- 
--LICENSE:${PN}-emi26 = "LicenseRef-Firmware-emi26"
-+LICENSE:${PN}-emi26 = "Firmware-emi26"
- FILES:${PN}-emi26 = "${firmwaredir}/emi26/*"
- RDEPENDS:${PN}-emi26 = "${PN}-drxk-license"
- 
- # For ene-ub6250 - ENE UB6250 SD card reader driver
--LICENSE:${PN}-ene-firmware-license = "LicenseRef-Firmware-ene-firmware"
-+LICENSE:${PN}-ene-firmware-license = "Firmware-ene-firmware"
- FILES:${PN}-ene-firmware-license = "${firmwaredir}/LICENCE.ene_firmware"
- 
--LICENSE:${PN}-ene-ub6250 = "LicenseRef-Firmware-ene-firmware"
-+LICENSE:${PN}-ene-ub6250 = "Firmware-ene-firmware"
- FILES:${PN}-ene-ub6250 = "${firmwaredir}/ene-ub6250/*"
- RDEPENDS:${PN}-ene-ub6250 = "${PN}-ene-firmware-license"
- 
- # For go7007-s2250
--LICENSE:${PN}-sensoray-license = "LicenseRef-Firmware-sensoray"
-+LICENSE:${PN}-sensoray-license = "Firmware-sensoray"
- FILES:${PN}-sensoray-license = "${firmwaredir}/LICENCE.sensoray"
- 
--LICENSE:${PN}-go7007-s2250 = "LicenseRef-Firmware-sensoray"
-+LICENSE:${PN}-go7007-s2250 = "Firmware-sensoray"
- FILES:${PN}-go7007-s2250 = " \
-     ${firmwaredir}/go7007/s2250* \
-     ${firmwaredir}/s2250* \
-@@ -3370,34 +3370,34 @@ FILES:${PN}-go7007-s2250 = " \
- RDEPENDS:${PN}-go7007-s2250 = "${PN}-sensoray-license"
- 
- # For go7007
--LICENSE:${PN}-go7007-license = "LicenseRef-Firmware-go7007"
-+LICENSE:${PN}-go7007-license = "Firmware-go7007"
- FILES:${PN}-go7007-license = "${firmwaredir}/LICENCE.go7007"
- 
--LICENSE:${PN}-go7007 = "LicenseRef-Firmware-go7007"
-+LICENSE:${PN}-go7007 = "Firmware-go7007"
- FILES:${PN}-go7007 = "${firmwaredir}/go7007/*"
- RDEPENDS:${PN}-go7007 = "${PN}-go7007-license"
- 
- # For hfi1 - Intel OPA Gen 1 adapter
--LICENSE:${PN}-hfi1-license = "LicenseRef-Firmware-hfi1-firmware"
-+LICENSE:${PN}-hfi1-license = "Firmware-hfi1-firmware"
- FILES:${PN}-hfi1-license = "${firmwaredir}/LICENSE.hfi1_firmware"
- 
--LICENSE:${PN}-hfi1 = "LicenseRef-Firmware-hfi1-firmware"
-+LICENSE:${PN}-hfi1 = "Firmware-hfi1-firmware"
- FILES:${PN}-hfi1 = "${firmwaredir}/hfi1_*"
- RDEPENDS:${PN}-hfi1 = "${PN}-hfi1-license"
- 
- # For inside-secure - Inside Secure EIP197 crypto driver
--LICENSE:${PN}-inside-secure-license = "LicenseRef-Firmware-inside-secure"
-+LICENSE:${PN}-inside-secure-license = "Firmware-inside-secure"
- FILES:${PN}-inside-secure-license = "${firmwaredir}/LICENCE.inside-secure"
- 
--LICENSE:${PN}-inside-secure = "LicenseRef-Firmware-inside-secure"
-+LICENSE:${PN}-inside-secure = "Firmware-inside-secure"
- FILES:${PN}-inside-secure = "${firmwaredir}/inside-secure/*"
- RDEPENDS:${PN}-inside-secure = "${PN}-inside-secure-license"
- 
- # For snd_soc_catpt - Intel AudioDSP driver for HSW/BDW platforms
--LICENSE:${PN}-intcsst2-license = "LicenseRef-Firmware-IntcSST2"
-+LICENSE:${PN}-intcsst2-license = "Firmware-IntcSST2"
- FILES:${PN}-intcsst2-license = "${firmwaredir}/LICENCE.IntcSST2"
- 
--LICENSE:${PN}-snd-soc-catpt = "LicenseRef-Firmware-IntcSST2"
-+LICENSE:${PN}-snd-soc-catpt = "Firmware-IntcSST2"
- FILES:${PN}-snd-soc-catpt = " \
-     ${firmwaredir}/intel/catpt/bdw/dsp_basefw.bin* \
-     ${firmwaredir}/intel/IntcSST2.bin* \
-@@ -3405,36 +3405,36 @@ FILES:${PN}-snd-soc-catpt = " \
- RDEPENDS:${PN}-snd-soc-catpt = "${PN}-intcsst2-license"
- 
- # For snd_intel_sst_core
--LICENSE:${PN}-fw-sst-0f28-license = "LicenseRef-Firmware-fw-sst-0f28"
-+LICENSE:${PN}-fw-sst-0f28-license = "Firmware-fw-sst-0f28"
- FILES:${PN}-fw-sst-0f28-license = "${firmwaredir}/LICENCE.fw_sst_0f28"
- 
--LICENSE:${PN}-snd-intel-sst-core = "LicenseRef-Firmware-fw-sst-0f28"
-+LICENSE:${PN}-snd-intel-sst-core = "Firmware-fw-sst-0f28"
- FILES:${PN}-snd-intel-sst-core = "${firmwaredir}/intel/fw_sst_*"
- RDEPENDS:${PN}-snd-intel-sst-core = "${PN}-fw-sst-0f28-license"
- 
- # For atomisp - Intel IPU2 (Image Processing Unit 2) driver
--LICENSE:${PN}-ivsc-license = "LicenseRef-Firmware-ivsc"
-+LICENSE:${PN}-ivsc-license = "Firmware-ivsc"
- FILES:${PN}-ivsc-license = "${firmwaredir}/LICENSE.ivsc"
- 
--LICENSE:${PN}-atomisp = "LicenseRef-Firmware-ivsc"
-+LICENSE:${PN}-atomisp = "Firmware-ivsc"
- FILES:${PN}-atomisp = "${firmwaredir}/intel/ipu/shisp_240*"
- RDEPENDS:${PN}-atomisp = "${PN}-ivsc-license"
- 
- # For intel-ipu6-isys - Intel IPU6 (Image Processing Unit 6) driver
--LICENSE:${PN}-intel-ipu6-isys = "LicenseRef-Firmware-ivsc"
-+LICENSE:${PN}-intel-ipu6-isys = "Firmware-ivsc"
- FILES:${PN}-intel-ipu6-isys = "${firmwaredir}/intel/ipu/ipu6*"
- RDEPENDS:${PN}-intel-ipu6-isys = "${PN}-ivsc-license"
- 
- # For mei-vsc-hw - Intel Visual Sensing Controller
--LICENSE:${PN}-mei-vsc-hw = "LicenseRef-Firmware-ivsc"
-+LICENSE:${PN}-mei-vsc-hw = "Firmware-ivsc"
- FILES:${PN}-mei-vsc-hw = "${firmwaredir}/intel/vsc/*"
- RDEPENDS:${PN}-mei-vsc-hw = "${PN}-ivsc-license"
- 
- # For ipu3-imgu - Intel IPU3 (3rd Gen Image Processing Unit) driver
--LICENSE:${PN}-ipu3-firmware-license = "LicenseRef-Firmware-ipu3-firmware"
-+LICENSE:${PN}-ipu3-firmware-license = "Firmware-ipu3-firmware"
- FILES:${PN}-ipu3-firmware-license = "${firmwaredir}/LICENSE.ipu3_firmware"
- 
--LICENSE:${PN}-ipu3-imgu = "LicenseRef-Firmware-ipu3-firmware"
-+LICENSE:${PN}-ipu3-imgu = "Firmware-ipu3-firmware"
- FILES:${PN}-ipu3-imgu = " \
-     ${firmwaredir}/intel/ipu/irci_irci_ecr-master_20161208_0213_20170112_1500.bin* \
-     ${firmwaredir}/intel/ipu3-fw.bin* \
-@@ -3443,15 +3443,15 @@ FILES:${PN}-ipu3-imgu = " \
- RDEPENDS:${PN}-ipu3-imgu = "${PN}-ipu3-firmware-license"
- 
- # For intel-ipu7-isys - Intel IPU7 (Image Processing Unit 7) driver
--LICENSE:${PN}-intel-ipu7-isys = "LicenseRef-Firmware-intel"
-+LICENSE:${PN}-intel-ipu7-isys = "Firmware-intel"
- FILES:${PN}-intel-ipu7-isys = "${firmwaredir}/intel/ipu/ipu7*"
- RDEPENDS:${PN}-intel-ipu7-isys = "${PN}-intel-license"
- 
- # For intel_vpu - Intel NPU driver
--LICENSE:${PN}-intel-vpu-license = "LicenseRef-Firmware-intel-vpu"
-+LICENSE:${PN}-intel-vpu-license = "Firmware-intel-vpu"
- FILES:${PN}-intel-vpu-license = "${firmwaredir}/LICENSE.intel_vpu"
- 
--LICENSE:${PN}-intel-vpu = "LicenseRef-Firmware-intel-vpu"
-+LICENSE:${PN}-intel-vpu = "Firmware-intel-vpu"
- FILES:${PN}-intel-vpu = "${firmwaredir}/intel/vpu/*"
- RDEPENDS:${PN}-intel-vpu = "${PN}-intel-vpu-license"
- 
-@@ -3460,26 +3460,26 @@ LICENSE:${PN}-isci = "GPL-2.0-only"
- FILES:${PN}-isci = "${firmwaredir}/isci/*"
- 
- # For ixp4xx-npe - Intel IXP4xx XScale Network Processing Engine (NPE) Firmware
--LICENSE:${PN}-ixp4xx-license = "LicenseRef-Firmware-ixp4xx"
-+LICENSE:${PN}-ixp4xx-license = "Firmware-ixp4xx"
- FILES:${PN}-ixp4xx-license = "${firmwaredir}/LICENSE.ixp4xx"
- 
--LICENSE:${PN}-ixp4xx-npe = "LicenseRef-Firmware-ixp4xx"
-+LICENSE:${PN}-ixp4xx-npe = "Firmware-ixp4xx"
- FILES:${PN}-ixp4xx-npe = "${firmwaredir}/ixp4xx/*"
- RDEPENDS:${PN}-ixp4xx-npe = "${PN}-ixp4xx-license"
- 
- # For kaweth - USB KLSI KL5USB101-based Ethernet device
--LICENSE:${PN}-kaweth-license = "LicenseRef-Firmware-kaweth"
-+LICENSE:${PN}-kaweth-license = "Firmware-kaweth"
- FILES:${PN}-kaweth-license = "${firmwaredir}/LICENCE.kaweth"
- 
--LICENSE:${PN}-kaweth = "LicenseRef-Firmware-kaweth"
-+LICENSE:${PN}-kaweth = "Firmware-kaweth"
- FILES:${PN}-kaweth = "${firmwaredir}/kaweth/*"
- RDEPENDS:${PN}-kaweth = "${PN}-kaweth-license"
- 
- # For keyspan - USB Keyspan USA-xxx serial device
--LICENSE:${PN}-keyspan-license = "LicenseRef-Firmware-keyspan"
-+LICENSE:${PN}-keyspan-license = "Firmware-keyspan"
- FILES:${PN}-keyspan-license = "${firmwaredir}/LICENCE.keyspan"
- 
--LICENSE:${PN}-keyspan = "LicenseRef-Firmware-keyspan"
-+LICENSE:${PN}-keyspan = "Firmware-keyspan"
- FILES:${PN}-keyspan = "${firmwaredir}/keyspan/*"
- RDEPENDS:${PN}-keyspan = "${PN}-keyspan-license"
- 
-@@ -3488,18 +3488,18 @@ LICENSE:${PN}-keyspan-pda = "GPL-2.0-or-later"
- FILES:${PN}-keyspan-pda = "${firmwaredir}/keyspan_pda/*"
- 
- # For mga - Matrox G200/G400/G550
--LICENSE:${PN}-mga-license = "LicenseRef-Firmware-mga"
-+LICENSE:${PN}-mga-license = "Firmware-mga"
- FILES:${PN}-mga-license = "${firmwaredir}/LICENSE.mga"
- 
--LICENSE:${PN}-mga = "LicenseRef-Firmware-mga"
-+LICENSE:${PN}-mga = "Firmware-mga"
- FILES:${PN}-mga = "${firmwaredir}/matrox/*"
- RDEPENDS:${PN}-mga = "${PN}-mga-license"
- 
- # For myri10ge - Myri10GE 10GbE NIC driver
--LICENSE:${PN}-myri10ge-firmware-license = "LicenseRef-Firmware-myri10ge-firmware"
-+LICENSE:${PN}-myri10ge-firmware-license = "Firmware-myri10ge-firmware"
- FILES:${PN}-myri10ge-firmware-license = "${firmwaredir}/LICENCE.myri10ge_firmware"
- 
--LICENSE:${PN}-myri10ge = "LicenseRef-Firmware-myri10ge-firmware"
-+LICENSE:${PN}-myri10ge = "Firmware-myri10ge-firmware"
- FILES:${PN}-myri10ge = "${firmwaredir}/myri10ge_*"
- RDEPENDS:${PN}-myri10ge = "${PN}-myri10ge-firmware-license"
- 
-@@ -3508,10 +3508,10 @@ LICENSE:${PN}-smc91c92-cs = "GPL-1.0-only"
- FILES:${PN}-smc91c92-cs = "${firmwaredir}/ositech/Xilinx7OD.bin*"
- 
- # For qla1280 - Qlogic QLA 1240/1x80/1x160 SCSI support
--LICENSE:${PN}-qla1280-license = "LicenseRef-Firmware-qla1280"
-+LICENSE:${PN}-qla1280-license = "Firmware-qla1280"
- FILES:${PN}-qla1280-license = "${firmwaredir}/LICENCE.qla1280"
- 
--LICENSE:${PN}-qla1280 = "LicenseRef-Firmware-qla1280"
-+LICENSE:${PN}-qla1280 = "Firmware-qla1280"
- FILES:${PN}-qla1280 = " \
-     ${firmwaredir}/qlogic/1040.bin* \
-     ${firmwaredir}/qlogic/1280.bin* \
-@@ -3520,26 +3520,26 @@ FILES:${PN}-qla1280 = " \
- RDEPENDS:${PN}-qla1280 = "${PN}-qla1280-license"
- 
- # For ib_qib - QLogic Infiniband
--LICENSE:${PN}-ib-qib-license = "LicenseRef-Firmware-ib-qib"
-+LICENSE:${PN}-ib-qib-license = "Firmware-ib-qib"
- FILES:${PN}-ib-qib-license = "${firmwaredir}/LICENSE.ib_qib"
- 
--LICENSE:${PN}-ib-qib = "LicenseRef-Firmware-ib-qib"
-+LICENSE:${PN}-ib-qib = "Firmware-ib-qib"
- FILES:${PN}-ib-qib = "${firmwaredir}/qlogic/sd7220.fw*"
- RDEPENDS:${PN}-ib-qib = "${PN}-ib-qib-license"
- 
- # For xhci-rcar - Renesas R-Car Gen2/3 USB 3.0 host controller driver
--LICENSE:${PN}-r8a779x-usb3-license = "LicenseRef-Firmware-r8a779x-usb3"
-+LICENSE:${PN}-r8a779x-usb3-license = "Firmware-r8a779x-usb3"
- FILES:${PN}-r8a779x-usb3-license = "${firmwaredir}/LICENCE.r8a779x_usb3"
- 
--LICENSE:${PN}-xhci-rcar = "LicenseRef-Firmware-r8a779x-usb3"
-+LICENSE:${PN}-xhci-rcar = "Firmware-r8a779x-usb3"
- FILES:${PN}-xhci-rcar = "${firmwaredir}/r8a779x_usb3_*"
- RDEPENDS:${PN}-xhci-rcar = "${PN}-r8a779x-usb3-license"
- 
- # For pcie-rcar-gen4 - Renesas R-Car Gen4 PCIe driver
--LICENSE:${PN}-r8a779g-pcie-phy-license = "LicenseRef-Firmware-r8a779g-pcie-phy"
-+LICENSE:${PN}-r8a779g-pcie-phy-license = "Firmware-r8a779g-pcie-phy"
- FILES:${PN}-r8a779g-pcie-phy-license = "${firmwaredir}/LICENCE.r8a779g_pcie_phy"
- 
--LICENSE:${PN}-pcie-rcar = "LicenseRef-Firmware-r8a779g-pcie-phy"
-+LICENSE:${PN}-pcie-rcar = "Firmware-r8a779g-pcie-phy"
- FILES:${PN}-pcie-rcar = "${firmwaredir}/rcar_gen4_pcie.bin*"
- RDEPENDS:${PN}-pcie-rcar = "${PN}-r8a779g-pcie-phy-license"
- 
-@@ -3548,26 +3548,26 @@ LICENSE:${PN}-r128 = "MIT"
- FILES:${PN}-r128 = "${firmwaredir}/r128/*"
- 
- # For rt1320 - Realtek rt1320 ASoC audio driver.
--LICENSE:${PN}-rt1320-license = "LicenseRef-Firmware-rt1320"
-+LICENSE:${PN}-rt1320-license = "Firmware-rt1320"
- FILES:${PN}-rt1320-license = "${firmwaredir}/LICENSE.rt1320"
- 
--LICENSE:${PN}-rt1320 = "LicenseRef-Firmware-rt1320"
-+LICENSE:${PN}-rt1320 = "Firmware-rt1320"
- FILES:${PN}-rt1320 = "${firmwaredir}/realtek/rt1320/*"
- RDEPENDS:${PN}-rt1320 = "${PN}-rt1320-license"
- 
- # For rp2 - Comtrol RocketPort 2 serial driver
--LICENSE:${PN}-rp2-license = "LicenseRef-Firmware-rp2"
-+LICENSE:${PN}-rp2-license = "Firmware-rp2"
- FILES:${PN}-rp2-license = "${firmwaredir}/LICENSE.rp2"
- 
--LICENSE:${PN}-rp2 = "LicenseRef-Firmware-rp2"
-+LICENSE:${PN}-rp2 = "Firmware-rp2"
- FILES:${PN}-rp2 = "${firmwaredir}/rp2.fw*"
- RDEPENDS:${PN}-rp2 = "${PN}-rp2-license"
- 
- # For s5p-mfc - Samsung MFC video encoder/decoder driver
--LICENSE:${PN}-s5p-mfc-license = "LicenseRef-Firmware-s5p-mfc"
-+LICENSE:${PN}-s5p-mfc-license = "Firmware-s5p-mfc"
- FILES:${PN}-s5p-mfc-license = "${firmwaredir}/LICENSE.s5p-mfc"
- 
--LICENSE:${PN}-s5p-mfc = "LicenseRef-Firmware-s5p-mfc"
-+LICENSE:${PN}-s5p-mfc = "Firmware-s5p-mfc"
- FILES:${PN}-s5p-mfc = "${firmwaredir}/s5p-mfc*"
- RDEPENDS:${PN}-s5p-mfc = "${PN}-s5p-mfc-license"
- 
-@@ -3576,54 +3576,54 @@ LICENSE:${PN}-snd-sb16-csp = "GPL-2.0-or-later"
- FILES:${PN}-snd-sb16-csp = "${firmwaredir}/sb16/*"
- 
- # For slicoss - Alacritech IS-NIC products
--LICENSE:${PN}-alacritech-license = "LicenseRef-Firmware-alacritech"
-+LICENSE:${PN}-alacritech-license = "Firmware-alacritech"
- FILES:${PN}-alacritech-license = "${firmwaredir}/LICENCE.alacritech"
- 
--LICENSE:${PN}-slicoss = "LicenseRef-Firmware-alacritech"
-+LICENSE:${PN}-slicoss = "Firmware-alacritech"
- FILES:${PN}-slicoss = "${firmwaredir}/slicoss/*"
- RDEPENDS:${PN}-slicoss = "${PN}-alacritech-license"
- 
--LICENSE:${PN}-sxg = "LicenseRef-Firmware-alacritech"
-+LICENSE:${PN}-sxg = "Firmware-alacritech"
- FILES:${PN}-sxg = "${firmwaredir}/sxg/*"
- RDEPENDS:${PN}-sxg = "${PN}-alacritech-license"
- 
- # For tehuti - Tehuti Networks 10G Ethernet
--LICENSE:${PN}-tehuti-license = "LicenseRef-Firmware-tehuti"
-+LICENSE:${PN}-tehuti-license = "Firmware-tehuti"
- FILES:${PN}-tehuti-license = "${firmwaredir}/LICENSE.tehuti"
- 
--LICENSE:${PN}-tehuti = "LicenseRef-Firmware-tehuti"
-+LICENSE:${PN}-tehuti = "Firmware-tehuti"
- FILES:${PN}-tehuti = "${firmwaredir}/tehuti/*"
- RDEPENDS:${PN}-tehuti = "${PN}-tehuti-license"
- 
- # For tg3 - Broadcom Tigon3 based gigabit Ethernet cards
--LICENSE:${PN}-tigon-license = "LicenseRef-Firmware-tigon"
-+LICENSE:${PN}-tigon-license = "Firmware-tigon"
- FILES:${PN}-tigon-license = "${firmwaredir}/LICENCE.tigon"
- 
--LICENSE:${PN}-tg3 = "LicenseRef-Firmware-tigon"
-+LICENSE:${PN}-tg3 = "Firmware-tigon"
- FILES:${PN}-tg3 = "${firmwaredir}/tigon/*"
- RDEPENDS:${PN}-tg3 = "${PN}-tigon-license"
- 
- # For tlg2300 - Telgent 2300 V4L/DVB driver.
--LICENSE:${PN}-tlg2300-license = "LicenseRef-Firmware-tlg2300"
-+LICENSE:${PN}-tlg2300-license = "Firmware-tlg2300"
- FILES:${PN}-tlg2300-license = "${firmwaredir}/LICENSE.tlg2300"
- 
--LICENSE:${PN}-tlg2300 = "LicenseRef-Firmware-tlg2300"
-+LICENSE:${PN}-tlg2300 = "Firmware-tlg2300"
- FILES:${PN}-tlg2300 = "${firmwaredir}/tlg2300*"
- RDEPENDS:${PN}-tlg2300 = "${PN}-tlg2300-license"
- 
- # For Mont-TSSE - Mont-TSSE(TM) Crypto Algorithm Accelerator Driver
--LICENSE:${PN}-montage-license = "LicenseRef-Firmware-montage"
-+LICENSE:${PN}-montage-license = "Firmware-montage"
- FILES:${PN}-montage-license = "${firmwaredir}/LICENSE.montage"
- 
--LICENSE:${PN}-mont-tsse = "LicenseRef-Firmware-montage"
-+LICENSE:${PN}-mont-tsse = "Firmware-montage"
- FILES:${PN}-mont-tsse = "${firmwaredir}/tsse_firmware.bin*"
- RDEPENDS:${PN}-mont-tsse = "${PN}-montage-license"
- 
- # For ueagle-atm - Driver for USB ADSL Modems based on Eagle IV Chipset
--LICENSE:${PN}-ueagle-atm4-firmware-license = "LicenseRef-Firmware-ueagle-atm4-firmware"
-+LICENSE:${PN}-ueagle-atm4-firmware-license = "Firmware-ueagle-atm4-firmware"
- FILES:${PN}-ueagle-atm4-firmware-license = "${firmwaredir}/LICENCE.ueagle-atm4-firmware"
- 
--LICENSE:${PN}-ueagle-atm = "LicenseRef-Firmware-ueagle-atm4-firmware"
-+LICENSE:${PN}-ueagle-atm = "Firmware-ueagle-atm4-firmware"
- FILES:${PN}-ueagle-atm = " \
-     ${firmwaredir}/ueagle-atm/CMV4p.bin.v2* \
-     ${firmwaredir}/ueagle-atm/DSP4p.bin* \
-@@ -3636,30 +3636,30 @@ LICENSE:${PN}-usbdux = "GPL-2.0-or-later"
- FILES:${PN}-usbdux = "${firmwaredir}/usbdux*"
- 
- # For cx231xx - Conexant Cx23100/101/102 USB broadcast A/V decoder
--LICENSE:${PN}-conexant-license = "LicenseRef-Firmware-conexant"
-+LICENSE:${PN}-conexant-license = "Firmware-conexant"
- FILES:${PN}-conexant-license = "${firmwaredir}/LICENSE.conexant"
- 
--LICENSE:${PN}-cx231xx = "LicenseRef-Firmware-conexant"
-+LICENSE:${PN}-cx231xx = "Firmware-conexant"
- FILES:${PN}-cx231xx = "${firmwaredir}/v4l-cx231xx*"
- RDEPENDS:${PN}-cx231xx = "${PN}-conexant-license"
- 
--LICENSE:${PN}-cx23418 = "LicenseRef-Firmware-conexant"
-+LICENSE:${PN}-cx23418 = "Firmware-conexant"
- FILES:${PN}-cx23418 = "${firmwaredir}/v4l-cx23418*"
- RDEPENDS:${PN}-cx23418 = "${PN}-conexant-license"
- 
--LICENSE:${PN}-cx23885 = "LicenseRef-Firmware-conexant"
-+LICENSE:${PN}-cx23885 = "Firmware-conexant"
- FILES:${PN}-cx23885 = "${firmwaredir}/v4l-cx23885*"
- RDEPENDS:${PN}-cx23885 = "${PN}-conexant-license"
- 
--LICENSE:${PN}-cx23840 = "LicenseRef-Firmware-conexant"
-+LICENSE:${PN}-cx23840 = "Firmware-conexant"
- FILES:${PN}-cx23840 = "${firmwaredir}/v4l-cx25840*"
- RDEPENDS:${PN}-cx23840 = "${PN}-conexant-license"
- 
- # For vxge - Exar X3100 Series 10GbE PCIe I/O Virtualized Server Adapter
--LICENSE:${PN}-vxge-license = "LicenseRef-Firmware-vxge"
-+LICENSE:${PN}-vxge-license = "Firmware-vxge"
- FILES:${PN}-vxge-license = "${firmwaredir}/LICENSE.vxge"
- 
--LICENSE:${PN}-vxge = "LicenseRef-Firmware-vxge"
-+LICENSE:${PN}-vxge = "Firmware-vxge"
- FILES:${PN}-vxge = "${firmwaredir}/vxge/*"
- RDEPENDS:${PN}-vxge = "${PN}-vxge-license"
- 
-@@ -3667,116 +3667,116 @@ RDEPENDS:${PN}-vxge = "${PN}-vxge-license"
- LICENSE:${PN}-whiteheat = "GPL-2.0-only"
- FILES:${PN}-whiteheat = "${firmwaredir}/whiteheat*"
- 
--LICENSE:${PN}-wil6210 = "LicenseRef-Firmware-qualcommAthos-ath10k"
-+LICENSE:${PN}-wil6210 = "Firmware-qualcommAthos-ath10k"
- FILES:${PN}-wil6210 = "${firmwaredir}/wil6210*"
- RDEPENDS:${PN}-wil6210 = "${PN}-ath10k-license"
- 
- # For xe - Intel Graphics driver
--LICENSE:${PN}-xe-license = "LicenseRef-Firmware-xe"
-+LICENSE:${PN}-xe-license = "Firmware-xe"
- FILES:${PN}-xe-license = "${firmwaredir}/LICENSE.xe"
- 
--LICENSE:${PN}-xe = "LicenseRef-Firmware-xe"
-+LICENSE:${PN}-xe = "Firmware-xe"
- FILES:${PN}-xe = "${firmwaredir}/xe/*"
- RDEPENDS:${PN}-xe = "${PN}-xe-license"
- 
- # For other firmwares
- # Maybe split out to separate packages when needed.
- LICENSE:${PN} = "\
--    LicenseRef-Firmware-Abilis \
--    AND LicenseRef-Firmware-aeonsemi \
--    AND LicenseRef-Firmware-agere \
--    AND LicenseRef-Firmware-aic \
--    AND LicenseRef-Firmware-airoha \
--    AND LicenseRef-Firmware-alacritech \
--    AND LicenseRef-Firmware-amdgpu \
--    AND LicenseRef-Firmware-amdisp \
--    AND LicenseRef-Firmware-amdnpu \
--    AND LicenseRef-Firmware-amd-pmf \
--    AND LicenseRef-Firmware-amd-sev \
--    AND LicenseRef-Firmware-amd-ucode \
--    AND LicenseRef-Firmware-amlogic \
--    AND LicenseRef-Firmware-amlogic-vdec \
--    AND LicenseRef-Firmware-atmel \
--    AND LicenseRef-Firmware-bfa \
--    AND LicenseRef-Firmware-bmi260 \
--    AND LicenseRef-Firmware-bnx2 \
--    AND LicenseRef-Firmware-bnx2x \
--    AND LicenseRef-Firmware-ca0132 \
--    AND LicenseRef-Firmware-cavium \
--    AND LicenseRef-Firmware-chelsio-firmware \
--    AND LicenseRef-Firmware-cirrus \
--    AND LicenseRef-Firmware-cnm \
--    AND LicenseRef-Firmware-conexant \
--    AND LicenseRef-Firmware-cw1200 \
--    AND LicenseRef-Firmware-cw1200-sdd \
--    AND LicenseRef-Firmware-cxgb3 \
--    AND LicenseRef-Firmware-dabusb \
--    AND LicenseRef-Firmware-dell \
--    AND LicenseRef-Firmware-dib0700 \
--    AND LicenseRef-Firmware-drxk \
--    AND LicenseRef-Firmware-e100 \
--    AND LicenseRef-Firmware-emi26 \
--    AND LicenseRef-Firmware-ene-firmware \
--    AND LicenseRef-Firmware-fw-sst-0f28 \
--    AND LicenseRef-Firmware-go7007 \
--    AND LicenseRef-Firmware-hfi1-firmware \
--    AND LicenseRef-Firmware-HP \
--    AND LicenseRef-Firmware-ib-qib \
--    AND LicenseRef-Firmware-ibt-firmware \
--    AND LicenseRef-Firmware-inside-secure \
--    AND LicenseRef-Firmware-intel \
--    AND LicenseRef-Firmware-intel-vpu \
--    AND LicenseRef-Firmware-ipu3-firmware \
--    AND LicenseRef-Firmware-it913x \
--    AND LicenseRef-Firmware-ivsc \
--    AND LicenseRef-Firmware-ixp4xx \
--    AND LicenseRef-Firmware-IntcSST2 \
--    AND LicenseRef-Firmware-kaweth \
--    AND LicenseRef-Firmware-keyspan \
--    AND LicenseRef-Firmware-lenovo \
--    AND LicenseRef-Firmware-mellanox \
--    AND LicenseRef-Firmware-mga \
--    AND LicenseRef-Firmware-montage \
--    AND LicenseRef-Firmware-morsemicro \
--    AND LicenseRef-Firmware-moxa \
--    AND LicenseRef-Firmware-myri10ge-firmware \
--    AND LicenseRef-Firmware-nvidia \
--    AND LicenseRef-Firmware-nxp \
--    AND LicenseRef-Firmware-OLPC \
--    AND LicenseRef-Firmware-ath9k-htc \
--    AND LicenseRef-Firmware-phanfw \
--    AND LicenseRef-Firmware-qat \
--    AND LicenseRef-Firmware-qcom \
--    AND LicenseRef-Firmware-qed \
--    AND LicenseRef-Firmware-qla1280 \
--    AND LicenseRef-Firmware-qla2xxx \
--    AND LicenseRef-Firmware-r8169 \
--    AND LicenseRef-Firmware-r8a779x-usb3 \
--    AND LicenseRef-Firmware-radeon \
--    AND LicenseRef-Firmware-ralink-a-mediatek-company-firmware \
--    AND LicenseRef-Firmware-ralink-firmware \
--    AND LicenseRef-Firmware-rp2 \
--    AND LicenseRef-Firmware-rsi \
--    AND LicenseRef-Firmware-rt1320 \
--    AND LicenseRef-Firmware-imx-sdma-firmware \
--    AND LicenseRef-Firmware-s5p-mfc \
--    AND LicenseRef-Firmware-sensoray \
--    AND LicenseRef-Firmware-siano \
--    AND LicenseRef-Firmware-tehuti \
--    AND LicenseRef-Firmware-ti-connectivity \
--    AND LicenseRef-Firmware-ti-keystone \
--    AND LicenseRef-Firmware-ti-tspa \
--    AND LicenseRef-Firmware-tigon \
--    AND LicenseRef-Firmware-tlg2300 \
--    AND LicenseRef-Firmware-typhoon \
--    AND LicenseRef-Firmware-ueagle-atm4-firmware \
--    AND LicenseRef-Firmware-vxge \
--    AND LicenseRef-Firmware-wl1251 \
--    AND LicenseRef-Firmware-xc4000 \
--    AND LicenseRef-Firmware-xc5000 \
--    AND LicenseRef-Firmware-xc5000c \
--    AND LicenseRef-Firmware-xe \
--    AND LicenseRef-Firmware-WHENCE \
-+    Firmware-Abilis \
-+    & Firmware-aeonsemi \
-+    & Firmware-agere \
-+    & Firmware-aic \
-+    & Firmware-airoha \
-+    & Firmware-alacritech \
-+    & Firmware-amdgpu \
-+    & Firmware-amdisp \
-+    & Firmware-amdnpu \
-+    & Firmware-amd-pmf \
-+    & Firmware-amd-sev \
-+    & Firmware-amd-ucode \
-+    & Firmware-amlogic \
-+    & Firmware-amlogic-vdec \
-+    & Firmware-atmel \
-+    & Firmware-bfa \
-+    & Firmware-bmi260 \
-+    & Firmware-bnx2 \
-+    & Firmware-bnx2x \
-+    & Firmware-ca0132 \
-+    & Firmware-cavium \
-+    & Firmware-chelsio-firmware \
-+    & Firmware-cirrus \
-+    & Firmware-cnm \
-+    & Firmware-conexant \
-+    & Firmware-cw1200 \
-+    & Firmware-cw1200-sdd \
-+    & Firmware-cxgb3 \
-+    & Firmware-dabusb \
-+    & Firmware-dell \
-+    & Firmware-dib0700 \
-+    & Firmware-drxk \
-+    & Firmware-e100 \
-+    & Firmware-emi26 \
-+    & Firmware-ene-firmware \
-+    & Firmware-fw-sst-0f28 \
-+    & Firmware-go7007 \
-+    & Firmware-hfi1-firmware \
-+    & Firmware-HP \
-+    & Firmware-ib-qib \
-+    & Firmware-ibt-firmware \
-+    & Firmware-inside-secure \
-+    & Firmware-intel \
-+    & Firmware-intel-vpu \
-+    & Firmware-ipu3-firmware \
-+    & Firmware-it913x \
-+    & Firmware-ivsc \
-+    & Firmware-ixp4xx \
-+    & Firmware-IntcSST2 \
-+    & Firmware-kaweth \
-+    & Firmware-keyspan \
-+    & Firmware-lenovo \
-+    & Firmware-mellanox \
-+    & Firmware-mga \
-+    & Firmware-montage \
-+    & Firmware-morsemicro \
-+    & Firmware-moxa \
-+    & Firmware-myri10ge-firmware \
-+    & Firmware-nvidia \
-+    & Firmware-nxp \
-+    & Firmware-OLPC \
-+    & Firmware-ath9k-htc \
-+    & Firmware-phanfw \
-+    & Firmware-qat \
-+    & Firmware-qcom \
-+    & Firmware-qed \
-+    & Firmware-qla1280 \
-+    & Firmware-qla2xxx \
-+    & Firmware-r8169 \
-+    & Firmware-r8a779x-usb3 \
-+    & Firmware-radeon \
-+    & Firmware-ralink-a-mediatek-company-firmware \
-+    & Firmware-ralink-firmware \
-+    & Firmware-rp2 \
-+    & Firmware-rsi \
-+    & Firmware-rt1320 \
-+    & Firmware-imx-sdma-firmware \
-+    & Firmware-s5p-mfc \
-+    & Firmware-sensoray \
-+    & Firmware-siano \
-+    & Firmware-tehuti \
-+    & Firmware-ti-connectivity \
-+    & Firmware-ti-keystone \
-+    & Firmware-ti-tspa \
-+    & Firmware-tigon \
-+    & Firmware-tlg2300 \
-+    & Firmware-typhoon \
-+    & Firmware-ueagle-atm4-firmware \
-+    & Firmware-vxge \
-+    & Firmware-wl1251 \
-+    & Firmware-xc4000 \
-+    & Firmware-xc5000 \
-+    & Firmware-xc5000c \
-+    & Firmware-xe \
-+    & Firmware-WHENCE \
- "
- 
- # The goal for this recipe is to creata bunch of breakout packages for the
+diff --git a/recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch b/recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch
+deleted file mode 100644
+index 2c7a70e..0000000
+--- a/recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch
++++ /dev/null
+@@ -1,40 +0,0 @@
+-From c4cb7a15e3f5c4081e3a459f15da3e58449cc4de Mon Sep 17 00:00:00 2001
+-From: Renato Caldas <renato@calgera.com>
+-Date: Thu, 29 Jun 2023 13:59:11 +0100
+-Subject: [PATCH] libselinux: restore: drop the obsolete LSF transitional API.
+-
+-The preferred way to enable LSF support on 32 bit systems is to define
+-_FILE_OFFSET_BITS=64 when building selinux.
+-
+-Upstream-Status: Submitted [https://github.com/SELinuxProject/selinux/pull/401]
+-
+-Signed-off-by: Renato Caldas <renato@calgera.com>
+----
+- libselinux/src/selinux_restorecon.c | 4 ++--
+- 1 file changed, 2 insertions(+), 2 deletions(-)
+-
+-diff --git a/libselinux/src/selinux_restorecon.c b/libselinux/src/selinux_restorecon.c
+-index 8fadf4d2..f23bad0c 100644
+---- a/libselinux/src/selinux_restorecon.c
+-+++ b/libselinux/src/selinux_restorecon.c
+-@@ -443,7 +443,7 @@ static int filespec_add(ino_t ino, const char *con, const char *file,
+- 	file_spec_t *prevfl, *fl;
+- 	uint32_t h;
+- 	int ret;
+--	struct stat64 sb;
+-+	struct stat sb;
+- 
+- 	__pthread_mutex_lock(&fl_mutex);
+- 
+-@@ -457,7 +457,7 @@ static int filespec_add(ino_t ino, const char *con, const char *file,
+- 	for (prevfl = &fl_head[h], fl = fl_head[h].next; fl;
+- 	     prevfl = fl, fl = fl->next) {
+- 		if (ino == fl->ino) {
+--			ret = lstat64(fl->file, &sb);
+-+			ret = lstat(fl->file, &sb);
+- 			if (ret < 0 || sb.st_ino != ino) {
+- 				freecon(fl->con);
+- 				free(fl->file);
+--- 
+-2.34.1
+-
+diff --git a/recipes-security/selinux/libselinux_3.10.bb b/recipes-security/selinux/libselinux_3.11.bb
+similarity index 86%
+rename from recipes-security/selinux/libselinux_3.10.bb
+rename to recipes-security/selinux/libselinux_3.11.bb
+index 98fc5c8..ead3452 100644
+--- a/recipes-security/selinux/libselinux_3.10.bb
++++ b/recipes-security/selinux/libselinux_3.11.bb
+@@ -10,11 +10,6 @@ require selinux_common.inc
+ 
+ inherit lib_package pkgconfig
+ 
+-FILESEXTRAPATHS:prepend := "${THISDIR}/libselinux:"
+-SRC_URI += "\
+-        file://0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch;patchdir=.. \
+-        "
+-
+ DEPENDS = "libsepol libpcre2"
+ DEPENDS:append:libc-musl = " fts"
+ 
+diff --git a/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch b/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch
+index 2ec8a62..bb2b6d6 100644
+--- a/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch
++++ b/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch
+@@ -17,18 +17,15 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+  1 file changed, 1 insertion(+), 1 deletion(-)
+ 
+ diff --git a/libsemanage/src/semanage_store.c b/libsemanage/src/semanage_store.c
+-index 1731c5e8..c6ace295 100644
++index f14ebe97..2a50605f 100644
+ --- a/libsemanage/src/semanage_store.c
+ +++ b/libsemanage/src/semanage_store.c
+-@@ -1445,7 +1445,7 @@ static int semanage_exec_prog(semanage_handle_t * sh,
++@@ -1505,7 +1505,7 @@ static int semanage_exec_prog(semanage_handle_t *sh, external_prog_t *e,
+  	if (forkval == 0) {
+  		/* child process.  file descriptors will be closed
+  		 * because they were set as close-on-exec. */
+ -		execve(e->path, argv, NULL);
+ +		execv(e->path, argv);
+- 		_exit(EXIT_FAILURE);	/* if execve() failed */
++ 		_exit(EXIT_FAILURE); /* if execve() failed */
+  	}
+  
+--- 
+-2.34.1
+-
+diff --git a/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch b/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch
+index 30d2afb..ab9c9f7 100644
+--- a/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch
++++ b/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch
+@@ -8,12 +8,12 @@ Upstream-Status: Inappropriate [embedded specific]
+ Signed-off-by: Wenzong Fan <wenzong.fan@windriver.com>
+ ---
+  libsemanage/src/Makefile        | 10 +++++++++-
+- libsemanage/src/seusers_local.c | 13 +++++++++++++
++ libsemanage/src/seusers_local.c | 10 ++++++++++
+  libsemanage/tests/Makefile      | 10 +++++++++-
+- 3 files changed, 31 insertions(+), 2 deletions(-)
++ 3 files changed, 28 insertions(+), 2 deletions(-)
+ 
+ diff --git a/libsemanage/src/Makefile b/libsemanage/src/Makefile
+-index fa3449fb..66c3010f 100644
++index 63c1499c..f6f76f0d 100644
+ --- a/libsemanage/src/Makefile
+ +++ b/libsemanage/src/Makefile
+ @@ -27,6 +27,14 @@ ifeq ($(DEBUG),1)
+@@ -31,17 +31,17 @@ index fa3449fb..66c3010f 100644
+  LEX = flex
+  LFLAGS = -s
+  YACC = bison
+-@@ -93,7 +101,7 @@ $(LIBA): $(OBJS)
++@@ -98,7 +106,7 @@ $(LIBA): $(OBJS)
+  	$(RANLIB) $@
+  
+  $(LIBSO): $(LOBJS)
+--	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -o $@ $^ -L../../libselinux/src -lsepol -laudit -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
+-+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -o $@ $^ -L../../libselinux/src -lsepol $(LIBAUDIT) -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
++-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -fPIC -shared -o $@ $^ -L../../libselinux/src -lsepol -laudit -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
+++	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -fPIC -shared -o $@ $^ -L../../libselinux/src -lsepol $(LIBAUDIT) -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
+  	ln -sf $@ $(TARGET)
+  
+  $(LIBPC): $(LIBPC).in ../VERSION
+ diff --git a/libsemanage/src/seusers_local.c b/libsemanage/src/seusers_local.c
+-index eb3f82bc..45da8257 100644
++index 865fe461..b959154c 100644
+ --- a/libsemanage/src/seusers_local.c
+ +++ b/libsemanage/src/seusers_local.c
+ @@ -8,7 +8,11 @@ typedef struct semanage_seuser record_t;
+@@ -56,44 +56,43 @@ index eb3f82bc..45da8257 100644
+  #include <errno.h>
+  #include "user_internal.h"
+  #include "seuser_internal.h"
+-@@ -56,6 +60,7 @@ static char *semanage_user_roles(semanage_handle_t * handle, const char *sename)
++@@ -57,6 +61,7 @@ static char *semanage_user_roles(semanage_handle_t *handle, const char *sename)
+  	return roles;
+  }
+  
+ +#ifndef DISABLE_AUDIT
+- static int semanage_seuser_audit(semanage_handle_t * handle,
+- 			  const semanage_seuser_t * seuser,
+- 			  const semanage_seuser_t * previous,
+-@@ -120,6 +125,7 @@ err:
++ static int semanage_seuser_audit(semanage_handle_t *handle,
++ 				 const semanage_seuser_t *seuser,
++ 				 const semanage_seuser_t *previous,
++@@ -123,6 +128,7 @@ err:
+  	free(proles);
+  	return rc;
+  }
+ +#endif
+  
+- int semanage_seuser_modify_local(semanage_handle_t * handle,
+- 				 const semanage_seuser_key_t * key,
+-@@ -165,8 +171,11 @@ int semanage_seuser_modify_local(semanage_handle_t * handle,
+- 	(void) semanage_seuser_query(handle, key, &previous);
++ int semanage_seuser_modify_local(semanage_handle_t *handle,
++ 				 const semanage_seuser_key_t *key,
++@@ -170,9 +176,11 @@ int semanage_seuser_modify_local(semanage_handle_t *handle,
++ 	(void)semanage_seuser_query(handle, key, &previous);
+  	handle->msg_callback = callback;
+  	rc = dbase_modify(handle, dconfig, key, new);
+-+
+ +#ifndef DISABLE_AUDIT
+- 	if (semanage_seuser_audit(handle, new, previous, AUDIT_ROLE_ASSIGN, rc == 0) < 0)
++ 	if (semanage_seuser_audit(handle, new, previous, AUDIT_ROLE_ASSIGN,
++ 				  rc == 0) < 0)
+  		rc = -1;
+ +#endif
+  err:
+  	if (previous)
+  		semanage_seuser_free(previous);
+-@@ -182,8 +191,12 @@ int semanage_seuser_del_local(semanage_handle_t * handle,
++@@ -188,9 +196,11 @@ int semanage_seuser_del_local(semanage_handle_t *handle,
+  	dbase_config_t *dconfig = semanage_seuser_dbase_local(handle);
+  	rc = dbase_del(handle, dconfig, key);
+  	semanage_seuser_query(handle, key, &seuser);
+-+
+ +#ifndef DISABLE_AUDIT
+- 	if (semanage_seuser_audit(handle, NULL, seuser, AUDIT_ROLE_REMOVE, rc == 0) < 0)
++ 	if (semanage_seuser_audit(handle, NULL, seuser, AUDIT_ROLE_REMOVE,
++ 				  rc == 0) < 0)
+  		rc = -1;
+ +#endif
+-+
+  	if (seuser)
+  		semanage_seuser_free(seuser);
+  	return rc;
+@@ -121,6 +120,3 @@ index 241ff17a..fa03fb66 100644
+  
+  OBJECTS = $(SOURCES:.c=.o)
+  POLICIES = $(CILS:.cil=.policy)
+--- 
+-2.34.1
+-
+diff --git a/recipes-security/selinux/libsemanage_3.10.bb b/recipes-security/selinux/libsemanage_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/libsemanage_3.10.bb
+rename to recipes-security/selinux/libsemanage_3.11.bb
+diff --git a/recipes-security/selinux/libsepol_3.10.bb b/recipes-security/selinux/libsepol_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/libsepol_3.10.bb
+rename to recipes-security/selinux/libsepol_3.11.bb
+diff --git a/recipes-security/selinux/mcstrans_3.10.bb b/recipes-security/selinux/mcstrans_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/mcstrans_3.10.bb
+rename to recipes-security/selinux/mcstrans_3.11.bb
+diff --git a/recipes-security/selinux/policycoreutils_3.10.bb b/recipes-security/selinux/policycoreutils_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/policycoreutils_3.10.bb
+rename to recipes-security/selinux/policycoreutils_3.11.bb
+diff --git a/recipes-security/selinux/restorecond_3.10.bb b/recipes-security/selinux/restorecond_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/restorecond_3.10.bb
+rename to recipes-security/selinux/restorecond_3.11.bb
+diff --git a/recipes-security/selinux/secilc_3.10.bb b/recipes-security/selinux/secilc_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/secilc_3.10.bb
+rename to recipes-security/selinux/secilc_3.11.bb
+diff --git a/recipes-security/selinux/selinux-dbus_3.10.bb b/recipes-security/selinux/selinux-dbus_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/selinux-dbus_3.10.bb
+rename to recipes-security/selinux/selinux-dbus_3.11.bb
+diff --git a/recipes-security/selinux/selinux-gui_3.10.bb b/recipes-security/selinux/selinux-gui_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/selinux-gui_3.10.bb
+rename to recipes-security/selinux/selinux-gui_3.11.bb
+diff --git a/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch b/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch
+index 0e8354b..a5640e9 100644
+--- a/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch
++++ b/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch
+@@ -13,18 +13,15 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+  1 file changed, 1 insertion(+), 1 deletion(-)
+ 
+ diff --git a/python/sepolicy/Makefile b/python/sepolicy/Makefile
+-index 1a26cfdc..6e40691d 100644
++index 51812980..33a595d1 100644
+ --- a/python/sepolicy/Makefile
+ +++ b/python/sepolicy/Makefile
+-@@ -27,7 +27,7 @@ test:
++@@ -26,7 +26,7 @@ test:
+  	@$(PYTHON) test_sepolicy.py -v
+  
+- install:
+--	$(PYTHON) -m pip install --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` $(PYTHON_SETUP_ARGS) .
+-+	$(PYTHON) -m pip install --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps $(PYTHON_SETUP_ARGS) .
++ install: python-build
++-	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` dist/*.whl
+++	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps dist/*.whl
+  	[ -d $(DESTDIR)$(BINDIR) ] || mkdir -p $(DESTDIR)$(BINDIR)
+  	install -m 755 sepolicy.py $(DESTDIR)$(BINDIR)/sepolicy
+  	(cd $(DESTDIR)$(BINDIR); ln -sf sepolicy sepolgen)
+--- 
+-2.34.1
+-
+diff --git a/recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch b/recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch
+deleted file mode 100644
+index e816be7..0000000
+--- a/recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch
++++ /dev/null
+@@ -1,61 +0,0 @@
+-From 845f081ba3dab6c27aeac12ab20a45250fd9a8e6 Mon Sep 17 00:00:00 2001
+-From: Yi Zhao <yi.zhao@windriver.com>
+-Date: Tue, 24 Sep 2024 14:07:41 +0800
+-Subject: [PATCH] sepolicy: set conf.substitutions['releasever'] to empty str
+- when releasever is None
+-
+-For some distributions (e.g. Yocto) that do not provide
+-system-release/distribution-release file, libdnf can not get releasever
+-variable, causing conf.substitutions['releasever'] to not be set.
+-This will cause 'sepolicy generate' command to fail with the following
+-error on these distributions:
+-
+-$ sepolicy generate --init /usr/local/bin/foo
+-Traceback (most recent call last):
+-  File "/usr/bin/sepolicy", line 702, in <module>
+-    args.func(args)
+-  File "/usr/bin/sepolicy", line 569, in generate
+-    mypolicy.gen_writeable()
+-  File "/usr/lib/python3.12/site-packages/sepolicy/generate.py", line 1302, in gen_writeable
+-    self.__extract_rpms()
+-  File "/usr/lib/python3.12/site-packages/sepolicy/generate.py", line 1268, in __extract_rpms
+-    base.read_all_repos()
+-  File "/usr/lib/python3.12/site-packages/dnf/base.py", line 554, in read_all_repos
+-    for repo in reader:
+-                ^^^^^^
+-  File "/usr/lib/python3.12/site-packages/dnf/conf/read.py", line 42, in __iter__
+-    for r in self._get_repos(self.conf.config_file_path):
+-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-  File "/usr/lib/python3.12/site-packages/dnf/conf/read.py", line 109, in _get_repos
+-    parser.setSubstitutions(substs)
+-  File "/usr/lib/python3.12/site-packages/libdnf/conf.py", line 1643, in setSubstitutions
+-    return _conf.ConfigParser_setSubstitutions(self, substitutions)
+-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-TypeError: in method 'ConfigParser_setSubstitutions', argument 2 of type 'std::map< std::string,std::string,std::less< std::string >,std::allocator< std::pair< std::string const,std::string > > > const &'
+-
+-Set conf.substitutions['releasever'] to empty str if releasever is None.
+-
+-Upstream-Status: Submitted [https://github.com/SELinuxProject/selinux/pull/444]
+-
+-Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+----
+- python/sepolicy/sepolicy/generate.py | 3 +++
+- 1 file changed, 3 insertions(+)
+-
+-diff --git a/python/sepolicy/sepolicy/generate.py b/python/sepolicy/sepolicy/generate.py
+-index adf65f27..56923dc4 100644
+---- a/python/sepolicy/sepolicy/generate.py
+-+++ b/python/sepolicy/sepolicy/generate.py
+-@@ -1265,6 +1265,9 @@ allow %s_t %s_t:%s_socket name_%s;
+-         import dnf
+- 
+-         with dnf.Base() as base:
+-+            if base.conf.substitutions.get('releasever') is None:
+-+                base.conf.substitutions['releasever'] = ''
+-+
+-             base.read_all_repos()
+-             base.fill_sack(load_system_repo=True)
+- 
+--- 
+-2.34.1
+-
+diff --git a/recipes-security/selinux/selinux-python_3.10.bb b/recipes-security/selinux/selinux-python_3.11.bb
+similarity index 96%
+rename from recipes-security/selinux/selinux-python_3.10.bb
+rename to recipes-security/selinux/selinux-python_3.11.bb
+index 61abd77..36f714c 100644
+--- a/recipes-security/selinux/selinux-python_3.10.bb
++++ b/recipes-security/selinux/selinux-python_3.11.bb
+@@ -11,12 +11,12 @@ require selinux_common.inc
+ inherit python3targetconfig
+ 
+ SRC_URI += "file://0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch;patchdir=.. \
+-            file://0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch;patchdir=.. \
+            "
+ 
+ S = "${UNPACKDIR}/${BP}/python"
+ 
+-DEPENDS = "libsepol libselinux gettext-native python3-setuptools-scm-native python3-pip-native"
++DEPENDS = "libsepol libselinux gettext-native python3-setuptools-scm-native python3-pip-native \
++           python3-build-native python3-wheel-native"
+ 
+ RDEPENDS:${PN} = "\
+         python3-core \
+diff --git a/recipes-security/selinux/selinux-sandbox_3.10.bb b/recipes-security/selinux/selinux-sandbox_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/selinux-sandbox_3.10.bb
+rename to recipes-security/selinux/selinux-sandbox_3.11.bb
+diff --git a/recipes-security/selinux/selinux_common.inc b/recipes-security/selinux/selinux_common.inc
+index 6932fea..5665bb3 100644
+--- a/recipes-security/selinux/selinux_common.inc
++++ b/recipes-security/selinux/selinux_common.inc
+@@ -1,7 +1,7 @@
+ HOMEPAGE = "https://github.com/SELinuxProject"
+ 
+ SRC_URI = "git://github.com/SELinuxProject/selinux.git;branch=main;protocol=https"
+-SRCREV = "ca10fc4204ed60540d41d2499127c18ad0643f9e"
++SRCREV = "2233a23a4d4f1bf29054037babec13f30d038e65"
+ 
+ require conf/selinux_refpolicy_common.inc
+ 
+diff --git a/recipes-security/selinux/semodule-utils_3.10.bb b/recipes-security/selinux/semodule-utils_3.11.bb
+similarity index 100%
+rename from recipes-security/selinux/semodule-utils_3.10.bb
+rename to recipes-security/selinux/semodule-utils_3.11.bb
 -- 
-2.56.0
+2.43.0
 
