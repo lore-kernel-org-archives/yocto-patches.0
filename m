@@ -1,617 +1,488 @@
 Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11002.1793517617599759634
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4374.1793586153105956756
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 01 Nov 2026 00:20:18 -0700
+ Sun, 01 Nov 2026 18:22:33 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
 Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wCnG9zA5+ZqENoAAA--.4653S3;
-	Sun, 01 Nov 2026 15:18:25 +0800 (CST)
+	by mtasvr (Coremail) with SMTP id _____wBX6txt8+dqnjEBAA--.6223S3;
+	Mon, 02 Nov 2026 10:20:30 +0800 (CST)
 Received: from chenqi-Redmi.. (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowABH2Ghq5+Zqq80pAA--.21820S2;
-	Sun, 01 Nov 2026 15:17:00 +0800 (CST)
+	by front01 (Coremail) with SMTP id C6CowABH2GgW8+dqc1EqAA--.24431S2;
+	Mon, 02 Nov 2026 10:19:03 +0800 (CST)
 From: chenqi_hycx@cetc.com.cn
-To: yocto-patches@lists.yoctoproject.org
+To: yocto-patches@lists.yoctoproject.org,
+	richard.purdie@linuxfoundation.org,
+	mark.hatle@kernel.crashing.org
 Cc: chen_q07@163.com
-Subject: [meta-selinux][PATCH] selinux: upgrade 3.10 -> 3.11
-Date: Sun,  1 Nov 2026 15:20:05 +0800
-Message-ID: <20261101072005.762131-1-chenqi_hycx@cetc.com.cn>
+Subject: [pseudo][PATCH] pseudo_client: resolve /proc/<pid>/fd/<n> to the descriptor
+Date: Mon,  2 Nov 2026 10:22:03 +0800
+Message-ID: <20261102022203.1613668-1-chenqi_hycx@cetc.com.cn>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C6CowABH2Ghq5+Zqq80pAA--.21820S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYSCmrl8FED4AABsT
-X-CM-DELIVERINFO: =?B?vRqGK6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoODccrEFRh21h5V2HAX9q96e1522XSszx503648eB8n52dt4FAhYXn/vL+4pa8ZX8UCUT
-	zyUl651oRVmjIvU0BuaNppZfu/V0KvDXhnatrK135zYak/x82b0Sfic1aJUOnQ==
-X-Coremail-Antispam: 1Uk129KBj9fXoWfur17WryDtFWUtFW5Jr1rZrc_yoW5CFy8Zo
-	WSvw4Svw1UGr13G3yjyF47Zay7GFyFgF4fAFWSqr4DJw13JFyUKryvka13ZFWIvr4UGr97
-	WFy8Gry0qrs5KF15l-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn5kqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6r4xYxn0WfAS
-	r-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUUbsAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI
+X-CM-TRANSID: C6CowABH2GgW8+dqc1EqAA--.24431S2
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYTCmrnQdEO8wAAs+
+X-CM-DELIVERINFO: =?B?yQw2W6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
+	PoOFa/r1iAD8uJ7SNfDBqCVpxdx0BESRF9TwMW01chl0vXA/TrFif9lL6FvAJoY+Lk/ocF
+	pAMe0OZ+dYhKRTNb/RWmIYL18HvRPUwCBNN65yxjpsbFfj08tiSBn26HyOfnYQ==
+X-Coremail-Antispam: 1Uk129KBj9fXoW3ZF48AFWxJFy5Jr48GrW8KrX_yoW8Gry8uo
+	WIkr1vvw10qr4Duryv93Zrtw1UWF1xur1UXw4rCFWDGFnYqrWrWrZ3Zr4rX3y3Wr4rKrW5
+	Aw1Sg3s3AF48t3s3l-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn5kqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6r4UYxn0WfAS
+	r-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI
 	8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJ
-	M28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2I
-	x0cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vE
-	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j
-	6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41lw4CEc2x0rVAKj4xxMxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCF
-	s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r
-	1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
-	JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r
-	1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUv
-	cSsGvfC2KfnxnUUI43ZEXa7IU8oSoJUUUUU==
+	M28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
+	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
+	Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
+	0EwIxGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6r4UMxAIw28IcxkI7VAKI48JMxC20s02
+	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
+	I_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
+	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
+	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
+	UjIFyTuYvjxU7F4iUUUUU
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 01 Nov 2026 07:20:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5204
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 02 Nov 2026 02:22:41 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5205
 Content-Type: text/plain; charset="utf-8"
 
 From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-All recipes come from the same SELinuxProject/selinux checkout, so they
-are upgraded together.
+Paths such as /proc/self/fd/<n> and /dev/fd/<n> denote the open file: the
+kernel resolves them to the descriptor, so an O_PATH|O_NOFOLLOW descriptor
+on a symlink addresses the symlink itself.
 
-ChangeLog:
-https://github.com/SELinuxProject/selinux/releases/tag/3.11
+Path canonicalization expands them with readlink(2) and follows the
+result, which changes that meaning.  For a descriptor on a symlink an
+xattr set through it lands on the link target instead of the link, and for
+a dangling symlink the call fails with ENOENT.  Once expanded, the path no
+longer looks like something pseudo tracks either, so the operation is
+passed straight through to the real syscall.
 
-* Several security improvements in libselinux, dbus, gui, mcstrans and
-  sandbox
-* Rewrote libselinux selinux_restorecon(3) to eliminate TOCTOU issues in
-  file relabeling
-* Rewrote restorecond and sandbox/seunshare to eliminate TOCTOU issues on
-  their path-based operations
-* restorecon only logs an error on a read-only filesystem instead of
-  failing, allowing relabeling with read-only BTRFS subvolumes
-* Added setfiles -A option to disable SELINUX_RESTORECON_ADD_ASSOC
-* Added SELINUX_RESTORECON_SKIP_MULTILINK flag to selinux_restorecon(3)
-  and made restorecond always pass it to avoid mislabeling hard links
-* Improved restorecond.service to use the new restorecond -F option to
-  run in the foreground
-* Added secilcheck program to check CIL neverallows against binary
-  policies
-* Dropped legacy fscon statement support from checkpolicy
-* Fixed checkpolicy handling of out-of-range and complement at range
-  boundaries for xperm rules
-* Fixed sandbox/seunshare remounting of /tmp and /var/tmp within the
-  sandbox, its getopt flags and its interactive prompt for saving files
-* Dropped sandbox/seunshare -k/--kill support
-* Added a cache size cap, max client cap, receive timeout and maxbit cap
-  to mcstrans to reduce the risk of DoS from misbehaving clients
-* Fixed mcstrans UAF on SIGHUP reload of its configuration files
-* Fixed semanage audit fd creation to avoid hitting RLIMIT_NOFILE on
-  large semanage import operations
-* Fixed libsepol generation of constraint expressions with a list of
-  names when writing policy.conf from CIL
-* Fixed libsepol to generate constrain/validatetrans instead of
-  mlsconstrain/mlsvalidatetrans when converting a module to CIL
-* Fixed libsepol selection of tunableif or booleanif, CIL source file
-  info reporting, xperm rule permission linking and an off-by-one error
-  in cats_ebitmap_len()
-* Fixed libselinux constructor to not clobber errno
-* Fixed libselinux selabel_partial_match(3) to correctly find partial
-  matches
-* Fixed libselinux selinux_init_policy_load() to still try to mount
-  selinuxfs when the mount of sysfs on /sys fails
-* Dropped Python 2 support from audit2why
-* Reformatted entire tree based on .clang-format
-* Updated pywrap and sepolicy build targets to use the Python3 build
-  module
-* Fixed build errors with glibc 2.43, non-pthread and uclibc builds
-* Fixed multiple musl/llvm-based build issues
-* Bug fixes
+libselinux 3.11 labels the rootfs through such descriptors, so setfiles
+could not label any symlink and do_image fell back to a first boot
+relabel:
 
-Recipe changes:
+  setfiles: Could not set context for .../etc/mtab:  No such file or directory
+  setfiles: Could not set context for .../etc/systemd/system/default.target:  Operation not permitted
 
-* Drop the patches that are upstream now: the libselinux LSF
-  transitional API removal and the sepolicy releasever workaround.  The
-  libselinux recipe has no patches left, so its recipe-local
-  FILESEXTRAPATHS goes away too.
-* Refresh the remaining patches for the reformatted sources.  No
-  functional change.
-* pywrap and sepolicy now build wheels with "python3 -m build
-  --no-isolation", so libselinux-python and selinux-python depend on
-  python3-build-native and python3-wheel-native.
+Rewrite the reference to the path pseudo recorded for the descriptor,
+which keeps the operation under pseudo's control.  The descriptor itself
+identifies the inode, so the final component is followed only when
+following it is what reproduces that inode, i.e. for a descriptor obtained
+through a symlink.  When the caller passes AT_SYMLINK_NOFOLLOW the
+reference itself is what is being asked about (readlink, lstat, l*xattr),
+so it is left alone for the kernel to resolve.
+
+Adds test/test-proc-fd.sh covering both descriptor flavours.
 
 Assisted-by: Codewhale:deepseek-v4-flash
 Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
 ---
- ...heckpolicy_3.10.bb => checkpolicy_3.11.bb} |  0
- ...thon_3.10.bb => libselinux-python_3.11.bb} |  4 +-
- ...hon-modules-install-path-for-multili.patch | 11 ++--
- ...T-and-rely-on-the-installed-file-nam.patch | 10 +--
- ...re-drop-the-obsolete-LSF-transitiona.patch | 40 ------------
- ...{libselinux_3.10.bb => libselinux_3.11.bb} |  5 --
- ...anage-Fix-execve-segfaults-on-Ubuntu.patch |  9 +--
- ...anage-allow-to-disable-audit-support.patch | 46 +++++++-------
- ...ibsemanage_3.10.bb => libsemanage_3.11.bb} |  0
- .../{libsepol_3.10.bb => libsepol_3.11.bb}    |  0
- .../{mcstrans_3.10.bb => mcstrans_3.11.bb}    |  0
- ...eutils_3.10.bb => policycoreutils_3.11.bb} |  0
- ...estorecond_3.10.bb => restorecond_3.11.bb} |  0
- .../{secilc_3.10.bb => secilc_3.11.bb}        |  0
- ...inux-dbus_3.10.bb => selinux-dbus_3.11.bb} |  0
- ...elinux-gui_3.10.bb => selinux-gui_3.11.bb} |  0
- ...stall-path-for-new-pymodule-sepolicy.patch | 13 ++--
- ...f.substitutions-releasever-to-empty-.patch | 61 -------------------
- ...-python_3.10.bb => selinux-python_3.11.bb} |  4 +-
- ...andbox_3.10.bb => selinux-sandbox_3.11.bb} |  0
- recipes-security/selinux/selinux_common.inc   |  2 +-
- ...e-utils_3.10.bb => semodule-utils_3.11.bb} |  0
- 22 files changed, 41 insertions(+), 164 deletions(-)
- rename recipes-security/selinux/{checkpolicy_3.10.bb => checkpolicy_3.11.bb} (100%)
- rename recipes-security/selinux/{libselinux-python_3.10.bb => libselinux-python_3.11.bb} (94%)
- delete mode 100644 recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch
- rename recipes-security/selinux/{libselinux_3.10.bb => libselinux_3.11.bb} (86%)
- rename recipes-security/selinux/{libsemanage_3.10.bb => libsemanage_3.11.bb} (100%)
- rename recipes-security/selinux/{libsepol_3.10.bb => libsepol_3.11.bb} (100%)
- rename recipes-security/selinux/{mcstrans_3.10.bb => mcstrans_3.11.bb} (100%)
- rename recipes-security/selinux/{policycoreutils_3.10.bb => policycoreutils_3.11.bb} (100%)
- rename recipes-security/selinux/{restorecond_3.10.bb => restorecond_3.11.bb} (100%)
- rename recipes-security/selinux/{secilc_3.10.bb => secilc_3.11.bb} (100%)
- rename recipes-security/selinux/{selinux-dbus_3.10.bb => selinux-dbus_3.11.bb} (100%)
- rename recipes-security/selinux/{selinux-gui_3.10.bb => selinux-gui_3.11.bb} (100%)
- delete mode 100644 recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch
- rename recipes-security/selinux/{selinux-python_3.10.bb => selinux-python_3.11.bb} (96%)
- rename recipes-security/selinux/{selinux-sandbox_3.10.bb => selinux-sandbox_3.11.bb} (100%)
- rename recipes-security/selinux/{semodule-utils_3.10.bb => semodule-utils_3.11.bb} (100%)
+ pseudo_client.c      | 118 +++++++++++++++++++++++++++++
+ pseudo_client.h      |   2 +
+ pseudo_util.c        |   2 +
+ pseudo_wrappers.c    |   2 +
+ test/test-proc-fd.c  | 174 +++++++++++++++++++++++++++++++++++++++++++
+ test/test-proc-fd.sh |  17 +++++
+ 6 files changed, 315 insertions(+)
+ create mode 100644 test/test-proc-fd.c
+ create mode 100755 test/test-proc-fd.sh
 
-diff --git a/recipes-security/selinux/checkpolicy_3.10.bb b/recipes-security/selinux/checkpolicy_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/checkpolicy_3.10.bb
-rename to recipes-security/selinux/checkpolicy_3.11.bb
-diff --git a/recipes-security/selinux/libselinux-python_3.10.bb b/recipes-security/selinux/libselinux-python_3.11.bb
-similarity index 94%
-rename from recipes-security/selinux/libselinux-python_3.10.bb
-rename to recipes-security/selinux/libselinux-python_3.11.bb
-index 01b7b93..4ad16b8 100644
---- a/recipes-security/selinux/libselinux-python_3.10.bb
-+++ b/recipes-security/selinux/libselinux-python_3.11.bb
-@@ -14,13 +14,13 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/libselinux:"
- SRC_URI += "\
-         file://0001-Makefile-fix-python-modules-install-path-for-multili.patch;patchdir=.. \
-         file://0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch;patchdir=.. \
--        file://0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch;patchdir=.. \
-         file://0004-libselinux-Replace-PyString_FromString-with-PyUnicode.patch;patchdir=.. \
-         "
+diff --git a/pseudo_client.c b/pseudo_client.c
+index 302ef21..1ebf665 100644
+--- a/pseudo_client.c
++++ b/pseudo_client.c
+@@ -864,6 +864,14 @@ fd_path(int fd) {
+ 	return 0;
+ }
  
- S = "${UNPACKDIR}/${BP}/libselinux"
++/* Return the path pseudo has recorded for fd, or NULL if it is not one
++ * pseudo knows about.  Declared in pseudo_client.h.
++ */
++char *
++pseudo_client_fdpath(int fd) {
++	return fd_path(fd);
++}
++
+ static void
+ pseudo_client_path_set(int fd, const char *path, char ***patharray, int *len) {
+ 	if (fd < 0)
+@@ -1451,12 +1459,112 @@ pseudo_client_shutdown(int wait_on_socket) {
+ 	return 0;
+ }
  
--DEPENDS = "libsepol libpcre2 swig-native python3-setuptools-scm-native python3-pip-native"
-+DEPENDS = "libsepol libpcre2 swig-native python3-setuptools-scm-native python3-pip-native \
-+           python3-build-native python3-wheel-native"
- DEPENDS:append:libc-musl = " fts"
++/* /proc/self/fd/<n>, /proc/<pid>/fd/<n> and /dev/fd/<n> denote the open file,
++ * not the path the magic link prints.  Canonicalization resolves symlinks with
++ * readlink(2), which changes the meaning of such a path: the kernel resolves it
++ * to the descriptor, so an O_PATH|O_NOFOLLOW descriptor on a symlink addresses
++ * the symlink itself, whereas the expansion yields the link target and then
++ * follows it.  That labels the wrong inode, or fails when the target does not
++ * resolve.
++ *
++ * Rewrite the reference to the path pseudo recorded for the descriptor, which
++ * also puts the operation under pseudo's control instead of passing it through.
++ * The descriptor itself identifies the inode, so the final component is only
++ * followed when following it is what reproduces that inode, i.e. for a
++ * descriptor obtained through a symlink.  Returns NULL to leave the path alone.
++ */
++static char *
++rewrite_proc_fd_ref(const char *path, int *leave_last) {
++	const char *p;
++	const char *digits;
++	const char *recpath;
++	char *out;
++	PSEUDO_STATBUF fbuf, pbuf;
++	int fd = 0;
++
++	if (!path || path[0] != '/')
++		return NULL;
++
++	if (!strncmp(path, "/dev/fd/", 8)) {
++		p = path + 8;
++	} else if (!strncmp(path, "/proc/", 6)) {
++		p = path + 6;
++		if (!strncmp(p, "self/fd/", 8)) {
++			p += 8;
++		} else if (!strncmp(p, "thread-self/fd/", 15)) {
++			p += 15;
++		} else {
++			const char *q = p;
++
++			while (*q >= '0' && *q <= '9')
++				++q;
++			if (q == p || strncmp(q, "/fd/", 4))
++				return NULL;
++			p = q + 4;
++		}
++	} else {
++		return NULL;
++	}
++
++	digits = p;
++	while (*p >= '0' && *p <= '9') {
++		if (fd > (0x7fffffff - 9) / 10)
++			return NULL;
++		fd = fd * 10 + (*p - '0');
++		++p;
++	}
++	if (p == digits || (*p != '\0' && *p != '/'))
++		return NULL;
++
++	recpath = pseudo_client_fdpath(fd);
++	if (!recpath || recpath[0] != '/')
++		return NULL;
++
++	/* Within a chroot the recorded path carries the chroot prefix, while
++	 * base_path() adds that prefix to absolute paths.  Strip it, or give up
++	 * if the descriptor is not inside the chroot.
++	 */
++	if (pseudo_chroot_len) {
++		if (strncmp(recpath, pseudo_chroot, pseudo_chroot_len) ||
++		    (recpath[pseudo_chroot_len] != '\0' && recpath[pseudo_chroot_len] != '/'))
++			return NULL;
++		recpath += pseudo_chroot_len;
++		if (*recpath == '\0')
++			recpath = "/";
++	}
++
++	if (*p != '\0') {
++		size_t len = strlen(recpath) + strlen(p) + 1;
++
++		out = malloc(len);
++		if (!out)
++			return NULL;
++		snprintf(out, len, "%s%s", recpath, p);
++		return out;
++	}
++
++	if (!pseudo_real_fstat || !pseudo_real_lstat)
++		return NULL;
++	if (pseudo_real_fstat(fd, &fbuf) == -1)
++		return NULL;
++	if (pseudo_real_lstat(recpath, &pbuf) == 0 &&
++	    pbuf.st_dev == fbuf.st_dev && pbuf.st_ino == fbuf.st_ino) {
++		*leave_last = 1;
++	} else if (pseudo_real_stat == NULL || pseudo_real_stat(recpath, &pbuf) == -1 ||
++		   pbuf.st_dev != fbuf.st_dev || pbuf.st_ino != fbuf.st_ino) {
++		/* The recorded path no longer describes this descriptor. */
++		return NULL;
++	}
++	return strdup(recpath);
++}
++
+ static char *
+ base_path(int dirfd, const char *path, int leave_last) {
+ 	char *basepath = 0;
+ 	size_t baselen = 0;
+ 	size_t minlen = 0;
+ 	char *newpath;
++	char *rewritten;
  
- RDEPENDS:${PN} = "libselinux python3-core python3-shell"
-diff --git a/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch b/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch
-index 8002149..0d0ebe6 100644
---- a/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch
-+++ b/recipes-security/selinux/libselinux/0001-Makefile-fix-python-modules-install-path-for-multili.patch
-@@ -11,18 +11,15 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 1 insertion(+), 1 deletion(-)
+ 	if (!path)
+ 		return NULL;
+@@ -1501,7 +1609,17 @@ base_path(int dirfd, const char *path, int leave_last) {
+ 		minlen = pseudo_chroot_len;
+ 	}
  
- diff --git a/libselinux/src/Makefile b/libselinux/src/Makefile
--index 0dbba7f4..d8011c99 100644
-+index 9ecdbd4d..5158959c 100644
- --- a/libselinux/src/Makefile
- +++ b/libselinux/src/Makefile
--@@ -198,7 +198,7 @@ ifneq ($(DISABLE_SHARED),y)
-+@@ -196,7 +196,7 @@ ifneq ($(DISABLE_SHARED),y)
-  endif
-  
-  install-pywrap: pywrap
---	CFLAGS="$(CPPFLAGS) $(CFLAGS) $(SWIG_CFLAGS)" $(PYTHON) -m pip install --no-build-isolation --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` $(PYTHON_SETUP_ARGS) .
--+	CFLAGS="$(CPPFLAGS) $(CFLAGS) $(SWIG_CFLAGS)" $(PYTHON) -m pip install --no-build-isolation --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps $(PYTHON_SETUP_ARGS) .
-+-	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` dist/*.whl
-++	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps dist/*.whl
-  	install -m 644 $(SWIGPYOUT) $(DESTDIR)$(PYTHONLIBDIR)/selinux/__init__.py
-  	ln -sf --relative $(DESTDIR)$(PYTHONLIBDIR)/selinux/_selinux$(PYCEXT) $(DESTDIR)$(PYTHONLIBDIR)/_selinux$(PYCEXT)
-  
---- 
--2.34.1
--
-diff --git a/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch b/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch
-index b6bd671..b9a54fe 100644
---- a/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch
-+++ b/recipes-security/selinux/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch
-@@ -27,10 +27,9 @@ Signed-off-by: Changqing Li <changqing.li@windriver.com>
-  1 file changed, 1 insertion(+), 2 deletions(-)
++	/* Only when the caller follows the final component.  With
++	 * AT_SYMLINK_NOFOLLOW the reference itself is what the caller asks
++	 * about (readlink, lstat, l*xattr), so it must be left for the kernel
++	 * to resolve.
++	 */
++	rewritten = leave_last ? NULL : rewrite_proc_fd_ref(path, &leave_last);
++	if (rewritten)
++		path = rewritten;
++
+ 	newpath = pseudo_fix_path(basepath, path, minlen, baselen, NULL, leave_last);
++	free(rewritten);
+ 	pseudo_debug(PDBGF_PATH, "base_path[%s]: %s</>%s => %s\n",
+ 		leave_last ? "nofollow" : "follow",
+ 		basepath ? basepath : "<nil>",
+diff --git a/pseudo_client.h b/pseudo_client.h
+index 9b9f86a..b3f9f49 100644
+--- a/pseudo_client.h
++++ b/pseudo_client.h
+@@ -51,6 +51,8 @@ extern FILE *pseudo_grp;
  
- diff --git a/libselinux/src/Makefile b/libselinux/src/Makefile
--index d8011c99..c611422d 100644
- --- a/libselinux/src/Makefile
- +++ b/libselinux/src/Makefile
--@@ -15,7 +15,6 @@ INCLUDEDIR ?= $(PREFIX)/include
-+@@ -18,7 +18,6 @@
-  PYINC ?= $(shell $(PKG_CONFIG) --cflags $(PYPREFIX))
-  PYLIBS ?= $(shell $(PKG_CONFIG) --libs $(PYPREFIX))
-  PYTHONLIBDIR ?= $(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_path('platlib', vars={'platbase': '$(PREFIX)', 'base': '$(PREFIX)'}))")
-@@ -38,15 +37,12 @@ index d8011c99..c611422d 100644
-  RUBYINC ?= $(shell $(RUBY) -e 'puts "-I" + RbConfig::CONFIG["rubyarchhdrdir"] + " -I" + RbConfig::CONFIG["rubyhdrdir"]')
-  RUBYLIBS ?= $(shell $(RUBY) -e 'puts "-L" + RbConfig::CONFIG["libdir"] + " -L" + RbConfig::CONFIG["archlibdir"] + " " + RbConfig::CONFIG["LIBRUBYARG_SHARED"]')
-  RUBYINSTALL ?= $(shell $(RUBY) -e 'puts RbConfig::CONFIG["vendorarchdir"]')
--@@ -200,7 +199,7 @@ endif
-+@@ -198,7 +197,7 @@
-  install-pywrap: pywrap
-- 	CFLAGS="$(CPPFLAGS) $(CFLAGS) $(SWIG_CFLAGS)" $(PYTHON) -m pip install --no-build-isolation --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps $(PYTHON_SETUP_ARGS) .
-+ 	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps dist/*.whl
-  	install -m 644 $(SWIGPYOUT) $(DESTDIR)$(PYTHONLIBDIR)/selinux/__init__.py
- -	ln -sf --relative $(DESTDIR)$(PYTHONLIBDIR)/selinux/_selinux$(PYCEXT) $(DESTDIR)$(PYTHONLIBDIR)/_selinux$(PYCEXT)
- +	ln -sf --relative $(DESTDIR)$(PYTHONLIBDIR)/selinux/_selinux*.so $(DESTDIR)$(PYTHONLIBDIR)/
-  
-  install-rubywrap: rubywrap
-  	test -d $(DESTDIR)$(RUBYINSTALL) || install -m 755 -d $(DESTDIR)$(RUBYINSTALL) 
---- 
--2.34.1
--
-diff --git a/recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch b/recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch
-deleted file mode 100644
-index 2c7a70e..0000000
---- a/recipes-security/selinux/libselinux/0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch
-+++ /dev/null
-@@ -1,40 +0,0 @@
--From c4cb7a15e3f5c4081e3a459f15da3e58449cc4de Mon Sep 17 00:00:00 2001
--From: Renato Caldas <renato@calgera.com>
--Date: Thu, 29 Jun 2023 13:59:11 +0100
--Subject: [PATCH] libselinux: restore: drop the obsolete LSF transitional API.
--
--The preferred way to enable LSF support on 32 bit systems is to define
--_FILE_OFFSET_BITS=64 when building selinux.
--
--Upstream-Status: Submitted [https://github.com/SELinuxProject/selinux/pull/401]
--
--Signed-off-by: Renato Caldas <renato@calgera.com>
-----
-- libselinux/src/selinux_restorecon.c | 4 ++--
-- 1 file changed, 2 insertions(+), 2 deletions(-)
--
--diff --git a/libselinux/src/selinux_restorecon.c b/libselinux/src/selinux_restorecon.c
--index 8fadf4d2..f23bad0c 100644
----- a/libselinux/src/selinux_restorecon.c
--+++ b/libselinux/src/selinux_restorecon.c
--@@ -443,7 +443,7 @@ static int filespec_add(ino_t ino, const char *con, const char *file,
-- 	file_spec_t *prevfl, *fl;
-- 	uint32_t h;
-- 	int ret;
---	struct stat64 sb;
--+	struct stat sb;
-- 
-- 	__pthread_mutex_lock(&fl_mutex);
-- 
--@@ -457,7 +457,7 @@ static int filespec_add(ino_t ino, const char *con, const char *file,
-- 	for (prevfl = &fl_head[h], fl = fl_head[h].next; fl;
-- 	     prevfl = fl, fl = fl->next) {
-- 		if (ino == fl->ino) {
---			ret = lstat64(fl->file, &sb);
--+			ret = lstat(fl->file, &sb);
-- 			if (ret < 0 || sb.st_ino != ino) {
-- 				freecon(fl->con);
-- 				free(fl->file);
---- 
--2.34.1
--
-diff --git a/recipes-security/selinux/libselinux_3.10.bb b/recipes-security/selinux/libselinux_3.11.bb
-similarity index 86%
-rename from recipes-security/selinux/libselinux_3.10.bb
-rename to recipes-security/selinux/libselinux_3.11.bb
-index 98fc5c8..ead3452 100644
---- a/recipes-security/selinux/libselinux_3.10.bb
-+++ b/recipes-security/selinux/libselinux_3.11.bb
-@@ -10,11 +10,6 @@ require selinux_common.inc
+ /* pseudo_wrappers will try to initialize these */
+ extern int (*pseudo_real_lstat)(const char *path, PSEUDO_STATBUF *buf);
++extern int (*pseudo_real_fstat)(int fd, PSEUDO_STATBUF *buf);
++extern int (*pseudo_real_stat)(const char *path, PSEUDO_STATBUF *buf);
+ extern int (*pseudo_real_fork)(void);
+ extern int (*pseudo_real_execv)(const char *, char * const *);
  
- inherit lib_package pkgconfig
+diff --git a/pseudo_util.c b/pseudo_util.c
+index 6e7c465..12718a5 100644
+--- a/pseudo_util.c
++++ b/pseudo_util.c
+@@ -99,6 +99,8 @@ static int pseudo_util_initted = -1;  /* Not yet run */
  
--FILESEXTRAPATHS:prepend := "${THISDIR}/libselinux:"
--SRC_URI += "\
--        file://0003-libselinux-restore-drop-the-obsolete-LSF-transitiona.patch;patchdir=.. \
--        "
--
- DEPENDS = "libsepol libpcre2"
- DEPENDS:append:libc-musl = " fts"
- 
-diff --git a/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch b/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch
-index 2ec8a62..bb2b6d6 100644
---- a/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch
-+++ b/recipes-security/selinux/libsemanage/libsemanage-Fix-execve-segfaults-on-Ubuntu.patch
-@@ -17,18 +17,15 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 1 insertion(+), 1 deletion(-)
- 
- diff --git a/libsemanage/src/semanage_store.c b/libsemanage/src/semanage_store.c
--index 1731c5e8..c6ace295 100644
-+index f14ebe97..2a50605f 100644
- --- a/libsemanage/src/semanage_store.c
- +++ b/libsemanage/src/semanage_store.c
--@@ -1445,7 +1445,7 @@ static int semanage_exec_prog(semanage_handle_t * sh,
-+@@ -1505,7 +1505,7 @@ static int semanage_exec_prog(semanage_handle_t *sh, external_prog_t *e,
-  	if (forkval == 0) {
-  		/* child process.  file descriptors will be closed
-  		 * because they were set as close-on-exec. */
- -		execve(e->path, argv, NULL);
- +		execv(e->path, argv);
-- 		_exit(EXIT_FAILURE);	/* if execve() failed */
-+ 		_exit(EXIT_FAILURE); /* if execve() failed */
-  	}
-  
---- 
--2.34.1
--
-diff --git a/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch b/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch
-index 30d2afb..ab9c9f7 100644
---- a/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch
-+++ b/recipes-security/selinux/libsemanage/libsemanage-allow-to-disable-audit-support.patch
-@@ -8,12 +8,12 @@ Upstream-Status: Inappropriate [embedded specific]
- Signed-off-by: Wenzong Fan <wenzong.fan@windriver.com>
- ---
-  libsemanage/src/Makefile        | 10 +++++++++-
-- libsemanage/src/seusers_local.c | 13 +++++++++++++
-+ libsemanage/src/seusers_local.c | 10 ++++++++++
-  libsemanage/tests/Makefile      | 10 +++++++++-
-- 3 files changed, 31 insertions(+), 2 deletions(-)
-+ 3 files changed, 28 insertions(+), 2 deletions(-)
- 
- diff --git a/libsemanage/src/Makefile b/libsemanage/src/Makefile
--index fa3449fb..66c3010f 100644
-+index 63c1499c..f6f76f0d 100644
- --- a/libsemanage/src/Makefile
- +++ b/libsemanage/src/Makefile
- @@ -27,6 +27,14 @@ ifeq ($(DEBUG),1)
-@@ -31,17 +31,17 @@ index fa3449fb..66c3010f 100644
-  LEX = flex
-  LFLAGS = -s
-  YACC = bison
--@@ -93,7 +101,7 @@ $(LIBA): $(OBJS)
-+@@ -98,7 +106,7 @@ $(LIBA): $(OBJS)
-  	$(RANLIB) $@
-  
-  $(LIBSO): $(LOBJS)
---	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -o $@ $^ -L../../libselinux/src -lsepol -laudit -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
--+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -o $@ $^ -L../../libselinux/src -lsepol $(LIBAUDIT) -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
-+-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -fPIC -shared -o $@ $^ -L../../libselinux/src -lsepol -laudit -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
-++	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -fPIC -shared -o $@ $^ -L../../libselinux/src -lsepol $(LIBAUDIT) -lselinux -lbz2 -Wl,-soname,$(LIBSO),--version-script=libsemanage.map,-z,defs
-  	ln -sf $@ $(TARGET)
-  
-  $(LIBPC): $(LIBPC).in ../VERSION
- diff --git a/libsemanage/src/seusers_local.c b/libsemanage/src/seusers_local.c
--index eb3f82bc..45da8257 100644
-+index 865fe461..b959154c 100644
- --- a/libsemanage/src/seusers_local.c
- +++ b/libsemanage/src/seusers_local.c
- @@ -8,7 +8,11 @@ typedef struct semanage_seuser record_t;
-@@ -56,44 +56,43 @@ index eb3f82bc..45da8257 100644
-  #include <errno.h>
-  #include "user_internal.h"
-  #include "seuser_internal.h"
--@@ -56,6 +60,7 @@ static char *semanage_user_roles(semanage_handle_t * handle, const char *sename)
-+@@ -57,6 +61,7 @@ static char *semanage_user_roles(semanage_handle_t *handle, const char *sename)
-  	return roles;
-  }
-  
- +#ifndef DISABLE_AUDIT
-- static int semanage_seuser_audit(semanage_handle_t * handle,
-- 			  const semanage_seuser_t * seuser,
-- 			  const semanage_seuser_t * previous,
--@@ -120,6 +125,7 @@ err:
-+ static int semanage_seuser_audit(semanage_handle_t *handle,
-+ 				 const semanage_seuser_t *seuser,
-+ 				 const semanage_seuser_t *previous,
-+@@ -123,6 +128,7 @@ err:
-  	free(proles);
-  	return rc;
-  }
- +#endif
-  
-- int semanage_seuser_modify_local(semanage_handle_t * handle,
-- 				 const semanage_seuser_key_t * key,
--@@ -165,8 +171,11 @@ int semanage_seuser_modify_local(semanage_handle_t * handle,
-- 	(void) semanage_seuser_query(handle, key, &previous);
-+ int semanage_seuser_modify_local(semanage_handle_t *handle,
-+ 				 const semanage_seuser_key_t *key,
-+@@ -170,9 +176,11 @@ int semanage_seuser_modify_local(semanage_handle_t *handle,
-+ 	(void)semanage_seuser_query(handle, key, &previous);
-  	handle->msg_callback = callback;
-  	rc = dbase_modify(handle, dconfig, key, new);
--+
- +#ifndef DISABLE_AUDIT
-- 	if (semanage_seuser_audit(handle, new, previous, AUDIT_ROLE_ASSIGN, rc == 0) < 0)
-+ 	if (semanage_seuser_audit(handle, new, previous, AUDIT_ROLE_ASSIGN,
-+ 				  rc == 0) < 0)
-  		rc = -1;
- +#endif
-  err:
-  	if (previous)
-  		semanage_seuser_free(previous);
--@@ -182,8 +191,12 @@ int semanage_seuser_del_local(semanage_handle_t * handle,
-+@@ -188,9 +196,11 @@ int semanage_seuser_del_local(semanage_handle_t *handle,
-  	dbase_config_t *dconfig = semanage_seuser_dbase_local(handle);
-  	rc = dbase_del(handle, dconfig, key);
-  	semanage_seuser_query(handle, key, &seuser);
--+
- +#ifndef DISABLE_AUDIT
-- 	if (semanage_seuser_audit(handle, NULL, seuser, AUDIT_ROLE_REMOVE, rc == 0) < 0)
-+ 	if (semanage_seuser_audit(handle, NULL, seuser, AUDIT_ROLE_REMOVE,
-+ 				  rc == 0) < 0)
-  		rc = -1;
- +#endif
--+
-  	if (seuser)
-  		semanage_seuser_free(seuser);
-  	return rc;
-@@ -121,6 +120,3 @@ index 241ff17a..fa03fb66 100644
-  
-  OBJECTS = $(SOURCES:.c=.o)
-  POLICIES = $(CILS:.cil=.policy)
---- 
--2.34.1
--
-diff --git a/recipes-security/selinux/libsemanage_3.10.bb b/recipes-security/selinux/libsemanage_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/libsemanage_3.10.bb
-rename to recipes-security/selinux/libsemanage_3.11.bb
-diff --git a/recipes-security/selinux/libsepol_3.10.bb b/recipes-security/selinux/libsepol_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/libsepol_3.10.bb
-rename to recipes-security/selinux/libsepol_3.11.bb
-diff --git a/recipes-security/selinux/mcstrans_3.10.bb b/recipes-security/selinux/mcstrans_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/mcstrans_3.10.bb
-rename to recipes-security/selinux/mcstrans_3.11.bb
-diff --git a/recipes-security/selinux/policycoreutils_3.10.bb b/recipes-security/selinux/policycoreutils_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/policycoreutils_3.10.bb
-rename to recipes-security/selinux/policycoreutils_3.11.bb
-diff --git a/recipes-security/selinux/restorecond_3.10.bb b/recipes-security/selinux/restorecond_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/restorecond_3.10.bb
-rename to recipes-security/selinux/restorecond_3.11.bb
-diff --git a/recipes-security/selinux/secilc_3.10.bb b/recipes-security/selinux/secilc_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/secilc_3.10.bb
-rename to recipes-security/selinux/secilc_3.11.bb
-diff --git a/recipes-security/selinux/selinux-dbus_3.10.bb b/recipes-security/selinux/selinux-dbus_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/selinux-dbus_3.10.bb
-rename to recipes-security/selinux/selinux-dbus_3.11.bb
-diff --git a/recipes-security/selinux/selinux-gui_3.10.bb b/recipes-security/selinux/selinux-gui_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/selinux-gui_3.10.bb
-rename to recipes-security/selinux/selinux-gui_3.11.bb
-diff --git a/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch b/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch
-index 0e8354b..a5640e9 100644
---- a/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch
-+++ b/recipes-security/selinux/selinux-python/0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch
-@@ -13,18 +13,15 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 1 insertion(+), 1 deletion(-)
- 
- diff --git a/python/sepolicy/Makefile b/python/sepolicy/Makefile
--index 1a26cfdc..6e40691d 100644
-+index 51812980..33a595d1 100644
- --- a/python/sepolicy/Makefile
- +++ b/python/sepolicy/Makefile
--@@ -27,7 +27,7 @@ test:
-+@@ -26,7 +26,7 @@ test:
-  	@$(PYTHON) test_sepolicy.py -v
-  
-- install:
---	$(PYTHON) -m pip install --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` $(PYTHON_SETUP_ARGS) .
--+	$(PYTHON) -m pip install --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps $(PYTHON_SETUP_ARGS) .
-+ install: python-build
-+-	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` dist/*.whl
-++	$(PYTHON) -m pip install --no-build-isolation --force-reinstall --prefix=$(PREFIX) --root $(DESTDIR) --ignore-installed --no-deps dist/*.whl
-  	[ -d $(DESTDIR)$(BINDIR) ] || mkdir -p $(DESTDIR)$(BINDIR)
-  	install -m 755 sepolicy.py $(DESTDIR)$(BINDIR)/sepolicy
-  	(cd $(DESTDIR)$(BINDIR); ln -sf sepolicy sepolgen)
---- 
--2.34.1
--
-diff --git a/recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch b/recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch
-deleted file mode 100644
-index e816be7..0000000
---- a/recipes-security/selinux/selinux-python/0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch
-+++ /dev/null
-@@ -1,61 +0,0 @@
--From 845f081ba3dab6c27aeac12ab20a45250fd9a8e6 Mon Sep 17 00:00:00 2001
--From: Yi Zhao <yi.zhao@windriver.com>
--Date: Tue, 24 Sep 2024 14:07:41 +0800
--Subject: [PATCH] sepolicy: set conf.substitutions['releasever'] to empty str
-- when releasever is None
--
--For some distributions (e.g. Yocto) that do not provide
--system-release/distribution-release file, libdnf can not get releasever
--variable, causing conf.substitutions['releasever'] to not be set.
--This will cause 'sepolicy generate' command to fail with the following
--error on these distributions:
--
--$ sepolicy generate --init /usr/local/bin/foo
--Traceback (most recent call last):
--  File "/usr/bin/sepolicy", line 702, in <module>
--    args.func(args)
--  File "/usr/bin/sepolicy", line 569, in generate
--    mypolicy.gen_writeable()
--  File "/usr/lib/python3.12/site-packages/sepolicy/generate.py", line 1302, in gen_writeable
--    self.__extract_rpms()
--  File "/usr/lib/python3.12/site-packages/sepolicy/generate.py", line 1268, in __extract_rpms
--    base.read_all_repos()
--  File "/usr/lib/python3.12/site-packages/dnf/base.py", line 554, in read_all_repos
--    for repo in reader:
--                ^^^^^^
--  File "/usr/lib/python3.12/site-packages/dnf/conf/read.py", line 42, in __iter__
--    for r in self._get_repos(self.conf.config_file_path):
--             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
--  File "/usr/lib/python3.12/site-packages/dnf/conf/read.py", line 109, in _get_repos
--    parser.setSubstitutions(substs)
--  File "/usr/lib/python3.12/site-packages/libdnf/conf.py", line 1643, in setSubstitutions
--    return _conf.ConfigParser_setSubstitutions(self, substitutions)
--           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
--TypeError: in method 'ConfigParser_setSubstitutions', argument 2 of type 'std::map< std::string,std::string,std::less< std::string >,std::allocator< std::pair< std::string const,std::string > > > const &'
--
--Set conf.substitutions['releasever'] to empty str if releasever is None.
--
--Upstream-Status: Submitted [https://github.com/SELinuxProject/selinux/pull/444]
--
--Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-----
-- python/sepolicy/sepolicy/generate.py | 3 +++
-- 1 file changed, 3 insertions(+)
--
--diff --git a/python/sepolicy/sepolicy/generate.py b/python/sepolicy/sepolicy/generate.py
--index adf65f27..56923dc4 100644
----- a/python/sepolicy/sepolicy/generate.py
--+++ b/python/sepolicy/sepolicy/generate.py
--@@ -1265,6 +1265,9 @@ allow %s_t %s_t:%s_socket name_%s;
--         import dnf
-- 
--         with dnf.Base() as base:
--+            if base.conf.substitutions.get('releasever') is None:
--+                base.conf.substitutions['releasever'] = ''
--+
--             base.read_all_repos()
--             base.fill_sack(load_system_repo=True)
-- 
---- 
--2.34.1
--
-diff --git a/recipes-security/selinux/selinux-python_3.10.bb b/recipes-security/selinux/selinux-python_3.11.bb
-similarity index 96%
-rename from recipes-security/selinux/selinux-python_3.10.bb
-rename to recipes-security/selinux/selinux-python_3.11.bb
-index 61abd77..36f714c 100644
---- a/recipes-security/selinux/selinux-python_3.10.bb
-+++ b/recipes-security/selinux/selinux-python_3.11.bb
-@@ -11,12 +11,12 @@ require selinux_common.inc
- inherit python3targetconfig
- 
- SRC_URI += "file://0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patch;patchdir=.. \
--            file://0002-sepolicy-set-conf.substitutions-releasever-to-empty-.patch;patchdir=.. \
-            "
- 
- S = "${UNPACKDIR}/${BP}/python"
- 
--DEPENDS = "libsepol libselinux gettext-native python3-setuptools-scm-native python3-pip-native"
-+DEPENDS = "libsepol libselinux gettext-native python3-setuptools-scm-native python3-pip-native \
-+           python3-build-native python3-wheel-native"
- 
- RDEPENDS:${PN} = "\
-         python3-core \
-diff --git a/recipes-security/selinux/selinux-sandbox_3.10.bb b/recipes-security/selinux/selinux-sandbox_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/selinux-sandbox_3.10.bb
-rename to recipes-security/selinux/selinux-sandbox_3.11.bb
-diff --git a/recipes-security/selinux/selinux_common.inc b/recipes-security/selinux/selinux_common.inc
-index 6932fea..5665bb3 100644
---- a/recipes-security/selinux/selinux_common.inc
-+++ b/recipes-security/selinux/selinux_common.inc
-@@ -1,7 +1,7 @@
- HOMEPAGE = "https://github.com/SELinuxProject"
- 
- SRC_URI = "git://github.com/SELinuxProject/selinux.git;branch=main;protocol=https"
--SRCREV = "ca10fc4204ed60540d41d2499127c18ad0643f9e"
-+SRCREV = "2233a23a4d4f1bf29054037babec13f30d038e65"
- 
- require conf/selinux_refpolicy_common.inc
- 
-diff --git a/recipes-security/selinux/semodule-utils_3.10.bb b/recipes-security/selinux/semodule-utils_3.11.bb
-similarity index 100%
-rename from recipes-security/selinux/semodule-utils_3.10.bb
-rename to recipes-security/selinux/semodule-utils_3.11.bb
+ /* bypass wrapper logic on path computations */
+ int (*pseudo_real_lstat)(const char *path, PSEUDO_STATBUF *buf) = NULL;
++int (*pseudo_real_fstat)(int fd, PSEUDO_STATBUF *buf) = NULL;
++int (*pseudo_real_stat)(const char *path, PSEUDO_STATBUF *buf) = NULL;
+ /* bash workaround */
+ int (*pseudo_real_unsetenv)(const char *) = unsetenv;
+ char * (*pseudo_real_getenv)(const char *) = getenv;
+diff --git a/pseudo_wrappers.c b/pseudo_wrappers.c
+index 16a451a..d073b1e 100644
+--- a/pseudo_wrappers.c
++++ b/pseudo_wrappers.c
+@@ -174,6 +174,8 @@ pseudo_init_wrappers(void) {
+ 	pseudo_real_fsetxattr = real_fsetxattr;
+ #endif
+ 	pseudo_real_lstat = base_lstat;
++	pseudo_real_fstat = base_fstat;
++	pseudo_real_stat = base_stat;
+ 	/* and these are used so the client's server spawn can bypass
+ 	 * wrappers.
+ 	 */
+diff --git a/test/test-proc-fd.c b/test/test-proc-fd.c
+new file mode 100644
+index 0000000..9550809
+--- /dev/null
++++ b/test/test-proc-fd.c
+@@ -0,0 +1,174 @@
++/*
++ * SPDX-License-Identifier: LGPL-2.1-only
++ *
++ * Check that xattr operations on /proc/self/fd/<n> address the file the
++ * descriptor refers to, and not the path the magic link prints.
++ *
++ * A descriptor opened with O_PATH|O_NOFOLLOW on a symlink denotes the
++ * symlink itself, so a context set through it must land on the link and
++ * leave the target alone.  A descriptor opened by following a symlink
++ * denotes the target, so the context must land there instead.
++ *
++ * Exit status: 0 all checks passed, 1 a check failed, 255 skipped because
++ * the platform has no xattr support.
++ */
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/xattr.h>
++
++#define CTX "security.selinux"
++
++static int failures;
++
++static void
++fail(const char *what, const char *detail)
++{
++	printf("  FAIL  %-52s %s\n", what, detail);
++	++failures;
++}
++
++static void
++pass(const char *what)
++{
++	printf("  PASS  %s\n", what);
++}
++
++/* Read the context of path itself, without following a final symlink.
++ * Returns NULL when there is none.
++ */
++static const char *
++get_ctx(const char *path, char *buf, size_t buflen)
++{
++	ssize_t n = lgetxattr(path, CTX, buf, buflen - 1);
++
++	if (n < 0)
++		return NULL;
++	buf[n] = '\0';
++	return buf;
++}
++
++static void
++expect_ctx(const char *what, const char *path, const char *want)
++{
++	char buf[256];
++	const char *got = get_ctx(path, buf, sizeof buf);
++
++	if (!want) {
++		if (got)
++			fail(what, got);
++		else
++			pass(what);
++		return;
++	}
++	if (got && strcmp(got, want) == 0)
++		pass(what);
++	else
++		fail(what, got ? got : "<no context>");
++}
++
++/* Set the context through the descriptor, the same way libselinux does when
++ * it pins a file: path-based call, no extra flags.
++ */
++static int
++set_via_fd(int fd, const char *value)
++{
++	char path[64];
++
++	snprintf(path, sizeof path, "/proc/self/fd/%d", fd);
++	return setxattr(path, CTX, value, strlen(value) + 1, 0);
++}
++
++int
++main(int argc, char **argv)
++{
++	const char *dir = argc > 1 ? argv[1] : ".";
++	char path[512];
++	int fd;
++
++	snprintf(path, sizeof path, "%s/file", dir);
++	if (close(open(path, O_CREAT | O_WRONLY, 0644)) == -1) {
++		perror(path);
++		return 1;
++	}
++	snprintf(path, sizeof path, "%s/link", dir);
++	if (symlink("file", path) == -1) {
++		perror(path);
++		return 1;
++	}
++	snprintf(path, sizeof path, "%s/dangling", dir);
++	if (symlink("/nonexistent/xyz", path) == -1) {
++		perror(path);
++		return 1;
++	}
++
++	/* 1. O_PATH|O_NOFOLLOW on a symlink: label the link, not its target. */
++	snprintf(path, sizeof path, "%s/link", dir);
++	fd = open(path, O_PATH | O_NOFOLLOW);
++	if (fd == -1) {
++		perror(path);
++		return 1;
++	}
++	if (set_via_fd(fd, "onlink") == -1 && errno == ENOTSUP) {
++		printf("  SKIP  xattr support unavailable\n");
++		return 255;
++	}
++	close(fd);
++
++	snprintf(path, sizeof path, "%s/link", dir);
++	expect_ctx("context landed on the symlink", path, "onlink");
++	snprintf(path, sizeof path, "%s/file", dir);
++	expect_ctx("context did not land on the target", path, NULL);
++
++	/* 2. A dangling symlink must not make the operation fail. */
++	snprintf(path, sizeof path, "%s/dangling", dir);
++	fd = open(path, O_PATH | O_NOFOLLOW);
++	if (fd == -1) {
++		perror(path);
++		return 1;
++	}
++	if (set_via_fd(fd, "ondangling") == -1) {
++		fail("context set on a dangling symlink", strerror(errno));
++	} else {
++		pass("context set on a dangling symlink");
++	}
++	close(fd);
++	expect_ctx("context landed on the dangling link", path, "ondangling");
++
++	/* 3. A descriptor obtained by following a symlink denotes the target. */
++	snprintf(path, sizeof path, "%s/target", dir);
++	if (close(open(path, O_CREAT | O_WRONLY, 0644)) == -1) {
++		perror(path);
++		return 1;
++	}
++	snprintf(path, sizeof path, "%s/link2", dir);
++	if (symlink("target", path) == -1) {
++		perror(path);
++		return 1;
++	}
++	fd = open(path, O_RDONLY);
++	if (fd == -1) {
++		perror(path);
++		return 1;
++	}
++	if (set_via_fd(fd, "ontarget") == -1) {
++		fail("context set through a followed descriptor", strerror(errno));
++	} else {
++		pass("context set through a followed descriptor");
++	}
++	close(fd);
++
++	snprintf(path, sizeof path, "%s/target", dir);
++	expect_ctx("context landed on the target", path, "ontarget");
++	snprintf(path, sizeof path, "%s/link2", dir);
++	expect_ctx("context did not land on the link", path, NULL);
++
++	printf("%s: %d check(s) failed\n", failures ? "FAIL" : "OK", failures);
++	return failures ? 1 : 0;
++}
+diff --git a/test/test-proc-fd.sh b/test/test-proc-fd.sh
+new file mode 100755
+index 0000000..4a7f8ba
+--- /dev/null
++++ b/test/test-proc-fd.sh
+@@ -0,0 +1,17 @@
++#!/bin/bash
++#
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++# Regressions guarded here: an xattr call on /proc/self/fd/<n> must address
++# the file the descriptor refers to.  Path canonicalization used to expand the
++# magic link with readlink(2) and then follow the result, so a context set
++# through an O_PATH|O_NOFOLLOW descriptor on a symlink landed on the link
++# target, and a dangling link made the call fail with ENOENT.  libselinux 3.11
++# labels the rootfs that way, which left every symlink in the image unlabelled.
++#
++# The temporary tree has to live below $PWD so that pseudo tracks it.
++
++tmpdir="$(mktemp -d -p "$PWD" proc_fd_XXXXXX)"
++trap "rm -rf '$tmpdir'" EXIT TERM INT
++
++./test/test-proc-fd "$tmpdir"
 -- 
 2.43.0
 
