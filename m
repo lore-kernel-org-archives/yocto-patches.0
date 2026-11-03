@@ -1,149 +1,209 @@
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8112.1793701719361391434
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9854.1793708084484972645
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 03 Nov 2026 02:28:39 -0800
+ Tue, 03 Nov 2026 04:14:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=jS04elge;
- spf=pass (domain: gmail.com, ip: 209.85.219.43, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-917a64f28d0so6389126d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 02:28:39 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=jBnnH7qc;
+ spf=pass (domain: gmail.com, ip: 209.85.128.178, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-8b06c0794cfso37217047b3.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 04:14:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793708083; cv=none;
+        d=google.com; s=arc-20260327;
+        b=p8w2W+IZOiTYE5I5BHRgcBZ6nLs7zUUCtF2aI6rI9nyNOwhSZba9FdkShpRBxLhP7I
+         GnIe6QCDI0rvFpFl2j1W62fK0bxtcAi9+/3iPEDVIFEyCspqRT2SsxxfMZGfTWXVbRdr
+         0seOcaF/E4A5wbarXarhq+oIx4q7uepDdcW9ANX+KzJx12va+hPI56/o0FCmBEFnAFr7
+         +Ue2TGftzVcIUc001/Bd846efOPWlra9pekEs7HH3NFUlTyD/BMnrnHl8zAL2NyRhXXL
+         MgZnN7X77l89w6+OIv3znfrSXh5QOjf8IIOMbOdF63zNcZTaVqXlZnAlFr4NUrfUuY3J
+         e37A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=Pf9+dqarDik/1VFNyF4qDgyRQaekTFSfrgk/fsHvIPE=;
+        fh=rW+F4vWbYRrKKqRcQBOl75fisa8SOH06jh5yjpycWq0=;
+        b=nUgcGE/Os2JFRw5Lac2arUZqngL+rgvOAVlHzi8iXUGO/STBa+a5joJapXlOPIAvRF
+         M0KJP8mc1vO/26UiMOHMXfGmMwbTkh+H8+P2XV2U/iEpwnS+5Rc5IpnOUXFfBmf9oxN0
+         LY6HDnN+3zTE4TgEjbHv/5rC5nQdAtOH5mDud8Z9K2yn5NTwwyhTtq9Ui84/ATIm6jUP
+         MvzelrOk1BtOmxTW8XOxF+CRQWgtpn0+1b4/A+ZuKwkTVSInyonXrpa2+NGATAgPQWrz
+         cFg2uf0n/u8Qpv7qVLq7V/+8JCABYOiOqGxG4vsKHtADjiVF7WaBeqDeST3OwOgpHJNr
+         PG0A==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793701718; x=1794306518; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jC8KEXQUy39n/l0HK66FeK5k2lYPbAJ6ihrGWr9CGNA=;
-        b=jS04elgeBdN1BJT/aTZLOBMHPC9oi3pXlE+QbtA1FcYPM/M+a05SRvqwW/Y37OtuJ2
-         ekVv7SJ0APi0oAsBAv0z2Wb10SHboFOEH27qQ80CxuQbb/DpsQlHxh9w1N+GtRJn4qJY
-         KcsGbt7uPUh/N9cERygviGyEFUcJLcE+dOrpXAwR3ZauaHCjO2wY1ARTWXVwtAztg0Ym
-         tYOrOCp19u6fBInDDAJMZN2Emlag0Z00C4lr5zuYyovJAE5LeJdhmQ/mABItzRitW/g6
-         zko4Ch/rvG6fWDC6sokKz4KPJofsW3CwfhgG6rsydHdVFtkaQYkghCBWeWKPl3NSEWMd
-         F2sA==
+        d=gmail.com; s=20260707; t=1793708083; x=1794312883; darn=lists.yoctoproject.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Pf9+dqarDik/1VFNyF4qDgyRQaekTFSfrgk/fsHvIPE=;
+        b=jBnnH7qcV5oV8eSLix2PhiuQ+2QEVJB2w4VS3aChqWtjiM8CiA2tKfEw4QwA+Ox1p0
+         CFCO6UUbEzdNh+WtgBqfrDpVpr8SLNwZkYVgeOtW1hqHAO4ivLI76iASabjHa+O0uMLt
+         YL6mwb2xJvf10Eyfkym6P04aEugNDFNhfIVFjnN8snTnJ4dh6u0WUvBKpDOzy2LFZ/6E
+         7fgUWNDRgKEfh6uaMc1YmegUREG/03XPWtd03gtwsGjnPPKCPiwBBpkO+ezXhzdRDoQa
+         K2Hgv4n46oN+NCNzzH2HMB+E0VJ2FzAmt8g2eVFKLm8w2Y8AfSrFcbvumjsUVwkEo0UE
+         fWbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793701718; x=1794306518;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=jC8KEXQUy39n/l0HK66FeK5k2lYPbAJ6ihrGWr9CGNA=;
-        b=k+mGKOL5rUV9bP6x1qNz0qvqelRMAD346rsWNl6hgeOFN6qmb+WTOrVi9/5ATUxHwn
-         T9ehkF5djN3JVm7ekMKtcOc9o/AaLuO71NO4SVb+PkujfS/7Sqzlcqm7G9u0qGy5xViD
-         shSjsiVBIQA9Qz9GoxVWgxuUsvGsQOdRL8GTKSYXy03Ol7RNMSWWIgbslqnmP8bPEdNe
-         6jEc+03JEheIjB78QUGGVY/ul3pbM0plxxzNE+WLK7PSW89eSth4kT2NQB2e8pOURJwP
-         lgA34smyg3LbMo/y3oLDY30dsd03L/tUJRbDpflVcxvsK1keJQyjKMu86BuUMU9ngsLp
-         vFoQ==
-X-Gm-Message-State: APuU4Z9FKcwky7WP6ud+wts381Hzk7bFm5pUe/1yJqVk/zB1ChR8i04Z
-	SAdfBq9fL1OA0Fv+/Zk9U4rrrLWCeZIvXa/vJT1rhuOjJHFUPhjJkt4psPg8Ww==
-X-Gm-Gg: AYBFou3fMGEFoZRQAATMuN9rciMTSCA/PME49YHiw+V8ecRE+U0RYvuDDnmmj3A5m2I
-	Z2a60Trim3QXpHmwZVvV4E2IbpH6Q9gCRWmAZFVcUdDf1heh7pmGP8R0HJtB5X+iSOvzQ946G8P
-	MBQK9UbHlspe5jPy2m15VGbBKzKDqTYe87wIrb/r/uvI4hierR1FbFYemSwvE+2IJgVO/DTUzLq
-	poJPLC5ww5ZHMxyQtlJkpvyy2p683HJmzlBovf3v28S1lccIt9xv8u9TJRKbEJDC0AUbnZnnDY9
-	vR06yip1t73WOBAXutVmppQxHe6OWda2eNOYkb4tmMcQgWYm5hACcq8Kq3vhSKLNWD9BNNHtClt
-	Rvgae61IXqMIYQtRa3EidHxdvdsId7WEeKsNcdI+ESPxa44askOcchw09DIKquydtE7PruMzDuh
-	lecrUB3b4Ao3YccwuB1jG19YCNezkSSXTR+UKGmu3bE3R/MrG65bYKqhbnt35dY7EUY32x2osZv
-	h4NoygORW56ilvJDRqzphw9SJ8nVZToSGwvVbg2XPchMFcvaUF8BbloIo1R+h9oI9LHxnLVjh5t
-	Pq99R11wkHoSyS6mpQQCKKA0/px1wgl4LPRGWgEsScls6/ZF8habjW3ZE/gwavxOPMSXPq/VYIr
-	bxSb9M2CLTms0gygRzbc5xOiMnIwaE7WKcc5CTKftLoj/zWm6BivJ
-X-Received: by 2002:a05:6214:4e82:b0:91c:c4ea:6b9f with SMTP id 6a1803df08f44-91cc4eac03bmr74594766d6.28.1793701717972;
-        Tue, 03 Nov 2026 02:28:37 -0800 (PST)
-Return-Path: <twoerner@gmail.com>
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91cd064ca1asm20022926d6.42.2026.11.03.02.28.37
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 02:28:37 -0800 (PST)
-From: Trevor Woerner <twoerner@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH v4] kernel: add config fragment for lttng-modules prerequisites
-Date: Tue,  3 Nov 2026 05:28:34 -0500
-Message-ID: <20261103102834.1507595-1-twoerner@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20260707; t=1793708083; x=1794312883;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Pf9+dqarDik/1VFNyF4qDgyRQaekTFSfrgk/fsHvIPE=;
+        b=zuGgmBY8yYDNF/vHF+P3lTgqQbJJsFz/TffrQOwRVfRrxKKZt3BKLs3ECHVWhv9eMF
+         hP3G/T6+X0jY2V2u20o2hiIQQLojYzwn1OLFLA00kyGSb6kvSebTmsu4wqaaHCKFLcbW
+         RGcMZn64YAjChfzUsvJiGVnttnEcBu2ICbazLNRU28w89jjM/kQTv9c+ym0d0ARQrfBr
+         PZ9E5KEsvDx3WM0Jv5BIS68DkaBatc/f9o38BtFmr6tjTpwrHbhs+CnDVMDQWj173Dqg
+         O3/WbjKpUZnz+ewFVFjywkre2F8yPtRg8eMUlwD1kDPa3kROdmLiTubAomyYnddu3wMz
+         OPZQ==
+X-Gm-Message-State: APuU4Z8j6WHxhNE/SwZMMlKf++HYKR6+eVS2ABdxc8JEl15szbShfzxH
+	/ExPTRVUkXbXJIGa75D+AyBudwvT8ypLafDJnVrwk9EdHyqoY2NZgHZy0ELDwGfxeXn+EQCoe6O
+	AKAdcnZzQYhN3lGADcPjgpGf7584gNHE=
+X-Gm-Gg: AYBFou0N3mIFm9Mh0BGst1Jf//VTfCnCqq/fb2KlnQBU6lhRdCi6WHI3FiVgACxdtEO
+	7n2LRAfzvKUHP8xQpPNDogMWOzS3/0CjAniq4LZnxaXDZz2B74c9bovJRutYvBJbjFmzP39a5Am
+	E2Tj9BHij+w0jOxXtaY0DniuB3Ypcdnfd/fOja05AjxRlb2buVrKMLM9haPD9GuOxjJwyY0n1RP
+	sqIV93Plazd0OJqGYfsC9+oopVvIEqB4l4As7A2yHzsPJJbFulnZv/5AOP7LY5uGAOmVNd7FPqQ
+	YZgtZF0GnDqBpg8iDS6pfJ5r/ZTWbKzssaSGn3tzO+HATOWvBO4nSDRKBhD+vB9lJCylvjwFx27
+	pYpkx6AED9qfU10n4WrBiN1oWxTk5wO5+n5GLhD/PrePSGZXWWO8CPLXTfx+JI4eObiWUAF8=
+X-Received: by 2002:a05:690c:281:b0:8ab:f06b:4150 with SMTP id
+ 00721157ae682-8b2b679076fmr101778067b3.57.1793708083341; Tue, 03 Nov 2026
+ 04:14:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261030103942.2373161-1-daniel.turull@ericsson.com> <20261030103942.2373161-2-daniel.turull@ericsson.com>
+In-Reply-To: <20261030103942.2373161-2-daniel.turull@ericsson.com>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Tue, 3 Nov 2026 13:14:31 +0100
+X-Gm-Features: AclHuK-Ou280E6Ccfw7CC7mX9hV5zwkhVHWEi-Mg2k23hmRm3V4VVjoIh-CxAN8
+Message-ID: <CANNYZj9Gxq+rt_sc89DcuLuaTsMX8vKggOOi4zF6Uuz_in1u+A@mail.gmail.com>
+Subject: Re: [AUH][PATCH v5 2/2] steps: skip changelog in commit message when
+ devtool flags it
+To: daniel.turull@ericsson.com
+Cc: yocto-patches@lists.yoctoproject.org, jaipaul.cheernam@est.tech
+Content-Type: multipart/alternative; boundary="000000000000236d2e065f5e358a"
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 10:28:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5218
-Content-Type: text/plain; charset="utf-8"
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 12:14:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5219
 
-The machines in this layer have no BSP description in yocto-kernel-cache
-and build from an in-tree defconfig via KBUILD_DEFCONFIG, so the
-standard kernel type's configuration never reaches them. Neither the arm
-nor the arm64 defconfig enables what lttng-modules needs: kprobes is a
-hard compile failure, and without the tracing infrastructure the build
-silently produces no modules at all.
+--000000000000236d2e065f5e358a
+Content-Type: text/plain; charset="UTF-8"
 
-Ship the missing subset as a fragment in the layer's own kmeta, so it
-resolves for any recipe here rather than only for ones that fetch the
-kernel cache.
+Thanks, both patches applied and pushed.
 
-AI-Generated: codex/claude-opus 5 (xhigh)
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
----
-changes in v4:
-- reword the fragment comment so no line opens with a CONFIG_ symbol
-  name; kconf_check reads such a line as a malformed "is not set" entry
-  and reports the fragment as badly formatted on every build
+Alex
 
-changes in v3:
-- move the fragment into the layer's own kmeta and reference it from
-  KERNEL_FEATURES, rather than adding a bare .cfg to SRC_URI, so it sits
-  with the layer's other kernel metadata and can be named
-- enable CONFIG_FTRACE_SYSCALLS, and justify the symbol set by what
-  ktypes/standard already gives a cache-described BSP (features/kprobes,
-  features/ftrace) rather than deriving it from first principles
-- leave CONFIG_KALLSYMS_ALL unset: ktypes/base sets it to n, so the
-  lttng writeback probe is dropped everywhere and this layer should not
-  diverge
-- considered yocto-cfg-fragments (as meta-virtualization does) and
-  CONFIG_ENABLE_DEFAULT_TRACERS as a lighter route to tracepoints; both
-  were dropped in favour of matching the standard kernel type, which
-  every other linux-yocto BSP already gets
----
- recipes-kernel/linux/linux-rockchip.inc          |  1 +
- .../rockchip-kmeta/bsp/rockchip/lttng.cfg        | 16 ++++++++++++++++
- .../rockchip-kmeta/bsp/rockchip/lttng.scc        |  1 +
- 3 files changed, 18 insertions(+)
- create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
- create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
+On Fri, 30 Oct 2026 at 11:39, <daniel.turull@ericsson.com> wrote:
 
-diff --git a/recipes-kernel/linux/linux-rockchip.inc b/recipes-kernel/linux/linux-rockchip.inc
-index 6c62e849834c..b87cb7a14bf8 100644
---- a/recipes-kernel/linux/linux-rockchip.inc
-+++ b/recipes-kernel/linux/linux-rockchip.inc
-@@ -34,5 +34,6 @@ COMPATIBLE_MACHINE:soquartz = "soquartz"
- SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
- SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
- 
-+KERNEL_FEATURES:append:rockchip = " bsp/rockchip/lttng.scc"
- KERNEL_FEATURES:append:rockchip:arm = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
- KERNEL_FEATURES:append:rockchip:aarch64 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
-diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
-new file mode 100644
-index 000000000000..cde4bfcece67
---- /dev/null
-+++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
-@@ -0,0 +1,16 @@
-+# Prerequisites for building lttng-modules.
-+#
-+# These symbols are what ktypes/standard gives every BSP that has a
-+# yocto-kernel-cache description, via features/kprobes and
-+# features/ftrace, trimmed to what lttng-modules uses: kprobes is a hard
-+# compile requirement (src/wrapper/kallsyms.c), and the tracing
-+# infrastructure is what it traces with - without it the build produces
-+# no modules at all rather than failing.
-+#
-+# KALLSYMS_ALL is deliberately absent: ktypes/base sets it to n, so the
-+# lttng "writeback" probe is dropped on every linux-yocto BSP and this
-+# layer has no reason to diverge.
-+CONFIG_KPROBES=y
-+CONFIG_FTRACE=y
-+CONFIG_FUNCTION_TRACER=y
-+CONFIG_FTRACE_SYSCALLS=y
-diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
-new file mode 100644
-index 000000000000..2d0412541c81
---- /dev/null
-+++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
-@@ -0,0 +1 @@
-+kconf non-hardware lttng.cfg
--- 
-2.50.0.173.g8b6f19ccfc3a
+> From: Daniel Turull <daniel.turull@ericsson.com>
+>
+> Some upstream changelogs are badly formed for a commit message (e.g.
+> mesa, gstreamer release notes, raw git log dumps) and make the upgrade
+> commits hard to read. 'devtool upgrade' now flags these, driven by
+> RECIPE_UPGRADE_CHANGELOG_SKIP in OE-Core, so honour that and leave them
+> out of the commit message. The changelog is still attached to the AUH
+> email, so the information is not lost.
+>
+> This depends on the OE-Core patch "devtool: upgrade: flag badly
+> formed changelogs in metadata".
+>
+> Assisted-by: kiro:claude-sonnet-5.5
+> Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
+> ---
+> Changes in v5:
+> - Use pkg_ctx['devtool_upgrade_metadata'] from the previous patch
+> Changes in v4:
+> - Use the devtool_changelog_skip field exposed in pkg_ctx by the
+>   previous patch (Alexander)
+> Changes in v3:
+> - Parse the devtool metadata JSON once and keep it in
+>   pkg_ctx['changelog_metadata'] instead of reading it in a separate
+>   _changelog_skip() helper (Alexander)
+> - Split the _get_changelog() refactor into a separate patch
+> ---
+>  modules/steps.py | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/modules/steps.py b/modules/steps.py
+> index 3da8984..9dc637f 100644
+> --- a/modules/steps.py
+> +++ b/modules/steps.py
+> @@ -106,6 +106,10 @@ def _append_changelog_to_commit_msg(group, opts):
+>      for p in group['pkgs']:
+>          if 'changelog_text' not in p:
+>              continue
+> +        # Changelog stays attached to the email, only the commit message
+> skips it
+> +        if p['devtool_upgrade_metadata'].get('changelog_skip'):
+> +            I(" %s: changelog not added to commit message
+> (RECIPE_UPGRADE_CHANGELOG_SKIP)" % p['PN'])
+> +            continue
+>          text = p['changelog_text'].strip()
+>          # Group recipes may share a source and produce identical
+> changelogs
+>          # (e.g. mesa, mesa-native); skip proven duplicates, keep the rest.
+>
 
+--000000000000236d2e065f5e358a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Thanks, both patches applied and pushed.</div><div><b=
+r></div><div>Alex</div></div><br><div class=3D"gmail_quote gmail_quote_cont=
+ainer"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, 30 Oct 2026 at 11:39, =
+&lt;<a href=3D"mailto:daniel.turull@ericsson.com">daniel.turull@ericsson.co=
+m</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin=
+:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"=
+>From: Daniel Turull &lt;<a href=3D"mailto:daniel.turull@ericsson.com" targ=
+et=3D"_blank">daniel.turull@ericsson.com</a>&gt;<br>
+<br>
+Some upstream changelogs are badly formed for a commit message (e.g.<br>
+mesa, gstreamer release notes, raw git log dumps) and make the upgrade<br>
+commits hard to read. &#39;devtool upgrade&#39; now flags these, driven by<=
+br>
+RECIPE_UPGRADE_CHANGELOG_SKIP in OE-Core, so honour that and leave them<br>
+out of the commit message. The changelog is still attached to the AUH<br>
+email, so the information is not lost.<br>
+<br>
+This depends on the OE-Core patch &quot;devtool: upgrade: flag badly<br>
+formed changelogs in metadata&quot;.<br>
+<br>
+Assisted-by: kiro:claude-sonnet-5.5<br>
+Signed-off-by: Daniel Turull &lt;<a href=3D"mailto:daniel.turull@ericsson.c=
+om" target=3D"_blank">daniel.turull@ericsson.com</a>&gt;<br>
+---<br>
+Changes in v5:<br>
+- Use pkg_ctx[&#39;devtool_upgrade_metadata&#39;] from the previous patch<b=
+r>
+Changes in v4:<br>
+- Use the devtool_changelog_skip field exposed in pkg_ctx by the<br>
+=C2=A0 previous patch (Alexander)<br>
+Changes in v3:<br>
+- Parse the devtool metadata JSON once and keep it in<br>
+=C2=A0 pkg_ctx[&#39;changelog_metadata&#39;] instead of reading it in a sep=
+arate<br>
+=C2=A0 _changelog_skip() helper (Alexander)<br>
+- Split the _get_changelog() refactor into a separate patch<br>
+---<br>
+=C2=A0modules/steps.py | 4 ++++<br>
+=C2=A01 file changed, 4 insertions(+)<br>
+<br>
+diff --git a/modules/steps.py b/modules/steps.py<br>
+index 3da8984..9dc637f 100644<br>
+--- a/modules/steps.py<br>
++++ b/modules/steps.py<br>
+@@ -106,6 +106,10 @@ def _append_changelog_to_commit_msg(group, opts):<br>
+=C2=A0 =C2=A0 =C2=A0for p in group[&#39;pkgs&#39;]:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if &#39;changelog_text&#39; not in p:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0continue<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 # Changelog stays attached to the email, only =
+the commit message skips it<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 if p[&#39;devtool_upgrade_metadata&#39;].get(&=
+#39;changelog_skip&#39;):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 I(&quot; %s: changelog not added=
+ to commit message (RECIPE_UPGRADE_CHANGELOG_SKIP)&quot; % p[&#39;PN&#39;])=
+<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 continue<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0text =3D p[&#39;changelog_text&#39;].stri=
+p()<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0# Group recipes may share a source and pr=
+oduce identical changelogs<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0# (e.g. mesa, mesa-native); skip proven d=
+uplicates, keep the rest.<br>
+</blockquote></div>
+
+--000000000000236d2e065f5e358a--
