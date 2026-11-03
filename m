@@ -1,85 +1,171 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6536.1793694734344158984
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8105.1793701692341459469
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 03 Nov 2026 00:32:15 -0800
+ Tue, 03 Nov 2026 02:28:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=dpxp4HPY;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 0AF5D1A1425
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  3 Nov 2026 08:32:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CC3356046C
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  3 Nov 2026 08:32:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EE7B410328267;
-	Tue,  3 Nov 2026 09:32:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793694731; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=fP9PgYViFZTWnAhU961Yf+4zUXE9/bMW6llYda0gakY=;
-	b=dpxp4HPYHZkICZ1LAl9OShkE+V6YvDw6kZeutqFbS6P4neiT0Wqc+83hdI2/GMEbs8hTib
-	tRGSxF0VJIWWSJpzPhGWJ2TAYGQd+t1kfkl+eNb93KTLl7s0qsKcoj5U+/1pFYPAMRKniJ
-	rBuTwO+qCnGFvEKUSaj/5/ozDLwJ0/tkMcFl7ei3qk2eoElHcgZstHwNvqDJh0hknKSqq1
-	KB6i557el6OGiOP/XRhVxqcTJdk6Vm4VWEptB5oSoQ5QpqrY4s52PGwKul9Gqy1vi4ifyk
-	NVGcgCR2ci52D/ZrbGMoVlyK1yXSQhGD+2MVqBdCYGVmEpCUGSScjnQzivDDPg==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Tue, 03 Nov 2026 09:31:59 +0100
-Subject: [PATCH yocto-autobuilder2] schedulers: Use blacksail branches for
- some layers
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261103-mathieu-blacksail-branches-v1-1-fe5e61ab4a26@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAP6b6WoC/x3MSwrCMBAA0KuUWTvQpKWoVxEXk3RiBmMi+RSl9
- O4Gl2/zdiichQtchx0yb1IkxQ51GsB6ig9GWbtBj3pRapzwRdULNzSB7LOQBDSZovVc8DwpOy/
- azRdy0IN3Zieff36Db7I1IbWaTJOwctZwP44fo4Irn4AAAAA=
-X-Change-ID: 20261103-mathieu-blacksail-branches-831c462f49af
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=xQ0cxvIW;
+ spf=pass (domain: gmail.com, ip: 209.85.160.176, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-5351d76e1baso5925331cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 02:28:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793701691; x=1794306491; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=TeACnPw7ovtsNmEkZnRM9XwkmKMU05byweQi/1+WWQs=;
+        b=xQ0cxvIWxQgS7kobiHT6IEzY0BlTL0D0s1rREx3N2YPD6e2OrAKp0M0t+JIPuLoBa6
+         36S/WUJ6x1h52qw1dMiiDsVSASaZgCdt3m7o03CJklFLhLRTOImLXH7xJxphgPPxoqZS
+         BnJ5ooN544d4kuEvCwtCFVAz+j+1Qm6tpORKKxcsrsvQng0adIYSxnmZ3NDp46Shm+h1
+         LrTfowsPfXoCUNsrfVOLT0lka5zjIh5bYqCnJ9nskqoqbWmdpSIGyGAs2Iy8k2d/n3dk
+         UkM9BcQ8ms/dFRQ3FyOzoY1lcbpvuyAd/ZjdqSSXgcLGHWnON4xruIxQSm98LaP8Ntfc
+         WRUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793701691; x=1794306491;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=TeACnPw7ovtsNmEkZnRM9XwkmKMU05byweQi/1+WWQs=;
+        b=eU3n57FKrdIgEIjXJCDiiUt0yd+pgeJQVTg3wxKhHrgI9i2toeglg9pDv9qu8UZ2+n
+         qQLtVOoyL7sEkknXJfY37T8/0KwPQzq06roCL7VSK46cJZhsxWY91QiyCIfHtz36Zvgw
+         NNpw5JciEl+gbwYHnmo4F0XoF2zh0RmJxSduB/oqC8RL2e5fLKU1Y9UU7ash3omQgJfw
+         5d0cxD3aRhmJl+iKfoKCnoh5lqTZyFmG03DYgGOum73IMen6IoGzBPqU2l+o0j2Ft4b7
+         0UnSFwIcUke56vZVsPjBn7mmVUtcuYgcuyHsIOHSqyqIMFC3lHyEZzCinPtHeGrRPplw
+         PghQ==
+X-Gm-Message-State: APuU4Z9/LAEfBEjKPN1a8QJnguY1krxeOrm7mR3ToNsJ0qZCho+Y9nyo
+	vQaUt/qhpeJCtB+qPnGBFgtp6rgyvcvSxrfAbsKalUXa8GGPasoWygrlbQXwRQ==
+X-Gm-Gg: AYBFou1chAjS5Y6F7haMJIgJqUnFLigsjmdYoR5o7645H9WAFXEKotyBdWOJbWsY3Bm
+	1ORhmoHIJINIOPSBzquMEf9Pj/DOvGpknTOnwzUOytVmYgO9vts2pIjmIk8hG5y0cBAcAfPlPQj
+	cjncH/Gh3gvG1HbtAfhWIzZQFo7SjBB9z40DbKQunFJe6+MXLIXImnGGZ0/g8qnl/AdQ34a8JJ+
+	kw+9sxagEmDEHOP7SJ60yCeX0p6HChQuTA4iiKwU8ykVmEhXj6QK55mVtMFxuU1s2jq29ox8bTA
+	VtSxSKOvHMUY0udpL36S3IdY7IyoNkv3T+lXjZsYojSBIBAQLIiKenbEm/Do6Hq7dFonTXXuoR5
+	wh9FWIkVk9M5v5BHLeFFRJTkSjShcaxuCH9QG0X7SVki3SQadl2O9fg9Hoiot+6KoI/qH+2CUm0
+	xcGKqLr5m+m2uFfNyOXb1Rt0MEcY2xRXGoZ3w74wQbGB8bSLYc2PpLwSfbTkVvE5Mk9HScK2tDd
+	H+KJS3IoxHFB2vxJF2gKl4oKAitEYfOcxynX83p49q/bhOGJl0JyE5e6MPD9dxAs0Lf/7H+gsOt
+	ozq6DqNvkdalZSwQsOSsrpP3cc3Kknot30XVXrygqXjYoL4PjMv/6zwUUeziahdtTYjZGohIWtB
+	lidopMbNrHTXPMpx9HbNQeJefe/P1b02DQv3GpfmVT+li8+svYx7U
+X-Received: by 2002:a05:622a:2b46:b0:53f:98b5:4317 with SMTP id d75a77b69052e-542b88d2cd5mr180975961cf.34.1793701690946;
+        Tue, 03 Nov 2026 02:28:10 -0800 (PST)
+Return-Path: <twoerner@gmail.com>
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5498b49da50sm22512171cf.9.2026.11.03.02.28.09
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2026 02:28:10 -0800 (PST)
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793694730; l=1115;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=dbr4H83G2N9ET4CY8M3kRz+dc0/x6s4HJ4KWQ8WboB0=;
- b=W5gppaiM4Yg3wzuK/FIZiJYJvv4KQvZeVYFI9kl2eG7dnvGOAhuYo8YvC7qMT1zRbLkg3Hbeo
- 7ww89LlyqhUD2kyoPQnNQtaQmfZVlKDAnwAOFkm8ugOIMDGSwbL7tK7
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: [meta-rockchip][PATCH v1] kernel: refresh the non-rockchip architecture removal fragments
+Date: Tue,  3 Nov 2026 05:27:59 -0500
+Message-ID: <20261103102759.1507386-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.51.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 08:32:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5216
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 10:28:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5217
+Content-Type: text/plain; charset="utf-8"
 
-Some layers added the branch, use it on the autobuilder.
+Several Arm platforms have been added upstream since these lists were
+written, so a kernel built from an in-tree defconfig was again carrying
+support for machines this layer does not target. On arm64 the
+defconfig re-enabled Aspeed, Black Sesame and Microchip; on arm the
+TI SoC driver menu came back.
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Add the platform symbols arm64 has gained, along with the Renesas and
+Tegra per-SoC options that arrived with them, and the TI menu on arm.
+Nothing has been removed: every symbol these fragments already carry
+still exists in the kernel.
+
+AI-Generated: codex/claude-opus 5 (xhigh)
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- schedulers.py | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../rockchip/remove-non-rockchip-arch-arm.cfg |  1 +
+ .../remove-non-rockchip-arch-arm64.cfg        | 20 +++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/schedulers.py b/schedulers.py
-index 2bfc36ed4439..5b5cf646fd48 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -76,7 +76,13 @@ branchdefaults = {
-     'blacksail': {
-         'branch': 'blacksail',
-         'branch_bitbake': '2.20',
-+        'branch_meta-arm': 'blacksail',
-+        'branch_meta-exein': 'blacksail',
-         'branch_meta-mingw': 'blacksail',
-+        'branch_meta-openembedded': 'blacksail',
-+        'branch_meta-riscv': 'blacksail',
-+        'branch_meta-security': 'blacksail',
-+        'branch_meta-virtualization': 'blacksail',
-         'branch_meta-yocto': 'blacksail',
-         'branch_oecore': 'blacksail',
-         'branch_yocto-docs': 'blacksail',
-
----
-base-commit: 41f0281bea933dd4603a4fe25ddb9de8a062526f
-change-id: 20261103-mathieu-blacksail-branches-831c462f49af
-
-Best regards,
+diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
+index fdd3e6964053..7651c5b05a76 100644
+--- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
++++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
+@@ -48,6 +48,7 @@ CONFIG_SOC_OMAP5=n
+ CONFIG_SOC_AM33XX=n
+ CONFIG_SOC_AM43XX=n
+ CONFIG_SOC_DRA7XX=n
++CONFIG_SOC_TI=n
+ CONFIG_ARCH_QCOM=n
+ CONFIG_ARCH_R7S72100=n
+ CONFIG_ARCH_R7S9210=n
+diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
+index 12fde404d64a..09fb5810c1cf 100644
+--- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
++++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
+@@ -2,14 +2,18 @@ CONFIG_ARCH_ACTIONS=n
+ CONFIG_ARCH_AIROHA=n
+ CONFIG_ARCH_ALPINE=n
+ CONFIG_ARCH_APPLE=n
++CONFIG_ARCH_ARTPEC=n
++CONFIG_ARCH_ASPEED=n
+ CONFIG_ARCH_AXIADO=n
+ CONFIG_ARCH_BCM2835=n
+ CONFIG_ARCH_BCM=n
+ CONFIG_ARCH_BCMBCA=n
+ CONFIG_ARCH_BCM_IPROC=n
+ CONFIG_ARCH_BERLIN=n
++CONFIG_ARCH_BITMAIN=n
+ CONFIG_ARCH_BLAIZE=n
+ CONFIG_ARCH_BRCMSTB=n
++CONFIG_ARCH_BST=n
+ CONFIG_ARCH_CIX=n
+ CONFIG_ARCH_EXYNOS=n
+ CONFIG_ARCH_SPARX5=n
+@@ -17,15 +21,19 @@ CONFIG_ARCH_HISI=n
+ CONFIG_ARCH_INTEL_SOCFPGA=n
+ CONFIG_ARCH_K3=n
+ CONFIG_ARCH_KEEMBAY=n
++CONFIG_ARCH_LAN969X=n
+ CONFIG_ARCH_LAYERSCAPE=n
+ CONFIG_ARCH_LG1K=n
+ CONFIG_ARCH_MEDIATEK=n
+ CONFIG_ARCH_MESON=n
++CONFIG_ARCH_MICROCHIP=n
++CONFIG_ARCH_MMP=n
+ CONFIG_ARCH_MVEBU=n
+ CONFIG_ARCH_MXC=n
+ CONFIG_ARCH_NPCM=n
+ CONFIG_ARCH_NXP=n
+ CONFIG_ARCH_MA35=n
++CONFIG_ARCH_PENSANDO=n
+ CONFIG_ARCH_QCOM=n
+ CONFIG_ARCH_REALTEK=n
+ CONFIG_ARCH_R8A774A1=n
+@@ -43,10 +51,19 @@ CONFIG_ARCH_R8A77995=n
+ CONFIG_ARCH_R8A779A0=n
+ CONFIG_ARCH_R8A779F0=n
+ CONFIG_ARCH_R8A779G0=n
++CONFIG_ARCH_R8A779H0=n
++CONFIG_ARCH_R8A78000=n
+ CONFIG_ARCH_R9A07G043=n
+ CONFIG_ARCH_R9A07G044=n
+ CONFIG_ARCH_R9A07G054=n
++CONFIG_ARCH_R9A08G045=n
++CONFIG_ARCH_R9A08G046=n
+ CONFIG_ARCH_R9A09G011=n
++CONFIG_ARCH_R9A09G047=n
++CONFIG_ARCH_R9A09G056=n
++CONFIG_ARCH_R9A09G057=n
++CONFIG_ARCH_R9A09G077=n
++CONFIG_ARCH_R9A09G087=n
+ CONFIG_ARCH_RENESAS=n
+ CONFIG_ARCH_S32=n
+ CONFIG_ARCH_SEATTLE=n
+@@ -61,6 +78,9 @@ CONFIG_ARCH_TEGRA_186_SOC=n
+ CONFIG_ARCH_TEGRA_194_SOC=n
+ CONFIG_ARCH_TEGRA_210_SOC=n
+ CONFIG_ARCH_TEGRA_234_SOC=n
++CONFIG_ARCH_TEGRA_238_SOC=n
++CONFIG_ARCH_TEGRA_241_SOC=n
++CONFIG_ARCH_TEGRA_264_SOC=n
+ CONFIG_ARCH_TESLA_FSD=n
+ CONFIG_ARCH_THUNDER2=n
+ CONFIG_ARCH_THUNDER=n
 -- 
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+2.50.0.173.g8b6f19ccfc3a
 
