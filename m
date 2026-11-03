@@ -1,145 +1,473 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4440.1793659690619097514
+Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1923.1793669446338888573
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 02 Nov 2026 14:48:10 -0800
+ Mon, 02 Nov 2026 17:30:46 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=Io+45+iq;
- spf=pass (domain: konsulko.com, ip: 209.85.221.44, mailfrom: scott.murray@konsulko.com)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-48e10a70540so1963118f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 02 Nov 2026 14:48:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1793659689; x=1794264489; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=Rv1qFGPZTU5xjeLXptQVkNzLBOBWTm5zrEfl5xjrwMo=;
-        b=Io+45+iqIzAogpn8jmzQbJyADKhhr4av4JBQjoUjGliYPS2HZ7h/tzRwNzEKh8ijHf
-         BGQmDjS9EnznX6q7EIPLsFdqeDTDs7/vYZjJV88hQAV8IojH7kna+jZsy79oweHBe05w
-         B+oZpYV6jiQ9gqp1/N2YohoA80kwchwQT0CBs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793659689; x=1794264489;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=Rv1qFGPZTU5xjeLXptQVkNzLBOBWTm5zrEfl5xjrwMo=;
-        b=LWgG40ivmt+DZJs7Rc3fyk9gEcVcCTCIvN0D9POTpRZgZ6+xgjre8uo52ijQXqPRre
-         IVDpwJizH0ecpdF4Ydngp0NYmx6SvVc4rhNsq68g4k8gU9oeMhp1xD1zfWvmT4kcWsJ4
-         KaHEBv2F+au1bc7zV91+0a15uUbz79A0N5ShcmNDcgQG3XVQezBA751lb5SOgigVXjsz
-         AXRwuiXjFdecFFOUAe3b0nVGMd0KrZUhkhw08XMNS+AOi+ljF31jPa02Ru+TZ+JHBzBu
-         ZIb1zs0ae6OlwfAGcAtY6tEwsNIVJHu2DQWNBN54AvPZpWC8HUSFeWLJmXGoHbqHJpTI
-         BXig==
-X-Gm-Message-State: APuU4Z9z+An3LnM3AnjyRt6AdPubAR9OqBmzTpTwft3SdoHmLb2R26Sg
-	3mqAJGGNE9TIdl3nY3Z2SMddFHc9kZm0xNszSz4LAzqeRMAVTxtVcNpub2zOHZ3iluRe6SAErmn
-	64W+TEj4=
-X-Gm-Gg: AYBFou3vyoUOGa/kMKw4WX2VY4kyOszgf5oOEGRLNJD32pWaehznM4zE4932pE5WgEa
-	dh2hThFN6iqW22Tc7u0pR/JE8rOHiPEcHWS2RaTSojQ/DCQEXtvVbEU6KSoFhio6+mncH8qRy2E
-	odd+xMX6U025CObyS2USFdpt1Cq+yeziH3pysPwCZcUhErLLj3QdFITwx56zXrN1gVhhsodRx9P
-	z5p0s9OxOKAk+G4s8ozl4yD55UBvyj/QoQEmg5jxXWvGNJvsZWXL4Ht88vDKO4loqjO2V7gkSgL
-	ftBUStDMM0oIT9xvNtK9IpUk1AVX1ZvsjfJnHPvUx4vyTn+xyYZzydF6tuyqnIy5APltEQ5gDgL
-	G8IN9HQZtA8ncNDkswXwfqedGX0VpGKUylUkDU8sP49JW5R/hAUCLur5eKYv/FpIT66EW1c+356
-	yXUNnEi2POJFxWYaeDVhd7C2l9dDlZ9WHWpvOqF20EMbdyGxfJNcNaGJh4Lm7TpGsmn7dthXebL
-	Uyiue9GWxKJhavIM4kuNBgUc+FB0Sw9YPUlQqVbj+5pP1ocR5mIx/kYjLDhlB382LKS2JQmKq4y
-	u+JLCx/sPt1o46ICljKjcg/+FYYrUK3fNmYF0k1hg8cEcASsYqWkQOtgQwcdJ4zOrQyTTrHNQ8h
-	lOuF24tukLjU5JOp3h+7yLORkZ1tJC7w=
-X-Received: by 2002:a05:6000:46da:b0:48c:43a3:6a74 with SMTP id ffacd0b85a97d-48e6e2f65c1mr18989143f8f.12.1793659688706;
-        Mon, 02 Nov 2026 14:48:08 -0800 (PST)
-Return-Path: <scott.murray@konsulko.com>
-Received: from tone.k.g (lan.nucleusys.com. [92.247.61.126])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71ba7168sm23770828f8f.55.2026.11.02.14.48.07
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 14:48:07 -0800 (PST)
-From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 3/4] tpm2-tss: update to 4.2.0
-Date: Tue,  3 Nov 2026 00:47:47 +0200
-Message-ID: <70d559289d526f5243aaab79df5ae2e268738f5e.1793659376.git.scott.murray@konsulko.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1793659376.git.scott.murray@konsulko.com>
-References: <cover.1793659376.git.scott.murray@konsulko.com>
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [123.125.172.206])
+	by mtasvr (Coremail) with SMTP id _____wCnOt3TOOlqYLgBAA--.8812S3;
+	Tue, 03 Nov 2026 09:28:52 +0800 (CST)
+Received: from chenqi-Redmi.. (unknown [123.125.172.206])
+	by front01 (Coremail) with SMTP id C6CowABH2Gh_OOlqOAgrAA--.28414S2;
+	Tue, 03 Nov 2026 09:27:27 +0800 (CST)
+From: chenqi_hycx@cetc.com.cn
+To: yocto-patches@lists.yoctoproject.org,
+	richard.purdie@linuxfoundation.org,
+	mark.hatle@kernel.crashing.org
+Cc: chen_q07@163.com
+Subject: [pseudo][PATCH V2 1/2] pseudo_client: resolve /proc/<pid>/fd/<n> to the descriptor
+Date: Tue,  3 Nov 2026 09:30:27 +0800
+Message-ID: <20261103013028.3295799-1-chenqi_hycx@cetc.com.cn>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C6CowABH2Gh_OOlqOAgrAA--.28414S2
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYACmrokZQITwAAsO
+X-CM-DELIVERINFO: =?B?m8FPT6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
+	PoOP9Uj60Bown3/XUUl7ZP32Jc9uTDcTmMt94+s6G7DhR58HmPHlNHSznCxtqUQknS/JJ7
+	w1+hj+Ge76+3hMcHFnCUA8NEZv24jrx7kQenjGgKNq9/JwQgJOuK+8cf2lWfaQ==
+X-Coremail-Antispam: 1Uk129KBj9fXoW3ZF48AFWxJFy5Jr48GrW8KrX_yoW8Jw48Go
+	WIgr1vvw10qr4Duryv93Zrtw1UWF1xur1UXw4rCryDGFnYqrWrWrZ3Zr4rX343Wr4rKrW5
+	Aw1Sg3s3AF48t3s3l-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn5xqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6w7v73VFW2AG
+	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY27kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
+	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
+	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7
+	IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
+	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
+	Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
+	0EwIxGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I0E
+	4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
+	WUWwC2zVAF1VAY17CE14v26r126r1DMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
+	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
+	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
+	0xZFpf9x07jUuc_UUUUU=
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 02 Nov 2026 22:48:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5211
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 01:30:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5214
 Content-Type: text/plain; charset="utf-8"
 
-From: Leonard Anderweit <L.Anderweit@phytec.de>
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-Update to version 4.2.0 and rebase the patch accordingly.
-Also, remove the CVE_STATUS for CVE-2024-29040 because it is now
-properly detected as fixed.
+Paths such as /proc/self/fd/<n> and /dev/fd/<n> denote the open file: the
+kernel resolves them to the descriptor, so an O_PATH|O_NOFOLLOW descriptor
+on a symlink addresses the symlink itself.
 
-Signed-off-by: Leonard Anderweit <l.anderweit@phytec.de>
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+Path canonicalization expands them with readlink(2) and follows the
+result, which changes that meaning.  For a descriptor on a symlink an
+xattr set through it lands on the link target instead of the link, and for
+a dangling symlink the call fails with ENOENT.  Once expanded, the path no
+longer looks like something pseudo tracks either, so the operation is
+passed straight through to the real syscall.
+
+libselinux 3.11 labels the rootfs through such descriptors, so setfiles
+could not label any symlink and do_image fell back to a first boot
+relabel:
+
+  setfiles: Could not set context for .../etc/mtab:  No such file or directory
+  setfiles: Could not set context for .../etc/systemd/system/default.target:  Operation not permitted
+
+Rewrite the reference to the path pseudo recorded for the descriptor,
+which keeps the operation under pseudo's control.  The descriptor itself
+identifies the inode, so the final component is followed only when
+following it is what reproduces that inode, i.e. for a descriptor obtained
+through a symlink.  When the caller passes AT_SYMLINK_NOFOLLOW the
+reference itself is what is being asked about (readlink, lstat, l*xattr),
+so it is left alone for the kernel to resolve.
+
+Adds test/test-proc-fd.sh covering both descriptor flavours.
+
+Assisted-by: Codewhale:deepseek-v4-flash
+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
 ---
- .../tpm2-tss/tpm2-tss/fixup_hosttools.patch         | 13 +++++++------
- .../{tpm2-tss_4.1.3.bb => tpm2-tss_4.2.0.bb}        |  4 +---
- 2 files changed, 8 insertions(+), 9 deletions(-)
- rename meta-tpm/recipes-tpm2/tpm2-tss/{tpm2-tss_4.1.3.bb => tpm2-tss_4.2.0.bb} (94%)
+ pseudo_client.c      | 110 +++++++++++++++++++++++++++
+ pseudo_client.h      |   2 +
+ pseudo_util.c        |   2 +
+ pseudo_wrappers.c    |   2 +
+ test/test-proc-fd.c  | 174 +++++++++++++++++++++++++++++++++++++++++++
+ test/test-proc-fd.sh |  17 +++++
+ 6 files changed, 307 insertions(+)
+ create mode 100644 test/test-proc-fd.c
+ create mode 100755 test/test-proc-fd.sh
 
-diff --git a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss/fixup_hosttools.patch b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss/fixup_hosttools.patch
-index 8822d1b..798a0c7 100644
---- a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss/fixup_hosttools.patch
-+++ b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss/fixup_hosttools.patch
-@@ -1,4 +1,4 @@
--From ab120a9642516cdfdae5c5b8a91e42e2c9898172 Mon Sep 17 00:00:00 2001
-+From 8913c8c4b207ae6dfd3ae58d886e2074d53cc268 Mon Sep 17 00:00:00 2001
- From: Valentin Kunin <kunin@google.com>
- Date: Mon, 20 May 2024 21:09:27 +0000
- Subject: [PATCH] revert configure: add checks for all tools used by make
-@@ -15,10 +15,10 @@ Signed-off-by: Valentin Kunin <kunin@google.com>
-  1 file changed, 11 deletions(-)
+diff --git a/pseudo_client.c b/pseudo_client.c
+index 302ef21..c8247e8 100644
+--- a/pseudo_client.c
++++ b/pseudo_client.c
+@@ -1451,12 +1451,112 @@ pseudo_client_shutdown(int wait_on_socket) {
+ 	return 0;
+ }
  
- diff --git a/configure.ac b/configure.ac
--index eb6051ea..a52c4725 100644
-+index 4a1f1b022772..5a745e9c5c22 100644
- --- a/configure.ac
- +++ b/configure.ac
--@@ -663,17 +663,6 @@ AM_CONDITIONAL([SYSD_SYSUSERS], [test "x$systemd_sysusers" = "xyes" && test "x$s
-+@@ -658,17 +658,6 @@ AM_CONDITIONAL([SYSD_SYSUSERS], [test "x$systemd_sysusers" = "xyes" && test "x$s
-  AC_CHECK_PROG(systemd_tmpfiles, systemd-tmpfiles, yes)
-  AM_CONDITIONAL([SYSD_TMPFILES], [test "x$systemd_tmpfiles" = "xyes" && test "x$tmpfilesdir" != "xno"])
-  
-@@ -29,12 +29,13 @@ index eb6051ea..a52c4725 100644
- -      AC_CHECK_PROG(adduser, adduser, yes)
- -      AC_CHECK_PROG(addgroup, addgroup, yes)
- -      AS_IF([test "x$addgroup" != "xyes" && test "x$groupadd" != "xyes" ],
---         [AC_MSG_ERROR([addgroup or groupadd are needed.])])
-+-         [AC_MSG_WARN([addgroup or groupadd are needed for install.])])
- -      AS_IF([test "x$adduser" != "xyes" && test "x$useradd" != "xyes" ],
---         [AC_MSG_ERROR([adduser or useradd are needed.])])])
-+-         [AC_MSG_WARN([adduser or useradd are needed for install.])])])
- -
-  AC_SUBST([PATH])
-  
-  dnl --------- Doxy Gen -----------------------
- -- 
--2.45.0.rc1.225.g2a3ae87e7f-goog
-+2.43.0
++/* /proc/self/fd/<n>, /proc/<pid>/fd/<n> and /dev/fd/<n> denote the open file,
++ * not the path the magic link prints.  Canonicalization resolves symlinks with
++ * readlink(2), which changes the meaning of such a path: the kernel resolves it
++ * to the descriptor, so an O_PATH|O_NOFOLLOW descriptor on a symlink addresses
++ * the symlink itself, whereas the expansion yields the link target and then
++ * follows it.  That labels the wrong inode, or fails when the target does not
++ * resolve.
++ *
++ * Rewrite the reference to the path pseudo recorded for the descriptor, which
++ * also puts the operation under pseudo's control instead of passing it through.
++ * The descriptor itself identifies the inode, so the final component is only
++ * followed when following it is what reproduces that inode, i.e. for a
++ * descriptor obtained through a symlink.  Returns NULL to leave the path alone.
++ */
++static char *
++rewrite_proc_fd_ref(const char *path, int *leave_last) {
++	const char *p;
++	const char *digits;
++	const char *recpath;
++	char *out;
++	PSEUDO_STATBUF fbuf, pbuf;
++	int fd = 0;
 +
-diff --git a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.2.0.bb
-similarity index 94%
-rename from meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb
-rename to meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.2.0.bb
-index 30e984e..0d5b36a 100644
---- a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb
-+++ b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.2.0.bb
-@@ -11,7 +11,7 @@ SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN
-            file://fixup_hosttools.patch \
-            "
++	if (!path || path[0] != '/')
++		return NULL;
++
++	if (!strncmp(path, "/dev/fd/", 8)) {
++		p = path + 8;
++	} else if (!strncmp(path, "/proc/", 6)) {
++		p = path + 6;
++		if (!strncmp(p, "self/fd/", 8)) {
++			p += 8;
++		} else if (!strncmp(p, "thread-self/fd/", 15)) {
++			p += 15;
++		} else {
++			const char *q = p;
++
++			while (*q >= '0' && *q <= '9')
++				++q;
++			if (q == p || strncmp(q, "/fd/", 4))
++				return NULL;
++			p = q + 4;
++		}
++	} else {
++		return NULL;
++	}
++
++	digits = p;
++	while (*p >= '0' && *p <= '9') {
++		if (fd > (0x7fffffff - 9) / 10)
++			return NULL;
++		fd = fd * 10 + (*p - '0');
++		++p;
++	}
++	if (p == digits || (*p != '\0' && *p != '/'))
++		return NULL;
++
++	recpath = fd_path(fd);
++	if (!recpath || recpath[0] != '/')
++		return NULL;
++
++	/* Within a chroot the recorded path carries the chroot prefix, while
++	 * base_path() adds that prefix to absolute paths.  Strip it, or give up
++	 * if the descriptor is not inside the chroot.
++	 */
++	if (pseudo_chroot_len) {
++		if (strncmp(recpath, pseudo_chroot, pseudo_chroot_len) ||
++		    (recpath[pseudo_chroot_len] != '\0' && recpath[pseudo_chroot_len] != '/'))
++			return NULL;
++		recpath += pseudo_chroot_len;
++		if (*recpath == '\0')
++			recpath = "/";
++	}
++
++	if (*p != '\0') {
++		size_t len = strlen(recpath) + strlen(p) + 1;
++
++		out = malloc(len);
++		if (!out)
++			return NULL;
++		snprintf(out, len, "%s%s", recpath, p);
++		return out;
++	}
++
++	if (!pseudo_real_fstat || !pseudo_real_lstat)
++		return NULL;
++	if (pseudo_real_fstat(fd, &fbuf) == -1)
++		return NULL;
++	if (pseudo_real_lstat(recpath, &pbuf) == 0 &&
++	    pbuf.st_dev == fbuf.st_dev && pbuf.st_ino == fbuf.st_ino) {
++		*leave_last = 1;
++	} else if (pseudo_real_stat == NULL || pseudo_real_stat(recpath, &pbuf) == -1 ||
++		   pbuf.st_dev != fbuf.st_dev || pbuf.st_ino != fbuf.st_ino) {
++		/* The recorded path no longer describes this descriptor. */
++		return NULL;
++	}
++	return strdup(recpath);
++}
++
+ static char *
+ base_path(int dirfd, const char *path, int leave_last) {
+ 	char *basepath = 0;
+ 	size_t baselen = 0;
+ 	size_t minlen = 0;
+ 	char *newpath;
++	char *rewritten;
  
--SRC_URI[sha256sum] = "37f1580200ab78305d1fc872d89241aaee0c93cbe85bc559bf332737a60d3be8"
-+SRC_URI[sha256sum] = "b53f0c5c8c4ce17f05701a410ca9688f725ca380c9bc4640eacd0eadb1fea124"
+ 	if (!path)
+ 		return NULL;
+@@ -1501,7 +1601,17 @@ base_path(int dirfd, const char *path, int leave_last) {
+ 		minlen = pseudo_chroot_len;
+ 	}
  
- UPSTREAM_CHECK_URI = "https://github.com/tpm2-software/${BPN}/releases"
++	/* Only when the caller follows the final component.  With
++	 * AT_SYMLINK_NOFOLLOW the reference itself is what the caller asks
++	 * about (readlink, lstat, l*xattr), so it must be left for the kernel
++	 * to resolve.
++	 */
++	rewritten = leave_last ? NULL : rewrite_proc_fd_ref(path, &leave_last);
++	if (rewritten)
++		path = rewritten;
++
+ 	newpath = pseudo_fix_path(basepath, path, minlen, baselen, NULL, leave_last);
++	free(rewritten);
+ 	pseudo_debug(PDBGF_PATH, "base_path[%s]: %s</>%s => %s\n",
+ 		leave_last ? "nofollow" : "follow",
+ 		basepath ? basepath : "<nil>",
+diff --git a/pseudo_client.h b/pseudo_client.h
+index 9b9f86a..b3f9f49 100644
+--- a/pseudo_client.h
++++ b/pseudo_client.h
+@@ -51,6 +51,8 @@ extern FILE *pseudo_grp;
  
-@@ -94,5 +94,3 @@ FILES:${PN} = "\
-     ${sysconfdir}/sysusers.d"
+ /* pseudo_wrappers will try to initialize these */
+ extern int (*pseudo_real_lstat)(const char *path, PSEUDO_STATBUF *buf);
++extern int (*pseudo_real_fstat)(int fd, PSEUDO_STATBUF *buf);
++extern int (*pseudo_real_stat)(const char *path, PSEUDO_STATBUF *buf);
+ extern int (*pseudo_real_fork)(void);
+ extern int (*pseudo_real_execv)(const char *, char * const *);
  
- BBCLASSEXTEND = "native nativesdk"
--
--CVE_STATUS[CVE-2024-29040] = "fixed-version: Fixed since version 4.1.0"
+diff --git a/pseudo_util.c b/pseudo_util.c
+index 6e7c465..12718a5 100644
+--- a/pseudo_util.c
++++ b/pseudo_util.c
+@@ -99,6 +99,8 @@ static int pseudo_util_initted = -1;  /* Not yet run */
+ 
+ /* bypass wrapper logic on path computations */
+ int (*pseudo_real_lstat)(const char *path, PSEUDO_STATBUF *buf) = NULL;
++int (*pseudo_real_fstat)(int fd, PSEUDO_STATBUF *buf) = NULL;
++int (*pseudo_real_stat)(const char *path, PSEUDO_STATBUF *buf) = NULL;
+ /* bash workaround */
+ int (*pseudo_real_unsetenv)(const char *) = unsetenv;
+ char * (*pseudo_real_getenv)(const char *) = getenv;
+diff --git a/pseudo_wrappers.c b/pseudo_wrappers.c
+index 16a451a..d073b1e 100644
+--- a/pseudo_wrappers.c
++++ b/pseudo_wrappers.c
+@@ -174,6 +174,8 @@ pseudo_init_wrappers(void) {
+ 	pseudo_real_fsetxattr = real_fsetxattr;
+ #endif
+ 	pseudo_real_lstat = base_lstat;
++	pseudo_real_fstat = base_fstat;
++	pseudo_real_stat = base_stat;
+ 	/* and these are used so the client's server spawn can bypass
+ 	 * wrappers.
+ 	 */
+diff --git a/test/test-proc-fd.c b/test/test-proc-fd.c
+new file mode 100644
+index 0000000..9550809
+--- /dev/null
++++ b/test/test-proc-fd.c
+@@ -0,0 +1,174 @@
++/*
++ * SPDX-License-Identifier: LGPL-2.1-only
++ *
++ * Check that xattr operations on /proc/self/fd/<n> address the file the
++ * descriptor refers to, and not the path the magic link prints.
++ *
++ * A descriptor opened with O_PATH|O_NOFOLLOW on a symlink denotes the
++ * symlink itself, so a context set through it must land on the link and
++ * leave the target alone.  A descriptor opened by following a symlink
++ * denotes the target, so the context must land there instead.
++ *
++ * Exit status: 0 all checks passed, 1 a check failed, 255 skipped because
++ * the platform has no xattr support.
++ */
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/xattr.h>
++
++#define CTX "security.selinux"
++
++static int failures;
++
++static void
++fail(const char *what, const char *detail)
++{
++	printf("  FAIL  %-52s %s\n", what, detail);
++	++failures;
++}
++
++static void
++pass(const char *what)
++{
++	printf("  PASS  %s\n", what);
++}
++
++/* Read the context of path itself, without following a final symlink.
++ * Returns NULL when there is none.
++ */
++static const char *
++get_ctx(const char *path, char *buf, size_t buflen)
++{
++	ssize_t n = lgetxattr(path, CTX, buf, buflen - 1);
++
++	if (n < 0)
++		return NULL;
++	buf[n] = '\0';
++	return buf;
++}
++
++static void
++expect_ctx(const char *what, const char *path, const char *want)
++{
++	char buf[256];
++	const char *got = get_ctx(path, buf, sizeof buf);
++
++	if (!want) {
++		if (got)
++			fail(what, got);
++		else
++			pass(what);
++		return;
++	}
++	if (got && strcmp(got, want) == 0)
++		pass(what);
++	else
++		fail(what, got ? got : "<no context>");
++}
++
++/* Set the context through the descriptor, the same way libselinux does when
++ * it pins a file: path-based call, no extra flags.
++ */
++static int
++set_via_fd(int fd, const char *value)
++{
++	char path[64];
++
++	snprintf(path, sizeof path, "/proc/self/fd/%d", fd);
++	return setxattr(path, CTX, value, strlen(value) + 1, 0);
++}
++
++int
++main(int argc, char **argv)
++{
++	const char *dir = argc > 1 ? argv[1] : ".";
++	char path[512];
++	int fd;
++
++	snprintf(path, sizeof path, "%s/file", dir);
++	if (close(open(path, O_CREAT | O_WRONLY, 0644)) == -1) {
++		perror(path);
++		return 1;
++	}
++	snprintf(path, sizeof path, "%s/link", dir);
++	if (symlink("file", path) == -1) {
++		perror(path);
++		return 1;
++	}
++	snprintf(path, sizeof path, "%s/dangling", dir);
++	if (symlink("/nonexistent/xyz", path) == -1) {
++		perror(path);
++		return 1;
++	}
++
++	/* 1. O_PATH|O_NOFOLLOW on a symlink: label the link, not its target. */
++	snprintf(path, sizeof path, "%s/link", dir);
++	fd = open(path, O_PATH | O_NOFOLLOW);
++	if (fd == -1) {
++		perror(path);
++		return 1;
++	}
++	if (set_via_fd(fd, "onlink") == -1 && errno == ENOTSUP) {
++		printf("  SKIP  xattr support unavailable\n");
++		return 255;
++	}
++	close(fd);
++
++	snprintf(path, sizeof path, "%s/link", dir);
++	expect_ctx("context landed on the symlink", path, "onlink");
++	snprintf(path, sizeof path, "%s/file", dir);
++	expect_ctx("context did not land on the target", path, NULL);
++
++	/* 2. A dangling symlink must not make the operation fail. */
++	snprintf(path, sizeof path, "%s/dangling", dir);
++	fd = open(path, O_PATH | O_NOFOLLOW);
++	if (fd == -1) {
++		perror(path);
++		return 1;
++	}
++	if (set_via_fd(fd, "ondangling") == -1) {
++		fail("context set on a dangling symlink", strerror(errno));
++	} else {
++		pass("context set on a dangling symlink");
++	}
++	close(fd);
++	expect_ctx("context landed on the dangling link", path, "ondangling");
++
++	/* 3. A descriptor obtained by following a symlink denotes the target. */
++	snprintf(path, sizeof path, "%s/target", dir);
++	if (close(open(path, O_CREAT | O_WRONLY, 0644)) == -1) {
++		perror(path);
++		return 1;
++	}
++	snprintf(path, sizeof path, "%s/link2", dir);
++	if (symlink("target", path) == -1) {
++		perror(path);
++		return 1;
++	}
++	fd = open(path, O_RDONLY);
++	if (fd == -1) {
++		perror(path);
++		return 1;
++	}
++	if (set_via_fd(fd, "ontarget") == -1) {
++		fail("context set through a followed descriptor", strerror(errno));
++	} else {
++		pass("context set through a followed descriptor");
++	}
++	close(fd);
++
++	snprintf(path, sizeof path, "%s/target", dir);
++	expect_ctx("context landed on the target", path, "ontarget");
++	snprintf(path, sizeof path, "%s/link2", dir);
++	expect_ctx("context did not land on the link", path, NULL);
++
++	printf("%s: %d check(s) failed\n", failures ? "FAIL" : "OK", failures);
++	return failures ? 1 : 0;
++}
+diff --git a/test/test-proc-fd.sh b/test/test-proc-fd.sh
+new file mode 100755
+index 0000000..4a7f8ba
+--- /dev/null
++++ b/test/test-proc-fd.sh
+@@ -0,0 +1,17 @@
++#!/bin/bash
++#
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++# Regressions guarded here: an xattr call on /proc/self/fd/<n> must address
++# the file the descriptor refers to.  Path canonicalization used to expand the
++# magic link with readlink(2) and then follow the result, so a context set
++# through an O_PATH|O_NOFOLLOW descriptor on a symlink landed on the link
++# target, and a dangling link made the call fail with ENOENT.  libselinux 3.11
++# labels the rootfs that way, which left every symlink in the image unlabelled.
++#
++# The temporary tree has to live below $PWD so that pseudo tracks it.
++
++tmpdir="$(mktemp -d -p "$PWD" proc_fd_XXXXXX)"
++trap "rm -rf '$tmpdir'" EXIT TERM INT
++
++./test/test-proc-fd "$tmpdir"
 -- 
-2.47.3
+2.43.0
 
