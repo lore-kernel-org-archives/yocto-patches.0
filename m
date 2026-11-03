@@ -1,76 +1,85 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2004.1793669451375932653
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6536.1793694734344158984
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 02 Nov 2026 17:30:52 -0800
+ Tue, 03 Nov 2026 00:32:15 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wD34NbYOOlqZrgBAA--.4469S3;
-	Tue, 03 Nov 2026 09:28:56 +0800 (CST)
-Received: from chenqi-Redmi.. (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowABH2Gh_OOlqOAgrAA--.28414S3;
-	Tue, 03 Nov 2026 09:27:31 +0800 (CST)
-From: chenqi_hycx@cetc.com.cn
-To: yocto-patches@lists.yoctoproject.org,
-	richard.purdie@linuxfoundation.org,
-	mark.hatle@kernel.crashing.org
-Cc: chen_q07@163.com
-Subject: [pseudo][PATCH V2 2/2] pseudo_client.h: remove dangling pseudo_client_fdpath declaration
-Date: Tue,  3 Nov 2026 09:30:28 +0800
-Message-ID: <20261103013028.3295799-2-chenqi_hycx@cetc.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261103013028.3295799-1-chenqi_hycx@cetc.com.cn>
-References: <20261103013028.3295799-1-chenqi_hycx@cetc.com.cn>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=dpxp4HPY;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 0AF5D1A1425
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  3 Nov 2026 08:32:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CC3356046C
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  3 Nov 2026 08:32:11 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EE7B410328267;
+	Tue,  3 Nov 2026 09:32:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1793694731; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=fP9PgYViFZTWnAhU961Yf+4zUXE9/bMW6llYda0gakY=;
+	b=dpxp4HPYHZkICZ1LAl9OShkE+V6YvDw6kZeutqFbS6P4neiT0Wqc+83hdI2/GMEbs8hTib
+	tRGSxF0VJIWWSJpzPhGWJ2TAYGQd+t1kfkl+eNb93KTLl7s0qsKcoj5U+/1pFYPAMRKniJ
+	rBuTwO+qCnGFvEKUSaj/5/ozDLwJ0/tkMcFl7ei3qk2eoElHcgZstHwNvqDJh0hknKSqq1
+	KB6i557el6OGiOP/XRhVxqcTJdk6Vm4VWEptB5oSoQ5QpqrY4s52PGwKul9Gqy1vi4ifyk
+	NVGcgCR2ci52D/ZrbGMoVlyK1yXSQhGD+2MVqBdCYGVmEpCUGSScjnQzivDDPg==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Tue, 03 Nov 2026 09:31:59 +0100
+Subject: [PATCH yocto-autobuilder2] schedulers: Use blacksail branches for
+ some layers
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C6CowABH2Gh_OOlqOAgrAA--.28414S3
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYACmrok1IH-QAAs0
-X-CM-DELIVERINFO: =?B?3NRMy6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoOChY5TDxb8V/J8ZyqMAlpTIh6JzZxzxBgEp5TljL6EUpJzDyR/UziSnv3uDfcmcp7fMv
-	MBWYZdIILHtBsGrKM+OUA8NEZv24jrx7kQenjGgKVcDVIOBKB5cWaKDcIz1qBQ==
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw4rtF47Cw4rJFyxKry8JFc_yoWxuwb_Gw
-	43JF1IgrW5tFnY93ZI9a4Yqr4Yqay7JrWavwnxXr42y34vgr1DCr1kGryxJF4qqrWUXF1x
-	C39F93Zxtwn7XosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjg05I8CrVACY4xI64kE6c02F40Ex7xfMxkIecxEwVAFwVWkYxn0WfASr-VF
-	AUDa7-sFnT9fnUUIcSsGvfJTRUUUbxkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I
-	8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28C
-	jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI
-	8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2
-	z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r10
-	6r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41lw4CEc2x0rVAKj4xxMxkIecxEwVAFwVWkMxAIw28IcxkI7VAKI48JMxC20s026xCa
-	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
-	Wlx4CE17CEb7AF67AKxVWUAVWUtwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0
-	cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z2
-	80aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI
-	43ZEXa7IU1DUUUUUUUU==
-List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 01:31:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5215
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261103-mathieu-blacksail-branches-v1-1-fe5e61ab4a26@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAP6b6WoC/x3MSwrCMBAA0KuUWTvQpKWoVxEXk3RiBmMi+RSl9
+ O4Gl2/zdiichQtchx0yb1IkxQ51GsB6ig9GWbtBj3pRapzwRdULNzSB7LOQBDSZovVc8DwpOy/
+ azRdy0IN3Zieff36Db7I1IbWaTJOwctZwP44fo4Irn4AAAAA=
+X-Change-ID: 20261103-mathieu-blacksail-branches-831c462f49af
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793694730; l=1115;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=dbr4H83G2N9ET4CY8M3kRz+dc0/x6s4HJ4KWQ8WboB0=;
+ b=W5gppaiM4Yg3wzuK/FIZiJYJvv4KQvZeVYFI9kl2eG7dnvGOAhuYo8YvC7qMT1zRbLkg3Hbeo
+ 7ww89LlyqhUD2kyoPQnNQtaQmfZVlKDAnwAOFkm8ugOIMDGSwbL7tK7
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
+List-Id: <yocto-patches.lists.yoctoproject.org>
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 08:32:16 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5216
 
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
+Some layers added the branch, use it on the autobuilder.
 
-There's no definition and there's no user. Delete it.
-
-Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- pseudo_client.h | 1 -
- 1 file changed, 1 deletion(-)
+ schedulers.py | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/pseudo_client.h b/pseudo_client.h
-index b3f9f49..19f3901 100644
---- a/pseudo_client.h
-+++ b/pseudo_client.h
-@@ -25,7 +25,6 @@ extern void pseudo_antimagic(void);
- extern void pseudo_magic(void);
- extern void pseudo_client_touchuid(void);
- extern void pseudo_client_touchgid(void);
--extern char *pseudo_client_fdpath(int fd);
- extern int pseudo_client_shutdown(int);
- extern int pseudo_fd(int fd, int how);
- #define MOVE_FD	0
+diff --git a/schedulers.py b/schedulers.py
+index 2bfc36ed4439..5b5cf646fd48 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -76,7 +76,13 @@ branchdefaults = {
+     'blacksail': {
+         'branch': 'blacksail',
+         'branch_bitbake': '2.20',
++        'branch_meta-arm': 'blacksail',
++        'branch_meta-exein': 'blacksail',
+         'branch_meta-mingw': 'blacksail',
++        'branch_meta-openembedded': 'blacksail',
++        'branch_meta-riscv': 'blacksail',
++        'branch_meta-security': 'blacksail',
++        'branch_meta-virtualization': 'blacksail',
+         'branch_meta-yocto': 'blacksail',
+         'branch_oecore': 'blacksail',
+         'branch_yocto-docs': 'blacksail',
+
+---
+base-commit: 41f0281bea933dd4603a4fe25ddb9de8a062526f
+change-id: 20261103-mathieu-blacksail-branches-831c462f49af
+
+Best regards,
 -- 
-2.43.0
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 
