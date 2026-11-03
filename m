@@ -1,171 +1,149 @@
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8105.1793701692341459469
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8112.1793701719361391434
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 03 Nov 2026 02:28:12 -0800
+ Tue, 03 Nov 2026 02:28:39 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=xQ0cxvIW;
- spf=pass (domain: gmail.com, ip: 209.85.160.176, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-5351d76e1baso5925331cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 02:28:12 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=jS04elge;
+ spf=pass (domain: gmail.com, ip: 209.85.219.43, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-917a64f28d0so6389126d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 02:28:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793701691; x=1794306491; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1793701718; x=1794306518; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=TeACnPw7ovtsNmEkZnRM9XwkmKMU05byweQi/1+WWQs=;
-        b=xQ0cxvIWxQgS7kobiHT6IEzY0BlTL0D0s1rREx3N2YPD6e2OrAKp0M0t+JIPuLoBa6
-         36S/WUJ6x1h52qw1dMiiDsVSASaZgCdt3m7o03CJklFLhLRTOImLXH7xJxphgPPxoqZS
-         BnJ5ooN544d4kuEvCwtCFVAz+j+1Qm6tpORKKxcsrsvQng0adIYSxnmZ3NDp46Shm+h1
-         LrTfowsPfXoCUNsrfVOLT0lka5zjIh5bYqCnJ9nskqoqbWmdpSIGyGAs2Iy8k2d/n3dk
-         UkM9BcQ8ms/dFRQ3FyOzoY1lcbpvuyAd/ZjdqSSXgcLGHWnON4xruIxQSm98LaP8Ntfc
-         WRUA==
+        bh=jC8KEXQUy39n/l0HK66FeK5k2lYPbAJ6ihrGWr9CGNA=;
+        b=jS04elgeBdN1BJT/aTZLOBMHPC9oi3pXlE+QbtA1FcYPM/M+a05SRvqwW/Y37OtuJ2
+         ekVv7SJ0APi0oAsBAv0z2Wb10SHboFOEH27qQ80CxuQbb/DpsQlHxh9w1N+GtRJn4qJY
+         KcsGbt7uPUh/N9cERygviGyEFUcJLcE+dOrpXAwR3ZauaHCjO2wY1ARTWXVwtAztg0Ym
+         tYOrOCp19u6fBInDDAJMZN2Emlag0Z00C4lr5zuYyovJAE5LeJdhmQ/mABItzRitW/g6
+         zko4Ch/rvG6fWDC6sokKz4KPJofsW3CwfhgG6rsydHdVFtkaQYkghCBWeWKPl3NSEWMd
+         F2sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793701691; x=1794306491;
+        d=1e100.net; s=20260707; t=1793701718; x=1794306518;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=TeACnPw7ovtsNmEkZnRM9XwkmKMU05byweQi/1+WWQs=;
-        b=eU3n57FKrdIgEIjXJCDiiUt0yd+pgeJQVTg3wxKhHrgI9i2toeglg9pDv9qu8UZ2+n
-         qQLtVOoyL7sEkknXJfY37T8/0KwPQzq06roCL7VSK46cJZhsxWY91QiyCIfHtz36Zvgw
-         NNpw5JciEl+gbwYHnmo4F0XoF2zh0RmJxSduB/oqC8RL2e5fLKU1Y9UU7ash3omQgJfw
-         5d0cxD3aRhmJl+iKfoKCnoh5lqTZyFmG03DYgGOum73IMen6IoGzBPqU2l+o0j2Ft4b7
-         0UnSFwIcUke56vZVsPjBn7mmVUtcuYgcuyHsIOHSqyqIMFC3lHyEZzCinPtHeGrRPplw
-         PghQ==
-X-Gm-Message-State: APuU4Z9/LAEfBEjKPN1a8QJnguY1krxeOrm7mR3ToNsJ0qZCho+Y9nyo
-	vQaUt/qhpeJCtB+qPnGBFgtp6rgyvcvSxrfAbsKalUXa8GGPasoWygrlbQXwRQ==
-X-Gm-Gg: AYBFou1chAjS5Y6F7haMJIgJqUnFLigsjmdYoR5o7645H9WAFXEKotyBdWOJbWsY3Bm
-	1ORhmoHIJINIOPSBzquMEf9Pj/DOvGpknTOnwzUOytVmYgO9vts2pIjmIk8hG5y0cBAcAfPlPQj
-	cjncH/Gh3gvG1HbtAfhWIzZQFo7SjBB9z40DbKQunFJe6+MXLIXImnGGZ0/g8qnl/AdQ34a8JJ+
-	kw+9sxagEmDEHOP7SJ60yCeX0p6HChQuTA4iiKwU8ykVmEhXj6QK55mVtMFxuU1s2jq29ox8bTA
-	VtSxSKOvHMUY0udpL36S3IdY7IyoNkv3T+lXjZsYojSBIBAQLIiKenbEm/Do6Hq7dFonTXXuoR5
-	wh9FWIkVk9M5v5BHLeFFRJTkSjShcaxuCH9QG0X7SVki3SQadl2O9fg9Hoiot+6KoI/qH+2CUm0
-	xcGKqLr5m+m2uFfNyOXb1Rt0MEcY2xRXGoZ3w74wQbGB8bSLYc2PpLwSfbTkVvE5Mk9HScK2tDd
-	H+KJS3IoxHFB2vxJF2gKl4oKAitEYfOcxynX83p49q/bhOGJl0JyE5e6MPD9dxAs0Lf/7H+gsOt
-	ozq6DqNvkdalZSwQsOSsrpP3cc3Kknot30XVXrygqXjYoL4PjMv/6zwUUeziahdtTYjZGohIWtB
-	lidopMbNrHTXPMpx9HbNQeJefe/P1b02DQv3GpfmVT+li8+svYx7U
-X-Received: by 2002:a05:622a:2b46:b0:53f:98b5:4317 with SMTP id d75a77b69052e-542b88d2cd5mr180975961cf.34.1793701690946;
-        Tue, 03 Nov 2026 02:28:10 -0800 (PST)
+        bh=jC8KEXQUy39n/l0HK66FeK5k2lYPbAJ6ihrGWr9CGNA=;
+        b=k+mGKOL5rUV9bP6x1qNz0qvqelRMAD346rsWNl6hgeOFN6qmb+WTOrVi9/5ATUxHwn
+         T9ehkF5djN3JVm7ekMKtcOc9o/AaLuO71NO4SVb+PkujfS/7Sqzlcqm7G9u0qGy5xViD
+         shSjsiVBIQA9Qz9GoxVWgxuUsvGsQOdRL8GTKSYXy03Ol7RNMSWWIgbslqnmP8bPEdNe
+         6jEc+03JEheIjB78QUGGVY/ul3pbM0plxxzNE+WLK7PSW89eSth4kT2NQB2e8pOURJwP
+         lgA34smyg3LbMo/y3oLDY30dsd03L/tUJRbDpflVcxvsK1keJQyjKMu86BuUMU9ngsLp
+         vFoQ==
+X-Gm-Message-State: APuU4Z9FKcwky7WP6ud+wts381Hzk7bFm5pUe/1yJqVk/zB1ChR8i04Z
+	SAdfBq9fL1OA0Fv+/Zk9U4rrrLWCeZIvXa/vJT1rhuOjJHFUPhjJkt4psPg8Ww==
+X-Gm-Gg: AYBFou3fMGEFoZRQAATMuN9rciMTSCA/PME49YHiw+V8ecRE+U0RYvuDDnmmj3A5m2I
+	Z2a60Trim3QXpHmwZVvV4E2IbpH6Q9gCRWmAZFVcUdDf1heh7pmGP8R0HJtB5X+iSOvzQ946G8P
+	MBQK9UbHlspe5jPy2m15VGbBKzKDqTYe87wIrb/r/uvI4hierR1FbFYemSwvE+2IJgVO/DTUzLq
+	poJPLC5ww5ZHMxyQtlJkpvyy2p683HJmzlBovf3v28S1lccIt9xv8u9TJRKbEJDC0AUbnZnnDY9
+	vR06yip1t73WOBAXutVmppQxHe6OWda2eNOYkb4tmMcQgWYm5hACcq8Kq3vhSKLNWD9BNNHtClt
+	Rvgae61IXqMIYQtRa3EidHxdvdsId7WEeKsNcdI+ESPxa44askOcchw09DIKquydtE7PruMzDuh
+	lecrUB3b4Ao3YccwuB1jG19YCNezkSSXTR+UKGmu3bE3R/MrG65bYKqhbnt35dY7EUY32x2osZv
+	h4NoygORW56ilvJDRqzphw9SJ8nVZToSGwvVbg2XPchMFcvaUF8BbloIo1R+h9oI9LHxnLVjh5t
+	Pq99R11wkHoSyS6mpQQCKKA0/px1wgl4LPRGWgEsScls6/ZF8habjW3ZE/gwavxOPMSXPq/VYIr
+	bxSb9M2CLTms0gygRzbc5xOiMnIwaE7WKcc5CTKftLoj/zWm6BivJ
+X-Received: by 2002:a05:6214:4e82:b0:91c:c4ea:6b9f with SMTP id 6a1803df08f44-91cc4eac03bmr74594766d6.28.1793701717972;
+        Tue, 03 Nov 2026 02:28:37 -0800 (PST)
 Return-Path: <twoerner@gmail.com>
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5498b49da50sm22512171cf.9.2026.11.03.02.28.09
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91cd064ca1asm20022926d6.42.2026.11.03.02.28.37
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 02:28:10 -0800 (PST)
+        Tue, 03 Nov 2026 02:28:37 -0800 (PST)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH v1] kernel: refresh the non-rockchip architecture removal fragments
-Date: Tue,  3 Nov 2026 05:27:59 -0500
-Message-ID: <20261103102759.1507386-1-twoerner@gmail.com>
+Subject: [meta-rockchip][PATCH v4] kernel: add config fragment for lttng-modules prerequisites
+Date: Tue,  3 Nov 2026 05:28:34 -0500
+Message-ID: <20261103102834.1507595-1-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 10:28:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5217
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Nov 2026 10:28:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5218
 Content-Type: text/plain; charset="utf-8"
 
-Several Arm platforms have been added upstream since these lists were
-written, so a kernel built from an in-tree defconfig was again carrying
-support for machines this layer does not target. On arm64 the
-defconfig re-enabled Aspeed, Black Sesame and Microchip; on arm the
-TI SoC driver menu came back.
+The machines in this layer have no BSP description in yocto-kernel-cache
+and build from an in-tree defconfig via KBUILD_DEFCONFIG, so the
+standard kernel type's configuration never reaches them. Neither the arm
+nor the arm64 defconfig enables what lttng-modules needs: kprobes is a
+hard compile failure, and without the tracing infrastructure the build
+silently produces no modules at all.
 
-Add the platform symbols arm64 has gained, along with the Renesas and
-Tegra per-SoC options that arrived with them, and the TI menu on arm.
-Nothing has been removed: every symbol these fragments already carry
-still exists in the kernel.
+Ship the missing subset as a fragment in the layer's own kmeta, so it
+resolves for any recipe here rather than only for ones that fetch the
+kernel cache.
 
 AI-Generated: codex/claude-opus 5 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- .../rockchip/remove-non-rockchip-arch-arm.cfg |  1 +
- .../remove-non-rockchip-arch-arm64.cfg        | 20 +++++++++++++++++++
- 2 files changed, 21 insertions(+)
+changes in v4:
+- reword the fragment comment so no line opens with a CONFIG_ symbol
+  name; kconf_check reads such a line as a malformed "is not set" entry
+  and reports the fragment as badly formatted on every build
 
-diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-index fdd3e6964053..7651c5b05a76 100644
---- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-+++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-@@ -48,6 +48,7 @@ CONFIG_SOC_OMAP5=n
- CONFIG_SOC_AM33XX=n
- CONFIG_SOC_AM43XX=n
- CONFIG_SOC_DRA7XX=n
-+CONFIG_SOC_TI=n
- CONFIG_ARCH_QCOM=n
- CONFIG_ARCH_R7S72100=n
- CONFIG_ARCH_R7S9210=n
-diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-index 12fde404d64a..09fb5810c1cf 100644
---- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-+++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-@@ -2,14 +2,18 @@ CONFIG_ARCH_ACTIONS=n
- CONFIG_ARCH_AIROHA=n
- CONFIG_ARCH_ALPINE=n
- CONFIG_ARCH_APPLE=n
-+CONFIG_ARCH_ARTPEC=n
-+CONFIG_ARCH_ASPEED=n
- CONFIG_ARCH_AXIADO=n
- CONFIG_ARCH_BCM2835=n
- CONFIG_ARCH_BCM=n
- CONFIG_ARCH_BCMBCA=n
- CONFIG_ARCH_BCM_IPROC=n
- CONFIG_ARCH_BERLIN=n
-+CONFIG_ARCH_BITMAIN=n
- CONFIG_ARCH_BLAIZE=n
- CONFIG_ARCH_BRCMSTB=n
-+CONFIG_ARCH_BST=n
- CONFIG_ARCH_CIX=n
- CONFIG_ARCH_EXYNOS=n
- CONFIG_ARCH_SPARX5=n
-@@ -17,15 +21,19 @@ CONFIG_ARCH_HISI=n
- CONFIG_ARCH_INTEL_SOCFPGA=n
- CONFIG_ARCH_K3=n
- CONFIG_ARCH_KEEMBAY=n
-+CONFIG_ARCH_LAN969X=n
- CONFIG_ARCH_LAYERSCAPE=n
- CONFIG_ARCH_LG1K=n
- CONFIG_ARCH_MEDIATEK=n
- CONFIG_ARCH_MESON=n
-+CONFIG_ARCH_MICROCHIP=n
-+CONFIG_ARCH_MMP=n
- CONFIG_ARCH_MVEBU=n
- CONFIG_ARCH_MXC=n
- CONFIG_ARCH_NPCM=n
- CONFIG_ARCH_NXP=n
- CONFIG_ARCH_MA35=n
-+CONFIG_ARCH_PENSANDO=n
- CONFIG_ARCH_QCOM=n
- CONFIG_ARCH_REALTEK=n
- CONFIG_ARCH_R8A774A1=n
-@@ -43,10 +51,19 @@ CONFIG_ARCH_R8A77995=n
- CONFIG_ARCH_R8A779A0=n
- CONFIG_ARCH_R8A779F0=n
- CONFIG_ARCH_R8A779G0=n
-+CONFIG_ARCH_R8A779H0=n
-+CONFIG_ARCH_R8A78000=n
- CONFIG_ARCH_R9A07G043=n
- CONFIG_ARCH_R9A07G044=n
- CONFIG_ARCH_R9A07G054=n
-+CONFIG_ARCH_R9A08G045=n
-+CONFIG_ARCH_R9A08G046=n
- CONFIG_ARCH_R9A09G011=n
-+CONFIG_ARCH_R9A09G047=n
-+CONFIG_ARCH_R9A09G056=n
-+CONFIG_ARCH_R9A09G057=n
-+CONFIG_ARCH_R9A09G077=n
-+CONFIG_ARCH_R9A09G087=n
- CONFIG_ARCH_RENESAS=n
- CONFIG_ARCH_S32=n
- CONFIG_ARCH_SEATTLE=n
-@@ -61,6 +78,9 @@ CONFIG_ARCH_TEGRA_186_SOC=n
- CONFIG_ARCH_TEGRA_194_SOC=n
- CONFIG_ARCH_TEGRA_210_SOC=n
- CONFIG_ARCH_TEGRA_234_SOC=n
-+CONFIG_ARCH_TEGRA_238_SOC=n
-+CONFIG_ARCH_TEGRA_241_SOC=n
-+CONFIG_ARCH_TEGRA_264_SOC=n
- CONFIG_ARCH_TESLA_FSD=n
- CONFIG_ARCH_THUNDER2=n
- CONFIG_ARCH_THUNDER=n
+changes in v3:
+- move the fragment into the layer's own kmeta and reference it from
+  KERNEL_FEATURES, rather than adding a bare .cfg to SRC_URI, so it sits
+  with the layer's other kernel metadata and can be named
+- enable CONFIG_FTRACE_SYSCALLS, and justify the symbol set by what
+  ktypes/standard already gives a cache-described BSP (features/kprobes,
+  features/ftrace) rather than deriving it from first principles
+- leave CONFIG_KALLSYMS_ALL unset: ktypes/base sets it to n, so the
+  lttng writeback probe is dropped everywhere and this layer should not
+  diverge
+- considered yocto-cfg-fragments (as meta-virtualization does) and
+  CONFIG_ENABLE_DEFAULT_TRACERS as a lighter route to tracepoints; both
+  were dropped in favour of matching the standard kernel type, which
+  every other linux-yocto BSP already gets
+---
+ recipes-kernel/linux/linux-rockchip.inc          |  1 +
+ .../rockchip-kmeta/bsp/rockchip/lttng.cfg        | 16 ++++++++++++++++
+ .../rockchip-kmeta/bsp/rockchip/lttng.scc        |  1 +
+ 3 files changed, 18 insertions(+)
+ create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
+ create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
+
+diff --git a/recipes-kernel/linux/linux-rockchip.inc b/recipes-kernel/linux/linux-rockchip.inc
+index 6c62e849834c..b87cb7a14bf8 100644
+--- a/recipes-kernel/linux/linux-rockchip.inc
++++ b/recipes-kernel/linux/linux-rockchip.inc
+@@ -34,5 +34,6 @@ COMPATIBLE_MACHINE:soquartz = "soquartz"
+ SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+ SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
+ 
++KERNEL_FEATURES:append:rockchip = " bsp/rockchip/lttng.scc"
+ KERNEL_FEATURES:append:rockchip:arm = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+ KERNEL_FEATURES:append:rockchip:aarch64 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
+new file mode 100644
+index 000000000000..cde4bfcece67
+--- /dev/null
++++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
+@@ -0,0 +1,16 @@
++# Prerequisites for building lttng-modules.
++#
++# These symbols are what ktypes/standard gives every BSP that has a
++# yocto-kernel-cache description, via features/kprobes and
++# features/ftrace, trimmed to what lttng-modules uses: kprobes is a hard
++# compile requirement (src/wrapper/kallsyms.c), and the tracing
++# infrastructure is what it traces with - without it the build produces
++# no modules at all rather than failing.
++#
++# KALLSYMS_ALL is deliberately absent: ktypes/base sets it to n, so the
++# lttng "writeback" probe is dropped on every linux-yocto BSP and this
++# layer has no reason to diverge.
++CONFIG_KPROBES=y
++CONFIG_FTRACE=y
++CONFIG_FUNCTION_TRACER=y
++CONFIG_FTRACE_SYSCALLS=y
+diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
+new file mode 100644
+index 000000000000..2d0412541c81
+--- /dev/null
++++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
+@@ -0,0 +1 @@
++kconf non-hardware lttng.cfg
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
