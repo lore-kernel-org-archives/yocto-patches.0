@@ -1,183 +1,91 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5438.1793784748507807221
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5704.1793786314732271555
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 04 Nov 2026 01:32:28 -0800
+ Wed, 04 Nov 2026 01:58:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=PbmTuwxp;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C84F44E413F5
-	for <yocto-patches@lists.yoctoproject.org>; Wed,  4 Nov 2026 09:32:26 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 96B6060770
-	for <yocto-patches@lists.yoctoproject.org>; Wed,  4 Nov 2026 09:32:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D7B3E1032920A;
-	Wed,  4 Nov 2026 10:32:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793784746; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=hTVDs370tAI1T343yiF6KUu5UpNR+qC8Gyd4dznS5Uc=;
-	b=PbmTuwxpSRWkFAxdaU47tKRqv6q7ktqaP2ius3ZH1Z0ZenMpsKIVtmCiTlwHUaS+/Z+TW2
-	aVkLrSPXduExXdFnN7/ThaPj+2SvqD6bIj+tSgFZZ/Jim4dK25YiJTVLqd1DoqqKPRah6X
-	EWcuO838e6mARGSnOxZesK+o7FN9gaBMl7zcyY0VKiwLeJFn6WcC8VG5VlmJ8aH6avyCmq
-	MpibrjqgJSNLt+HXpuhHGm7VSJvPlMXUdPDEKcx4ymUJV79fZIhY7EG0nXoe93Y/0hq+zs
-	3wYvyTbW+OICjCfATWKXT/OMfik8JoVLKvNlDQqAhWZ3sj7pAK98Odwv1fduaQ==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Wed, 04 Nov 2026 10:32:16 +0100
-Subject: [PATCH yocto-autobuilder2 5/5] releaseselector: Read release
- shortcuts from the force scheduler spec
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=avm4T9+T;
+ spf=pass (domain: gmail.com, ip: 209.85.128.45, mailfrom: ghidoliemanuele@gmail.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a60f9474c4so3834005e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 01:58:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793786313; x=1794391113; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from:to
+         :references:content-language:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QeFohobjbWTkRocLVluCcb/x8SKpeVMRBQgXuNbQWHg=;
+        b=avm4T9+TfGwRE9PrPliIoXrMV7IswUNz79dxbM2wo35Ry59M3E48g7q6kuTpmnQUJz
+         lSlbCBy7xgnorXKxEJvfXnzcblIbxWzWcAOYZb7JWcg8Uxt5Cl+Qj9OzYvZ5B7Q9Py/k
+         +AuDSXpM0Q6MoKlD23HD6/rlVcgv9t7G98qNbVq5yGxh28zZ8A+n/mQAnUDZLBU8Ivma
+         xWAByaF/BFjDtABMWgtWs8X4Yl7JNgICGig7Fkw6fjDVD1nw9GOaZ4UVu54OurwmLv+Y
+         Mz9rXoImkMH+UnRv21wxmQPf19OD39BHF/hUlVGHRY+iiCjKuA7bfBN/R4IqhCZJ/sLU
+         R+9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793786313; x=1794391113;
+        h=content-transfer-encoding:content-type:in-reply-to:from:to
+         :references:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QeFohobjbWTkRocLVluCcb/x8SKpeVMRBQgXuNbQWHg=;
+        b=AlOsTuipoEEB6kFXa9/LQxIe/4EXCb4xH0fT/YKZvXe0LWnt+Vrwj047c13EQYnJpD
+         IH5lSYY3qPFs8IzJJwjZX0qDjZkAIX+1GP1Srr51Gnwts91F+Dvgsdr/Ptu6M0SUCpMa
+         KWQ9t6GsJLO1eksDSjDYboOtBX0QfsjWyd2A1NOXp8G6cZkR1MsrmOaebN9Mayi5e0f0
+         Hp0AsvWXegQpK8syQb3EHYxbUPgKhiRfTP/ft7Hm1pKwlbFNg7udnH5XRzXNNbr1qxYA
+         xkJbgoboiNZ5TY6ltdGN8LWJkLyOfozVzOVbxqsee1kiO5SdJzA/Oaxh48uDQxHiE3gm
+         7CxA==
+X-Gm-Message-State: APuU4Z9f6+xRP0hpfPYA1d5sFw4aQD9O8mJAEuFBJOJ5XLzd9ly9Uo3L
+	UVSJ6KFWfRIpmro9uaYvYvV1SA08MXiyAa4k7xa96OfopUG9GGqZxMFkMdSlXnVWIFg=
+X-Gm-Gg: AYBFou2ohz/1yhI4fGLKWQsfWhLJh51a/ztfQwSOs63ubaPz1mQCrMKxsw5pv9ukRPN
+	Tv2RDL6ZNJkHzM6iB2fhJ/82VBXcTXLtXsIab+PsY1wzKvVG6+92zw+aZv5Rq/X0dsQHzcTPRrk
+	VZpqF1ZObWpBZx3zIqkczRDauOCpV4mujIDfXO+k5f8pT2O67k6IIiNiK0sn6NAMT6BDtKHl1Rp
+	LCq1nMexkI9HHwErkh6dwmQ8b48Yc9+qern9hJu+tsY1i8dUBXMMStJmKvQwuHfGQ6/suU1iT83
+	MgU8TUx8/81rs1iPPKf5FyGAhEza1aOXW2eqllhGALLPhCgvBoXstHFnTQdgpdJyyyOTwVBT4MH
+	v3PmB4i5hstbC+OaRc0OB0MY8DvISwDjEj1wKsmLGQTJ85fr4+hdzJr0jMU0W1k/e27tqo1Manm
+	kJA5cDfEfqUpNb4NeeZQXZlRGnhAUkBiCYBmwIVGeHRF0YKZ+nvowUXVRrpdHWMDutVh3UJu2eP
+	wto04Jc8RsX8JWa2tLgaR4e2DHZiAmuqkj8JKhXVx8YTPmXF0k2H+r+sCXVvqpr4gK9yqmZuo2M
+	KSbhHW4NQSliW6q/i87MCVpSFiQPLiRmSk0tE7bPO51KcKsggOBfN+U0uYNGivScfsOkqbKKaA4
+	19PiH/dxMCmtt9IT3rfKZ
+X-Received: by 2002:a05:6000:4b03:b0:48f:cb37:3ec3 with SMTP id ffacd0b85a97d-48fcb3768b7mr3529988f8f.41.1793786312670;
+        Wed, 04 Nov 2026 01:58:32 -0800 (PST)
+Return-Path: <ghidoliemanuele@gmail.com>
+Received: from [10.0.1.67] (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fed92a753sm3348606f8f.45.2026.11.04.01.58.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2026 01:58:32 -0800 (PST)
+Message-ID: <2532fb3b-b6cf-417a-a0ea-a3cb25eed32c@gmail.com>
+Date: Wed, 4 Nov 2026 10:58:32 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Fwd: [PATCH] tpm2-tools: Fix build
+Content-Language: en-US
+References: <eeb340a2-81d2-4a28-bfba-418a46001e3e@gmail.com>
+To: yocto-patches@lists.yoctoproject.org,
+ Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+From: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
+In-Reply-To: <eeb340a2-81d2-4a28-bfba-418a46001e3e@gmail.com>
+X-Forwarded-Message-Id: <eeb340a2-81d2-4a28-bfba-418a46001e3e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261104-mathieu-release-selector-fix-v1-5-a245895c0093@bootlin.com>
-References: <20261104-mathieu-release-selector-fix-v1-0-a245895c0093@bootlin.com>
-In-Reply-To: <20261104-mathieu-release-selector-fix-v1-0-a245895c0093@bootlin.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793784741; l=4808;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=gmCETQ/WrujWY09X2kfT4jscItgav4BmbXISEzix7qw=;
- b=YsfZbqGsekiKgHVYEX4C1QoDvEES0y6M+mnb+/4IrkiaKBuO+DTVuFoXD0BLLkHnGRfivSK/1
- Xf9yiqZyO8LCEWCvPZ68TBFsO8x+Ip8gsoberEBQZECr6wP6LrZ45jR
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 09:32:31 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5230
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 09:58:41 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5231
 
-The release selector configuration was encoded in the choice strings
-and decoded in the browser. Instead, use field spec attribute to
-retrieve them.
+On 11/3/26 16:18, Marcel Ziswiler wrote:
+> Fix the following build errors:
+> 
+> ../sources/tpm2-tools-5.8/lib/object.c: In function 'PEM_read_bio_TSSPRIVKEY_OBJ':
+> ../sources/tpm2-tools-5.8/lib/object.c:28:1: error: implicit declaration of function 'ERR_raise' [-Wimplicit-function-declaration]
+>    28 | IMPLEMENT_PEM_read_bio(TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ_PEM_STRING,
+>       | ^~~~~~~~~~~~~~~~~~~~~~
+> ../sources/tpm2-tools-5.8/lib/object.c:28:1: error: 'ERR_LIB_PEM' undeclared (first use in this function)
+>    28 | IMPLEMENT_PEM_read_bio(TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ_PEM_STRING,
+>       | ^~~~~~~~~~~~~~~~~~~~~~
+> ../sources/tpm2-tools-5.8/lib/object.c:28:1: note: each undeclared identifier is reported only once for each function it appears in
+> ../sources/tpm2-tools-5.8/lib/object.c:28:1: error: 'ERR_R_ASN1_LIB' undeclared (first use in this function)
+>    28 | IMPLEMENT_PEM_read_bio(TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ_PEM_STRING,
+>       | ^~~~~~~~~~~~~~~~~~~~~~
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
 
-AI-Generated: Uses opencode (DeepSeek V4 Flash)
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
- yocto_console_view/src/releaseselectorfield.ts    | 52 ++++++++++-------------
- yocto_console_view/yocto_console_view/__init__.py |  9 +---
- 2 files changed, 23 insertions(+), 38 deletions(-)
+Tested-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-diff --git a/yocto_console_view/src/releaseselectorfield.ts b/yocto_console_view/src/releaseselectorfield.ts
-index 1c4d289af224..c5c681a51e29 100644
---- a/yocto_console_view/src/releaseselectorfield.ts
-+++ b/yocto_console_view/src/releaseselectorfield.ts
-@@ -1,5 +1,5 @@
- import {buildbotSetupPlugin} from "buildbot-plugin-support";
--buildbotSetupPlugin((reg) => {
-+buildbotSetupPlugin((reg, config) => {
- 	let selectInputName = null;
- 	let selectListName = null;
- 	let inputRefs = null;
-@@ -12,6 +12,26 @@ buildbotSetupPlugin((reg) => {
- 		return label ? label.textContent.split(':')[0] : null;
- 	}
- 
-+	async function loadSelectors() {
-+		try {
-+			const res = await fetch(config.buildbotURL + 'api/v2/forceschedulers', {
-+				headers: {accept: 'application/json'}
-+			});
-+			const data = await res.json();
-+			for (const sched of data.forceschedulers ?? []) {
-+				for (const field of sched.all_fields) {
-+					if (field.selectors) {
-+						selectors = new Map(Object.entries(field.selectors));
-+						return;
-+					}
-+				}
-+			}
-+		} catch (e) {
-+			console.error('releaseselector: failed to load release shortcuts:', e);
-+		}
-+	}
-+	loadSelectors();
-+
- 	const onTransitionEndEvent = (event) => {
- 		/*
- 		 * We are looking for the transition showing the "forcebuild" dialog.
-@@ -46,19 +66,11 @@ buildbotSetupPlugin((reg) => {
- 			prepareInterceptor(input);
- 		});
- 
--		/*
--		 * Only show the pretty name in the release selector field.
--		 */
--		const releaseSelector = inputRefs.get('force-field-branchselector');
--		const releaseSelectorLabel = releaseSelector.parentNode.previousSibling;
--		const sepIdx = releaseSelectorLabel.textContent.indexOf(':');
--		if (sepIdx >= 0) {
--			releaseSelectorLabel.textContent = releaseSelectorLabel.textContent.substring(0, sepIdx);
--		}
- 
- 		/*
- 		 * Get the name of the ReleaseSelector field div.
- 		 */
-+		const releaseSelector = inputRefs.get('force-field-branchselector');
- 		selectInputName = releaseSelector.attributes.getNamedItem('id').value;
- 		const selectName = selectInputName.substring(0, selectInputName.lastIndexOf('-'));
- 		selectListName = selectName + '-listbox';
-@@ -66,24 +78,6 @@ buildbotSetupPlugin((reg) => {
- 	}
- 	window.addEventListener('transitionend', onTransitionEndEvent);
- 
--	function updateSelectors() {
--		if (selectListName) {
--			const listDiv = document.getElementById(selectListName);
--			if (listDiv) {
--				listDiv.childNodes.forEach(div => {
--					const sepIdx = div.textContent.indexOf(':');
--					if (sepIdx >= 0) {
--						try {
--							selectors.set(div.textContent.substring(0, sepIdx),
--							              JSON.parse(div.textContent.substring(sepIdx + 1)));
--						} catch (e) {}
--						div.textContent = div.textContent.substring(0, sepIdx);
--					}
--				});
--			}
--		}
--	}
--
- 	function applySelectorByName(name) {
- 		const selector = selectors.get(name);
- 		if (selector) {
-@@ -92,8 +86,6 @@ buildbotSetupPlugin((reg) => {
- 	}
- 
- 	const onClick = (event) => {
--		updateSelectors();
--
- 		if (event.target.parentElement) {
- 			const parentId = event.target.parentElement.attributes.getNamedItem('id');
- 			if (parentId && parentId.value == selectListName) {
-diff --git a/yocto_console_view/yocto_console_view/__init__.py b/yocto_console_view/yocto_console_view/__init__.py
-index 6118ac29409b..eedf6958cfe9 100644
---- a/yocto_console_view/yocto_console_view/__init__.py
-+++ b/yocto_console_view/yocto_console_view/__init__.py
-@@ -16,8 +16,6 @@
- from buildbot.www.plugin import Application
- from buildbot.schedulers.forcesched import ChoiceStringParameter
- 
--import json
--
- # create the interface for the setuptools entry point
- ep = Application(__package__, "Yocto Buildbot Console View plugin")
- 
-@@ -27,10 +25,5 @@ class ReleaseSelector(ChoiceStringParameter):
-     selectors = None
- 
-     def __init__(self, name, selectors, **kw):
--        def format_choice(choice):
--            return choice + ': ' + json.dumps(selectors.get(choice, {}))
--
-         super().__init__(name, **kw)
--        self.choices = [format_choice(choice)
--                        for choice in kw.get('choices', {})]
--        self.__dict__['default'] = format_choice(self.__dict__['default'])
-+        self.selectors = selectors
-
--- 
-2.47.3
 
