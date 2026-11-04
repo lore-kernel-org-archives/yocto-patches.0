@@ -1,111 +1,85 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4303.1793753956360250545
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5539.1793784745471638524
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 03 Nov 2026 16:59:16 -0800
+ Wed, 04 Nov 2026 01:32:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wDHStztgupqfU8CAA--.11542S3;
-	Wed, 04 Nov 2026 08:57:18 +0800 (CST)
-Received: from [192.168.31.243] (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowACHGWqZgupqO+0rAA--.46007S2;
-	Wed, 04 Nov 2026 08:55:54 +0800 (CST)
-Message-ID: <6cfb18e0-8ac6-41a3-9af4-ca734692fda4@cetc.com.cn>
-Date: Wed, 4 Nov 2026 08:58:56 +0800
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=jLIDh+Ge;
+ spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 62A0A4E413F5
+	for <yocto-patches@lists.yoctoproject.org>; Wed,  4 Nov 2026 09:32:23 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3930460770
+	for <yocto-patches@lists.yoctoproject.org>; Wed,  4 Nov 2026 09:32:23 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D5769103291F8;
+	Wed,  4 Nov 2026 10:32:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1793784742; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=benTEhhGzb7q52ggWJlgUJ2TezcbTCYD2PVD2kskx4o=;
+	b=jLIDh+Ge/i4InHrCi1/Y73MsIn6sYFVk63rhUZ5KgVBzfukeyZDY9tvVKvsM2XdI2qyGZL
+	mUfZwU5oYTUtN418cLXA1GPLf8SxqANp4du6YlQR1LVRoZ84v9JniRpJRB41Pv4rKbx0ik
+	5AbpUvWKCuzWy3pwE7hn7fdxuEKjXc+zxfd+toLU3T4Tr4Cr5unXhOI5kawmWvoTrJSq1P
+	96Uil2Av2VGI8HBl9u2icTNq9lmnCbfQ7aYZFPWo3Re0HK4O2wWaScStMs/9cu91fT8DBJ
+	40hGg8Jn4TFfj0g0kXSlwYxu0RKoYLIkk3DnHiEu8/sBvX+8Wqy2Ws/VurlcVg==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: [PATCH yocto-autobuilder2 0/5] releaseselector: Fix know issues
+ and improve configuration retrieval
+Date: Wed, 04 Nov 2026 10:32:11 +0100
+Message-Id: <20261104-mathieu-release-selector-fix-v1-0-a245895c0093@bootlin.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [meta-selinux][RFC] refpolicy - add "Yocto" distro upstream
-To: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Cc: joe.macdonald@siemens.com, Yi Zhao <yi.zhao@windriver.com>,
- yocto-patches@lists.yoctoproject.org
-References: <9fa9f7cb-b82e-4d7e-83af-8027c39590ea@gmail.com>
- <7b3e26c9-b524-4b0f-ac88-5403e256c5d7@gmail.com>
- <24e6a59f-522c-4ef0-a5fd-29af4c160560@windriver.com>
- <7c117fe8-9698-4320-84b6-c53a321f454e@gmail.com>
- <87d913cc-61eb-4527-a080-d77877ede9a3@gmail.com>
- <7933a8f6-337d-40f7-9e07-c5ff8a1f5739@gmail.com>
-Content-Language: en-US
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
-In-Reply-To: <7933a8f6-337d-40f7-9e07-c5ff8a1f5739@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: C6CowACHGWqZgupqO+0rAA--.46007S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYBCmrp5NIFtQABsI
-X-CM-DELIVERINFO: =?B?INDaH6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoOGf+ybSYYtFb9Hm0wXO+e7o2FKA3CYsrg/yFemNK7UGAS2q+uamwPAu9IoyLf1bINPNZ
-	nNR5DB9J00HAmvSpXpPr+huwpdocE1MfV6nyTjuYJIkirY2cRgTuIWA86e7YmQ==
-X-Coremail-Antispam: 1Uk129KBj93XoW7tF43Ar43JrykAF1kGF1xWFX_yoW8Aw4xpF
-	W5JF13Ars7JFy0kw1Ik34jv3WFq3yFyrW3Xry5W340vFZ09FyUJF4IgFyUuas7uF1rXF47
-	Aw43Ary3Ja1FyacCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3qc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_tbIjqfuFe4nv
-	WSU5nxnvy29KBjDU0xBIdaVrnRJUUUkCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20V
-	C2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2
-	F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjx
-	v20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
-	x4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	JVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxkIecxEwVAFwVWDMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
-	vjxUcrgADUUUU
+X-B4-Tracking: v=1; b=H4sIAJz76moC/x2M0QrCMBAEf6XcswdNqAr+ivhwJlt7UBu5NKKU/
+ ruHT8ssw2xUYYpKl24jw1urlsUhHDpKkywPsGZnin08hdAP/JR1UjQ2zJAKrr5pLcajflgwjOG
+ c5JgB8sTL4Pc/f6VvcY+lreXedM6wSLd9/wHFjJnhggAAAA==
+X-Change-ID: 20261104-mathieu-release-selector-fix-ae4f17ca5dee
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793784741; l=1432;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=bDUMJQnWNtTrNIiHzyh1n9ZhUN0/UwU5EWwzWD8gpQQ=;
+ b=XFnl2+6enXD6L84RY1C1GOE6PJOJR7Iqy0nHLz34ooeb6mIMXF1+3wv9mizxvZNYCOngnwW7L
+ /B0rqj1cknRBH9C9bsrqffynTTXswZRyzIuDzoQjU9ILoZUow+y5liX
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 00:59:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5224
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 09:32:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5225
 
-Hi Clayton,
+Try to fix known issue [1], where the selected configuration is not
+applied correctly. Also improved the way we retrieve the configuration,
+so we no longer use this hack where each list items contained the whole
+configuration.
 
-I'm very glad to see this! This is exactly what I was thinking.
+This was AI-assisted quite a lot, because JS... Still, the code looks
+sane.
 
-I haven't started this because I need to do the following work first:
-1) Upgrade all recipes to latest versions. In particular, refpolicy 
-needs to be upgraded to latest tip of master branch.
-2) Establisth OEQA for meta-selinux. I've added some runtime tests 
-recently. But there need more.
-3) Fix things for latest master to ensure there's no AVC error for some 
-selected images.
-When the above work items are finished, we'll get a good baseline + 
-automatic test cases (OEQA).
+[1]: https://bugzilla.yoctoproject.org/show_bug.cgi?id=16291
 
-With this baseline + OEQA, we can sync with refpolicy upstream and 
-maintain the refpolicy Yocto distro in a much easier manner.
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+Mathieu Dubois-Briand (5):
+      docker: Use https instead of git protocol
+      docker: Refresh patches and fix configuration
+      releaseselector: Fix release selector not applied on keyboard use
+      releaseselector: Fix checkbox filling
+      releaseselector: Read release shortcuts from the force scheduler spec
 
-Any help is greatly appreciated.
+ docker/Dockerfile                                  |   8 +-
+ docker/entry.sh                                    |   1 +
+ ...builders-Do-not-create-tags-during-builds.patch |  10 +-
+ ...Modify-free-space-check-to-work-in-docker.patch |  21 ++--
+ yocto_console_view/src/releaseselectorfield.ts     | 107 +++++++++++----------
+ yocto_console_view/yocto_console_view/__init__.py  |   9 +-
+ 6 files changed, 78 insertions(+), 78 deletions(-)
+---
+base-commit: 41f0281bea933dd4603a4fe25ddb9de8a062526f
+change-id: 20261104-mathieu-release-selector-fix-ae4f17ca5dee
 
-Regards,
-Qi
-
-On 11/3/26 21:26, Clayton Casciato wrote:
->>>> On 7/23/25 10:42, Clayton Casciato wrote:
->>>>> >From the upstream maintainer, Chris PeBenito:
->>>>> "I'm not opposed to this, as long as meta-selinux maintainers are
->>>>> willing to maintain/contribute to distro-yocto sections."
->>>>>
->>>>> Are the maintainers and wider community open to this?
->>>> Hi Clayton,
->>>>
->>>>
->>>> Thanks for your work. I have no objection. I think it is a good thing for both upstream and meta-selinux.
->>>>
->>> Thank you, Yi!
->>>
->>> I will leave (at least) the first commit to the maintainers to allow for:
->>> * a decision on the name (e.g. "yocto" or "openembedded")
->>> * prioritization/timing of this effort
->>> * use of historical knowledge and potential patch culling
->>>
->>> Clayton Casciato
->> Hi, Yi
->>
->> Is this still on your radar?
->>
->> --
->> Clayton Casciato
-> Thank you for taking on the maintainer role, Qi!
->
-> There is an open opportunity to upstream meta-selinux's RefPolicy patches [1].
->
-> [1] https://lists.yoctoproject.org/g/yocto-patches/topic/113634417
+Best regards,
+-- 
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 
