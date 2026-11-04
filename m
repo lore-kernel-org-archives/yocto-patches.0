@@ -1,67 +1,67 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8365.1793797040035596311
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8469.1793797354935331527
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 04 Nov 2026 04:57:20 -0800
+ Wed, 04 Nov 2026 05:02:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@amarulasolutions.com header.s=google header.b=VfrDrd2I;
- spf=pass (domain: amarulasolutions.com, ip: 209.85.221.53, mailfrom: andrea.ricchi@amarulasolutions.com)
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-48c4649b35bso580751f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 04:57:19 -0800 (PST)
+ dkim=pass header.i=@amarulasolutions.com header.s=google header.b=KWaGeWSE;
+ spf=pass (domain: amarulasolutions.com, ip: 209.85.128.53, mailfrom: andrea.ricchi@amarulasolutions.com)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a549cd7fd2so6096975e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 05:02:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1793797038; x=1794401838; darn=lists.yoctoproject.org;
+        d=amarulasolutions.com; s=google; t=1793797353; x=1794402153; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=W1kum1dpdXE3WtfmoD8p+R66ptoYNgCehsfbyi98qas=;
-        b=VfrDrd2IYZn2hKNN6cDhzAJCCdKbTahZhXkNQHSY0zBC/L1a6wt9nT2jJCuja3gB97
-         psGsHzNIMB/z89Kglo4uuE/3yXlCfJkNYVMJLh0qqGES5QOPfkGLp5hAo2RNoy+7NFCG
-         EPYyFscRrRiUtaeVLD9ELrjrbB3R6Kd8DD86I=
+        bh=1aLhXxDFy5Pf3t6ORezcYz+pxbkBvQiwBRSKWrqj6nk=;
+        b=KWaGeWSEh2q1X2Hj5HQ3Lp9gm8xpFvvdSBChhETnsjDTKxN6DRFeJWzR/brv1FeUI0
+         sy7MXFORV80YLFwXufZFItoGh5xxp9ZcLUN6P35hPM+/l8ubuIn6axrFu5gxOF7fqzqb
+         SCT1rQdzbMTl/C9mrYqNp6DV3aPkYZio5uttE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793797038; x=1794401838;
+        d=1e100.net; s=20260707; t=1793797353; x=1794402153;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=W1kum1dpdXE3WtfmoD8p+R66ptoYNgCehsfbyi98qas=;
-        b=e/XqNLY7EC+ZmdRPLTrO0dDi4TEaeFByGso5D+CmpT/wwTPSFX370zvRvyEYx5oVFT
-         VGdYucxuw17OOBFeBbLvaW6IZBRPbBznZ1rh+qfqO2YvVCQsqc8uhHzNE1MT5Gg+ANGo
-         b3PV3bbLMV46FHc51aLYHsMU3q2xDdhYpYFUgm0sKXp8tjUiFT9onc7YyisTJmCboMzx
-         UuOCVOfofXlBuFtq67lHJuV31qxHXxy66LapXkh7C5urKYZOfd19DQ0+BOJo2U6ajzXO
-         rAahQ8nZzgG1hrkf8hK+2gJzU06PjZV9cPhVNaqVLpy/X3CuFhwB3qIit65H1wAUgliQ
-         9WTQ==
-X-Gm-Message-State: APuU4Z9FvIpgnHA4ZmpMm1GH8jbbqAJWIyO7ee65ROQs8ABs0OugUeHh
-	UglHTbhsNKDPqvgMt90a2jvsySOSjHS8+GqFm5Zdv0Bc+GauTuAy+4vL2PzKgc4VCOrKpIMq4St
-	HsRFv
-X-Gm-Gg: AYBFou06kO1XzegrFCfFNc2cL4sW7H9U7x/Qcer4V9brBUhZ75cGYrenOdLiAZ2YrrF
-	9jYRoLagQa7ZvSZVZTuUzW2JurwI0oqW9sJgdRpZQBRJScyYRt4lliYmXHx3lyWgWf3jOjG0b8C
-	Mpru1YMLLvACRWVsNWyKksfcwZj5DsdVmYeAPEevNAjeSwb9+zlEJApYh0YwiYXjogtbGNxXlWR
-	16x85b1Z4yujqusCrjAD9GuPrTsrr7cEj5kWqDAuR46tMSCjqdSbgJrGzbiJZnmM+mFrFTpmjXk
-	5bRWScOstaXwaJIV3sVCq2bAXB9ykSHHOmuN401iDKx5BmtgvQAGIL6RCMkdv22Oat4jCON6v6X
-	qxW2r/f8J8mFm/UQNpkzLqVniMs7IVRBYR0We1uBeTZabNN0WfgFkO+0AehPdoHX7Th+64BId+1
-	Kad7xNoKT0ZOg/IXI/7W0FYZCECSk06JHpVO8OozL23YKRsx+75qvxb4+Yyz313TPn079gWUqRt
-	j60PAn+1dVsZRWYBQ8QCqldhB2s+NLc5T14MUnRpaqCfGKU/41AvJyiNXo4g15neptXj3gwfQH6
-	CgAhJhOVMvQ91lsRYMeDxeDubawoLGc2luG3uFa4UOvssfafdTZtkJ6PCLOAf2p1WNR8jgJjqnC
-	Ji2GFIjorLkU2RbknJl+VpzfrBs1Sh8RhyJ3au65m+XSefiPgcYNnYhUqOfG6GWUavznTuS701X
-	reol0vWwvR1I5JGrNLQ0OllcTaJU16kY50ztY5iLLHaSi4hgehckGxjRPTzRTraxr0zEleRxXfW
-	MvqJXd7
-X-Received: by 2002:a05:6000:200e:b0:48c:466e:9d08 with SMTP id ffacd0b85a97d-48e6e50ab18mr34637003f8f.43.1793797038144;
-        Wed, 04 Nov 2026 04:57:18 -0800 (PST)
+        bh=1aLhXxDFy5Pf3t6ORezcYz+pxbkBvQiwBRSKWrqj6nk=;
+        b=B6e+I3qOaOw+JTD54SGexOlfeoivmY79BSVjjp6wk8QPFZHbYLfXGR3Zpee1obccAB
+         95ZrZHwIUWlkHe9uAczN3IUcXz9cFID9XynsCQe+/KGizOcrWAXqRAXujuB4nqvU6DLK
+         uHIHjDn5F7jGOwlY+YIOcmm9R5TpjMmzgn2HQZxQoM8DKyxbKC+5DX765sS+v4LyFKFf
+         Y0UxfzSojMINArrYgdrkuLAv8PCKwcWVGoZBE+MztjSHqw7bXORmP/doogM6fOE2NyaQ
+         ldgYSY4P7T0+akYH7TqHDEsAcT2i/aa3q7GZ+DPGh0kkYpHoDORpShaYFye3Wdd5oMtC
+         cZAw==
+X-Gm-Message-State: APuU4Z+luwPxuDFtIqHPOtt3dIekcgtEZwczwnDv75tzwgiu+JVtwHBP
+	kUEgpxfqPFkAfBI5Tre/yt2zh0LAX5iS7RS4WCGdLmjJQKDz9IPxSgK91AwlDtzMkBze2l5dXfq
+	T6BWV
+X-Gm-Gg: AYBFou1HWkvHCoa14WVuJ/Jg/tQxPNc4EBpIBsI4evyS5LUvi+dvatMNnZwp2D8SIvX
+	NIWPwnQKOjK0r/lUoNxc3qWo0bzXnZIq4psv2zj6Rx8USs42A6r0U3GQOTlU3B/jxPy8+SMZDCD
+	/4dM9rPqwk0S+RJ5UDeqVCBbh3bLr26SSX0aQDGgfz1/GmLU8WSgcGf60e1OU1/INEVuA+uzB12
+	w8lESdWKgEnbjyvYm/q2vAIkFzilRWjT3VVL/mu4P4Uvn5+8XvBE7JtnXPDPMHcGI1O3Dm+pZvz
+	qHDRrNi/F5pqIDttVuSKupgR0B6fusTmPIZYfXD2uvvsCP09VtgKlQTU5Y771QngXBrv0Q5tE45
+	FA44uNu9c01wfrN5NRKjbgjJ5quYGvcK9WJyx0fiutVmLsmijfByuTRaueuP339p31ceD9A9CFp
+	QdBAreEwarKpL7xlFr+Mi91bKZkGBsv08GUTIDueyq7lY7+2A2ljTDXCz+c5t4ve/iA3dLCSI/e
+	Z1bwEDhApRwnrn91syCPvJc8qqB0Cy7Fj8790HgwN2ZDiSqIE19g07cRIo4GPqiTpaLbGiJ3JQd
+	guJJkzkU2k4RLSat7VU7qaE//E9QkY3MesiYSOQBo3kxZmyPVVyw0U7lm9Z9pZP3hH5L5l0vHan
+	2DUnKZZDooYldnRu3GEz2CH1ncyf6CFLMuIIoWOSwLhqMU0fc7PjyCC/tkKt0HOfHwO35BQdyjk
+	ZvAMCgx5ORn8o6fM5HTvfSSXxlawWsocWb32LfgFHR+GYQscCgykvFXBfho+DkSP2kee4kbzzS6
+	hYGYtUY7yylSHH26/5aPGdv4bm3Vg==
+X-Received: by 2002:a05:600d:1a:b0:4a1:d49e:9ce with SMTP id 5b1f17b1804b1-4aa86e16223mr435582045e9.2.1793797353123;
+        Wed, 04 Nov 2026 05:02:33 -0800 (PST)
 Return-Path: <andrea.ricchi@amarulasolutions.com>
 Received: from rcc-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-79-55-40-40.retail.telecomitalia.it. [79.55.40.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fece998absm4091917f8f.22.2026.11.04.04.57.17
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fece998absm4119196f8f.22.2026.11.04.05.02.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 04:57:17 -0800 (PST)
+        Wed, 04 Nov 2026 05:02:32 -0800 (PST)
 From: Andrea Ricchi <andrea.ricchi@amarulasolutions.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: twoerner@gmail.com,
 	Andrea Ricchi <andrea.ricchi@amarulasolutions.com>
-Subject: [PATCH] kernel: restore options the 32-bit arch removal drops
-Date: Wed,  4 Nov 2026 13:57:13 +0100
-Message-ID: <20261104125713.234969-1-andrea.ricchi@amarulasolutions.com>
+Subject: [meta-rockchip][PATCH v2] kernel: restore options the 32-bit arch removal drops
+Date: Wed,  4 Nov 2026 14:02:29 +0100
+Message-ID: <20261104130230.236614-1-andrea.ricchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 12:57:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5232
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 13:02:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5233
 Content-Type: text/plain; charset="utf-8"
 
 multi_v7_defconfig does not list several options the Rockchip boards
@@ -91,6 +91,8 @@ multi_v7_defconfig against the built .config.
 
 Signed-off-by: Andrea Ricchi <andrea.ricchi@amarulasolutions.com>
 ---
+v2: add the layer tag to the subject, the patch itself is unchanged.
+
  .../rockchip/remove-non-rockchip-arch-arm.scc |  1 +
  .../rockchip/restore-arm-selected-options.cfg | 26 +++++++++++++++++++
  2 files changed, 27 insertions(+)
