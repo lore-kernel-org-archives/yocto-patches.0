@@ -1,150 +1,266 @@
-Received: from rcdn-iport-1.cisco.com (rcdn-iport-1.cisco.com [173.37.86.72])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.29047.1793862380803339449
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.33558.1793882577151793816
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 04 Nov 2026 23:06:20 -0800
+ Thu, 05 Nov 2026 04:42:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: message contains an insecure body length tag" header.i=@cisco.com header.s=iport01 header.b=cLxmEluU;
- spf=pass (domain: cisco.com, ip: 173.37.86.72, mailfrom: dkelaiya@cisco.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=2885; q=dns/txt;
-  s=iport01; t=1793862380; x=1795071980;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=L5dIeE2Y5kG4SYT9kxXdIV7+bEOJCCWjfJt40C/VFgw=;
-  b=cLxmEluUNwJq0DUsYvrtOtto/0pCucypbyqqIuyJS4IRXtrDJ0riat5f
-   TSba/UUEuYEHcUqLERTQt1HlSlE8X23OWp9xCwceS8VATgrTymKUBho+G
-   gKUJzIx2K6wZFJ5aexYdzEhmGkpGfM4D0Q4eWfKesDb52JUEw2EClh7b7
-   iHB4AM3dUOEyZXjO8v1b2yx3Y3ciSlc1IQ9EYtakLYVciaBJdRa2xbqmr
-   hOyIP8cGveiNGi62yNoHhEo70WEWG4AzDyVdUsMAn+lug0iQ1IEpg2DgO
-   nYHh8Ghqh/CwtLk18q99fQ5YE9nW1m97P/tisI4T97FAjB8/EXc/vxaCK
-   w==;
-X-CSE-ConnectionGUID: PtqUzTuoT3KJy1Kzh8nhNA==
-X-CSE-MsgGUID: t5fyA2l3SVKVYGk/e8AoGg==
-X-IPAS-Result: =?us-ascii?q?A0BGAgBCKexq/4r/Ja1aglmCV3VgQ0kDlVxsi2iSPIF+D?=
- =?us-ascii?q?wEBAQ9EDQQBAYQ/Ro4fAiY0CQ4BAgQDAgMBAQEBAQEBAQEBAQEKAQEFAQEBA?=
- =?us-ascii?q?gEHBYEOE4ZPDZASAQIBNQFGLAMBAk8LIyGDAgGCOgM3AxEGvDOCLIEBhH7YT?=
- =?us-ascii?q?A2CWgELFAGBOIVAgn+FJF0YAYR9JxsbgXKEfoEFgRpCAQEBgSaBBoV5BIIig?=
- =?us-ascii?q?QyBWh6GIoZYAoFShnFIgR4DWSwBVRMNCgsHBYFoAzUSKhVuMh2BIz4XgQcbB?=
- =?us-ascii?q?gWBHYEegRKBB12BKyhdASGBCIF2AoJRggACAUlBDgdFUwklQxJHJCIIEgkBE?=
- =?us-ascii?q?xosCoEaNTwJJj8VDGQLGgVhCAINDHI5EDAeJC8FHCZAGwoYGA1IESw3FRkEP?=
- =?us-ascii?q?m4Hki+CfxKBDgEHIgKBIF0GKUulK6AgcQoog3iMJI8+hXwaM6pxC5h9jgqEC?=
- =?us-ascii?q?pJHhGmBaDyBWXAVgyIJCUEZD44vCgscg0SFE8lIJjICCQMvAQEHAgcOAwuBa?=
- =?us-ascii?q?JAAgX4BAQ?=
-IronPort-Data: A9a23:ZozteKLJHvIL4VYpFE+RhJQlxSXFcZb7ZxGr2PjKsXjdYENS1jdUm
- mdLW26DM/zZa2eme9p+YIvioR9T75LQmtBiTVQd+CA2RRqmiyZq6fd1j6vUF3nPRiEWZBs/t
- 63yUvGZcoZpCCea+Uf1WlTYhSEU/bmSQbbhA/LzNCl0RAt1IA8skhsLd9QR2uaEuvDnRVnS0
- T/Oi5eHYgH8gmYoajh8B5+r8XuDgtyj4Fv0gXRmDRx7lAe2v2UYCpsZOZawIxPQKqFIHvS3T
- vr017qw+GXU5X8FUrtJRZ6iLyXm6paLVeS/oiI+t5qK23CulQRuukoPD8fwXG8M49m/c3+d/
- /0W3XC4YV9B0qQhA43xWTEAe811FfUuFLMqvRFTvOTLp3AqfUcAzN1WEFgLL7EF/dosIkNfr
- N8KKGALbjaq0rfeLLKTEoGAh+w5J8XteYdasXZ6wHSBVLAtQIvIROPB4towMDUY358VW62BI
- ZBENHw2N0Sojx5nYj/7DLoyn+qsj3juehVTqUmeouw85G27IAlZjeSxa4KOKoLbLSlTtlrFq
- HPvpWCiOS85Cu2wyn2IolurqeCayEsXX6pXTtVU7MVCkVqY2mtWEBQKXlu2utG9i1WiQJROL
- EcI/TI0qqo//1DtScPyNyBUu1aetRIaHt4VGOog5UTVk+zf4h2SAS4PSTsphMEaifLajAcCj
- jeh9+4FzxQ22FFJYRpxLoupkA4=
-IronPort-HdrOrdr: A9a23:ntPZbqk+1JcZgH3IknxlG+zl6gnpDfIa3DAbv31ZSRFFG/FwWf
- rAoB19726QtN9/YhAdcLy7VZVoIkmsl6Kdn7NwAV7KZmCP0wGVxepZg7cKrQeNJ8SHzJ8/6Y
- 5QN45jFdb3EV92yez+4AW+DpIc5ePvytHNuQ8bpE0dKz2DrMpbnmBENjo=
-X-Talos-CUID: 9a23:zbYEgmCtZsbreIf6ExF77XMGJt0iTib+7maJAF24WWBpbpTAHA==
-X-Talos-MUID: 9a23:MeSFDAb6opDG2+BTq2LilRg4MJxT3YeQOW8O1phWks6rOnkl
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.27,196,1787011200"; 
-   d="scan'208";a="544303869"
-Received: from rcdn-l-core-01.cisco.com ([173.37.255.138])
-  by rcdn-iport-1.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 05 Nov 2026 07:06:19 +0000
-Received: from sjc-ads-5675.cisco.com (sjc-ads-5675.cisco.com [10.28.88.189])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by rcdn-l-core-01.cisco.com (Postfix) with ESMTPS id B8740180001F2;
-	Thu,  5 Nov 2026 07:06:19 +0000 (GMT)
-Received: by sjc-ads-5675.cisco.com (Postfix, from userid 1887444)
-	id 62360CC1611; Wed,  4 Nov 2026 23:06:19 -0800 (PST)
-From: "Darsh Kelaiya -X (dkelaiya - E INFOCHIPS PRIVATE LIMITED at Cisco)" <dkelaiya@cisco.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Darsh Kelaiya <dkelaiya@cisco.com>
-Subject: [yocto-patches][meta-selinux][wrynose][PATCH 1/2] selinux-sandbox: fix CVE-2026-59676
-Date: Wed,  4 Nov 2026 23:06:16 -0800
-Message-Id: <20261105070617.839020-1-dkelaiya@cisco.com>
-X-Mailer: git-send-email 2.35.6
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Outbound-Client-TLS: ANONYMOUS;sjc-ads-5675.cisco.com [10.28.88.189];TLSv1.3;TLS_AES_256_GCM_SHA384;256
-X-Outbound-SMTP-Client: 10.28.88.189, sjc-ads-5675.cisco.com
-X-Outbound-Node: rcdn-l-core-01.cisco.com
-List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 05 Nov 2026 07:06:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5241
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=Ls3xLqwa;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=576967b061=sunilkumar.dora@windriver.com)
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A59uRnZ138509;
+	Thu, 5 Nov 2026 12:42:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-id:content-transfer-encoding:content-type:date
+	:from:in-reply-to:message-id:mime-version:references:subject:to;
+	 s=PPS06212021; bh=q8PkNEtPTuLKb9IgqN9zeSjIQkmIphJS7bVfm9rwEK4=; b=
+	Ls3xLqwaLz42177OWBGZ8BTeDPRVxwb2nna+Z8iv2bi6WsuhSGklO++ZjxNal64J
+	8G7aTghtx+NMUxycKZ8uZUbOkjVzMXh+ZF0o9sxBKVvsRucvJC1AQHJbKn2bS/R/
+	h77Si6zLeIGoYjnTjCrkMU5yNNdwNUpyQ63hUTzNeT6XDUEDhrsE2qLpR4PbVaSF
+	AD7d+xsK8QHLmxiahq7Iu0CjLkDdY3nvKNH+qAzfcpxY3eL3O+xz5PIWK7rF7fRz
+	QJLhGJV19ua2mPi7suOpcHxraz+t+4pp0DeVku0ODnxYotfhLa62TgCA+Qi2FeKl
+	2GYmtgY66EsT22I5dIW2Jg==
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11021117.outbound.protection.outlook.com [52.101.62.117])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4hrafhsstq-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 05 Nov 2026 12:42:54 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ykTLsuv43giB6TR9vBPuI9zxcH7raPI3MTUJs3mXuuwldRkh65IbtWuBDfMJ+XPGxi7XEQ+0mDa4o8jdEl2LehcqmxN32zZ4V9AkyMS9UucG3C8TfZp+yGD7TPhJgaudbIIX+aPo/bD/fETrZEiiTAqIAzIPfICJTuGXo6IMgz3X8eLttOSHYK4cJyH6pbQnsvkxjVdnpEegZ+gKja6z4dBOO444bdc2jbYxWhy4W43yJan7cXY1S0Xo7Y6ET7Px6s93RX59x0VqWQJsMg2+fRj+uXTlOM+6NVOBd+wJMifTKwvSf+Fjm9SmiUSlEj9Ps/HPVonSnid/WdB5RZ94hQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q8PkNEtPTuLKb9IgqN9zeSjIQkmIphJS7bVfm9rwEK4=;
+ b=pNCRtG60JpWqJvXOZxhsdhOy0BOXNt2XKASyAGXEqBW05ApBK9T3tS8zaaLbiwmsH9f8/SnRBSiSMKWPEsx6Va1OZuyngd7R9ZXklUyzT5vAu1w+zsHFHZ0GodCBIMzhNB3vlAoQM6ES0uHQQTUWvSczqvjS/3V8GyxFQTVojG5Vms4UOQwPYSAZWY7YLhM4clzSX4elXPRJhdrRCFyAZasEYEyrKeG6pNcuUQR+os3L+R2vnMUOAQvn48GbhyjJXAZSp+I8nGF1WHUHW81Lnbuj+S8EW0a6/WoTfuU1/NogkR/PuFk0P270tzFkfV3XKmmgfyxQXtRGyqI82ABT2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from DS0PR11MB7901.namprd11.prod.outlook.com (2603:10b6:8:f4::20) by
+ LV3PR11MB8482.namprd11.prod.outlook.com (2603:10b6:408:1bb::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Thu, 5 Nov
+ 2026 12:42:07 +0000
+Received: from DS0PR11MB7901.namprd11.prod.outlook.com
+ ([fe80::4293:7c4b:a0b5:eb5f]) by DS0PR11MB7901.namprd11.prod.outlook.com
+ ([fe80::4293:7c4b:a0b5:eb5f%3]) with mapi id 15.21.0592.007; Thu, 5 Nov 2026
+ 12:42:07 +0000
+From: "Dora, Sunil Kumar" <SunilKumar.Dora@windriver.com>
+To: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>,
+        Richard Purdie
+	<richard.purdie@linuxfoundation.org>,
+        Simon Marchi <simark@simark.ca>
+CC: "Term Yang, Liezhi" <Liezhi.Yang@windriver.com>,
+        "Kokkonda, Sundeep"
+	<Sundeep.Kokkonda@windriver.com>
+Subject: Re: [pseudo][PATCH v3] makewrappers: Allow the wrapper architecture
+ to be set for cross builds
+Thread-Topic: [pseudo][PATCH v3] makewrappers: Allow the wrapper architecture
+ to be set for cross builds
+Thread-Index: AQHdaKB048bAD/LaBUWAl5TR4plA57cfdN+A
+Date: Thu, 5 Nov 2026 12:42:07 +0000
+Message-ID: <82733a32-8abd-4d2e-84e3-fa876d516917@windriver.com>
+References: <20261030185645.765144-1-sunilkumar.dora@windriver.com>
+In-Reply-To: <20261030185645.765144-1-sunilkumar.dora@windriver.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=windriver.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR11MB7901:EE_|LV3PR11MB8482:EE_
+x-ms-office365-filtering-correlation-id: fa3334d4-cb0c-4afc-981e-08df3b3a3405
+x-ld-processed: 8ddb2873-a1ad-4a18-ae4e-4644631433be,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|23010399003|366016|10070799003|1800799024|10067099003|38070700021|11063799006|261021123027099003|261021121427099003|56012099006|261022105027099003|261028144727099003|261102123227099003|261026140227099003|261022075727099003|261026121527099003|18002099003|22082099003|6133799003|3023799007;
+x-microsoft-antispam-message-info: Zekx/dqxexCbIBHWppCAtrHLDN/Qsbvx2z1OaFn71xIIgSgrc+2JPsiFseJoamJhiKOYXmJTGOJtZnY6aRo8Wi7Gnhdez8WgoP1UnQ+6FzOfT83qAwFdiLN10Ggl0OIh3L5MEbzD/YfOeLnoZTbRD/nDZN7VUzDBdyKDXuv76ri4Nxq/g6winxga/BOtt1isJ2n/+vtS3oJQknE4Yod4CM6N1vAVsyZCFc2nFAzT+0yrUVw7C+7JJvhGCEvuCas7ScySaK098vz2hrAxV2D2bpjYgWYb3Dfix6E1MkAjbMGnErPzC9hzxdPzEV8hNPcmY1RrcG9sbW+v0n19j7B+fRXR/h6/nghm25nJ4YuLc6SLBU5XyJVcYr17qsR/mRkF7m+2q1ey2aAz85yWJSkVWDmRd7DTMMnb+qP0V2ygj2o8xe9/DdZNFLB1tuPusdS0D5iA9d1etjUM5hEtecFGEq2Ig/rJQIDRfp9TTGQSI2RjdoXDL3lR+aTaxA4fSlgXT+vFAZGOeahnIcSWN92pTIB0+85Xu1CNjBJVU3fvbDbsD/HKVFJ3rDmTV+YsSAiQrzs2jRLi+VU2hQbYm7WG1FsJJtgWWd6QHqV1l5wfSrOM3xmin6ScVhFgo6uqIenDTaNZFTa8tZFGI30tYUPqu7kUln0N3pJ65a6e7q2Qcd3tj4YRx98AMDHPX5im8j6GVUzd8yydTiLCPMA21ZQZmXjJkOoy5MUe+AQBVQJG3Ko=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7901.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(366016)(10070799003)(1800799024)(10067099003)(38070700021)(11063799006)(261021123027099003)(261021121427099003)(56012099006)(261022105027099003)(261028144727099003)(261102123227099003)(261026140227099003)(261022075727099003)(261026121527099003)(18002099003)(22082099003)(6133799003)(3023799007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 2
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SXpnZFZCM3VTcFRJMnkrLzBLMFJ5Y0FMM2xMQ0VjU0hxaWZDUEZQTzVGbk1p?=
+ =?utf-8?B?RFNBb2U1aFZaNm5sRldhV2RGK3RrcHdRZjVQZVh2YUQ0bGppMml2S29yV2M1?=
+ =?utf-8?B?Nlo0RndmOHUxZ0NMMzBWWTBlMm9mN0VaWUtSUVVUOWlkSkRIRS9iWWtRZWlw?=
+ =?utf-8?B?Sk9WemMzTzFWdnFoblRWc0d5N1RCYVF2V1VVbnBna2ZtNWFjVXdCZFJ4STE4?=
+ =?utf-8?B?VC9KWU1heGR3TUJzdm9teGpnUHJ1Sm1xQXpWUTVMQ1B3elBveXB1QlIwSVE3?=
+ =?utf-8?B?bUNVZXl1R09sNkdqdmU4cjNWT3I3WDVRUEtXQThHV1VsTDVEZEhCbXBNOXZV?=
+ =?utf-8?B?VnhMcDlKcTVoU1FJdDVtWEZyQm1OZkNHL3JIR2locmExVjFDeFFYTVNhclJz?=
+ =?utf-8?B?NUFldXIwblhVdGZmUndEcE5WQzZLcEFoWStHNlE1Wkl6UDVPSDlXU01HdGwz?=
+ =?utf-8?B?c09CZVpEV2dRdFA3WjFIS05DS0RPYlphQVR6c3FURmUvRkwxNVhuUjNtUm13?=
+ =?utf-8?B?SUVrOVM0eUxwTFZkYkdBQzUrckdXQWhhUFgzYmFhWXU0QmxJendsOHA0Yyth?=
+ =?utf-8?B?djBwOGFSTzA1TzVZbEpSdUhsMlEzcE1XNXNKaTJmbE55eXc5RlJkMktPKzhw?=
+ =?utf-8?B?OWRoRkxBN3NoVExIK3F6YWlXNTBzczdTM0dGa0VNWVNrZEFqanZxNlpjcmUr?=
+ =?utf-8?B?dnNJVjBSdzNxYUMxY0FEYmtPNzI1bVNMQkRoVmthNnlITU9MZ2xPUzdJeGI0?=
+ =?utf-8?B?WkdzaW11WE1xZDZGL0tsbGRPM0xCYmRxdkthd1V2bHJxaFA1TWVFS294WUcw?=
+ =?utf-8?B?b2JPU1ByUitoSjZLeHp1dUNFd0lCdFJ4c2t5aXBnVWFNYUN1dEZPNzdwck9X?=
+ =?utf-8?B?UlJqVzlQYnJaL3hZdkhiVnBnYnJld1hMNGZUWFV0ckZCSUl2RlY1NXZFdW1I?=
+ =?utf-8?B?WU54YUJoczNGd1Qwbzc4bGw3bmVGQ2dxeTdOVGtoc2gyUlVvRkFTNHlUdnhI?=
+ =?utf-8?B?OHBZZVJLRSsyTEh5VW1wZVY3U1BxOEFCZDVUaklxWXY4SWQzOHppc2Z4OHB4?=
+ =?utf-8?B?cFBoelIwakJBWUFaZW83dk5nTzhNREhEVHoycUhvRll0S010N3l5Mjc1bitt?=
+ =?utf-8?B?ZGh2em5hN1dIK2ZLZDVicFpGQUlpT3EvTTdjNGIyK2VqNGU3Q1FWU09mOVBj?=
+ =?utf-8?B?WmdQUG1EMmpPQXluamx6czB1RnVxczRibmVtSTQ2bUsreEcwVURkTjZ6SlU1?=
+ =?utf-8?B?elorSWNVWnZFTng4TFdrOHNmTGpWQ1ROQWM2VTR1K1RlUmJsMUZaRnNSbzJ5?=
+ =?utf-8?B?UDZSVkg5V09SaGJVcXJXR285YnJZZW84WSs4N1c2Rm02T3c2TDhtVmNxUDhG?=
+ =?utf-8?B?dWpuYjVYQWZMK1V1T0hmNmxvamkwQzR1S2xhNGhBRVVOY1hZMUgremlzYUc1?=
+ =?utf-8?B?OEFhQUk3SEdXbmlWcE00N3pIMkRyM2YzU3BTeUZuVnBvOGw1cmp6RjFwUEh2?=
+ =?utf-8?B?Q284WmxKelJObTQ0OHcvbllBSGNWdlV5a2tCUldOVklsdVVPeDRrVmNwOTk2?=
+ =?utf-8?B?U053aGpzN0hDc1lpenFPbFlrbzZQK1NYRHdLOFlJRFlOVXMzNXpHbXM4eFA3?=
+ =?utf-8?B?Zk9WbHA3a2o1Y3dSaDhjS2c4QWtVSGFMczU1WTF4N0YvUno5MFdGbEtXUFhy?=
+ =?utf-8?B?UCtXcnA4N1FOWEZBS3hsYUxWbVRKUlVqeCtRaXdVY29QdkhlUXVNYll1OGFr?=
+ =?utf-8?B?Skdnc2U5R1Ixc01LZmI0Uk9XeE8wak10ZEIyOFN2T0k2UVVFLytFcXpTTEdX?=
+ =?utf-8?B?MmE2V2t1Z2VGKzRhRVFhOEdHUW1hQ1M4VTBOUVVBSkZrWFBxUjRmbUZiNDdL?=
+ =?utf-8?B?bnpYOVBDbUs0d1ZkWWYrYXQxd3N4NzlXUU5VLy9JYTJoK0wyc3kzL3NwTitC?=
+ =?utf-8?B?MUNLR1A1eExkSHJHcnZ5dzJIaWExSmRGUFp5amJYSGhkU1RHZDNDVXROWHFi?=
+ =?utf-8?B?bTdjY0NoME5yaC9LYnFTWVhDOFlwQmNmbFRsNnRRQlFya2xyTGlsUmF6Wlp4?=
+ =?utf-8?B?MDNBMUYxSG1HbW1naDFkM0ZXTElWRko1QmdpNlN0MWl6cFdvSWpUMGVRYWRP?=
+ =?utf-8?B?aFh0K2ZLZFRNZTdKNStWSk85bjMrcDQ5Z29FZVRiL3FnYVdSWmgyVjFScWlm?=
+ =?utf-8?B?ZGVqOWwzeEl3QWFrMHdPTWVqbExLQXI0LzE4TllOWWhTbWZ1M1Mvd2dZbTZW?=
+ =?utf-8?B?bWVGdk8zbU42R3FDdUxqS1llN3FNUDFKdzRMM2haYVNUYUY3Y09CVGdDZU9K?=
+ =?utf-8?B?alRZYkkrRGRFaVd1WHhSRXFnS2Q4eVJzb2ZRdkhScWd6dDRTLzZLRzgwOXVN?=
+ =?utf-8?Q?WWr+vo/qy8mdYlqKiS+oAXV7h5Rvx5AYwFaEJY6FzmGfn?=
+x-ms-exchange-antispam-messagedata-1: hw4K39YidqqmELAcK8A0ZbgOYlcoYT2W7ChMnOVRzJ+ECDb77iHSbKYk
 Content-Type: text/plain; charset="utf-8"
+Content-ID: <B18870DDAD937D41A48855DB3B67D55F@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: eSLv/q91rBa4jFro2ve0hkrwMBSAUxb8As/DSwG8fiHNZ1nDrJKkwLYHZEJRqDsjh5eNbZwwcoFSpxTXyt6VkOO7xErXg8RKVF77a1oYcxxs812X2dAeWEKeqP0LsZQxMRFyPOlVDL4mCHwNslkcLW1vTPj4fHRw3OG8aysP+qqj57In/2WXWYeT0h8ooWUsg98AO3iMzFNlJGhAJFHDSKA0Z2GKvDQ0THI+v7V7TfMJkhR12iEWO+8yL7IMLcQrAolpQJOyrom9WXn33nqZ+xZc5d9WPkEAqYtuU7k31Wo1k4G08INeFGRvhgbfnG8giTMNL7gWQg+5hGUHDFlRoA==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7901.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa3334d4-cb0c-4afc-981e-08df3b3a3405
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2026 12:42:07.6720
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AUjZ6DTg4iws9oczIGFhWUq/licPrkvewnEiz0g8hkhhUSL0gZktCqaI5SdA/oNhraG7NGfKCGLF6vv+GiErEwcTGou5zKdM73wP4J4RPO8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8482
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA1MDA1MCBTYWx0ZWRfX2aNLJF8MvleS
+ JxwlNF09F+0Mg1UOONFBLDFWBv59fGWAiax4Sg87m73Usijc778FXUA3KpGa/CwK3WzOX8mYXSQ
+ 1upwgvY6xtpWN0VOQf1m2q3r9Oro5OwIoDb7oKo4oByGhRYTpCtHCYwU3hAnSy0CRiiZBHKKRsj
+ q1ZEePiV27V32hLnfND1ZXeX5JylSy/CBxnIPHyHrKGJlefzUJVYMQglUaIiO7s6n1oYYw0Ck7E
+ KRRgNbPq2xNs1mfJ/ez5w55ylhfnQ2j2EqBqeWNT2hn9HHz8D5XwRrEuZOT3gb1vH6J6esXAeQa
+ 0rm1QnvrNxj8MlY0DLfZ9PcvWdfg7MBDEp4HlKROKeiFxZeg2fyKmXhxSUWMqPGiRq2Wzmk8EUC
+ +2C2IBc3+MJMxBd8pNTJ+mlC3rUa7KAWMj1OEUCGbfyRp64YYcO2Mn7wGZo35awfaIaJbxyDvm7
+ qJngGUkKuR9bMXNXlbQ==
+X-Proofpoint-GUID: UMZIFRcwjE-NjHUEd8ni2w7yvSmIzbip
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA1MDA1MCBTYWx0ZWRfXzVUJeXzYSlq0
+ 2B+sR5rCtvShm9rZ2f/7xuTSDC5mZl1tIQI3eW+HGiimu0gKO99+uZBRyvRslQFWxyGYWDbWeyF
+ KT4UCyOd3+Wf+bd+rHzt0GIfsCXCH5ErXeRUAToKtMl9wC6oT7qm
+X-Authority-Analysis: v=2.4 cv=ZIJCCn7b c=1 sm=1 tr=0 ts=6aec79ce cx=c_pps
+ a=0ugTtL2IYW/sDoruYPcCDA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=bi6dqmuHe4P4UrxVR6um:22
+ a=klDOsUkWDRETUCZYPvoE:22 a=t7CeM3EgAAAA:8 a=flN3qdsN_UXKb4Fx9sYA:9
+ a=QEXdDO2ut3YA:10 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: UMZIFRcwjE-NjHUEd8ni2w7yvSmIzbip
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-05_03,2026-11-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 suspectscore=0 spamscore=0 priorityscore=1501
+ phishscore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611050050
+List-Id: <yocto-patches.lists.yoctoproject.org>
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 05 Nov 2026 12:43:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5242
 
-From: Darsh Kelaiya <dkelaiya@cisco.com>
-
-This patch applies the upstream fix as referenced in [2],
-using the commit shown in [1].
-
-The 3.10 rm_rf() implementation follows symlinks after checking
-directory entries, allowing a setuid seunshare caller to remove
-root-owned files. Add O_NOFOLLOW to its recursive openat() call.
-
-[1] https://github.com/SELinuxProject/selinux/commit/38f0a4d9a683f2cd2472d4502842df5d5b8255a8
-[2] https://security.opensuse.org/2026/07/15/selinux-seunshare.html
-
-Signed-off-by: Darsh Kelaiya <dkelaiya@cisco.com>
----
- .../selinux-sandbox/CVE-2026-59676.patch      | 33 +++++++++++++++++++
- .../selinux/selinux-sandbox_3.10.bb           |  1 +
- 2 files changed, 34 insertions(+)
- create mode 100644 recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch
-
-diff --git a/recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch b/recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch
-new file mode 100644
-index 0000000..1356381
---- /dev/null
-+++ b/recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch
-@@ -0,0 +1,33 @@
-+From 38f0a4d9a683f2cd2472d4502842df5d5b8255a8 Mon Sep 17 00:00:00 2001
-+From: Stephen Smalley <stephen.smalley.work@gmail.com>
-+Date: Tue, 12 May 2026 14:34:02 -0400
-+Subject: [PATCH] sandbox/seunshare: pass O_NOFOLLOW to openat()
-+
-+We do not want to follow symlinks here.
-+
-+CVE: CVE-2026-59676
-+Upstream-Status: Backport [https://github.com/SELinuxProject/selinux/commit/38f0a4d9a683f2cd2472d4502842df5d5b8255a8]
-+
-+Acked-by: James Carter <jwcart2@gmail.com>
-+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-+(cherry picked from commit 38f0a4d9a683f2cd2472d4502842df5d5b8255a8)
-+Signed-off-by: Darsh Kelaiya <dkelaiya@cisco.com>
-+---
-+ sandbox/seunshare.c | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/sandbox/seunshare.c b/sandbox/seunshare.c
-+index e89a9fec..a1900eaa 100644
-+--- a/sandbox/seunshare.c
-++++ b/sandbox/seunshare.c
-+@@ -428,7 +428,7 @@ static bool rm_rf(int targetfd, const char *path) {
-+ 	}
-+ 
-+ 	if (S_ISDIR(statbuf.st_mode)) {
-+-		const int newfd = openat(targetfd, path, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-++		const int newfd = openat(targetfd, path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
-+ 		if (newfd < 0) {
-+ 			perror("openat");
-+ 			return false;
-+-- 
-+2.35.6
-diff --git a/recipes-security/selinux/selinux-sandbox_3.10.bb b/recipes-security/selinux/selinux-sandbox_3.10.bb
-index d29cd88..f8ffd36 100644
---- a/recipes-security/selinux/selinux-sandbox_3.10.bb
-+++ b/recipes-security/selinux/selinux-sandbox_3.10.bb
-@@ -10,6 +10,7 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=393a5ca445f6965873eca0259a17f833"
- require selinux_common.inc
- 
- SRC_URI += "file://sandbox-de-bashify.patch;patchdir=.. \
-+            file://CVE-2026-59676.patch;patchdir=.. \
-            "
- 
- S = "${UNPACKDIR}/${BP}/sandbox"
--- 
-2.35.6
+SGkgTWFyaywgUmljaGFyZCwNCg0KR2VudGxlIHBpbmcgb24gdGhpcy4gdjMgb25seSBhZGRzIHRo
+ZSBbcHNldWRvXSBzdWJqZWN0IHRhZyBvdmVyIHYyLCANCndoaWNoIHN3aXRjaGVkIHRvIGNvbmZp
+Z3VyZSAtLXRhcmdldA0KYXMgTWFyayBzdWdnZXN0ZWQuDQoNCkFueSBDb21tZW50cz8NCg0KVGhh
+bmtzLA0KU3VuaWwNCg0KT24gMTAvMzEvMjAyNiAxMjoyNyBBTSwgRG9yYSwgU3VuaWwgS3VtYXIg
+d3JvdGU6DQo+IEZyb206IFN1bmlsIERvcmEgPHN1bmlsa3VtYXIuZG9yYUB3aW5kcml2ZXIuY29t
+Pg0KPg0KPiBBcmNoaXRlY3R1cmUgc3BlY2lmaWMgbW9kaWZpZXJzIGluIHdyYXBmdW5jcy5pbiwg
+c3VjaCBhcw0KPiB2ZXJzaW9uLWFhcmNoNjQ9IkdMSUJDXzIuMTciIG9uIHRoZSB4YXR0ciB3cmFw
+cGVycywgYXJlIHNlbGVjdGVkIHdpdGgNCj4gcGxhdGZvcm0ubWFjaGluZSgpLCBzbyB0aGV5IGZv
+bGxvdyB0aGUgbWFjaGluZSBydW5uaW5nIHRoZSBzY3JpcHQNCj4gcmF0aGVyIHRoYW4gdGhlIG9u
+ZSBwc2V1ZG8gaXMgYnVpbHQgZm9yLiBBbiBhYXJjaDY0IHBzZXVkbyBjcm9zcyBidWlsdA0KPiBv
+biB4ODZfNjQgZW5kcyB1cCB3aXRoIEdMSUJDXzIuMyBhbmQgdGhlIHJldmVyc2Ugd2l0aCBHTElC
+Q18yLjE3LCB3aGljaA0KPiBzaG93cyB1cCBhcyBwc2V1ZG8gbm90IGJlaW5nIHJlcHJvZHVjaWJs
+ZSBiZXR3ZWVuIHg4Nl82NCBhbmQgYWFyY2g2NA0KPiBidWlsZGVycy4NCj4NCj4gQWRkIGEgLS10
+YXJnZXQgb3B0aW9uIHRvIGNvbmZpZ3VyZSBhbmQgcGFzcyBpdCBvbiB0byBtYWtld3JhcHBlcnMs
+DQo+IHdoaWNoIHVzZXMgdGhlIGNwdSBwYXJ0IG9mIHRoZSB0cmlwbGV0IGZvciB0aGVzZSBtb2Rp
+ZmllcnMuIFdpdGhvdXQNCj4gLS10YXJnZXQgdGhlIGJ1aWxkIG1hY2hpbmUgaXMgdXNlZCBhcyBi
+ZWZvcmUuDQo+DQo+IFtZT0NUTyAjMTYzNzZdDQo+DQo+IFNpZ25lZC1vZmYtYnk6IFN1bmlsIERv
+cmEgPHN1bmlsa3VtYXIuZG9yYUB3aW5kcml2ZXIuY29tPg0KPiAtLS0NCj4gdjM6IEkgbWlzc2Vk
+IHRoZSBbcHNldWRvXSB0YWcgaW4gdGhlIHN1YmplY3QuDQo+DQo+IHYyOiB1c2UgYSBjb25maWd1
+cmUgLS10YXJnZXQgb3B0aW9uIGFuZCBhIG1ha2V3cmFwcGVycyAtLXRhcmdldCBhcmd1bWVudA0K
+PiAgICAgIGluc3RlYWQgb2YgdGhlIE1BS0VXUkFQUEVSU19BUkNIIGVudmlyb25tZW50IHZhcmlh
+YmxlLCBhcyBzdWdnZXN0ZWQgYnkNCj4gICAgICBNYXJrLiBXaXRob3V0IC0tdGFyZ2V0IHRoZSBn
+ZW5lcmF0ZWQgd3JhcHBlciB0YWJsZSBpcyB1bmNoYW5nZWQuDQo+DQo+ICAgTWFrZWZpbGUuaW4g
+IHwgIDMgKystDQo+ICAgY29uZmlndXJlICAgIHwgIDYgKysrKysrDQo+ICAgbWFrZXdyYXBwZXJz
+IHwgMTcgKysrKysrKysrKysrKysrLS0NCj4gICAzIGZpbGVzIGNoYW5nZWQsIDIzIGluc2VydGlv
+bnMoKyksIDMgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9NYWtlZmlsZS5pbiBiL01h
+a2VmaWxlLmluDQo+IGluZGV4IDY2NDBhNzMuLjljNmRhNzcgMTAwNjQ0DQo+IC0tLSBhL01ha2Vm
+aWxlLmluDQo+ICsrKyBiL01ha2VmaWxlLmluDQo+IEBAIC0zNCw2ICszNCw3IEBAIEJJVFM9QEJJ
+VFNADQo+ICAgQVJDSF9GTEFHUz1AQVJDSF9GTEFHU0ANCj4gICBNQVJLNjQ9QE1BUks2NEANCj4g
+ICBSUEFUSD1AUlBBVEhADQo+ICtUQVJHRVQ9QFRBUkdFVEANCj4gICBWRVJTSU9OPTEuOTkuMA0K
+PiAgIA0KPiAgIExJQj1ATElCQA0KPiBAQCAtMTQ2LDcgKzE0Nyw3IEBAIHRhYmxlczogZW51bXMv
+Ki5pbiBtYWtldGFibGVzIHRlbXBsYXRlZmlsZS5weSAkKFRBQkxFUykNCj4gICAJLi9tYWtldGFi
+bGVzIGVudW1zLyouaW4NCj4gICANCj4gICB3cmFwcGVyczogbWFrZXdyYXBwZXJzIHRlbXBsYXRl
+ZmlsZS5weSAkKFRFTVBMQVRFUykgcG9ydHMvKi93cmFwZnVuY3MuaW4NCj4gLQlDQz0iJChDQykg
+JChDRkxBR1MpICQoQ0ZMQUdTX1BTRVVETykiIC4vbWFrZXdyYXBwZXJzICJ4YXR0cj0kKFhBVFRS
+KSINCj4gKwlDQz0iJChDQykgJChDRkxBR1MpICQoQ0ZMQUdTX1BTRVVETykiIC4vbWFrZXdyYXBw
+ZXJzIC0tdGFyZ2V0PSIkKFRBUkdFVCkiICJ4YXR0cj0kKFhBVFRSKSINCj4gICANCj4gICAuU0VD
+T05EQVJZOiB0YWJsZXMgd3JhcHBlcnMNCj4gICANCj4gZGlmZiAtLWdpdCBhL2NvbmZpZ3VyZSBi
+L2NvbmZpZ3VyZQ0KPiBpbmRleCA2OGM5OTYyLi5iNDM4MDllIDEwMDc1NQ0KPiAtLS0gYS9jb25m
+aWd1cmUNCj4gKysrIGIvY29uZmlndXJlDQo+IEBAIC0xMCw2ICsxMCw3IEBADQo+ICAgb3B0X3By
+ZWZpeD0NCj4gICBvcHRfbGliZGlyPQ0KPiAgIG9wdF9zdWZmaXg9DQo+ICtvcHRfdGFyZ2V0PQ0K
+PiAgIG9wdF9hcmNoPXg4Ng0KPiAgIG9wdF9iaXRzPQ0KPiAgIG9wdF9zcWxpdGU9L3Vzcg0KPiBA
+QCAtMzIsNiArMzMsNyBAQCB1c2FnZSgpDQo+ICAgICAgIGVjaG8gPiYyICIgIGNvbmZpZ3VyZSAt
+LXByZWZpeD0uLi4iDQo+ICAgICAgIGVjaG8gPiYyICIgICAgICAgICAgIFstLWxpYmRpcj0uLi5d
+Ig0KPiAgICAgICBlY2hvID4mMiAiICAgICAgICAgICBbLS1zdWZmaXg9Li4uXSINCj4gKyAgICBl
+Y2hvID4mMiAiICAgICAgICAgICBbLS10YXJnZXQ9Li4uXSINCj4gICAgICAgZWNobyA+JjIgIiAg
+ICAgICAgICAgWy0tZW5hYmxlLW1lbW9yeS1kYl0iDQo+ICAgICAgIGVjaG8gPiYyICIgICAgICAg
+ICAgIFstLWVuYWJsZS1lcG9sbF0iDQo+ICAgICAgIGVjaG8gPiYyICIgICAgICAgICAgIFstLWVu
+YWJsZS14YXR0cl0iDQo+IEBAIC0xNTMsNiArMTU1LDkgQEAgZG8NCj4gICAgICAgLS1zdWZmaXg9
+KikNCj4gICAgICAgICAgIG9wdF9zdWZmaXg9JHthcmcjLS1zdWZmaXg9fQ0KPiAgICAgICAgICAg
+OzsNCj4gKyAgICAtLXRhcmdldD0qKQ0KPiArICAgICAgICBvcHRfdGFyZ2V0PSR7YXJnIy0tdGFy
+Z2V0PX0NCj4gKyAgICAgICAgOzsNCj4gICAgICAgLS1hcmNoPSopDQo+ICAgICAgICAgICBlY2hv
+ID4mMiAiV0FSTklORzogVGhlIC0tYXJjaCBvcHRpb24gaXMgbm93IGRlcHJlY2F0ZWQuIFVzZSAt
+LWNmbGFncy4iDQo+ICAgICAgICAgICBvcHRfYXJjaD0ke2FyZyMtLWFyY2g9fQ0KPiBAQCAtMzQx
+LDYgKzM0Niw3IEBAIHNlZCAtZSAnDQo+ICAgICBzLEBMSUJESVJALCciJG9wdF9saWJkaXIiJyxn
+DQo+ICAgICBzLEBMSUJALCciJG9wdF9saWIiJyxnDQo+ICAgICBzLEBTVUZGSVhALCciJG9wdF9z
+dWZmaXgiJyxnDQo+ICsgIHMsQFRBUkdFVEAsJyIkb3B0X3RhcmdldCInLGcNCj4gICAgIHMsQFNR
+TElURUAsJyIkb3B0X3NxbGl0ZSInLGcNCj4gICAgIHMsQEFSQ0hfRkxBR1NALCciJGFyY2hfZmxh
+Z3MiJyxnDQo+ICAgICBzLEBERUZBVUxUX1NRTElURUAsJyIkZGVmYXVsdF9zcWxpdGUiJyxnDQo+
+IGRpZmYgLS1naXQgYS9tYWtld3JhcHBlcnMgYi9tYWtld3JhcHBlcnMNCj4gaW5kZXggMTk1MDhm
+YS4uN2NmMjg2MiAxMDA3NTUNCj4gLS0tIGEvbWFrZXdyYXBwZXJzDQo+ICsrKyBiL21ha2V3cmFw
+cGVycw0KPiBAQCAtMTUsNiArMTUsMTMgQEAgaW1wb3J0IHBsYXRmb3JtDQo+ICAgaW1wb3J0IHN1
+YnByb2Nlc3MNCj4gICBmcm9tIHRlbXBsYXRlZmlsZSBpbXBvcnQgVGVtcGxhdGVGaWxlDQo+ICAg
+DQo+ICsjIFNldCBmcm9tIC0tdGFyZ2V0PSwgZW1wdHkgbWVhbnMgdGhlIG1hY2hpbmUgcnVubmlu
+ZyB0aGlzIHNjcmlwdA0KPiArdGFyZ2V0X2FyY2ggPSAiIg0KPiArDQo+ICtkZWYgd3JhcHBlcl9h
+cmNoKCk6DQo+ICsgICAgIiIiQXJjaGl0ZWN0dXJlIHRoZSB3cmFwcGVycyBhcmUgYnVpbHQgZm9y
+OiB0aGUgLS10YXJnZXQgY3B1IG9yIHRoZSBidWlsZCBtYWNoaW5lLiIiIg0KPiArICAgIHJldHVy
+biB0YXJnZXRfYXJjaCBvciBwbGF0Zm9ybS5tYWNoaW5lKCkNCj4gKw0KPiAgIGNsYXNzIEFyZ3Vt
+ZW50TGlzdDoNCj4gICAgICAgIiIiQSAocG9zc2libHkgZW1wdHkpIGxpc3Qgb2YgYXJndW1lbnRz
+IiIiDQo+ICAgDQo+IEBAIC0zMTksMTEgKzMyNiwxMSBAQCBjbGFzcyBGdW5jdGlvbjoNCj4gICAg
+ICAgICAgICAgICAjIFN0cmlwIGFsbCBsZWFkaW5nL3RyYWlsaW5nIHdoaXRlc3BhY2UNCj4gICAg
+ICAgICAgICAgICBtb2RpZmllcnMgPSB7ay5zdHJpcCgpOnYuc3RyaXAoKSBmb3IgaywgdiBpbiBt
+b2RpZmllcnMuaXRlbXMoKX0NCj4gICANCj4gLSAgICAgICAgICAgIGFyY2ggPSAiLSIgKyBwbGF0
+Zm9ybS5tYWNoaW5lKCkNCj4gKyAgICAgICAgICAgIGFyY2ggPSAiLSIgKyB3cmFwcGVyX2FyY2go
+KQ0KPiAgICAgICAgICAgICAgICMgU29ydGVkIHNvIHRoYXQgdmVyc2lvbnMtZm9vIGFwcGVhciBh
+ZnRlciB2ZXJzaW9ucywgc28gb3ZlcnJpZGVzIGFyZSBlYXN5DQo+ICAgICAgICAgICAgICAgZm9y
+IGtleSBpbiBzb3J0ZWQobW9kaWZpZXJzKToNCj4gICAgICAgICAgICAgICAgICAgdmFsdWUgPSBt
+b2RpZmllcnNba2V5XS5yZXBsYWNlKCc8ZXF1YWxzPicsICc9PScpDQo+IC0gICAgICAgICAgICAg
+ICAgIyBJZiB0aGUga2V5IGlzIHZlcnNpb24tYXJtNjQgYW5kIHdlJ3JlIG9uIGFybTY0IHRoZW4g
+cmVuYW1lIHRoaXMgdG8gdmVyc2lvbg0KPiArICAgICAgICAgICAgICAgICMgSWYgdGhlIGtleSBp
+cyB2ZXJzaW9uLWFybTY0IGFuZCB3ZSdyZSBidWlsZGluZyBmb3IgYXJtNjQgdGhlbiByZW5hbWUg
+dGhpcyB0byB2ZXJzaW9uDQo+ICAgICAgICAgICAgICAgICAgIGlmIGtleS5lbmRzd2l0aChhcmNo
+KToNCj4gICAgICAgICAgICAgICAgICAgICAgIGtleSA9IGtleS5yZXBsYWNlKGFyY2gsICIiKQ0K
+PiAgICAgICAgICAgICAgICAgICBzZXRhdHRyKHNlbGYsIGtleSwgdmFsdWUpDQo+IEBAIC02Njks
+MTAgKzY3NiwxNSBAQCBkZWYgcHJvY2Vzc193cmFwZnVuY3MocG9ydCk6DQo+ICAgDQo+ICAgZGVm
+IG1haW4oYXJndik6DQo+ICAgICAgICIiIlJlYWQgaW4gZnVuY3Rpb24gZGVmaW5pdGlvbnMsIHdy
+aXRlIG91dCBmaWxlcyBiYXNlZCBvbiB0ZW1wbGF0ZXMuIiIiDQo+ICsgICAgZ2xvYmFsIHRhcmdl
+dF9hcmNoDQo+ICAgICAgIGZ1bmNzID0gW10NCj4gICAgICAgc291cmNlcyA9IFtdDQo+ICAgDQo+
+ICAgICAgIGZvciBhcmcgaW4gYXJndjoNCj4gKyAgICAgICAgaWYgYXJnLnN0YXJ0c3dpdGgoJy0t
+dGFyZ2V0PScpOg0KPiArICAgICAgICAgICAgIyBBIEdOVSB0cmlwbGV0IHN1Y2ggYXMgYWFyY2g2
+NC1wb2t5LWxpbnV4LCBvbmx5IHRoZSBjcHUgcGFydCBpcyB1c2VkDQo+ICsgICAgICAgICAgICB0
+YXJnZXRfYXJjaCA9IGFyZ1tsZW4oJy0tdGFyZ2V0PScpOl0uc3BsaXQoJy0nKVswXQ0KPiArICAg
+ICAgICAgICAgY29udGludWUNCj4gICAgICAgICAgIGlmICc9JyBub3QgaW4gYXJnOg0KPiAgICAg
+ICAgICAgICAgIHByaW50KCJJbnZhbGlkIGFyZ3VtZW50ICclcycsIG11c3QgYmUgb2YgdGhlIGZv
+cm0gbmFtZT12YWx1ZSIgJSBhcmcpDQo+ICAgICAgICAgICAgICAgZXhpdCgxKQ0KPiBAQCAtNzAy
+LDYgKzcxNCw3IEBAIGRlZiBtYWluKGFyZ3YpOg0KPiAgICAgICBwb3J0ID0gUG9ydCgnY29tbW9u
+Jywgc291cmNlcykNCj4gICANCj4gICAgICAgIyB0aGUgcGVyLWZ1bmN0aW9uIHN0dWZmDQo+ICsg
+ICAgcHJpbnQoIkFyY2hpdGVjdHVyZSBmb3Igd3JhcHBlciBtb2RpZmllcnM6ICVzIiAlIHdyYXBw
+ZXJfYXJjaCgpKQ0KPiAgICAgICBwcmludCgiV3JpdGluZyBmdW5jdGlvbnMuLi4iKQ0KPiAgICAg
+ICBhbGxfZnVuY3MgPSBwb3J0LmZ1bmN0aW9ucygpDQo+ICAgICAgIGZvciBuYW1lIGluIHNvcnRl
+ZChhbGxfZnVuY3Mua2V5cygpKToNCg0KDQo=
