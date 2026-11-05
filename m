@@ -1,161 +1,118 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.21569.1793831053526227088
+Received: from rcdn-iport-5.cisco.com (rcdn-iport-5.cisco.com [173.37.86.76])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.29018.1793862193573720461
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 04 Nov 2026 14:24:13 -0800
+ Wed, 04 Nov 2026 23:03:13 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=K0A8rH//;
- spf=pass (domain: gmail.com, ip: 209.85.221.180, mailfrom: twoerner@gmail.com)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5ead4026fe6so456527e0c.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 14:24:13 -0800 (PST)
+ dkim=fail reason="dkim: message contains an insecure body length tag" header.i=@cisco.com header.s=iport01 header.b=DdmOuvr1;
+ spf=pass (domain: cisco.com, ip: 173.37.86.76, mailfrom: dkelaiya@cisco.com)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793831052; x=1794435852; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=CSCDqca8OCv6saqwxifQaCmZK3nSvdaQ3kSOcyLO3h8=;
-        b=K0A8rH//b/jOYV+bmpmZmvoL5n/HhF6qrQqvIh71gx7+X6pk4zlR4o8HsMOEjY5uEv
-         3wmN1yZ5qrW9M8CdEspTvX1ySY4+SFWYVtJ9ZW7e9AHAT+a2H0p4we1vY8HgfE66iGpL
-         HoGRZTML52TjUSqFtqC3ipY7yis2OFQngdNTI5ANPJjYWwtu6/Jm5Pd/DZmbybpfleKL
-         gWzqqVWbrRyMF7fL0oL+8nuz/VJFrf+oMr7zjEgjXIzJQldTk2wY+XCt2Tu7jBo87Jou
-         fSgvNO8u9EVT6FQ2nmNuubD7kVhRWZCnowPbtshz40RygcL+dttp3F2QfyfO9qUGHbHj
-         gt0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793831052; x=1794435852;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CSCDqca8OCv6saqwxifQaCmZK3nSvdaQ3kSOcyLO3h8=;
-        b=R7sPNuO+BDUcZvnvic0xP13Qs2BbmDw2zL0IwIv3dKAtPn6sFXI7YdulCVqwaf8mhN
-         0JSZXb0JjJGufqWCYpHwZLbu4iWRMBGZJWkZjPu1FnHKKru4kJJcZZfKt4qWMNQ3S9mo
-         nTHG8lWqie8oWqQ1Ba4uaPUWeMzqvnx+PJCpaP9suX4mgJB/1uog1QUTmQhv7CGdIvSj
-         bHqXvgrldLsKPIOuOtSNTFn35ttX8c0mrQGih0ihs9+GCS1cl4QyU6ixzy8B3Nl02Pzr
-         XWMvWDUSbM6c2TI0/mZZ6KF/+XJNwH5I/abCqltS8Bk4jMul8BH8/m+CJuTh3pNlVvfz
-         +Z5w==
-X-Gm-Message-State: APuU4Z+eKZy7DmdO4vNS1dKSfUDXUzKljCO8nVgd4hggdZJYFPAaM1nr
-	uVqMmhglPDk7Q2VTCHWIRsb0IMftMEp6AYMum5+HxIpYYegGHJC8DQHH
-X-Gm-Gg: AYBFou0/3QAXYDRXCNzDgRLDA1aDSH4b4UaaozWaeKdmnpAaQmDdVaB65TY57lKHmdz
-	0zEG6rWkur+6xbmlP0xWQaXBolXVIZdOfMgjw7s8MoeM1vCV/b7yoovGeeqQWBU4vYL7ZmKxAAb
-	qKWipvJFJchEaRU91ypySVIHdbLtybEuOgLhKKhdpH6Op2oxQ0Rq72dAQNstlN7l/poru7F9scT
-	keR9bsmXzk48ranMVT2DOpIKrUw5SGPxRueNUdZHNOVhvHSE9Wl34KtUKlIMXE/c+hbp/hauWL4
-	l+4K/g9Q850QQ2mhnJN8BhdbwO2uerauV9yfeJprd4sm1vkTUdq/F4dGfX2D2R90IFtYsTzIZ5F
-	lTXIaULIIjLr+0CZfPcdG+k/popYVMH3kHgQ2xRc8vfZaDgXHfD5ArTv1fy3gk4XGqaWnR1dNvT
-	vECNNccjocbpxmzQGfNZBwQa6SHE4xIPleUNbNTqx93aC9Kct3hcJ5bz/fiA+n7T6hbnuvNP3E8
-	ihOHM2OYMy/iFjFTnNxuVh8aQcyX89urTUdewEgZ2D86FjUgnhQhyokXoAE1xJdvKCvCtXUWT40
-	5MIKB78maXLyrpxMEDsWfcL4ydPTGgbZWeRM95filGrwGXWSzbjiVIGGQFiGx1eepIRdH4PdnLR
-	fHRNR16rK9efdIEbAMnlRmzmm+BHrhQ==
-X-Received: by 2002:a05:6122:1795:b0:5e9:6d96:aa38 with SMTP id 71dfb90a1353d-5ec6883a598mr7596394e0c.9.1793831052303;
-        Wed, 04 Nov 2026 14:24:12 -0800 (PST)
-Return-Path: <twoerner@gmail.com>
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5eca8dbb17bsm2741537e0c.11.2026.11.04.14.24.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 14:24:11 -0800 (PST)
-Date: Wed, 4 Nov 2026 17:24:09 -0500
-From: Trevor Woerner <twoerner@gmail.com>
-To: Andrea Ricchi <andrea.ricchi@amarulasolutions.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH v2] kernel: restore options the 32-bit
- arch removal drops
-Message-ID: <auuwicmJxjEY0QS7@localhost.localdomain>
-References: <20261104130230.236614-1-andrea.ricchi@amarulasolutions.com>
+  d=cisco.com; i=@cisco.com; l=1776; q=dns/txt;
+  s=iport01; t=1793862193; x=1795071793;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=eztZUn7ktebkr+cav8vHsiT0hbz8WGnV3I+T2e2R7Vk=;
+  b=DdmOuvr1oq/AjGixmY04DaIgX1ItZ5alwyy0ePCFcNeY78+FEYuNuGg7
+   1ostTsGfg2dISFnrQjF5RZZszbnMtD2KzRmLLHBiCM8NpAptEUSbmcGj/
+   GTlWw8jGYbTsIHIJazh3sPuVMXxaqeZv7D+Xn+MEjuEx/+GcF+SpxExMF
+   tK7/H47VU04LcTrBAFqJ2RtIFvVR2itUmNzpcNGJwEFR4jt47qaXgwCP0
+   UDn0X7UOH6Gc5tUi24XNL1Aqxh/ZegqJbMA429tWjXnYU4v3iRJIQvI4w
+   JO6IyzND2GNZfcn7tBjjVIjcCSVUY6apG2+guFxFAMp5xRcfCmxOOgTSZ
+   Q==;
+X-CSE-ConnectionGUID: iqlDHLxhQW+mvN/MD5ZpWg==
+X-CSE-MsgGUID: +uKlf69RS9SfnnjbDc416w==
+X-IPAS-Result: =?us-ascii?q?A0BGAgDEKOxq/4v/Ja1aglmCV3VgQ0kDlkgDniGBfg8BA?=
+ =?us-ascii?q?QEPSgcEAQGEP0YCjh0CJjQJDgECBAMCAwEBAQEBAQEBAQEBAQoBAQUBAQECA?=
+ =?us-ascii?q?QcFgQ4Thk8NkBMCAQMyATQSECAmCysrGYMCAYJ0AxEGvDGCLIEB4DEBBQYUA?=
+ =?us-ascii?q?YE4hUCII3aEfScbG4FyhH6BBYFcAQEBARiCE4V5BIINFYEMhH+Jc4hFSIEeA?=
+ =?us-ascii?q?1ksAVUTDQoLBwWBaAM1EioVbjIdgSM+F4EHGwYFgR2BHoESgQddgSsoXQEhg?=
+ =?us-ascii?q?QiBdgKCUYIAAgFJQQ4HRVMJJUMSRyQiCBIJARMaLAqBGjU8CSY/FQxkCxoFY?=
+ =?us-ascii?q?QgCDQxyORAwHiQvBRwmQBsKGBgNSBEsNxUZBD5uB5IvgxGBDioCBByBXS8Pp?=
+ =?us-ascii?q?WeeS4JGCiiDeIwklToaM6pxmQiOCpZRhGmBaDyBWXAVgyISQRkPjjkng0SFE?=
+ =?us-ascii?q?8k+JjICCQMvAQEHAgcOAwuBaJF+AQE?=
+IronPort-Data: A9a23:ztM//qg1qiUlNprvrcCxEymZX161NREKZh0ujC45NGQN5FlHY01je
+ htvX2iAP/7cajehctx0PIW//UoD65OGndE1GQptrng0ES5jpJueD7x1DKtf0wB+jyHnZBg6h
+ ynLQoCYdKjYdleF+FHwdOCn8ikkvU2xbuKUIPbePSxsThNTRi4kiBZy88Y0mYcAbeKRW2thg
+ vus5ZeAULOZ82QsaDxNsvrf8EkHUMna4Vv0gHRvPZing3eG/5UlJMp3Db28KXL+Xr5VEoaSL
+ 87fzKu093/u5BwkDNWoiN7TKiXmlZaLYGBiIlIPM0STqkAqSh4ai87XB9JAAatjsAhlqvgqo
+ Dl7WTNcfi9yVkHEsLx1vxC1iEiSN4UekFPMCSDXXcB+UyQqflO0q8iCAn3aMqUZ4+JbIUVe9
+ cUnazUTSFemq7+E2I20H7wEasQLdKEHPasFsX1miDWcBvE8TNWbGePB5MRT23E7gcUm8fT2P
+ pVCL2EwKk6dPlsWYQZ/5JEWxI9EglHzcDBcoVOErII84nPYy0p6172F3N/9J4DWFZwOwxnGz
+ o7A1yfkIRUUao2l8mu+/HSqhOXjln+iBp1HQdVU8dYv2jV/3Fc7GRodSVz+ufClgU6zQPpbK
+ lcI4Ww/qqMu81SxSdvwVAH+p2SL1iPwQPJKGOE8rQXIwa3O7kPBXC4PTyVKb5ots8peqSEW6
+ 2JlVujBXVRH2IB5g1rEnltIhVte4RQoEFI=
+IronPort-HdrOrdr: A9a23:6czTF6A6hzxSOxLlHemO55DYdb4zR+YMi2TDGXofdfUzSL3+qy
+ nAppUmPHPP5Qr5HUtQ++xoW5PwJU80i6QU3WB5B97LN2PbUSmTXeRfBODZrQEIdReTygck79
+ YCT4FOTPvtEFN9kcH2pCO8E9om3Z271ZrAv5a585+oJjsaE52JKGxCe3+mLnE=
+X-Talos-CUID: 9a23:xDRVEG7D64HFGB3twdss9VcQNuABYn3k8zTVPWn/LEo0eqWqRgrF
+X-Talos-MUID: 9a23:7k8BhQtkLd678rSdNs2nxyxBMMk2sp6VWXsDl5MEseWPaXUuJGLI
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.27,196,1787011200"; 
+   d="scan'208";a="544813576"
+Received: from rcdn-l-core-02.cisco.com ([173.37.255.139])
+  by rcdn-iport-5.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 05 Nov 2026 07:03:12 +0000
+Received: from sjc-ads-5675.cisco.com (sjc-ads-5675.cisco.com [10.28.88.189])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by rcdn-l-core-02.cisco.com (Postfix) with ESMTPS id 9314D18000206;
+	Thu,  5 Nov 2026 07:03:12 +0000 (GMT)
+Received: by sjc-ads-5675.cisco.com (Postfix, from userid 1887444)
+	id 3CAE3CBF201; Wed,  4 Nov 2026 23:03:12 -0800 (PST)
+From: "Darsh Kelaiya -X (dkelaiya - E INFOCHIPS PRIVATE LIMITED at Cisco)" <dkelaiya@cisco.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Darsh Kelaiya <dkelaiya@cisco.com>
+Subject: [yocto-patches][meta-selinux][wrynose][PATCH 2/2] selinux: ignore CVE-2026-59677 in components excluding seunshare
+Date: Wed,  4 Nov 2026 23:03:09 -0800
+Message-Id: <20261105070309.834959-2-dkelaiya@cisco.com>
+X-Mailer: git-send-email 2.35.6
+In-Reply-To: <20261105070309.834959-1-dkelaiya@cisco.com>
+References: <20261105070309.834959-1-dkelaiya@cisco.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261104130230.236614-1-andrea.ricchi@amarulasolutions.com>
+Content-Transfer-Encoding: 8bit
+X-Outbound-Client-TLS: ANONYMOUS;sjc-ads-5675.cisco.com [10.28.88.189];TLSv1.3;TLS_AES_256_GCM_SHA384;256
+X-Outbound-SMTP-Client: 10.28.88.189, sjc-ads-5675.cisco.com
+X-Outbound-Node: rcdn-l-core-02.cisco.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 04 Nov 2026 22:24:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5237
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 05 Nov 2026 07:03:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5238
+Content-Type: text/plain; charset="utf-8"
 
-Hi Andrea,
+From: Darsh Kelaiya <dkelaiya@cisco.com>
 
-On Wed 2026-11-04 @ 02:02:29 PM, Andrea Ricchi wrote:
-> multi_v7_defconfig does not list several options the Rockchip boards
-> rely on; it gets them through "select" from platforms that
-> remove-non-rockchip-arch-arm.cfg switches off (ARCH_OMAP2PLUS,
-> ARCH_VEXPRESS, ARCH_VIRT, ARCH_U8500, ...). Removing those platforms
-> therefore also removes:
-> 
->   REGULATOR_FIXED_VOLTAGE   parent supply of the PMIC regulators
->   VFP, VFPv3, NEON, KERNEL_MODE_NEON
->   ARM_PSCI                  HAVE_ARM_SMCCC_DISCOVERY, which
->                             ROCKCHIP_PM_DOMAINS depends on
->   ROCKCHIP_PM_DOMAINS
->   HIGHMEM
->   REALTEK_PHY
->   USB_EHCI_HCD_PLATFORM, USB_OHCI_HCD_PLATFORM
-> 
-> On tinker-board-s with linux-yocto 6.18 the kernel stops at "Waiting
-> for root device": the RK808 regulators have no parent supply, so the
-> SD host never gets vmmc. With the root mounted, every hard-float
-> binary would fail and the VOPs would never probe for lack of power
-> domains.
-> 
-> Add the options back in a fragment pulled in by the same scc, so the
-> removal no longer takes them along. Found by diffing the expanded
-> multi_v7_defconfig against the built .config.
+Analysis:
+- CVE-2026-59677 affects the privileged --kill path in seunshare;
+  upstream removes its killall() helper to fix the issue [1, 2].
+- SELinux components share a broad CVE product mapping through
+  selinux_common.inc [3]. Only selinux-sandbox builds seunshare.
+- Set not-applicable-config once in the shared include for the
+  components that exclude seunshare, including native variants.
+- For BPN selinux-sandbox, remove this status flag after parsing
+  so CVE reporting detects the source patch carried by its recipe.
 
-Out of curiosity, is this happening with or without the patch I recently
-sent for review?
+Reference:
+[1] https://security.opensuse.org/2026/07/15/selinux-seunshare.html
+[2] https://github.com/SELinuxProject/selinux/commit/572db2fae9157ae620160e0d7b2c3f8b75fe6c1a
+[3] https://git.yoctoproject.org/meta-selinux/tree/recipes-security/selinux/selinux_common.inc?id=1c3a699f363167571ab39fecb0fe6f56691a4e20
 
-https://lists.yoctoproject.org/g/yocto-patches/topic/meta_rockchip_patch_v1/122073724
+Signed-off-by: Darsh Kelaiya <dkelaiya@cisco.com>
+---
+ recipes-security/selinux/selinux_common.inc | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I don't expect the above patch to fix this if it was happening before,
-but I'm curious if it only started after trying the above patch (if you
-have tried both with and without it).
-
-> Signed-off-by: Andrea Ricchi <andrea.ricchi@amarulasolutions.com>
-> ---
-> v2: add the layer tag to the subject, the patch itself is unchanged.
-
-Thanks for adding the "meta-rockchip", that's how I filter (and notice)
-them.
-
-> 
->  .../rockchip/remove-non-rockchip-arch-arm.scc |  1 +
->  .../rockchip/restore-arm-selected-options.cfg | 26 +++++++++++++++++++
->  2 files changed, 27 insertions(+)
->  create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
-> 
-> diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-> index ce77704..da5c12e 100644
-> --- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-> +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-> @@ -1 +1,2 @@
->  kconf hardware remove-non-rockchip-arch-arm.cfg
-> +kconf hardware restore-arm-selected-options.cfg
-> diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
-> new file mode 100644
-> index 0000000..ababaf6
-> --- /dev/null
-> +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
-> @@ -0,0 +1,26 @@
-> +# multi_v7_defconfig does not list these options; it gets them through
-> +# "select" from platforms that remove-non-rockchip-arch-arm.cfg switches
-> +# off (ARCH_OMAP2PLUS, ARCH_VEXPRESS, ARCH_VIRT, ARCH_U8500, ...). Set them
-> +# explicitly so removing those platforms does not remove them too.
-> +
-> +# regulator-fixed: parent supply of the PMIC regulators on most boards
-> +CONFIG_REGULATOR_FIXED_VOLTAGE=y
-> +
-> +# hard-float userspace
-> +CONFIG_VFP=y
-> +CONFIG_VFPv3=y
-> +CONFIG_NEON=y
-> +CONFIG_KERNEL_MODE_NEON=y
-> +
-> +# ROCKCHIP_PM_DOMAINS depends on HAVE_ARM_SMCCC_DISCOVERY, provided by
-> +# ARM_PSCI; without the power domains the VOPs, HDMI and IOMMUs never probe
-> +CONFIG_ARM_PSCI=y
-> +CONFIG_ROCKCHIP_PM_DOMAINS=y
-> +
-> +# boards with more than 768 MB
-> +CONFIG_HIGHMEM=y
-> +
-> +# Realtek PHYs on most boards, generic-ehci/generic-ohci in rk3288.dtsi
-> +CONFIG_REALTEK_PHY=y
-> +CONFIG_USB_EHCI_HCD_PLATFORM=y
-> +CONFIG_USB_OHCI_HCD_PLATFORM=y
-> -- 
-> 2.53.0
-> 
+diff --git a/recipes-security/selinux/selinux_common.inc b/recipes-security/selinux/selinux_common.inc
+index bf7aa78..e434853 100644
+--- a/recipes-security/selinux/selinux_common.inc
++++ b/recipes-security/selinux/selinux_common.inc
+@@ -23,8 +23,10 @@ do_install() {
+ CVE_PRODUCT ?= "selinux_project:selinux"
+ 
+ CVE_STATUS[CVE-2026-59676] = "not-applicable-config: The vulnerable seunshare utility is built by selinux-sandbox."
++CVE_STATUS[CVE-2026-59677] = "not-applicable-config: The vulnerable seunshare utility is built by selinux-sandbox."
+ 
+ python __anonymous() {
+     if d.getVar("BPN") == "selinux-sandbox":
+         d.delVarFlag("CVE_STATUS", "CVE-2026-59676")
++        d.delVarFlag("CVE_STATUS", "CVE-2026-59677")
+ }
+-- 
+2.35.6
