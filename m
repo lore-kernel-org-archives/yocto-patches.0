@@ -1,197 +1,130 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5590.1793910295990408947
+Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.12300.1793932700628563294
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 05 Nov 2026 12:24:56 -0800
+ Thu, 05 Nov 2026 18:38:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=SGcZ9Fql;
- spf=pass (domain: konsulko.com, ip: 209.85.160.181, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-5364042eecfso31552291cf.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 05 Nov 2026 12:24:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1793910295; x=1794515095; darn=lists.yoctoproject.org;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=W3FeU2w+ZY6w6kqH8J4yp3alCUXbQLnKOeoHHB6qsWY=;
-        b=SGcZ9Fql/YBur66KRk4Szy044Zg/fkDdh330apZQsM4KqIf4hq9OscLec/SiiYpP7z
-         jzvsaoLK3uRBPXvGC8ZKubblHLU1Gcb6k9yfWRnnrQ0BCBKdvwWZ9qNwVhE44Svydm4i
-         lY5E4ayj0syr/2JVN7o44QsGEv3/M3zzqwoAQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793910295; x=1794515095;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=W3FeU2w+ZY6w6kqH8J4yp3alCUXbQLnKOeoHHB6qsWY=;
-        b=YD7Mimq6iQStwvj2xAqMTgDuLyd44qheACUbGyek3Rx8Fn97lRDHZ0Zoh5eWbaDIjZ
-         hSOxD+Z2n5SaAXCYUdxTnbsozvJxel4gY6L2hE81Ab1wQ6e1vWDk5zIpZDUultVGHDWg
-         S69rkgxgnjhEzzi20UbMmYxilsNKPgDEWeF5dDcQ7rlCYzjyDVIFln1JiGj6osOvDaMA
-         PDGOvujLQUgqgejax5Vpa7b5JMIT17bTgbjCZ3j3BGVq5WQN6qxlRWTMgrsIVFMpAlJC
-         3jSxF7IIJRad1LjnSQ3YfZ6p7/+azgDGGXXs7ZMNHnjdqEVYoLUJLLEVp+Pvwsx/INwK
-         2PsQ==
-X-Gm-Message-State: APuU4Z/YBI/e4mXyrAR0i6ClNAWCqJO5mkInnXJZ4MjB5+ppB2fI0W4W
-	GATZeF/+p1Z9SRExaCgLvYS+dsvG6yl2inHmVipxBRHaBgZT9hoJ0ZaNUA+B0AKIWWJDy7zLWpd
-	qboSbyTo=
-X-Gm-Gg: AYBFou2zvH22F9UJp6VYAgamaib8d+/DIIFnn55Vl8cl5LW1tTbG5rJ0y4kYFEg9VHe
-	8TmzFkTw4+jD8jQhxd2nnvJIc0eGmTYXShZjzFkmPTY39BV/P+/0UftfSZpTk7Oncc/ct9hKoEN
-	UURpzJbfOcCXBunJVcEQzMzP5ZhH7ZbhxhttxGpyEFE9Ny0Gsdq02XmvMQh5IVvJQcYhLKIcG62
-	T2zrDZjOk10H4g/svdmLAIIrHKPIz9/bkpHezmzFYHDdjs0U08Vz4/VrH//OepcjwdH0KLs3zvu
-	Dz3sIBhoSmOyt0GjrYbVcPqnlS9V+wP3+hbBh3xFNvOdv2qs7CUjBFVvgakZJ6WboMQMp4/Ysei
-	IseebuhiB0ZROsY8fmBSyfoQFU3IWXUbozwjTRWE+O+VLdb/bg5C9G5UNfkfH6614+f9xcaY/pT
-	nWSRmbhuTYXzMGCfhqXIqWXJQj2oJAcMF0sfbtup7AAwtlg7wSJVtSMs8nxKQ7ARmrsIsAmWtm2
-	BlfJOCxVRStIw4HkJjUlMghInPCWNE9o+5LZQ7doUifEHkgjPHlqwoEjDEflR0UnN3x81NzY1Ns
-	OpBFGUG9vIGRYAt7r054MJbC+zZeacwc/TL7RnxSyN4f++Li0i1zTwpwfGbXuOTMBdtMWW+jhfn
-	X3DIN1kTEuHspOwTXUoRd6xsENhBDgKEATJeaAjHuJS92sTvL+vVG+fQ=
-X-Received: by 2002:a05:622a:5289:b0:537:5488:de83 with SMTP id d75a77b69052e-54e14e6eff1mr6594121cf.54.1793910294575;
-        Thu, 05 Nov 2026 12:24:54 -0800 (PST)
-Return-Path: <scott.murray@konsulko.com>
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-54e1ff8d0e2sm2445721cf.0.2026.11.05.12.24.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 12:24:54 -0800 (PST)
-Date: Thu, 5 Nov 2026 15:24:53 -0500 (EST)
-From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-cc: ricardo.salveti@oss.qualcomm.com
-Subject: Re: [yocto-patches] [meta-security][PATCH] tpm2-openssl: Fix build
- with OpenSSL 4.1
-In-Reply-To: <20261104184329.3927007-1-ricardo.salveti@oss.qualcomm.com>
-Message-ID: <39dad749-846c-5008-d08d-8a91da81ec19@konsulko.com>
-References: <20261104184329.3927007-1-ricardo.salveti@oss.qualcomm.com>
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [123.125.172.206])
+	by mtasvr (Coremail) with SMTP id _____wC3StUjPe1q74cDAA--.14010S3;
+	Fri, 06 Nov 2026 10:36:19 +0800 (CST)
+Received: from [192.168.31.243] (unknown [123.125.172.206])
+	by front01 (Coremail) with SMTP id C6CowADneWrLPO1qw8MtAA--.53598S3;
+	Fri, 06 Nov 2026 10:34:56 +0800 (CST)
+Message-ID: <1dddd59c-3c1d-4461-9828-392385b9e746@cetc.com.cn>
+Date: Fri, 6 Nov 2026 10:38:08 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches][meta-selinux][wrynose][PATCH 1/2]
+ selinux-sandbox: fix CVE-2026-59676
+To: yocto-patches@lists.yoctoproject.org
+Cc: Darsh Kelaiya <dkelaiya@cisco.com>
+References: <20261105070617.839020-1-dkelaiya@cisco.com>
+Content-Language: en-US
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
+In-Reply-To: <20261105070617.839020-1-dkelaiya@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: C6CowADneWrLPO1qw8MtAA--.53598S3
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYDCmrshhUL4wAAsw
+X-CM-DELIVERINFO: =?B?QV1Wa6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
+	PoOIpW4/8Z0l7A1TJMY5S9w3q04JsFKj1OJYWOmvApiuhzT6dEgh9B12DWQiFPLsq+2Oap
+	lVkZ9aJFLpojPk8zcjaLKWIs9QtIqyraOmA/GD2SC/PswAQhh0G5KyOTr6cN9w==
+X-Coremail-Antispam: 1Uk129KBj93XoWxXw1xAr4xur15Ar45Aw48Xwc_yoW5ur4DpF
+	W5Ga13GrZ7GFs3urn7WF12vF4UXw4ru347WFZ8WrW5XFyakFykXas5Kry3CrW3XF95GayU
+	A3WUZr95K34UAFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GrUv73VFW2AG
+	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYF7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
+	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUGVWUXwA2ocxC64kIII0Yj41l
+	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
+	x4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	GVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC2
+	0s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI
+	0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv2
+	0xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2js
+	IE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZE
+	Xa7IU8UDG5UUUUU==
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 05 Nov 2026 20:24:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5244
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Nov 2026 02:38:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5245
 
-On Wed, 4 Nov 2026, Ricardo Salveti via yocto-patches wrote:
+Both merged.
 
-> OpenSSL 4.1.0 deprecates ASN1_STRING_set() and ASN1_STRING_length(),
-> and its pem.h macros now call ERR_raise() without including err.h, so
-> tpm2-provider-pkey.c fails to build with -Werror:
+Regards,
+Qi
+
+On 11/5/26 15:06, Darsh Kelaiya -X (dkelaiya - E INFOCHIPS PRIVATE 
+LIMITED at Cisco) via yocto-patches wrote:
+> From: Darsh Kelaiya <dkelaiya@cisco.com>
 >
->   src/tpm2-provider-pkey.c:32:1: error: implicit declaration of function 'ERR_raise'
->   src/tpm2-provider-pkey.c:84:5: error: 'ASN1_STRING_set' is deprecated: Since OpenSSL 4.1
+> This patch applies the upstream fix as referenced in [2],
+> using the commit shown in [1].
 >
-> Backport the upstream fix.
+> The 3.10 rm_rf() implementation follows symlinks after checking
+> directory entries, allowing a setuid seunshare caller to remove
+> root-owned files. Add O_NOFOLLOW to its recursive openat() call.
 >
-> Signed-off-by: Ricardo Salveti <ricardo.salveti@oss.qualcomm.com>
-
-I merged a previously contributed fix for this yesterday, please pull
-master branch and try it.
-
-Thanks,
-
-Scott
-
-
+> [1] https://github.com/SELinuxProject/selinux/commit/38f0a4d9a683f2cd2472d4502842df5d5b8255a8
+> [2] https://security.opensuse.org/2026/07/15/selinux-seunshare.html
+>
+> Signed-off-by: Darsh Kelaiya <dkelaiya@cisco.com>
 > ---
->  ...key-fix-compilation-with-OpenSSL-4.1.patch | 86 +++++++++++++++++++
->  .../tpm2-openssl/tpm2-openssl_1.3.0.bb        |  1 +
->  2 files changed, 87 insertions(+)
->  create mode 100644 meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0002-pkey-fix-compilation-with-OpenSSL-4.1.patch
+>   .../selinux-sandbox/CVE-2026-59676.patch      | 33 +++++++++++++++++++
+>   .../selinux/selinux-sandbox_3.10.bb           |  1 +
+>   2 files changed, 34 insertions(+)
+>   create mode 100644 recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch
 >
-> diff --git a/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0002-pkey-fix-compilation-with-OpenSSL-4.1.patch b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0002-pkey-fix-compilation-with-OpenSSL-4.1.patch
+> diff --git a/recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch b/recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch
 > new file mode 100644
-> index 0000000..0b482b1
+> index 0000000..1356381
 > --- /dev/null
-> +++ b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0002-pkey-fix-compilation-with-OpenSSL-4.1.patch
-> @@ -0,0 +1,86 @@
-> +From 9cc4cbe25702fc95c536dfb6723ae454e0039faf Mon Sep 17 00:00:00 2001
-> +From: Moritz Buhl <moritz.buhl@infineon.com>
-> +Date: Tue, 1 Sep 2026 09:58:28 +0200
-> +Subject: [PATCH] pkey: fix compilation with OpenSSL 4.1
+> +++ b/recipes-security/selinux/selinux-sandbox/CVE-2026-59676.patch
+> @@ -0,0 +1,33 @@
+> +From 38f0a4d9a683f2cd2472d4502842df5d5b8255a8 Mon Sep 17 00:00:00 2001
+> +From: Stephen Smalley <stephen.smalley.work@gmail.com>
+> +Date: Tue, 12 May 2026 14:34:02 -0400
+> +Subject: [PATCH] sandbox/seunshare: pass O_NOFOLLOW to openat()
 > +
-> +Avoid deprecated OpenSSL functions, add fallback defines for older
-> +versions:
-> +src/tpm2-provider-pkey.c:91:5: error: 'ASN1_STRING_set' is deprecated:
-> +Since OpenSSL 4.1; use ASN1_STRING_set1_data() or ASN1_STRING_set1_string()
-> +[-Werror,-Wdeprecated-declarations]
-> +src/tpm2-provider-pkey.c:165:41: error: 'ASN1_STRING_length' is deprecated:
-> +Since OpenSSL 4.1; use ASN1_STRING_get_length()
-> +[-Werror,-Wdeprecated-declarations]
+> +We do not want to follow symlinks here.
 > +
-> +Add missing header:
-> +src/tpm2-provider-pkey.c:32:1: error: call to undeclared function 'ERR_raise';
-> +ISO C99 and later do not support implicit function declarations
-> +[-Wimplicit-function-declaration]
+> +CVE: CVE-2026-59676
+> +Upstream-Status: Backport [https://github.com/SELinuxProject/selinux/commit/38f0a4d9a683f2cd2472d4502842df5d5b8255a8]
 > +
-> +Upstream-Status: Backport [https://github.com/tpm2-software/tpm2-openssl/commit/9cc4cbe25702fc95c536dfb6723ae454e0039faf]
-> +Signed-off-by: Moritz Buhl <moritz.buhl@infineon.com>
-> +Signed-off-by: Ricardo Salveti <ricardo.salveti@oss.qualcomm.com>
+> +Acked-by: James Carter <jwcart2@gmail.com>
+> +Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> +(cherry picked from commit 38f0a4d9a683f2cd2472d4502842df5d5b8255a8)
+> +Signed-off-by: Darsh Kelaiya <dkelaiya@cisco.com>
 > +---
-> + src/tpm2-provider-pkey.c | 22 ++++++++++++++++------
-> + 1 file changed, 16 insertions(+), 6 deletions(-)
+> + sandbox/seunshare.c | 2 +-
+> + 1 file changed, 1 insertion(+), 1 deletion(-)
 > +
-> +diff --git a/src/tpm2-provider-pkey.c b/src/tpm2-provider-pkey.c
-> +index 80213af..bb56ba7 100644
-> +--- a/src/tpm2-provider-pkey.c
-> ++++ b/src/tpm2-provider-pkey.c
-> +@@ -2,6 +2,8 @@
+> +diff --git a/sandbox/seunshare.c b/sandbox/seunshare.c
+> +index e89a9fec..a1900eaa 100644
+> +--- a/sandbox/seunshare.c
+> ++++ b/sandbox/seunshare.c
+> +@@ -428,7 +428,7 @@ static bool rm_rf(int targetfd, const char *path) {
+> + 	}
 > +
-> + #include <string.h>
-> +
-> ++#include <openssl/err.h>
-> ++#include <openssl/opensslv.h>
-> + #include <openssl/pem.h>
-> + #include <openssl/rand.h>
-> +
-> +@@ -9,6 +11,14 @@
-> +
-> + #include "tpm2-provider-pkey.h"
-> +
-> ++#if OPENSSL_VERSION_NUMBER >= 0x40100000
-> ++#define TPM2_ASN1_STRING_get_length(x)		ASN1_STRING_get_length(x)
-> ++#define TPM2_ASN1_STRING_set1_data(s, d, l)	ASN1_STRING_set1_data(s, d, l)
-> ++#else
-> ++#define TPM2_ASN1_STRING_get_length(x)		ASN1_STRING_length(x)
-> ++#define TPM2_ASN1_STRING_set1_data(s, d, l)	ASN1_STRING_set(s, d, l)
-> ++#endif
-> ++
-> + typedef struct {
-> +     ASN1_OBJECT *type;
-> +     ASN1_BOOLEAN emptyAuth;
-> +@@ -81,8 +91,8 @@ tpm2_keydata_write(const TPM2_KEYDATA *keydata, BIO *bout, TPM2_PKEY_FORMAT form
-> +     else
-> +         ASN1_INTEGER_set_uint64(tpk->parent, TPM2_RH_OWNER);
-> +
-> +-    ASN1_STRING_set(tpk->privkey, &privbuf[0], privbuf_len);
-> +-    ASN1_STRING_set(tpk->pubkey, &pubbuf[0], pubbuf_len);
-> ++    TPM2_ASN1_STRING_set1_data(tpk->privkey, &privbuf[0], privbuf_len);
-> ++    TPM2_ASN1_STRING_set1_data(tpk->pubkey, &pubbuf[0], pubbuf_len);
-> +
-> +     switch (format) {
-> +     case KEY_FORMAT_PEM:
-> +@@ -150,13 +160,13 @@ tpm2_keydata_read(BIO *bin, TPM2_KEYDATA *keydata, TPM2_PKEY_FORMAT format)
-> +         goto error;
-> +
-> +     if (Tss2_MU_TPM2B_PRIVATE_Unmarshal(ASN1_STRING_get0_data(tpk->privkey),
-> +-                                        ASN1_STRING_length(tpk->privkey), NULL,
-> +-                                        &keydata->priv))
-> ++                                        TPM2_ASN1_STRING_get_length(tpk->privkey),
-> ++                                        NULL, &keydata->priv))
-> +         goto error;
-> +
-> +     if (Tss2_MU_TPM2B_PUBLIC_Unmarshal(ASN1_STRING_get0_data(tpk->pubkey),
-> +-                                       ASN1_STRING_length(tpk->pubkey), NULL,
-> +-                                       &keydata->pub))
-> ++                                       TPM2_ASN1_STRING_get_length(tpk->pubkey),
-> ++                                       NULL, &keydata->pub))
-> +         goto error;
-> +
-> +     TSSPRIVKEY_free(tpk);
+> + 	if (S_ISDIR(statbuf.st_mode)) {
+> +-		const int newfd = openat(targetfd, path, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+> ++		const int newfd = openat(targetfd, path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+> + 		if (newfd < 0) {
+> + 			perror("openat");
+> + 			return false;
 > +--
-> +2.43.0
-> +
-> diff --git a/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb
-> index 07feb00..fdef883 100644
-> --- a/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb
-> +++ b/meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl_1.3.0.bb
-> @@ -7,6 +7,7 @@ DEPENDS = "autoconf-archive-native tpm2-tss openssl"
->
->  SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz \
->             file://0001-Fix-ASN1_OCTET_STRING-and-X509_NAME-access-for-OpenS.patch \
-> +           file://0002-pkey-fix-compilation-with-OpenSSL-4.1.patch \
->             "
->
->  SRC_URI[sha256sum] = "9a9aca55d4265ec501bcf9c56d21d6ca18dba902553f21c888fe725b42ea9964"
->
+> +2.35.6
+> diff --git a/recipes-security/selinux/selinux-sandbox_3.10.bb b/recipes-security/selinux/selinux-sandbox_3.10.bb
+> index d29cd88..f8ffd36 100644
+> --- a/recipes-security/selinux/selinux-sandbox_3.10.bb
+> +++ b/recipes-security/selinux/selinux-sandbox_3.10.bb
+> @@ -10,6 +10,7 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=393a5ca445f6965873eca0259a17f833"
+>   require selinux_common.inc
+>   
+>   SRC_URI += "file://sandbox-de-bashify.patch;patchdir=.. \
+> +            file://CVE-2026-59676.patch;patchdir=.. \
+>              "
+>   
+>   S = "${UNPACKDIR}/${BP}/sandbox"
+
