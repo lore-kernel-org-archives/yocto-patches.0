@@ -1,337 +1,182 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4866.1794034330296371379
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6293.1794232228886927883
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 06 Nov 2026 22:52:11 -0800
+ Mon, 09 Nov 2026 05:50:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wDHStwhyu5q_UYEAA--.20601S3;
-	Sat, 07 Nov 2026 14:50:10 +0800 (CST)
-Received: from chenqi-Redmi.. (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowABn+WnMye5q+ZouAA--.56892S2;
-	Sat, 07 Nov 2026 14:48:45 +0800 (CST)
-From: chenqi_hycx@cetc.com.cn
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=rGad7aEb;
+ spf=pass (domain: gmail.com, ip: 209.85.218.42, mailfrom: patrick.oetken@gmail.com)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c40f29667e6so131414066b.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Nov 2026 05:50:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794232227; x=1794837027; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7cT9uFVe5qDX5CnnnAo2XyYmoUsdffk7c6QpHK/+U0A=;
+        b=rGad7aEbP4NjiJWfXy2yFjwS4xCc28dLhgmCsI99H/Sw1d4gq9U3vIGucowdGxb9KI
+         6ZM/W6EaylCPoy5pTWC7oHpfmR/1N5FAUYskB7uN/LvrgvxfHmvhyMqIlkPWCqhv8VFQ
+         l8R8qkuRjvuDjubqoe3jWxnOfyQjcIppOWjDWbaryoINO7u3BbXg/DJgco+nSBJZDf7+
+         UMwloVoma+jMufDJGDGw4pVCw2LonOniQusOQEmiriUwglb7JWppeTvGwIEJxWvCqGBm
+         MtL5ElQX9ZwskAw3FHG0By1lLl6Ntc5VTw1lXj4QVGNZGi5w39SqhmkaolNN2hy2nlWi
+         /voA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794232227; x=1794837027;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=7cT9uFVe5qDX5CnnnAo2XyYmoUsdffk7c6QpHK/+U0A=;
+        b=W1J8Re18Z3EgVZlGgHGwfvFqGU4JDN7zskd9aALTYgcwUmz7LE12spmJMgqrk+OrwW
+         P2YZK2njQQFepuhPC+q0YvX1VbNQwqezfVVAQLMR6XeSJ/X5ocg9h8pgyox2SLk3nq3I
+         6gE09QuUMuZTK7wau6LoXzOLdWJYMPGE7Qxg+RuBEZaaQP6N/NDs9H55ilRXL+QTnzyG
+         N1v2BUutl1VjanDD+6yjtiMJGdYw5xu4SxIxe5ovSYuoHRlGbVZa1IUNaUKByLvEBfHv
+         87YqK6UzpQRtQFTgHqDamP1iOflQFUp8cWx6dtoHmjRIKu16GYgYBRdkkvHO8vH/Lpcz
+         EsPQ==
+X-Gm-Message-State: APuU4Z+fXlBOW3psyZcKAdJdaY0RTxJlF3O7qmY21rvPszywvWd+SpmW
+	68+NFV2aNvv6iG44lS655Vs0UuGk90bqfQCPTcPjdWEw7O/ewtVtK/l+eXEH4+Wz
+X-Gm-Gg: AYBFou2MRjt+OPfL69pxWQAgOdK9C6HAZnux0jTvMH8Gy7ZzPvyUKdGYQd8SphuYiv7
+	BrTDntGxGkcGK4iAlKN7sggYdx3Pk3wgrl0XO61kxFR2XJeQ1N+TlhFnE3sV6NehEL6fLPoF2sW
+	eQmpVk8rK4gDifwquy5LKAUzIXUCdo1bqoQEoqupuMDDM1kpf/zQwD9rYtjU6CaOkxLZv+VWRDb
+	hYnOe0blpbXA5DhvMrD8ryImCt8sVEE6Wm8DWdWtS0T6t6jpelLvblW1ZY4mBOu5518aYRQxbaf
+	mLLY3FZ0wlEZ86AuV+1JJWoEm6fuB86I8t/Okyr9WI/7FFEiW4edbYWwpSFyWpTb1ajcXsreo3x
+	OjTLqcrUgeDXHledy3ujezN7GajoL+XFQC6l/lq+iKpSPDgviHcsuIPFf8fFzQYxWDvrGBViIaC
+	ARbuHZyZ5ktajnsU4l8zT0CO7+0PR51AZMYYepuMreRcMKyLcO3h6pLciAd45T48cMX7d7WZBMO
+	/Qwsac89YdvAon7VK0c1Ov65MgHidnMqVbIQ9w39rCwoxIg7izZ5/nPITK2PpW0SsLfJOP1rAiv
+	JZQfaJVzIDnzmJmJmPJdmWlI//RdLJgEYgMy2Hgw7AY8tpn/8VncOtmYzASBCGPihCMVnLhookj
+	OwkfcG1wo9xIigKhAuSw=
+X-Received: by 2002:a17:906:4795:b0:c46:ba0d:3728 with SMTP id a640c23a62f3a-c4d6d4f2dcfmr309450166b.18.1794232226956;
+        Mon, 09 Nov 2026 05:50:26 -0800 (PST)
+Return-Path: <patrick.oetken@gmail.com>
+Received: from ws-24.. ([91.26.133.33])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d68d52cf9sm173476066b.2.2026.11.09.05.50.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2026 05:50:26 -0800 (PST)
+From: Patrick Oetken <patrick.oetken@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: chen_q07@163.com
-Subject: [meta-selinux][PATCH] refpolicy: upgrade to 20260922+git
-Date: Sat,  7 Nov 2026 14:52:00 +0800
-Message-ID: <20261107065200.2706875-1-chenqi_hycx@cetc.com.cn>
+Cc: Patrick Oetken <patrick.oetken@gmail.com>,
+	Tim Orling <tim.orling@konsulko.com>,
+	Tom Rini <tom.rini@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/u-boot][PATCH] u-boot: backport fix for the bcm2712 non-removable check
+Date: Mon,  9 Nov 2026 14:50:21 +0100
+Message-ID: <20261109135021.4184031-1-patrick.oetken@gmail.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C6CowABn+WnMye5q+ZouAA--.56892S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYECmrt2VQGpwAAsi
-X-CM-DELIVERINFO: =?B?fA15iKc9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoODkXvEA96EkWVMgXpQVgXWaQwygsxppJ0Xq/s6sxxykJnnMvm1+UnqCX4WF/KRygRnwf
-	laGNOFoacEafHJW86NL7sENV42QVu/GzZYc66+zfkwZxdZBEX55b9rOxn/Rgzw==
-X-Coremail-Antispam: 1Uk129KBj9fXoW3CrW3tr47GFyfJr4fKr1rGrX_yoW8XrW7Wo
-	W09a13ua1xCry7u3W2yanFgFyUuwsxWa4kJrZYk3WxCryFgFyYyrsrW3WUJ3yruF98ZFW5
-	Aw1kJFnxu3s7J3Z3l-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn5kqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6r47Yxn0WfAS
-	r-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI
-	8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJ
-	M28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2I
-	x0cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
-	0EwIxGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6r47MxAIw28IcxkI7VAKI48JMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
-	I_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
-	UjIFyTuYvjxUcIJmUUUUU
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Nov 2026 06:52:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5252
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Nov 2026 13:50:32 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5253
 Content-Type: text/plain; charset="utf-8"
 
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
+sdhci_brcmstb_init_2712() tests host->mmc->host_caps, which is still zero
+when sdhci_bcmstb_probe() calls it; mmc_of_parse() has put the device-tree
+capabilities into plat->cfg.host_caps instead. Every BCM2712 SDHCI instance
+therefore takes the removable-card branch and programs SDIO_CFG_SD_PIN_SEL
+to SD mode, including the soldered eMMC on a Compute Module 5.
 
-Upstream changes since 20260616 (452 commits):
+That register survives into Linux and makes the first MMC_POWER_UP fail to
+latch POWER_ON. On a CM5 booting from eMMC through U-Boot 2025.04 this cost
+a fixed ~134 s inside "Waiting for root device /dev/mmcblk0pN..." on 6 of
+9 boots; with this backport applied, 0 of 19 boots stalled and boot time
+went from 2 min 23 s to ~13 s.
 
-* New modules: adb, docportal, matrixbot, pipewire, rauc, tqftpserv and
-  wireplumber
-* Remove 24 modules for software that no longer exists, among them
-  portmap, rshd, rlogin, remotelogin, telnet, i18n_input, prelink,
-  tzdata, usbmodules, rssh, hddtemp, likewise, qpid, slpd, xfs and
-  zarafa
-* file_contexts.subs_dist: alias the systemd-sysext and confext staging
-  directories (/etc/extensions, /run/extensions, /var/lib/extensions,
-  /run/confexts, ...) onto the paths they are merged onto
-* Enable the genfs_seclabel_symlinks, ioctl_skip_cloexec and
-  userspace_initial_context policy capabilities; netlink_xperm and
-  netif_wildcard stay off
-* Rework the shadow transitions and access, and let sysadm_t transition
-  to systemd_passwd_agent_t; su gains getcap
-* Add systemd_stream_connect_logind() and use it from authlogin and
-  locallogin, let a user manager remove a stale notify socket, and stop
-  auditing domains that probe SELinux booleans
-* Various MLS fixes for systemd, init, logging and the filesystem
-  interfaces
-* Rewrite segenxml.py (argparse, ElementTree, --Werror, -o)
-* Bug fixes
+The bug is present from v2024.04 up to v2026.04 and is fixed upstream in
+v2026.07 by 8de24e226d74 ("mmc: bcmstb: Fix non-removable check in bcm2712
+init"), so oe-core master (2026.10) already has it. The patch applies to
+2025.04 without fuzz. Only the bcm2712 init hook changes.
 
-The new subs_dist aliases use the whole-path-component "*"
-substitution source, which libselinux only understands from 3340da2,
-after 3.11.  The libselinux in this tree parses them without error but
-never matches them, so sysext/confext labelling stays as it is and
-becomes active once the userspace is newer than 3.11.
-
-Recipe changes:
-
-* Update PV and SRCREV_refpolicy.
-* Refresh 0001, 0002, 0013, 0019 and 0026, which no longer apply to the
-  new sources.  The policy lines they add are unchanged: the patches
-  only pick up the new hunk offsets, 0013 gains one hunk boundary, and
-  the context around 0019 now shows the systemd unit files that
-  replaced the /usr/kerberos paths.
-
-Assisted-by: Codewhale:deepseek-v4-pro
-Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
+Signed-off-by: Patrick Oetken <patrick.oetken@gmail.com>
 ---
- ...latile-alias-common-var-volatile-paths.patch | 17 ++++++++++-------
- ...sybox-set-aliases-for-bin-sbin-and-usr.patch | 17 ++++++++++-------
- ...3-fc-fstools-fix-real-path-for-fstools.patch | 15 ++++++++-------
- ...-apply-policy-to-kerberos-alternatives.patch | 14 +++++++-------
- ...subs_dist-set-aliase-for-root-director.patch | 17 ++++++++++-------
- recipes-security/refpolicy/refpolicy_git.inc    |  4 ++--
- 6 files changed, 47 insertions(+), 37 deletions(-)
+ ...-non-removable-check-in-bcm2712-init.patch | 69 +++++++++++++++++++
+ recipes-bsp/u-boot/u-boot-common.inc          |  1 +
+ 2 files changed, 70 insertions(+)
+ create mode 100644 recipes-bsp/u-boot/files/0001-mmc-bcmstb-Fix-non-removable-check-in-bcm2712-init.patch
 
-diff --git a/recipes-security/refpolicy/refpolicy/0001-fc-subs-volatile-alias-common-var-volatile-paths.patch b/recipes-security/refpolicy/refpolicy/0001-fc-subs-volatile-alias-common-var-volatile-paths.patch
-index 112f5cc..d269f72 100644
---- a/recipes-security/refpolicy/refpolicy/0001-fc-subs-volatile-alias-common-var-volatile-paths.patch
-+++ b/recipes-security/refpolicy/refpolicy/0001-fc-subs-volatile-alias-common-var-volatile-paths.patch
-@@ -1,4 +1,4 @@
--From 3bed8cf8fb9f6a1651d005619a2b029a838539ea Mon Sep 17 00:00:00 2001
-+From 353f0521c52ea934cc1745d53fea8cad429b3a60 Mon Sep 17 00:00:00 2001
- From: Joe MacDonald <joe_macdonald@mentor.com>
- Date: Thu, 28 Mar 2019 16:14:09 -0400
- Subject: [PATCH] fc/subs/volatile: alias common /var/volatile paths
-@@ -15,19 +15,22 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 6 insertions(+)
- 
- diff --git a/config/file_contexts.subs_dist b/config/file_contexts.subs_dist
--index a6b747fad..d64580e89 100644
-+index deeadcb80..8b9423db8 100644
- --- a/config/file_contexts.subs_dist
- +++ b/config/file_contexts.subs_dist
--@@ -34,3 +34,9 @@
-- # not for refpolicy intern, but for /var/run using applications,
-+@@ -35,6 +35,12 @@
-  # like systemd tmpfiles or systemd socket configurations
-  /var/run /run
--+
+diff --git a/recipes-bsp/u-boot/files/0001-mmc-bcmstb-Fix-non-removable-check-in-bcm2712-init.patch b/recipes-bsp/u-boot/files/0001-mmc-bcmstb-Fix-non-removable-check-in-bcm2712-init.patch
+new file mode 100644
+index 0000000..459fbcd
+--- /dev/null
++++ b/recipes-bsp/u-boot/files/0001-mmc-bcmstb-Fix-non-removable-check-in-bcm2712-init.patch
+@@ -0,0 +1,69 @@
++From 8de24e226d745c59972b1898df5cceacf0a7ad47 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
++Date: Tue, 12 May 2026 14:24:35 +0200
++Subject: [PATCH] mmc: bcmstb: Fix non-removable check in bcm2712 init
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++sdhci_brcmstb_init_2712() reads host->mmc->host_caps to decide whether
++to force card-detect for a non-removable eMMC, or to route the CD signal
++for a removable SD card. At the time this function runs from
++sdhci_bcmstb_probe(), however, host->mmc->host_caps is still zero, that
++field is only populated later by the MMC uclass, after the driver's
++probe returns. mmc_of_parse() has already filled plat->cfg.host_caps
++from the device tree by this point, so check that field instead.
++
++Without the fix, every BCM2712 SDHCI instance takes the else branch and
++writes SDIO_CFG_SD_PIN_SEL = SDIO_CFG_SD_PIN_SEL_CARD (0x02), including
++the non-removable eMMC on boards such as CM5 on Home Assistant Yellow.
++The SDIO_CFG block lies outside the SDHCI core's reset scope, so this
++value persists across SDHCI_RESET_ALL into the next stage. On the
++BCM2712, having SD_PIN_SEL set to "SD" when the Linux kernel performs
++its first set_power(MMC_POWER_UP) write racily prevents the SDHCI
++POWER_ON bit from latching (see [1] for the whole backstory) - the
++voltage bits stick but POWER_ON drops - which wedges the first CMD0 the
++full 10 s software timeout. On Home Assistant Yellow this manifested as
++a ~20 s eMMC probe delay on roughly one in two Linux boots when U-Boot
++was the previous stage. Booting directly from the Pi firmware (no U-Boot
++in between) left SD_PIN_SEL at its default and did not exhibit the race.
++
++Reading plat->cfg.host_caps lets init_2712 see the "non-removable"
++property and take the correct branch, leaving SD_PIN_SEL untouched for
++the eMMC.
++
++[1] https://github.com/home-assistant/operating-system/pull/3700#issuecomment-4430229511
++
++Fixes: 10127cdbab64 ("mmc: bcmstb: Add support for bcm2712 SD controller")
++Signed-off-by: Jan Čermák <sairon@sairon.cz>
++Reviewed-by: Ivan T. Ivanov <iivanov@suse.de>
++Upstream-Status: Backport [https://source.denx.de/u-boot/u-boot/-/commit/8de24e226d745c59972b1898df5cceacf0a7ad47]
++Signed-off-by: Patrick Oetken <patrick.oetken@gmail.com>
++---
++ drivers/mmc/bcmstb_sdhci.c | 6 +++---
++ 1 file changed, 3 insertions(+), 3 deletions(-)
++
++diff --git a/drivers/mmc/bcmstb_sdhci.c b/drivers/mmc/bcmstb_sdhci.c
++index 7bddbebb1622..f27b84a6ee43 100644
++--- a/drivers/mmc/bcmstb_sdhci.c
+++++ b/drivers/mmc/bcmstb_sdhci.c
++@@ -56,7 +56,7 @@ struct sdhci_brcmstb_dev_priv {
 + 
- +# volatile aliases
- +# ensure the policy applied to the base filesystem objects are reflected in the
- +# volatile hierarchy.
- +/var/volatile/log /var/log
- +/var/volatile/tmp /var/tmp
---- 
--2.34.1
-++
-+ # systemd system extension (systemd-sysext) staging dirs merge onto /usr and /opt,
-+ # and systemd configuration extension (systemd-confext) staging dirs merge onto /etc.
-+ # The staged trees are overlaid onto the host tree with overlayfs, so they must carry
- 
-+-- 
-+2.43.0
-diff --git a/recipes-security/refpolicy/refpolicy/0002-fc-subs-busybox-set-aliases-for-bin-sbin-and-usr.patch b/recipes-security/refpolicy/refpolicy/0002-fc-subs-busybox-set-aliases-for-bin-sbin-and-usr.patch
-index 2bd7953..d7e525f 100644
---- a/recipes-security/refpolicy/refpolicy/0002-fc-subs-busybox-set-aliases-for-bin-sbin-and-usr.patch
-+++ b/recipes-security/refpolicy/refpolicy/0002-fc-subs-busybox-set-aliases-for-bin-sbin-and-usr.patch
-@@ -1,4 +1,4 @@
--From e0221dfaf60dc6dedbf04247fabd5b13490bbabf Mon Sep 17 00:00:00 2001
-+From 1cb7a914b570ca8dd51ea7b4e6a4ffadedde709d Mon Sep 17 00:00:00 2001
- From: Joe MacDonald <joe_macdonald@mentor.com>
- Date: Thu, 28 Mar 2019 20:48:10 -0400
- Subject: [PATCH] fc/subs/busybox: set aliases for bin, sbin and usr
-@@ -15,19 +15,22 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 6 insertions(+)
- 
- diff --git a/config/file_contexts.subs_dist b/config/file_contexts.subs_dist
--index d64580e89..8a5274283 100644
-+index 8b9423db8..bae4ef439 100644
- --- a/config/file_contexts.subs_dist
- +++ b/config/file_contexts.subs_dist
--@@ -40,3 +40,9 @@
-- # volatile hierarchy.
-+@@ -41,6 +41,12 @@
-  /var/volatile/log /var/log
-  /var/volatile/tmp /var/tmp
--+
++ static int sdhci_brcmstb_init_2712(struct udevice *dev)
++ {
++-	struct sdhci_host *host = dev_get_priv(dev);
+++	struct sdhci_bcmstb_plat *plat = dev_get_plat(dev);
++ 	void *cfg_regs;
++ 	u32 reg;
 + 
- +# busybox aliases
- +# quickly match up the busybox built-in tree to the base filesystem tree
- +/usr/lib/busybox/bin /usr/bin
- +/usr/lib/busybox/sbin /usr/bin
- +/usr/lib/busybox/usr /usr
---- 
--2.34.1
-++
-+ # systemd system extension (systemd-sysext) staging dirs merge onto /usr and /opt,
-+ # and systemd configuration extension (systemd-confext) staging dirs merge onto /etc.
-+ # The staged trees are overlaid onto the host tree with overlayfs, so they must carry
- 
-+-- 
-+2.43.0
-diff --git a/recipes-security/refpolicy/refpolicy/0013-fc-fstools-fix-real-path-for-fstools.patch b/recipes-security/refpolicy/refpolicy/0013-fc-fstools-fix-real-path-for-fstools.patch
-index 33942dd..ab254d3 100644
---- a/recipes-security/refpolicy/refpolicy/0013-fc-fstools-fix-real-path-for-fstools.patch
-+++ b/recipes-security/refpolicy/refpolicy/0013-fc-fstools-fix-real-path-for-fstools.patch
-@@ -1,4 +1,4 @@
--From 3ed3519c26ea0146415bf915a78bad55086abbde Mon Sep 17 00:00:00 2001
-+From 4beb1c28718bce5b470ea886c2cd0a38ca7a7463 Mon Sep 17 00:00:00 2001
- From: Wenzong Fan <wenzong.fan@windriver.com>
- Date: Mon, 27 Jan 2014 03:54:01 -0500
- Subject: [PATCH] fc/fstools: fix real path for fstools
-@@ -14,7 +14,7 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 11 insertions(+)
- 
- diff --git a/policy/modules/system/fstools.fc b/policy/modules/system/fstools.fc
--index ece09e6b4..aad5a608e 100644
-+index 8386937c4..02adc5400 100644
- --- a/policy/modules/system/fstools.fc
- +++ b/policy/modules/system/fstools.fc
- @@ -1,7 +1,9 @@
-@@ -27,7 +27,7 @@ index ece09e6b4..aad5a608e 100644
-  /usr/bin/btrfs			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/cfdisk			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/clubufflush		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
--@@ -15,23 +17,29 @@
-+@@ -15,10 +17,13 @@
-  /usr/bin/e2mmpstatus		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/fatsort		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/fdisk			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-@@ -41,6 +41,7 @@ index ece09e6b4..aad5a608e 100644
-  /usr/bin/install-mbr		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/jfs_.*			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/losetup.*		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-+@@ -26,13 +31,16 @@
-  /usr/bin/lsraid			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/mkdosfs		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/mke2fs			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-@@ -57,7 +58,7 @@ index ece09e6b4..aad5a608e 100644
-  /usr/bin/partx			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/raidautorun		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/raidstart		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
--@@ -43,8 +51,10 @@
-+@@ -44,8 +52,10 @@
-  /usr/bin/sfdisk			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/smartctl		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/swapoff		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-@@ -68,7 +69,7 @@ index ece09e6b4..aad5a608e 100644
-  /usr/bin/zdb			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/zhack			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  /usr/bin/zinject		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
--@@ -53,6 +63,7 @@
-+@@ -54,6 +64,7 @@
-  /usr/bin/ztest			--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-  
-  /usr/bin/fstrim		--	gen_context(system_u:object_r:fsadm_exec_t,s0)
-@@ -76,6 +77,6 @@ index ece09e6b4..aad5a608e 100644
-  
-  ifdef(`distro_gentoo',`
-  /var/db/smartmontools(/.*)?		gen_context(system_u:object_r:fsadm_db_t,s0)
---- 
--2.34.1
- 
-+-- 
-+2.43.0
-diff --git a/recipes-security/refpolicy/refpolicy/0019-fc-kerberos-apply-policy-to-kerberos-alternatives.patch b/recipes-security/refpolicy/refpolicy/0019-fc-kerberos-apply-policy-to-kerberos-alternatives.patch
-index 8b052f3..893c839 100644
---- a/recipes-security/refpolicy/refpolicy/0019-fc-kerberos-apply-policy-to-kerberos-alternatives.patch
-+++ b/recipes-security/refpolicy/refpolicy/0019-fc-kerberos-apply-policy-to-kerberos-alternatives.patch
-@@ -1,4 +1,4 @@
--From c5f2bec748a7afbb6ea6ff4fdb2e729f749d7e99 Mon Sep 17 00:00:00 2001
-+From 7d14d563c9e6256274e9b31068b8ae42d2fc4a08 Mon Sep 17 00:00:00 2001
- From: Yi Zhao <yi.zhao@windriver.com>
- Date: Fri, 15 Nov 2019 10:55:05 +0800
- Subject: [PATCH] fc/kerberos: apply policy to kerberos alternatives
-@@ -11,7 +11,7 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 10 insertions(+)
- 
- diff --git a/policy/modules/services/kerberos.fc b/policy/modules/services/kerberos.fc
--index 81627d2db..4966b06d4 100644
-+index aae6c841d..9afe60ec4 100644
- --- a/policy/modules/services/kerberos.fc
- +++ b/policy/modules/services/kerberos.fc
- @@ -12,9 +12,13 @@ HOME_DIR/\.k5login	--	gen_context(system_u:object_r:krb5_home_t,s0)
-@@ -26,9 +26,9 @@ index 81627d2db..4966b06d4 100644
- +/usr/bin/kadmin\.local	--	gen_context(system_u:object_r:kadmind_exec_t,s0)
- +/usr/bin/kpropd	--	gen_context(system_u:object_r:kpropd_exec_t,s0)
-  
-- /usr/kerberos/sbin/krb5kdc	--	gen_context(system_u:object_r:krb5kdc_exec_t,s0)
-- /usr/kerberos/sbin/kadmind	--	gen_context(system_u:object_r:kadmind_exec_t,s0)
--@@ -39,6 +43,12 @@ HOME_DIR/\.k5login	--	gen_context(system_u:object_r:krb5_home_t,s0)
-+ /usr/lib/systemd/system/kadmin\.service	--	gen_context(system_u:object_r:kerberos_unit_t,s0)
-+ /usr/lib/systemd/system/krb5kdc\.service	--	gen_context(system_u:object_r:kerberos_unit_t,s0)
-+@@ -42,6 +46,12 @@ HOME_DIR/\.k5login	--	gen_context(system_u:object_r:krb5_home_t,s0)
-  /var/kerberos/krb5kdc/principal.*	gen_context(system_u:object_r:krb5kdc_principal_t,s0)
-  /var/kerberos/krb5kdc/principal.*\.ok	--	gen_context(system_u:object_r:krb5kdc_lock_t,s0)
-  
-@@ -41,6 +41,6 @@ index 81627d2db..4966b06d4 100644
-  /var/log/krb5kdc\.log.*	--	gen_context(system_u:object_r:krb5kdc_log_t,s0)
-  /var/log/kadmin\.log.*	--	gen_context(system_u:object_r:kadmind_log_t,s0)
-  /var/log/kadmind\.log.*	--	gen_context(system_u:object_r:kadmind_log_t,s0)
---- 
--2.34.1
- 
-+-- 
-+2.43.0
-diff --git a/recipes-security/refpolicy/refpolicy/0026-file_contexts.subs_dist-set-aliase-for-root-director.patch b/recipes-security/refpolicy/refpolicy/0026-file_contexts.subs_dist-set-aliase-for-root-director.patch
-index cf4d59d..6f6b2fc 100644
---- a/recipes-security/refpolicy/refpolicy/0026-file_contexts.subs_dist-set-aliase-for-root-director.patch
-+++ b/recipes-security/refpolicy/refpolicy/0026-file_contexts.subs_dist-set-aliase-for-root-director.patch
-@@ -1,4 +1,4 @@
--From 795b2380c6f1e3541384f69d0f00e8933dfacf93 Mon Sep 17 00:00:00 2001
-+From 25b8af93a5684abf449afed1414ca6e38184e0ae Mon Sep 17 00:00:00 2001
- From: Yi Zhao <yi.zhao@windriver.com>
- Date: Sun, 5 Apr 2020 22:03:45 +0800
- Subject: [PATCH] file_contexts.subs_dist: set aliase for /root directory
-@@ -14,17 +14,20 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 4 insertions(+)
- 
- diff --git a/config/file_contexts.subs_dist b/config/file_contexts.subs_dist
--index 8a5274283..f54517d89 100644
-+index bae4ef439..fb966318b 100644
- --- a/config/file_contexts.subs_dist
- +++ b/config/file_contexts.subs_dist
--@@ -46,3 +46,7 @@
-- /usr/lib/busybox/bin /usr/bin
-+@@ -47,6 +47,10 @@
-  /usr/lib/busybox/sbin /usr/bin
-  /usr/lib/busybox/usr /usr
--+
++@@ -65,8 +65,8 @@ static int sdhci_brcmstb_init_2712(struct udevice *dev)
++ 	if (!cfg_regs)
++ 		return -ENOENT;
 + 
- +# The script genhomedircon.py will expand `/root` (i.e. root's home
- +# directory) to `/home/root`. Add an alias for it.
- +/root /home/root
---- 
--2.34.1
-++
-+ # systemd system extension (systemd-sysext) staging dirs merge onto /usr and /opt,
-+ # and systemd configuration extension (systemd-confext) staging dirs merge onto /etc.
-+ # The staged trees are overlaid onto the host tree with overlayfs, so they must carry
++-	if ((host->mmc->host_caps & MMC_CAP_NONREMOVABLE) ||
++-	    (host->mmc->host_caps & MMC_CAP_NEEDS_POLL)) {
+++	if ((plat->cfg.host_caps & MMC_CAP_NONREMOVABLE) ||
+++	    (plat->cfg.host_caps & MMC_CAP_NEEDS_POLL)) {
++ 		/* Force presence */
++ 		reg = readl(cfg_regs + SDIO_CFG_CTRL);
++ 		reg &= ~SDIO_CFG_CTRL_SDCD_N_TEST_LEV;
+diff --git a/recipes-bsp/u-boot/u-boot-common.inc b/recipes-bsp/u-boot/u-boot-common.inc
+index b0ea013..9ea05e5 100644
+--- a/recipes-bsp/u-boot/u-boot-common.inc
++++ b/recipes-bsp/u-boot/u-boot-common.inc
+@@ -15,6 +15,7 @@ PE = "1"
+ SRCREV = "34820924edbc4ec7803eb89d9852f4b870fa760a"
  
-+-- 
-+2.43.0
-diff --git a/recipes-security/refpolicy/refpolicy_git.inc b/recipes-security/refpolicy/refpolicy_git.inc
-index 4d207a2..dbc8cc8 100644
---- a/recipes-security/refpolicy/refpolicy_git.inc
-+++ b/recipes-security/refpolicy/refpolicy_git.inc
-@@ -1,8 +1,8 @@
--PV = "2.20260616+git"
-+PV = "2.20260922+git"
+ SRC_URI = "git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master"
++SRC_URI += "file://0001-mmc-bcmstb-Fix-non-removable-check-in-bcm2712-init.patch"
  
- SRC_URI = "git://github.com/SELinuxProject/refpolicy.git;protocol=https;branch=main;name=refpolicy;destsuffix=refpolicy"
- 
--SRCREV_refpolicy = "30d3cf5abd1872d3da5dd44de37de4251674f736"
-+SRCREV_refpolicy = "acf41c52116fef3a9dcd8f1f39b133e0372fce7c"
- 
- UPSTREAM_CHECK_GITTAGREGEX = "RELEASE_(?P<pver>\d+_\d+)"
- 
+ S = "${WORKDIR}/git"
+ B = "${WORKDIR}/build"
 -- 
 2.43.0
 
