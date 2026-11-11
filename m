@@ -1,358 +1,201 @@
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.550.1794413715745210173
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.551.1794413715907391001
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Nov 2026 08:15:15 -0800
+ Wed, 11 Nov 2026 08:15:16 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6ABGFDdk2529923
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6ABGFDdl2529923
 	for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 10:15:15 -0600
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [pseudo][pseudo-1.9]PATCH 05/10] pseudo_client: serialize path changes across clients
-Date: Wed, 11 Nov 2026 10:15:07 -0600
-Message-Id: <1794413712-18072-6-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][pseudo-1.9]PATCH 06/10] ports: hold the path lock in create and metadata wrappers
+Date: Wed, 11 Nov 2026 10:15:08 -0600
+Message-Id: <1794413712-18072-7-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 16:15:19 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5303
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5304
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
 From: Mark Hatle <mark.hatle@amd.com>
 
-test-parallel-rename and test-parallel-symlinks failed with "inode
-mismatch" and "path mismatch" errors, and clients were aborted by the
-server.
+Like rename() and unlink(), the wrappers that create a name, or that
+look at a path and then change its metadata in the database, do so in
+separate steps: the real operation on disk, then a request to the
+server.  Another client renaming onto or removing the same name in
+between leaves the database out of step with the filesystem, which the
+server reports as an inode or path mismatch, and may abort a client.
 
-rename() and unlink() look at the destination, send OP_MAY_UNLINK,
-make the change on disk, and then send OP_DID_UNLINK and OP_RENAME, as
-separate steps.  The wrapper lock only covers one process, so another
-client can rename onto the same name in between.  The first client then
-marks and removes the wrong inode, and its OP_RENAME finds a different
-entry at the destination.  ln -sf does the same, as it creates a
-temporary symlink and renames it over the link.
+Hold the path lock exclusively in the wrappers that create a name:
+link, linkat, symlink, symlinkat, mkdir, mkdirat, mkfifo, mkfifoat,
+mknod, mknodat, __xmknod, __xmknodat, bind, mkdtemp and the mkstemp
+family.  None of these can block indefinitely.
 
-Readers race in the same way: a client can lstat() a name before
-another client replaces it, but only report the result to the server
-afterwards.  If the filesystem has meanwhile reused the inode number
-for a new file, the server sees the inode under the wrong path, and
-aborts the reader.
-
-Add a path lock shared by all clients of a server, using fcntl() locks
-on pseudo.pathlock in the local state directory.  makewrappers gains a
-path_lock option which holds the lock around the guts of a wrapper:
-exclusive (path_lock=1) for rename, renameat, unlink, unlinkat and
-rmdir, and shared (path_lock=shared) for the stat family, so readers
-don't block each other but can't observe a name in the middle of a
-change.
-
-fcntl() locks belong to the process, so a forked child doesn't share
-them, and they are released if the process dies.  The descriptor is
-kept open and protected like pseudo's other internal descriptors.  If
-the lock can't be taken the operation runs unlocked as before.
-
-Both tests now pass consistently, including with PSEUDO_DEBUG set.  The
-lock adds about 4us to an lstat() (about 12%) and 2% to a rename.
+Hold it shared in the wrappers that look at a path and then record or
+query its metadata: chmod, lchmod, fchmodat, chown, lchown, fchownat,
+fts_read, fts_children, and the path based xattr calls.
 
 AI-Generated: Uses GitHub Copilot
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
-(cherry picked from commit 4a605712d6a4c9b410cc51c33f3d08a2836ab7d0)
+(cherry picked from commit c8b1b3ab4d552570f854d3ee19f3bf9611ae633a)
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 ---
- makewrappers                   | 17 +++++++++
- ports/linux/statx/wrapfuncs.in |  2 +-
- ports/linux/wrapfuncs.in       | 24 ++++++------
- ports/unix/wrapfuncs.in        | 10 ++---
- pseudo.h                       |  1 +
- pseudo_client.c                | 83 +++++++++++++++++++++++++++++++++++++++++-
- pseudo_client.h                |  2 +
- templates/wrapfuncs.c          |  2 +-
- 8 files changed, 121 insertions(+), 20 deletions(-)
+ ports/linux/wrapfuncs.in       | 16 +++++++--------
+ ports/linux/xattr/wrapfuncs.in | 16 +++++++--------
+ ports/unix/wrapfuncs.in        | 46 +++++++++++++++++++++---------------------
+ 3 files changed, 39 insertions(+), 39 deletions(-)
 
-diff --git a/makewrappers b/makewrappers
-index 4c99cf3..6b96c74 100755
---- a/makewrappers
-+++ b/makewrappers
-@@ -244,6 +244,11 @@ class Function:
-         self.noignore_path = False
-         self.hand_wrapped = None
-         self.async_skip = None
-+        # Hold the client path lock (pseudo_client_path_lock()) around
-+        # the guts: path_lock=1 (exclusive) for operations that check,
-+        # change and then record a path in separate steps, and
-+        # path_lock=shared for operations that only look at a path.
-+        self.path_lock = None
-         # used for the copyright date when creating stub functions
-         self.date = datetime.date.today().year
-         # Used to define pointers that should EFAULT if null
-@@ -494,6 +499,18 @@ class Function:
-         else:
-             return "rc ="
- 
-+    def path_lock_begin(self):
-+        """take the client path lock, for path_lock=1 functions"""
-+        if self.path_lock:
-+            return "int path_lock_fd = pseudo_client_path_lock(%d);\n\t\t\t" % (self.path_lock == "shared")
-+        return ""
-+
-+    def path_lock_end(self):
-+        """release the client path lock, for path_lock=1 functions"""
-+        if self.path_lock:
-+            return "\n\t\t\tpseudo_client_path_unlock(path_lock_fd);"
-+        return ""
-+
-     def def_return(self):
-         """return default value (or just return)"""
-         if self.type == 'void':
-diff --git a/ports/linux/statx/wrapfuncs.in b/ports/linux/statx/wrapfuncs.in
-index a81fb91..3ca40ac 100644
---- a/ports/linux/statx/wrapfuncs.in
-+++ b/ports/linux/statx/wrapfuncs.in
-@@ -1 +1 @@
--int statx(int dirfd, const char *path, int flags, unsigned int mask, struct statx *statxbuf); /* efault=path */
-+int statx(int dirfd, const char *path, int flags, unsigned int mask, struct statx *statxbuf); /* efault=path, path_lock=shared */
 diff --git a/ports/linux/wrapfuncs.in b/ports/linux/wrapfuncs.in
-index d417ed3..65f2d7a 100644
+index 65f2d7a..a682383 100644
 --- a/ports/linux/wrapfuncs.in
 +++ b/ports/linux/wrapfuncs.in
-@@ -2,12 +2,12 @@ int open(const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFO
- int __open_2(const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
- int __open64_2(const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
- char *get_current_dir_name(void);
--int __xstat(int ver, const char *path, struct stat *buf);
--int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW */
-+int __xstat(int ver, const char *path, struct stat *buf); /* path_lock=shared */
-+int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
+@@ -5,17 +5,17 @@ char *get_current_dir_name(void);
+ int __xstat(int ver, const char *path, struct stat *buf); /* path_lock=shared */
+ int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
  int __fxstat(int ver, int fd, struct stat *buf);
- int lchmod(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
- int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW */
--int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags);
-+int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags); /* path_lock=shared */
+-int lchmod(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
+-int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW */
++int lchmod(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
++int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
+ int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags); /* path_lock=shared */
  int openat(int dirfd, const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
  int __openat_2(int dirfd, const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
  int open_tree(int dirfd, const char *path, unsigned int flags); /* preserve_paths=1, noignore_path=1 */
-@@ -25,18 +25,18 @@ int open64(const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NO
- int openat64(int dirfd, const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
- int __openat64_2(int dirfd, const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
- int creat64(const char *path, mode_t mode);
--int stat(const char *path, struct stat *buf); /* real_func=pseudo_stat */
--int lstat(const char *path, struct stat *buf); /* real_func=pseudo_lstat, flags=AT_SYMLINK_NOFOLLOW */
-+int stat(const char *path, struct stat *buf); /* real_func=pseudo_stat, path_lock=shared */
-+int lstat(const char *path, struct stat *buf); /* real_func=pseudo_lstat, flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
- int fstat(int fd, struct stat *buf); /* real_func=pseudo_fstat */
--int fstatat(int dirfd, const char *path, struct stat *buf, int flags);
--int stat64(const char *path, struct stat64 *buf); /* real_func=pseudo_stat64 */
--int lstat64(const char *path, struct stat64 *buf); /* real_func=pseudo_lstat64, flags=AT_SYMLINK_NOFOLLOW */
-+int fstatat(int dirfd, const char *path, struct stat *buf, int flags); /* path_lock=shared */
-+int stat64(const char *path, struct stat64 *buf); /* real_func=pseudo_stat64, path_lock=shared */
-+int lstat64(const char *path, struct stat64 *buf); /* real_func=pseudo_lstat64, flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
- int fstat64(int fd, struct stat64 *buf); /* real_func=pseudo_fstat64 */
--int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags);
--int __xstat64(int ver, const char *path, struct stat64 *buf);
--int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW */
-+int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags); /* path_lock=shared */
-+int __xstat64(int ver, const char *path, struct stat64 *buf); /* path_lock=shared */
-+int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
- int __fxstat64(int ver, int fd, struct stat64 *buf);
--int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags);
-+int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags); /* path_lock=shared */
- FILE *fopen64(const char *path, const char *mode); /* noignore_path=1 */
- int nftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flag); /* noignore_path=1 */
- FILE *freopen64(const char *path, const char *mode, FILE *stream);  /* noignore_path=1 */
+ int open_tree_attr(int dirfd, const char *path, unsigned int flags, struct mount_attr *attr, size_t size); /* preserve_paths=1, noignore_path=1*/
+-int mknod(const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknod */
+-int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknodat */
+-int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW */
+-int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW */
++int mknod(const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknod, path_lock=1 */
++int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknodat, path_lock=1 */
++int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int fcntl(int fd, int cmd, ...{struct flock *lock});  /* noignore_path=1 */
+ int fcntl64(int fd, int cmd, ...{struct flock *lock});  /* noignore_path=1 */
+ # just so we know the inums of symlinks
+@@ -44,8 +44,8 @@ int ftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int),
+ int glob64(const char *pattern, int flags, int (*errfunc)(const char *, int), glob64_t *pglob);
+ int scandir64(const char *path, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)());
+ int truncate64(const char *path, off64_t length);
+-int mkostemp64(char *template, int oflags); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkstemp64(char *template); /* flags=AT_SYMLINK_NOFOLLOW */
++int mkostemp64(char *template, int oflags); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkstemp64(char *template); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int getgrouplist(const char *user, gid_t group, gid_t *groups, int *ngroups);
+ int setgroups(size_t size, const gid_t *list);
+ int setfsgid(gid_t fsgid);
+diff --git a/ports/linux/xattr/wrapfuncs.in b/ports/linux/xattr/wrapfuncs.in
+index 09eba23..89b1c68 100644
+--- a/ports/linux/xattr/wrapfuncs.in
++++ b/ports/linux/xattr/wrapfuncs.in
+@@ -1,12 +1,12 @@
+-ssize_t getxattr(const char *path, const char *name, void *value, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+-ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
++ssize_t getxattr(const char *path, const char *name, void *value, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
++ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
+ ssize_t fgetxattr(int filedes, const char *name, void *value, size_t size); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+-int setxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+-int lsetxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
++int setxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
++int lsetxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
+ int fsetxattr(int filedes, const char *name, const void *value, size_t size, int xflags); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+-ssize_t listxattr(const char *path, char *list, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+-ssize_t llistxattr(const char *path, char *list, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
++ssize_t listxattr(const char *path, char *list, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
++ssize_t llistxattr(const char *path, char *list, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
+ ssize_t flistxattr(int filedes, char *list, size_t size); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+-int removexattr(const char *path, const char *name); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+-int lremovexattr(const char *path, const char *name); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
++int removexattr(const char *path, const char *name); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
++int lremovexattr(const char *path, const char *name); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", path_lock=shared */
+ int fremovexattr(int filedes, const char *name); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
 diff --git a/ports/unix/wrapfuncs.in b/ports/unix/wrapfuncs.in
-index 5665735..a4892fe 100644
+index a4892fe..b9d0782 100644
 --- a/ports/unix/wrapfuncs.in
 +++ b/ports/unix/wrapfuncs.in
-@@ -53,13 +53,13 @@ int mkstemp(char *template); /* flags=AT_SYMLINK_NOFOLLOW */
- int mkostemp(char *template, int oflags); /* flags=AT_SYMLINK_NOFOLLOW */
- int mkstemps(char *template, int suffixlen); /* flags=AT_SYMLINK_NOFOLLOW */
- int mkostemps(char *template, int suffixlen, int oflags); /* flags=AT_SYMLINK_NOFOLLOW */
--int rename(const char *oldpath, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
--int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
--int rmdir(const char *path); /* flags=AT_SYMLINK_NOFOLLOW */
-+int rename(const char *oldpath, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
-+int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
-+int rmdir(const char *path); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
- int symlink(const char *oldname, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
- int symlinkat(const char *oldname, int dirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
--int unlink(const char *path); /* flags=AT_SYMLINK_NOFOLLOW */
--int unlinkat(int dirfd, const char *path, int rflags); /* flags=AT_SYMLINK_NOFOLLOW */
-+int unlink(const char *path); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
-+int unlinkat(int dirfd, const char *path, int rflags); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+@@ -4,7 +4,7 @@ char *getwd(char *buf);
+ int close(int fd);  /* noignore_path=1 */
+ int fchmod(int fd, mode_t mode);
+ int fchown(int fd, uid_t owner, gid_t group);
+-int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW */
++int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
+ int dup2(int oldfd, int newfd); /* noignore_path=1 */
+ int dup(int fd); /* noignore_path=1 */
+ int chdir(const char *path); /* noignore_path=1 */
+@@ -13,13 +13,13 @@ int access(const char *path, int mode);
+ int faccessat(int dirfd, const char *path, int mode, int flags);
+ int faccessat2(int dirfd, const char *path, int mode, int flags);
+ FTS *fts_open(char * const *path_argv, int options, int (*compar)(const FTSENT **, const FTSENT **)); /* inode64=1 */
+-FTSENT *fts_read(FTS *ftsp); /* noignore_path=1, inode64=1 */
+-FTSENT *fts_children(FTS *ftsp, int options); /* noignore_path=1, inode64=1 */
++FTSENT *fts_read(FTS *ftsp); /* noignore_path=1, inode64=1, path_lock=shared */
++FTSENT *fts_children(FTS *ftsp, int options); /* noignore_path=1, inode64=1, path_lock=shared */
+ int ftw(const char *path, int (*fn)(const char *, const struct stat *, int), int nopenfd);
+ int nftw(const char *path, int (*fn)(const char *, const struct stat *, int, struct FTW *), int nopenfd, int flag);
+ int glob(const char *pattern, int flags, int (*errfunc)(const char *, int), glob_t *pglob);
+ int lutimes(const char *path, const struct timeval *tv); /* flags=AT_SYMLINK_NOFOLLOW */
+-char *mkdtemp(char *template);
++char *mkdtemp(char *template); /* path_lock=1 */
+ char *mktemp(char *template);
+ long pathconf(const char *path, int name);
+ char *realpath(const char *name, char *resolved_name); /* version="GLIBC_2.3" */
+@@ -37,27 +37,27 @@ int fclose(FILE *fp);  /* noignore_path=1 */
+ FILE *freopen(const char *path, const char *mode, FILE *stream); /* noignore_path=1 */
+ int chroot(const char *path); /* noignore_path=1 */
+ int acct(const char *path);
+-int chmod(const char *path, mode_t mode);
+-int chown(const char *path, uid_t owner, gid_t group);
+-int fchmodat(int dirfd, const char *path, mode_t mode, int flags);
+-int fchownat(int dirfd, const char *path, uid_t owner, gid_t group, int flags);
+-int link(const char *oldname, const char *newname); /* flags=AT_SYMLINK_NOFOLLOW */
+-int linkat(int olddirfd, const char *oldname, int newdirfd, const char *newname, int flags);
+-int mkdir(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkdirat(int dirfd, const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkfifo(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkfifoat(int dirfd, const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mknod(const char *path, mode_t mode, dev_t dev); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkstemp(char *template); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkostemp(char *template, int oflags); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkstemps(char *template, int suffixlen); /* flags=AT_SYMLINK_NOFOLLOW */
+-int mkostemps(char *template, int suffixlen, int oflags); /* flags=AT_SYMLINK_NOFOLLOW */
++int chmod(const char *path, mode_t mode); /* path_lock=shared */
++int chown(const char *path, uid_t owner, gid_t group); /* path_lock=shared */
++int fchmodat(int dirfd, const char *path, mode_t mode, int flags); /* path_lock=shared */
++int fchownat(int dirfd, const char *path, uid_t owner, gid_t group, int flags); /* path_lock=shared */
++int link(const char *oldname, const char *newname); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int linkat(int olddirfd, const char *oldname, int newdirfd, const char *newname, int flags); /* path_lock=1 */
++int mkdir(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkdirat(int dirfd, const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkfifo(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkfifoat(int dirfd, const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mknod(const char *path, mode_t mode, dev_t dev); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkstemp(char *template); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkostemp(char *template, int oflags); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkstemps(char *template, int suffixlen); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int mkostemps(char *template, int suffixlen, int oflags); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int rename(const char *oldpath, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int rmdir(const char *path); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+-int symlink(const char *oldname, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
+-int symlinkat(const char *oldname, int dirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
++int symlink(const char *oldname, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int symlinkat(const char *oldname, int dirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int unlink(const char *path); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int unlinkat(int dirfd, const char *path, int rflags); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
  # primarily for use with chroot()
- ssize_t readlink(const char *path, char *buf, size_t bufsiz); /* flags=AT_SYMLINK_NOFOLLOW */
- ssize_t readlinkat(int dirfd, const char *path, char *buf, size_t bufsiz); /* flags=AT_SYMLINK_NOFOLLOW */
-diff --git a/pseudo.h b/pseudo.h
-index 3e98c0b..c1077cb 100644
---- a/pseudo.h
-+++ b/pseudo.h
-@@ -109,6 +109,7 @@ extern char *pseudo_version;
- 
- #define PSEUDO_LOCKFILE "pseudo.lock"
- #define PSEUDO_LOGFILE "pseudo.log"
-+#define PSEUDO_PATHLOCK "pseudo.pathlock"
- #define PSEUDO_PIDFILE "pseudo.pid"
- #define PSEUDO_SOCKET "pseudo.socket"
- 
-diff --git a/pseudo_client.c b/pseudo_client.c
-index 6bdb17c..759afeb 100644
---- a/pseudo_client.c
-+++ b/pseudo_client.c
-@@ -47,6 +47,7 @@ static char *base_path(int dirfd, const char *path, int leave_last);
- static int connect_fd = -1;
- static int server_pid = 0;
- int pseudo_localstate_dir_fd = -1;
-+static int pseudo_pathlock_fd = -1;
- int pseudo_pwd_fd = -1;
- int pseudo_pwd_lck_fd = -1;
- char *pseudo_pwd_lck_name = NULL;
-@@ -532,6 +533,7 @@ pseudo_init_client(void) {
- 		/* Ensure that all of the values are reset */
- 		server_pid = 0;
- 		pseudo_localstate_dir_fd = -1;
-+		pseudo_pathlock_fd = -1;
- 		pseudo_pwd_fd = -1;
- 		pseudo_pwd_lck_fd = -1;
- 		pseudo_pwd_lck_name = NULL;
-@@ -1173,6 +1175,80 @@ pseudo_fd(int fd, int how) {
- 	return(newfd);
- }
- 
-+/* Operations such as rename() and unlink() look at the destination, change
-+ * it on disk, and then tell the server what happened, in several separate
-+ * steps.  Another client doing the same to the same name in between makes
-+ * the database describe a file that is no longer there, which the server
-+ * reports as an inode or path mismatch.  Wrappers marked path_lock=1 hold
-+ * this lock, shared by every client of the server, for the whole sequence.
-+ *
-+ * fcntl() locks belong to the process, so a forked child does not share
-+ * them even though it inherits the descriptor, and they are released if
-+ * the process dies.  The descriptor is kept open and protected like
-+ * pseudo's other internal descriptors.
-+ *
-+ * Wrappers that only look at a path (stat() and friends) take the lock
-+ * shared: they don't block each other, but can't observe a path between
-+ * the change on disk and the database update.
-+ *
-+ * Returns the descriptor to pass to pseudo_client_path_unlock(), or -1 if
-+ * the lock could not be taken, in which case the operation runs unlocked.
-+ */
-+int
-+pseudo_client_path_lock(int shared) {
-+	static char *lock_path = NULL;
-+	struct flock lk = { .l_type = shared ? F_RDLCK : F_WRLCK, .l_whence = SEEK_SET };
-+	int save_errno = errno;
-+	int locked = 0, retried = 0;
-+
-+	pseudo_antimagic();
-+	for (;;) {
-+		if (pseudo_pathlock_fd == -1) {
-+			if (!lock_path)
-+				lock_path = pseudo_localstatedir_path(PSEUDO_PATHLOCK);
-+			if (lock_path)
-+				pseudo_pathlock_fd = pseudo_fd(open(lock_path,
-+					O_RDWR | O_CREAT | O_CLOEXEC, 0644), MOVE_FD);
-+			if (pseudo_pathlock_fd == -1) {
-+				pseudo_debug(PDBGF_CLIENT, "path lock: can't open '%s': %s\n",
-+					lock_path ? lock_path : "<nil>", strerror(errno));
-+				break;
-+			}
-+		}
-+		if (fcntl(pseudo_pathlock_fd, F_SETLKW, &lk) == 0) {
-+			locked = 1;
-+			break;
-+		}
-+		if (errno == EINTR)
-+			continue;
-+		/* closed behind our back: reopen it once */
-+		if (errno == EBADF && !retried) {
-+			pseudo_pathlock_fd = -1;
-+			retried = 1;
-+			continue;
-+		}
-+		pseudo_debug(PDBGF_CLIENT, "path lock: can't lock '%s': %s\n",
-+			lock_path ? lock_path : "<nil>", strerror(errno));
-+		break;
-+	}
-+	pseudo_magic();
-+	errno = save_errno;
-+	return locked ? pseudo_pathlock_fd : -1;
-+}
-+
-+void
-+pseudo_client_path_unlock(int fd) {
-+	struct flock lk = { .l_type = F_UNLCK, .l_whence = SEEK_SET };
-+	int save_errno = errno;
-+
-+	if (fd != -1) {
-+		pseudo_antimagic();
-+		fcntl(fd, F_SETLK, &lk);
-+		pseudo_magic();
-+	}
-+	errno = save_errno;
-+}
-+
- static int
- client_connect(void) {
- 	/* we have a server pid, is it responsive? */
-@@ -1913,6 +1989,8 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			startfd = pseudo_util_evlog_fd + 1;
- 		if (pseudo_localstate_dir_fd >= startfd)
- 			startfd = pseudo_localstate_dir_fd + 1;
-+		if (pseudo_pathlock_fd >= startfd)
-+			startfd = pseudo_pathlock_fd + 1;
- 		if (pseudo_pwd_fd >= startfd)
- 			startfd = pseudo_pwd_fd + 1;
- 		if (pseudo_pwd_lck_fd >= startfd)
-@@ -1926,7 +2004,8 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		 */
- 		for (i = fd; i < startfd && i <= close_range_maxfd; ++i) {
- 			if (i == pseudo_util_debug_fd || i == pseudo_util_evlog_fd ||
--					i == pseudo_localstate_dir_fd || i == pseudo_pwd_fd ||
-+					i == pseudo_localstate_dir_fd || i == pseudo_pathlock_fd ||
-+					i == pseudo_pwd_fd ||
- 					i == pseudo_pwd_lck_fd || i == pseudo_grp_fd ||
- 					i == connect_fd)
- 				continue;
-@@ -1952,6 +2031,8 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 				pseudo_util_debug_fd = pseudo_fd(fd, COPY_FD);
- 			} else if (fd == pseudo_localstate_dir_fd) {
- 				pseudo_localstate_dir_fd = pseudo_fd(fd, COPY_FD);
-+			} else if (fd == pseudo_pathlock_fd) {
-+				pseudo_pathlock_fd = pseudo_fd(fd, COPY_FD);
- 			} else if (fd == pseudo_pwd_fd) {
- 				pseudo_pwd_fd = pseudo_fd(fd, COPY_FD);
- 				/* since we have a FILE * on it, we close that... */
-diff --git a/pseudo_client.h b/pseudo_client.h
-index 9b9f86a..217981d 100644
---- a/pseudo_client.h
-+++ b/pseudo_client.h
-@@ -28,6 +28,8 @@ extern void pseudo_client_touchgid(void);
- extern char *pseudo_client_fdpath(int fd);
- extern int pseudo_client_shutdown(int);
- extern int pseudo_fd(int fd, int how);
-+extern int pseudo_client_path_lock(int shared);
-+extern void pseudo_client_path_unlock(int fd);
- #define MOVE_FD	0
- #define COPY_FD	1
- #define PSEUDO_MIN_FD	20
-diff --git a/templates/wrapfuncs.c b/templates/wrapfuncs.c
-index 9385a40..a57c997 100644
---- a/templates/wrapfuncs.c
-+++ b/templates/wrapfuncs.c
-@@ -68,7 +68,7 @@ ${maybe_async_skip}
- 		} else {
- 			/* exec*() use this to restore the sig mask */
- 			pseudo_saved_sigmask = saved;
--			${rc_assign} wrap_$name(${call_args});
-+			${path_lock_begin}${rc_assign} wrap_$name(${call_args});${path_lock_end}
- 		}
- 	}
- 	${variadic_end}
+@@ -74,4 +74,4 @@ void sync(void); /* async_skip= */
+ int sync_file_range(int fd, off64_t offset, off64_t nbytes, unsigned int flags); /* async_skip=0 */
+ int msync(void *addr, size_t length, int flags); /* async_skip=0 */
+ mode_t umask(mode_t mask);
+-int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
++int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen); /* path_lock=1 */
 -- 
 1.8.3.1
 
