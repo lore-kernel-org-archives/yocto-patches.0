@@ -1,659 +1,356 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1737.1794358338118949606
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2565.1794370864776787971
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 10 Nov 2026 16:52:18 -0800
+ Tue, 10 Nov 2026 20:21:05 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wCHGtW_u_Nq5xsGAA--.24092S3;
-	Wed, 11 Nov 2026 08:50:08 +0800 (CST)
-Received: from [192.168.31.243] (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowADneWppu_Nq6Q4zAA--.3584S2;
-	Wed, 11 Nov 2026 08:48:41 +0800 (CST)
-Message-ID: <295dd652-4ddc-4783-aaeb-6ef0be150d8d@cetc.com.cn>
-Date: Wed, 11 Nov 2026 08:51:54 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [pseudo][PATCH V2 1/2] pseudo_client: resolve
- /proc/<pid>/fd/<n> to the descriptor
-To: yocto-patches@lists.yoctoproject.org, richard.purdie@linuxfoundation.org,
- chen_q07@163.com
-References: <20261103013028.3295799-1-chenqi_hycx@cetc.com.cn>
- <0b977592-3cbf-494b-82e9-0659ab1408a0@kernel.crashing.org>
- <cbeb1b10-725a-464a-af1d-a70020950eca@cetc.com.cn>
- <c7bbe9c5-57fc-494a-8107-d2526125b8f8@kernel.crashing.org>
-Content-Language: en-US
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
-In-Reply-To: <c7bbe9c5-57fc-494a-8107-d2526125b8f8@kernel.crashing.org>
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C6CowADneWppu_Nq6Q4zAA--.3584S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYICmrzHZcEEQAAsA
-X-CM-DELIVERINFO: =?B?rnU/gqc9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoOIjgpGi0GuTdhhpJJ2ykM9O3RWrSELxTu3E32mAxk+yVTdo38O4aQQp2GyauusxwFhlG
-	scTb9GDTeIckc5MZkrWsn2KwgnRMDjx4DXSctx9yTeU9Zu80VuFN3D81DiyKyw==
-X-Coremail-Antispam: 1Uk129KBj9fXoWfur1rur4rGr18ur4kKrW8KrX_yoW8KF4Uuo
-	W8Kr1fJr4rXr1UWr1UJ3yDJrya93W8GrnrJryUGr9rJF10vr17A3yxAryUt3yUGr18Gr1U
-	AryUJry0yFWjqw1rl-sFpf9Il3svdjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn5xqx4xG64xvF2IEw4CE5I8CrVC2j2Wlc2xSY4AK67AK6wUv73VFW2AG
-	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYO7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
-	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
-	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2
-	z280aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
-	Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CY02Avz4vE14v_twCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-	6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jr
-	v_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvE
-	c7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
-	v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7I
-	U8y5l5UUUUU==
+ dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
+Received: from kernel.crashing.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6AB4L3ll2428068
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Nov 2026 22:21:04 -0600
+From: Mark Hatle <mark.hatle@kernel.crashing.org>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [pseudo][PATCH 01/34] pseudo_client: serialize path changes across clients
+Date: Tue, 10 Nov 2026 22:20:29 -0600
+Message-Id: <1794370862-30908-2-git-send-email-mark.hatle@kernel.crashing.org>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1794370862-30908-1-git-send-email-mark.hatle@kernel.crashing.org>
+References: <1794370862-30908-1-git-send-email-mark.hatle@kernel.crashing.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 00:52:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5259
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 04:21:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5260
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+From: Mark Hatle <mark.hatle@amd.com>
 
-On 11/10/26 22:47, Mark Hatle wrote:
->
->
-> On 11/10/26 3:16 AM, Chen Qi wrote:
->> Hi Mark,
->>
->> Thanks a lot for reviewing this! I was quite surprised by the bugs you
->> found.
->> I went through the commits one by one and I think they do fix problems
->> of my original patch.
->>
->> I also tested the master-next branch and I can confirm that things work
->> for me.
->
-> Wonderful.  I'll go through the patches and will probably squash at 
-> least some of them together.  I need to evaluate the set again now 
-> that it my morning and make sure squashing really makes sense here.
->
->> I have a question on the TOCTOU section of the README.security:
->>   From my understanding, pseudo uses an inode based database, so path
->> based TOCTOU issues should not exist in the first place? Because if that
->> happens, inode mismatch error will be reported.
->
-> My understanding (which may be wrong), is that selinux and other 
-> security tools will often use /proc/pid/fd/descriptor in order to get 
-> a single fd that refers to a file or component.  Then all subsequent 
-> actions happen against the one fd making sure that a external actor 
-> can't manipulate the file via a race condition.
->
-> Introducing pseudo into the mix, we now have a series of stat, 
-> emulation (processing db calls), and then open in order to perform the 
-> same action.  So we are introducing a potential race window (for 
-> secure applications) where a malicious actor could now change the file 
-> between the stat and the open.  While this is all theoretical, in a 
-> running system it very much would be an attack vector.  (This BTW also 
-> appears to be the actual cause of the two parallel rename and symlink 
-> failures in the tests.  Which I'm working on a fix for. However even 
-> with the fix, it still wouldn't be a guarenty but simply less likely 
-> to cause a problem.)
->
-> Basically it's a complex problem, and I wanted to make sure it was 
-> clearly documented for people that pseudo is not intended to be used 
-> in a secure run-time environment, but instead it's part of a build 
-> system tooling to emulate certain behavior.  Due to the nature of the 
-> emulation, it will likely never be as secure as a properly implemented 
-> operating system, container environment, etc.  Things we just can't do!
->
-> --Mark
->
-Thanks for the detailed explanation. I think you're right.
+test-parallel-rename and test-parallel-symlinks failed with "inode
+mismatch" and "path mismatch" errors, and clients were aborted by the
+server.
 
-Regards,
-Qi
+rename() and unlink() look at the destination, send OP_MAY_UNLINK,
+make the change on disk, and then send OP_DID_UNLINK and OP_RENAME, as
+separate steps.  The wrapper lock only covers one process, so another
+client can rename onto the same name in between.  The first client then
+marks and removes the wrong inode, and its OP_RENAME finds a different
+entry at the destination.  ln -sf does the same, as it creates a
+temporary symlink and renames it over the link.
 
->
->> Regards,
->> Qi
->>
->> On 11/10/26 10:56, Mark Hatle wrote:
->>> I believe I have found some bugs in this set.  I worked through it and
->>> I THINK I have them fixed.  I did not squash them into your commit, as
->>> I'm not completely sure I understand the full workflow you are using.
->>>
->>> Can you please review the following commits.  If you agree they fix
->>> issues in yoru commit, I'll squash them into a single commit. See:
->>>
->>> https://git.yoctoproject.org/pseudo/log/?h=master-next
->>>
->>>
->>> Specifically the commits:
->>>
->>>
->>> 89592a8f6c378526fdfab40396f61c97fce68d68 pseudo_client.h: remove
->>> dangling pseudo_client_fdpath declaration
->>> 65f48296f01ab949f0dab72e27cfda3f6ae2b45c pseudo_client: don't rewrite
->>> /proc/self/fd/<n> within a chroot
->>> 90789d335c990cfa37f34aa357f0fbed7133fbc6 pseudo_client: validate the
->>> descriptor for /proc/self/fd/<n>/<path>
->>> 914512e431dc07611c09bc9a1aefa9199463bd62 pseudo_client: only rewrite
->>> /proc/<pid>/fd/<n> for this process
->>> 5e4ea38a0daeabe1e05a604c2e5c3cb29570363f pseudo_client: don't use the
->>> rewritten path after freeing it in base_path()
->>> 21a9576df43f63ac82777166e801813ef88f8b3b pseudo_client: resolve
->>> /proc/<pid>/fd/<n> to the descriptor
->>>
->>> (the list is from newest to oldest, so git log format)
->>>
->>> The first and last commits are the ones submitted.  The ones in the
->>> middle are my fixes to issues found during review and testing.
->>>
->>> The set in master-next also contains other changes as well as two
->>> additional test cases based on your changes:
->>>
->>> c8770dc60339af270c8eb582d244600116889473 test-chroot-proc-dev: Add
->>> /proc and /dev within a chroot test
->>> 96338ee7f2b4118cd0477d7e77a5cf2df05ad5d4 test-proc-fd: Add a stale
->>> directory descriptor case
->>>
->>> as well as a README file that I figured was necessary.  The LLM based
->>> review pointed out that tools use the /proc interfaces to ensure a
->>> reference without a race window to the fd.  However using pseudo does
->>> not allow for this ability. The solution to this is we're documenting
->>> it as a design decision and that users should not believe that pseudo
->>> can be used in secure workflows.
->>>
->>>
->>> Any concerns, with the above (or anything in the master-next) please
->>> let me know!  Thank you for the submissions!  Sorry it took me so long
->>> to review it.
->>>
->>> --Mark
->>>
->>> On 11/2/26 7:30 PM, Chen Qi wrote:
->>>> From: Chen Qi <chenqi_hycx@cetc.com.cn>
->>>>
->>>> Paths such as /proc/self/fd/<n> and /dev/fd/<n> denote the open file:
->>>> the
->>>> kernel resolves them to the descriptor, so an O_PATH|O_NOFOLLOW
->>>> descriptor
->>>> on a symlink addresses the symlink itself.
->>>>
->>>> Path canonicalization expands them with readlink(2) and follows the
->>>> result, which changes that meaning.  For a descriptor on a symlink an
->>>> xattr set through it lands on the link target instead of the link,
->>>> and for
->>>> a dangling symlink the call fails with ENOENT.  Once expanded, the
->>>> path no
->>>> longer looks like something pseudo tracks either, so the operation is
->>>> passed straight through to the real syscall.
->>>>
->>>> libselinux 3.11 labels the rootfs through such descriptors, so 
->>>> setfiles
->>>> could not label any symlink and do_image fell back to a first boot
->>>> relabel:
->>>>
->>>>     setfiles: Could not set context for .../etc/mtab:  No such file or
->>>> directory
->>>>     setfiles: Could not set context for
->>>> .../etc/systemd/system/default.target:  Operation not permitted
->>>>
->>>> Rewrite the reference to the path pseudo recorded for the descriptor,
->>>> which keeps the operation under pseudo's control.  The descriptor 
->>>> itself
->>>> identifies the inode, so the final component is followed only when
->>>> following it is what reproduces that inode, i.e. for a descriptor
->>>> obtained
->>>> through a symlink.  When the caller passes AT_SYMLINK_NOFOLLOW the
->>>> reference itself is what is being asked about (readlink, lstat,
->>>> l*xattr),
->>>> so it is left alone for the kernel to resolve.
->>>>
->>>> Adds test/test-proc-fd.sh covering both descriptor flavours.
->>>>
->>>> Assisted-by: Codewhale:deepseek-v4-flash
->>>> Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
->>>> ---
->>>>    pseudo_client.c      | 110 +++++++++++++++++++++++++++
->>>>    pseudo_client.h      |   2 +
->>>>    pseudo_util.c        |   2 +
->>>>    pseudo_wrappers.c    |   2 +
->>>>    test/test-proc-fd.c  | 174 
->>>> +++++++++++++++++++++++++++++++++++++++++++
->>>>    test/test-proc-fd.sh |  17 +++++
->>>>    6 files changed, 307 insertions(+)
->>>>    create mode 100644 test/test-proc-fd.c
->>>>    create mode 100755 test/test-proc-fd.sh
->>>>
->>>> diff --git a/pseudo_client.c b/pseudo_client.c
->>>> index 302ef21..c8247e8 100644
->>>> --- a/pseudo_client.c
->>>> +++ b/pseudo_client.c
->>>> @@ -1451,12 +1451,112 @@ pseudo_client_shutdown(int wait_on_socket) {
->>>>        return 0;
->>>>    }
->>>>    +/* /proc/self/fd/<n>, /proc/<pid>/fd/<n> and /dev/fd/<n> denote
->>>> the open file,
->>>> + * not the path the magic link prints.  Canonicalization resolves
->>>> symlinks with
->>>> + * readlink(2), which changes the meaning of such a path: the kernel
->>>> resolves it
->>>> + * to the descriptor, so an O_PATH|O_NOFOLLOW descriptor on a
->>>> symlink addresses
->>>> + * the symlink itself, whereas the expansion yields the link target
->>>> and then
->>>> + * follows it.  That labels the wrong inode, or fails when the
->>>> target does not
->>>> + * resolve.
->>>> + *
->>>> + * Rewrite the reference to the path pseudo recorded for the
->>>> descriptor, which
->>>> + * also puts the operation under pseudo's control instead of passing
->>>> it through.
->>>> + * The descriptor itself identifies the inode, so the final
->>>> component is only
->>>> + * followed when following it is what reproduces that inode, i.e. 
->>>> for a
->>>> + * descriptor obtained through a symlink.  Returns NULL to leave the
->>>> path alone.
->>>> + */
->>>> +static char *
->>>> +rewrite_proc_fd_ref(const char *path, int *leave_last) {
->>>> +    const char *p;
->>>> +    const char *digits;
->>>> +    const char *recpath;
->>>> +    char *out;
->>>> +    PSEUDO_STATBUF fbuf, pbuf;
->>>> +    int fd = 0;
->>>> +
->>>> +    if (!path || path[0] != '/')
->>>> +        return NULL;
->>>> +
->>>> +    if (!strncmp(path, "/dev/fd/", 8)) {
->>>> +        p = path + 8;
->>>> +    } else if (!strncmp(path, "/proc/", 6)) {
->>>> +        p = path + 6;
->>>> +        if (!strncmp(p, "self/fd/", 8)) {
->>>> +            p += 8;
->>>> +        } else if (!strncmp(p, "thread-self/fd/", 15)) {
->>>> +            p += 15;
->>>> +        } else {
->>>> +            const char *q = p;
->>>> +
->>>> +            while (*q >= '0' && *q <= '9')
->>>> +                ++q;
->>>> +            if (q == p || strncmp(q, "/fd/", 4))
->>>> +                return NULL;
->>>> +            p = q + 4;
->>>> +        }
->>>> +    } else {
->>>> +        return NULL;
->>>> +    }
->>>> +
->>>> +    digits = p;
->>>> +    while (*p >= '0' && *p <= '9') {
->>>> +        if (fd > (0x7fffffff - 9) / 10)
->>>> +            return NULL;
->>>> +        fd = fd * 10 + (*p - '0');
->>>> +        ++p;
->>>> +    }
->>>> +    if (p == digits || (*p != '\0' && *p != '/'))
->>>> +        return NULL;
->>>> +
->>>> +    recpath = fd_path(fd);
->>>> +    if (!recpath || recpath[0] != '/')
->>>> +        return NULL;
->>>> +
->>>> +    /* Within a chroot the recorded path carries the chroot prefix,
->>>> while
->>>> +     * base_path() adds that prefix to absolute paths. Strip it, or
->>>> give up
->>>> +     * if the descriptor is not inside the chroot.
->>>> +     */
->>>> +    if (pseudo_chroot_len) {
->>>> +        if (strncmp(recpath, pseudo_chroot, pseudo_chroot_len) ||
->>>> +            (recpath[pseudo_chroot_len] != '\0' &&
->>>> recpath[pseudo_chroot_len] != '/'))
->>>> +            return NULL;
->>>> +        recpath += pseudo_chroot_len;
->>>> +        if (*recpath == '\0')
->>>> +            recpath = "/";
->>>> +    }
->>>> +
->>>> +    if (*p != '\0') {
->>>> +        size_t len = strlen(recpath) + strlen(p) + 1;
->>>> +
->>>> +        out = malloc(len);
->>>> +        if (!out)
->>>> +            return NULL;
->>>> +        snprintf(out, len, "%s%s", recpath, p);
->>>> +        return out;
->>>> +    }
->>>> +
->>>> +    if (!pseudo_real_fstat || !pseudo_real_lstat)
->>>> +        return NULL;
->>>> +    if (pseudo_real_fstat(fd, &fbuf) == -1)
->>>> +        return NULL;
->>>> +    if (pseudo_real_lstat(recpath, &pbuf) == 0 &&
->>>> +        pbuf.st_dev == fbuf.st_dev && pbuf.st_ino == fbuf.st_ino) {
->>>> +        *leave_last = 1;
->>>> +    } else if (pseudo_real_stat == NULL || pseudo_real_stat(recpath,
->>>> &pbuf) == -1 ||
->>>> +           pbuf.st_dev != fbuf.st_dev || pbuf.st_ino != 
->>>> fbuf.st_ino) {
->>>> +        /* The recorded path no longer describes this descriptor. */
->>>> +        return NULL;
->>>> +    }
->>>> +    return strdup(recpath);
->>>> +}
->>>> +
->>>>    static char *
->>>>    base_path(int dirfd, const char *path, int leave_last) {
->>>>        char *basepath = 0;
->>>>        size_t baselen = 0;
->>>>        size_t minlen = 0;
->>>>        char *newpath;
->>>> +    char *rewritten;
->>>>          if (!path)
->>>>            return NULL;
->>>> @@ -1501,7 +1601,17 @@ base_path(int dirfd, const char *path, int
->>>> leave_last) {
->>>>            minlen = pseudo_chroot_len;
->>>>        }
->>>>    +    /* Only when the caller follows the final component. With
->>>> +     * AT_SYMLINK_NOFOLLOW the reference itself is what the caller 
->>>> asks
->>>> +     * about (readlink, lstat, l*xattr), so it must be left for the
->>>> kernel
->>>> +     * to resolve.
->>>> +     */
->>>> +    rewritten = leave_last ? NULL : rewrite_proc_fd_ref(path,
->>>> &leave_last);
->>>> +    if (rewritten)
->>>> +        path = rewritten;
->>>> +
->>>>        newpath = pseudo_fix_path(basepath, path, minlen, baselen,
->>>> NULL, leave_last);
->>>> +    free(rewritten);
->>>>        pseudo_debug(PDBGF_PATH, "base_path[%s]: %s</>%s => %s\n",
->>>>            leave_last ? "nofollow" : "follow",
->>>>            basepath ? basepath : "<nil>",
->>>> diff --git a/pseudo_client.h b/pseudo_client.h
->>>> index 9b9f86a..b3f9f49 100644
->>>> --- a/pseudo_client.h
->>>> +++ b/pseudo_client.h
->>>> @@ -51,6 +51,8 @@ extern FILE *pseudo_grp;
->>>>      /* pseudo_wrappers will try to initialize these */
->>>>    extern int (*pseudo_real_lstat)(const char *path, PSEUDO_STATBUF
->>>> *buf);
->>>> +extern int (*pseudo_real_fstat)(int fd, PSEUDO_STATBUF *buf);
->>>> +extern int (*pseudo_real_stat)(const char *path, PSEUDO_STATBUF 
->>>> *buf);
->>>>    extern int (*pseudo_real_fork)(void);
->>>>    extern int (*pseudo_real_execv)(const char *, char * const *);
->>>>    diff --git a/pseudo_util.c b/pseudo_util.c
->>>> index 6e7c465..12718a5 100644
->>>> --- a/pseudo_util.c
->>>> +++ b/pseudo_util.c
->>>> @@ -99,6 +99,8 @@ static int pseudo_util_initted = -1;  /* Not yet
->>>> run */
->>>>      /* bypass wrapper logic on path computations */
->>>>    int (*pseudo_real_lstat)(const char *path, PSEUDO_STATBUF *buf) =
->>>> NULL;
->>>> +int (*pseudo_real_fstat)(int fd, PSEUDO_STATBUF *buf) = NULL;
->>>> +int (*pseudo_real_stat)(const char *path, PSEUDO_STATBUF *buf) = 
->>>> NULL;
->>>>    /* bash workaround */
->>>>    int (*pseudo_real_unsetenv)(const char *) = unsetenv;
->>>>    char * (*pseudo_real_getenv)(const char *) = getenv;
->>>> diff --git a/pseudo_wrappers.c b/pseudo_wrappers.c
->>>> index 16a451a..d073b1e 100644
->>>> --- a/pseudo_wrappers.c
->>>> +++ b/pseudo_wrappers.c
->>>> @@ -174,6 +174,8 @@ pseudo_init_wrappers(void) {
->>>>        pseudo_real_fsetxattr = real_fsetxattr;
->>>>    #endif
->>>>        pseudo_real_lstat = base_lstat;
->>>> +    pseudo_real_fstat = base_fstat;
->>>> +    pseudo_real_stat = base_stat;
->>>>        /* and these are used so the client's server spawn can bypass
->>>>         * wrappers.
->>>>         */
->>>> diff --git a/test/test-proc-fd.c b/test/test-proc-fd.c
->>>> new file mode 100644
->>>> index 0000000..9550809
->>>> --- /dev/null
->>>> +++ b/test/test-proc-fd.c
->>>> @@ -0,0 +1,174 @@
->>>> +/*
->>>> + * SPDX-License-Identifier: LGPL-2.1-only
->>>> + *
->>>> + * Check that xattr operations on /proc/self/fd/<n> address the file
->>>> the
->>>> + * descriptor refers to, and not the path the magic link prints.
->>>> + *
->>>> + * A descriptor opened with O_PATH|O_NOFOLLOW on a symlink denotes 
->>>> the
->>>> + * symlink itself, so a context set through it must land on the link
->>>> and
->>>> + * leave the target alone.  A descriptor opened by following a 
->>>> symlink
->>>> + * denotes the target, so the context must land there instead.
->>>> + *
->>>> + * Exit status: 0 all checks passed, 1 a check failed, 255 skipped
->>>> because
->>>> + * the platform has no xattr support.
->>>> + */
->>>> +#define _GNU_SOURCE
->>>> +#include <errno.h>
->>>> +#include <fcntl.h>
->>>> +#include <stdio.h>
->>>> +#include <stdlib.h>
->>>> +#include <string.h>
->>>> +#include <unistd.h>
->>>> +#include <sys/stat.h>
->>>> +#include <sys/types.h>
->>>> +#include <sys/xattr.h>
->>>> +
->>>> +#define CTX "security.selinux"
->>>> +
->>>> +static int failures;
->>>> +
->>>> +static void
->>>> +fail(const char *what, const char *detail)
->>>> +{
->>>> +    printf("  FAIL  %-52s %s\n", what, detail);
->>>> +    ++failures;
->>>> +}
->>>> +
->>>> +static void
->>>> +pass(const char *what)
->>>> +{
->>>> +    printf("  PASS  %s\n", what);
->>>> +}
->>>> +
->>>> +/* Read the context of path itself, without following a final 
->>>> symlink.
->>>> + * Returns NULL when there is none.
->>>> + */
->>>> +static const char *
->>>> +get_ctx(const char *path, char *buf, size_t buflen)
->>>> +{
->>>> +    ssize_t n = lgetxattr(path, CTX, buf, buflen - 1);
->>>> +
->>>> +    if (n < 0)
->>>> +        return NULL;
->>>> +    buf[n] = '\0';
->>>> +    return buf;
->>>> +}
->>>> +
->>>> +static void
->>>> +expect_ctx(const char *what, const char *path, const char *want)
->>>> +{
->>>> +    char buf[256];
->>>> +    const char *got = get_ctx(path, buf, sizeof buf);
->>>> +
->>>> +    if (!want) {
->>>> +        if (got)
->>>> +            fail(what, got);
->>>> +        else
->>>> +            pass(what);
->>>> +        return;
->>>> +    }
->>>> +    if (got && strcmp(got, want) == 0)
->>>> +        pass(what);
->>>> +    else
->>>> +        fail(what, got ? got : "<no context>");
->>>> +}
->>>> +
->>>> +/* Set the context through the descriptor, the same way libselinux
->>>> does when
->>>> + * it pins a file: path-based call, no extra flags.
->>>> + */
->>>> +static int
->>>> +set_via_fd(int fd, const char *value)
->>>> +{
->>>> +    char path[64];
->>>> +
->>>> +    snprintf(path, sizeof path, "/proc/self/fd/%d", fd);
->>>> +    return setxattr(path, CTX, value, strlen(value) + 1, 0);
->>>> +}
->>>> +
->>>> +int
->>>> +main(int argc, char **argv)
->>>> +{
->>>> +    const char *dir = argc > 1 ? argv[1] : ".";
->>>> +    char path[512];
->>>> +    int fd;
->>>> +
->>>> +    snprintf(path, sizeof path, "%s/file", dir);
->>>> +    if (close(open(path, O_CREAT | O_WRONLY, 0644)) == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +    snprintf(path, sizeof path, "%s/link", dir);
->>>> +    if (symlink("file", path) == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +    snprintf(path, sizeof path, "%s/dangling", dir);
->>>> +    if (symlink("/nonexistent/xyz", path) == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +
->>>> +    /* 1. O_PATH|O_NOFOLLOW on a symlink: label the link, not its
->>>> target. */
->>>> +    snprintf(path, sizeof path, "%s/link", dir);
->>>> +    fd = open(path, O_PATH | O_NOFOLLOW);
->>>> +    if (fd == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +    if (set_via_fd(fd, "onlink") == -1 && errno == ENOTSUP) {
->>>> +        printf("  SKIP  xattr support unavailable\n");
->>>> +        return 255;
->>>> +    }
->>>> +    close(fd);
->>>> +
->>>> +    snprintf(path, sizeof path, "%s/link", dir);
->>>> +    expect_ctx("context landed on the symlink", path, "onlink");
->>>> +    snprintf(path, sizeof path, "%s/file", dir);
->>>> +    expect_ctx("context did not land on the target", path, NULL);
->>>> +
->>>> +    /* 2. A dangling symlink must not make the operation fail. */
->>>> +    snprintf(path, sizeof path, "%s/dangling", dir);
->>>> +    fd = open(path, O_PATH | O_NOFOLLOW);
->>>> +    if (fd == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +    if (set_via_fd(fd, "ondangling") == -1) {
->>>> +        fail("context set on a dangling symlink", strerror(errno));
->>>> +    } else {
->>>> +        pass("context set on a dangling symlink");
->>>> +    }
->>>> +    close(fd);
->>>> +    expect_ctx("context landed on the dangling link", path,
->>>> "ondangling");
->>>> +
->>>> +    /* 3. A descriptor obtained by following a symlink denotes the
->>>> target. */
->>>> +    snprintf(path, sizeof path, "%s/target", dir);
->>>> +    if (close(open(path, O_CREAT | O_WRONLY, 0644)) == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +    snprintf(path, sizeof path, "%s/link2", dir);
->>>> +    if (symlink("target", path) == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +    fd = open(path, O_RDONLY);
->>>> +    if (fd == -1) {
->>>> +        perror(path);
->>>> +        return 1;
->>>> +    }
->>>> +    if (set_via_fd(fd, "ontarget") == -1) {
->>>> +        fail("context set through a followed descriptor",
->>>> strerror(errno));
->>>> +    } else {
->>>> +        pass("context set through a followed descriptor");
->>>> +    }
->>>> +    close(fd);
->>>> +
->>>> +    snprintf(path, sizeof path, "%s/target", dir);
->>>> +    expect_ctx("context landed on the target", path, "ontarget");
->>>> +    snprintf(path, sizeof path, "%s/link2", dir);
->>>> +    expect_ctx("context did not land on the link", path, NULL);
->>>> +
->>>> +    printf("%s: %d check(s) failed\n", failures ? "FAIL" : "OK",
->>>> failures);
->>>> +    return failures ? 1 : 0;
->>>> +}
->>>> diff --git a/test/test-proc-fd.sh b/test/test-proc-fd.sh
->>>> new file mode 100755
->>>> index 0000000..4a7f8ba
->>>> --- /dev/null
->>>> +++ b/test/test-proc-fd.sh
->>>> @@ -0,0 +1,17 @@
->>>> +#!/bin/bash
->>>> +#
->>>> +# SPDX-License-Identifier: LGPL-2.1-only
->>>> +#
->>>> +# Regressions guarded here: an xattr call on /proc/self/fd/<n> must
->>>> address
->>>> +# the file the descriptor refers to.  Path canonicalization used to
->>>> expand the
->>>> +# magic link with readlink(2) and then follow the result, so a
->>>> context set
->>>> +# through an O_PATH|O_NOFOLLOW descriptor on a symlink landed on the
->>>> link
->>>> +# target, and a dangling link made the call fail with ENOENT.
->>>> libselinux 3.11
->>>> +# labels the rootfs that way, which left every symlink in the image
->>>> unlabelled.
->>>> +#
->>>> +# The temporary tree has to live below $PWD so that pseudo tracks it.
->>>> +
->>>> +tmpdir="$(mktemp -d -p "$PWD" proc_fd_XXXXXX)"
->>>> +trap "rm -rf '$tmpdir'" EXIT TERM INT
->>>> +
->>>> +./test/test-proc-fd "$tmpdir"
->>>
->>>
->>>
->>
->>
->>
->>
->>
->
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#5257): 
-> https://lists.yoctoproject.org/g/yocto-patches/message/5257
-> Mute This Topic: https://lists.yoctoproject.org/mt/122070118/10573603
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: 
-> https://lists.yoctoproject.org/g/yocto-patches/leave/15343253/10573603/1695603168/xyzzy 
-> [chenqi_hycx@cetc.com.cn]
-> -=-=-=-=-=-=-=-=-=-=-=-
+Readers race in the same way: a client can lstat() a name before
+another client replaces it, but only report the result to the server
+afterwards.  If the filesystem has meanwhile reused the inode number
+for a new file, the server sees the inode under the wrong path, and
+aborts the reader.
+
+Add a path lock shared by all clients of a server, using fcntl() locks
+on pseudo.pathlock in the local state directory.  makewrappers gains a
+path_lock option which holds the lock around the guts of a wrapper:
+exclusive (path_lock=1) for rename, renameat, unlink, unlinkat and
+rmdir, and shared (path_lock=shared) for the stat family, so readers
+don't block each other but can't observe a name in the middle of a
+change.
+
+fcntl() locks belong to the process, so a forked child doesn't share
+them, and they are released if the process dies.  The descriptor is
+kept open and protected like pseudo's other internal descriptors.  If
+the lock can't be taken the operation runs unlocked as before.
+
+Both tests now pass consistently, including with PSEUDO_DEBUG set.  The
+lock adds about 4us to an lstat() (about 12%) and 2% to a rename.
+
+AI-Generated: Uses GitHub Copilot
+Signed-off-by: Mark Hatle <mark.hatle@amd.com>
+---
+ makewrappers                   | 17 +++++++++
+ ports/linux/statx/wrapfuncs.in |  2 +-
+ ports/linux/wrapfuncs.in       | 24 ++++++------
+ ports/unix/wrapfuncs.in        | 10 ++---
+ pseudo.h                       |  1 +
+ pseudo_client.c                | 83 +++++++++++++++++++++++++++++++++++++++++-
+ pseudo_client.h                |  2 +
+ templates/wrapfuncs.c          |  2 +-
+ 8 files changed, 121 insertions(+), 20 deletions(-)
+
+diff --git a/makewrappers b/makewrappers
+index 1ac46bf..303ae32 100755
+--- a/makewrappers
++++ b/makewrappers
+@@ -248,6 +248,11 @@ class Function:
+         self.noignore_path = False
+         self.hand_wrapped = None
+         self.async_skip = None
++        # Hold the client path lock (pseudo_client_path_lock()) around
++        # the guts: path_lock=1 (exclusive) for operations that check,
++        # change and then record a path in separate steps, and
++        # path_lock=shared for operations that only look at a path.
++        self.path_lock = None
+         # used for the copyright date when creating stub functions
+         self.date = datetime.date.today().year
+         # Used to define pointers that should EFAULT if null
+@@ -492,6 +497,18 @@ class Function:
+         else:
+             return "rc ="
+ 
++    def path_lock_begin(self):
++        """take the client path lock, for path_lock=1 functions"""
++        if self.path_lock:
++            return "int path_lock_fd = pseudo_client_path_lock(%d);\n\t\t\t" % (self.path_lock == "shared")
++        return ""
++
++    def path_lock_end(self):
++        """release the client path lock, for path_lock=1 functions"""
++        if self.path_lock:
++            return "\n\t\t\tpseudo_client_path_unlock(path_lock_fd);"
++        return ""
++
+     def def_return(self):
+         """return default value (or just return)"""
+         if self.type == 'void':
+diff --git a/ports/linux/statx/wrapfuncs.in b/ports/linux/statx/wrapfuncs.in
+index a81fb91..3ca40ac 100644
+--- a/ports/linux/statx/wrapfuncs.in
++++ b/ports/linux/statx/wrapfuncs.in
+@@ -1 +1 @@
+-int statx(int dirfd, const char *path, int flags, unsigned int mask, struct statx *statxbuf); /* efault=path */
++int statx(int dirfd, const char *path, int flags, unsigned int mask, struct statx *statxbuf); /* efault=path, path_lock=shared */
+diff --git a/ports/linux/wrapfuncs.in b/ports/linux/wrapfuncs.in
+index d417ed3..65f2d7a 100644
+--- a/ports/linux/wrapfuncs.in
++++ b/ports/linux/wrapfuncs.in
+@@ -2,12 +2,12 @@ int open(const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFO
+ int __open_2(const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+ int __open64_2(const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+ char *get_current_dir_name(void);
+-int __xstat(int ver, const char *path, struct stat *buf);
+-int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW */
++int __xstat(int ver, const char *path, struct stat *buf); /* path_lock=shared */
++int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
+ int __fxstat(int ver, int fd, struct stat *buf);
+ int lchmod(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
+ int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW */
+-int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags);
++int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags); /* path_lock=shared */
+ int openat(int dirfd, const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+ int __openat_2(int dirfd, const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+ int open_tree(int dirfd, const char *path, unsigned int flags); /* preserve_paths=1, noignore_path=1 */
+@@ -25,18 +25,18 @@ int open64(const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NO
+ int openat64(int dirfd, const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+ int __openat64_2(int dirfd, const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+ int creat64(const char *path, mode_t mode);
+-int stat(const char *path, struct stat *buf); /* real_func=pseudo_stat */
+-int lstat(const char *path, struct stat *buf); /* real_func=pseudo_lstat, flags=AT_SYMLINK_NOFOLLOW */
++int stat(const char *path, struct stat *buf); /* real_func=pseudo_stat, path_lock=shared */
++int lstat(const char *path, struct stat *buf); /* real_func=pseudo_lstat, flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
+ int fstat(int fd, struct stat *buf); /* real_func=pseudo_fstat */
+-int fstatat(int dirfd, const char *path, struct stat *buf, int flags);
+-int stat64(const char *path, struct stat64 *buf); /* real_func=pseudo_stat64 */
+-int lstat64(const char *path, struct stat64 *buf); /* real_func=pseudo_lstat64, flags=AT_SYMLINK_NOFOLLOW */
++int fstatat(int dirfd, const char *path, struct stat *buf, int flags); /* path_lock=shared */
++int stat64(const char *path, struct stat64 *buf); /* real_func=pseudo_stat64, path_lock=shared */
++int lstat64(const char *path, struct stat64 *buf); /* real_func=pseudo_lstat64, flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
+ int fstat64(int fd, struct stat64 *buf); /* real_func=pseudo_fstat64 */
+-int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags);
+-int __xstat64(int ver, const char *path, struct stat64 *buf);
+-int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW */
++int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags); /* path_lock=shared */
++int __xstat64(int ver, const char *path, struct stat64 *buf); /* path_lock=shared */
++int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=shared */
+ int __fxstat64(int ver, int fd, struct stat64 *buf);
+-int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags);
++int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags); /* path_lock=shared */
+ FILE *fopen64(const char *path, const char *mode); /* noignore_path=1 */
+ int nftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flag); /* noignore_path=1 */
+ FILE *freopen64(const char *path, const char *mode, FILE *stream);  /* noignore_path=1 */
+diff --git a/ports/unix/wrapfuncs.in b/ports/unix/wrapfuncs.in
+index d797235..5956742 100644
+--- a/ports/unix/wrapfuncs.in
++++ b/ports/unix/wrapfuncs.in
+@@ -53,13 +53,13 @@ int mkstemp(char *template); /* flags=AT_SYMLINK_NOFOLLOW */
+ int mkostemp(char *template, int oflags); /* flags=AT_SYMLINK_NOFOLLOW */
+ int mkstemps(char *template, int suffixlen); /* flags=AT_SYMLINK_NOFOLLOW */
+ int mkostemps(char *template, int suffixlen, int oflags); /* flags=AT_SYMLINK_NOFOLLOW */
+-int rename(const char *oldpath, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
+-int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
+-int rmdir(const char *path); /* flags=AT_SYMLINK_NOFOLLOW */
++int rename(const char *oldpath, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int rmdir(const char *path); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ int symlink(const char *oldname, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
+ int symlinkat(const char *oldname, int dirfd, const char *newpath); /* flags=AT_SYMLINK_NOFOLLOW */
+-int unlink(const char *path); /* flags=AT_SYMLINK_NOFOLLOW */
+-int unlinkat(int dirfd, const char *path, int rflags); /* flags=AT_SYMLINK_NOFOLLOW */
++int unlink(const char *path); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
++int unlinkat(int dirfd, const char *path, int rflags); /* flags=AT_SYMLINK_NOFOLLOW, path_lock=1 */
+ # primarily for use with chroot()
+ ssize_t readlink(const char *path, char *buf, size_t bufsiz); /* flags=AT_SYMLINK_NOFOLLOW */
+ ssize_t readlinkat(int dirfd, const char *path, char *buf, size_t bufsiz); /* flags=AT_SYMLINK_NOFOLLOW */
+diff --git a/pseudo.h b/pseudo.h
+index 0047f2f..6d50b77 100644
+--- a/pseudo.h
++++ b/pseudo.h
+@@ -129,6 +129,7 @@ extern char *pseudo_version;
+ 
+ #define PSEUDO_LOCKFILE "pseudo.lock"
+ #define PSEUDO_LOGFILE "pseudo.log"
++#define PSEUDO_PATHLOCK "pseudo.pathlock"
+ #define PSEUDO_PIDFILE "pseudo.pid"
+ #define PSEUDO_SOCKET "pseudo.socket"
+ 
+diff --git a/pseudo_client.c b/pseudo_client.c
+index 7f425dd..ffd3450 100644
+--- a/pseudo_client.c
++++ b/pseudo_client.c
+@@ -48,6 +48,7 @@ static char *base_path(int dirfd, const char *path, int leave_last);
+ static int connect_fd = -1;
+ static int server_pid = 0;
+ int pseudo_localstate_dir_fd = -1;
++static int pseudo_pathlock_fd = -1;
+ int pseudo_pwd_fd = -1;
+ int pseudo_pwd_lck_fd = -1;
+ char *pseudo_pwd_lck_name = NULL;
+@@ -533,6 +534,7 @@ pseudo_init_client(void) {
+ 		/* Ensure that all of the values are reset */
+ 		server_pid = 0;
+ 		pseudo_localstate_dir_fd = -1;
++		pseudo_pathlock_fd = -1;
+ 		pseudo_pwd_fd = -1;
+ 		pseudo_pwd_lck_fd = -1;
+ 		pseudo_pwd_lck_name = NULL;
+@@ -1149,6 +1151,80 @@ pseudo_fd(int fd, int how) {
+ 	return(newfd);
+ }
+ 
++/* Operations such as rename() and unlink() look at the destination, change
++ * it on disk, and then tell the server what happened, in several separate
++ * steps.  Another client doing the same to the same name in between makes
++ * the database describe a file that is no longer there, which the server
++ * reports as an inode or path mismatch.  Wrappers marked path_lock=1 hold
++ * this lock, shared by every client of the server, for the whole sequence.
++ *
++ * fcntl() locks belong to the process, so a forked child does not share
++ * them even though it inherits the descriptor, and they are released if
++ * the process dies.  The descriptor is kept open and protected like
++ * pseudo's other internal descriptors.
++ *
++ * Wrappers that only look at a path (stat() and friends) take the lock
++ * shared: they don't block each other, but can't observe a path between
++ * the change on disk and the database update.
++ *
++ * Returns the descriptor to pass to pseudo_client_path_unlock(), or -1 if
++ * the lock could not be taken, in which case the operation runs unlocked.
++ */
++int
++pseudo_client_path_lock(int shared) {
++	static char *lock_path = NULL;
++	struct flock lk = { .l_type = shared ? F_RDLCK : F_WRLCK, .l_whence = SEEK_SET };
++	int save_errno = errno;
++	int locked = 0, retried = 0;
++
++	pseudo_antimagic();
++	for (;;) {
++		if (pseudo_pathlock_fd == -1) {
++			if (!lock_path)
++				lock_path = pseudo_localstatedir_path(PSEUDO_PATHLOCK);
++			if (lock_path)
++				pseudo_pathlock_fd = pseudo_fd(open(lock_path,
++					O_RDWR | O_CREAT | O_CLOEXEC, 0644), MOVE_FD);
++			if (pseudo_pathlock_fd == -1) {
++				pseudo_debug(PDBGF_CLIENT, "path lock: can't open '%s': %s\n",
++					lock_path ? lock_path : "<nil>", strerror(errno));
++				break;
++			}
++		}
++		if (fcntl(pseudo_pathlock_fd, F_SETLKW, &lk) == 0) {
++			locked = 1;
++			break;
++		}
++		if (errno == EINTR)
++			continue;
++		/* closed behind our back: reopen it once */
++		if (errno == EBADF && !retried) {
++			pseudo_pathlock_fd = -1;
++			retried = 1;
++			continue;
++		}
++		pseudo_debug(PDBGF_CLIENT, "path lock: can't lock '%s': %s\n",
++			lock_path ? lock_path : "<nil>", strerror(errno));
++		break;
++	}
++	pseudo_magic();
++	errno = save_errno;
++	return locked ? pseudo_pathlock_fd : -1;
++}
++
++void
++pseudo_client_path_unlock(int fd) {
++	struct flock lk = { .l_type = F_UNLCK, .l_whence = SEEK_SET };
++	int save_errno = errno;
++
++	if (fd != -1) {
++		pseudo_antimagic();
++		fcntl(fd, F_SETLK, &lk);
++		pseudo_magic();
++	}
++	errno = save_errno;
++}
++
+ static int
+ client_connect(void) {
+ 	/* we have a server pid, is it responsive? */
+@@ -2018,6 +2094,8 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 			startfd = pseudo_util_evlog_fd + 1;
+ 		if (pseudo_localstate_dir_fd >= startfd)
+ 			startfd = pseudo_localstate_dir_fd + 1;
++		if (pseudo_pathlock_fd >= startfd)
++			startfd = pseudo_pathlock_fd + 1;
+ 		if (pseudo_pwd_fd >= startfd)
+ 			startfd = pseudo_pwd_fd + 1;
+ 		if (pseudo_pwd_lck_fd >= startfd)
+@@ -2031,7 +2109,8 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 		 */
+ 		for (i = fd; i < startfd && i <= close_range_maxfd; ++i) {
+ 			if (i == pseudo_util_debug_fd || i == pseudo_util_evlog_fd ||
+-					i == pseudo_localstate_dir_fd || i == pseudo_pwd_fd ||
++					i == pseudo_localstate_dir_fd || i == pseudo_pathlock_fd ||
++					i == pseudo_pwd_fd ||
+ 					i == pseudo_pwd_lck_fd || i == pseudo_grp_fd ||
+ 					i == connect_fd)
+ 				continue;
+@@ -2057,6 +2136,8 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 				pseudo_util_debug_fd = pseudo_fd(fd, COPY_FD);
+ 			} else if (fd == pseudo_localstate_dir_fd) {
+ 				pseudo_localstate_dir_fd = pseudo_fd(fd, COPY_FD);
++			} else if (fd == pseudo_pathlock_fd) {
++				pseudo_pathlock_fd = pseudo_fd(fd, COPY_FD);
+ 			} else if (fd == pseudo_pwd_fd) {
+ 				pseudo_pwd_fd = pseudo_fd(fd, COPY_FD);
+ 				/* since we have a FILE * on it, we close that... */
+diff --git a/pseudo_client.h b/pseudo_client.h
+index 19f3901..3958f6d 100644
+--- a/pseudo_client.h
++++ b/pseudo_client.h
+@@ -27,6 +27,8 @@ extern void pseudo_client_touchuid(void);
+ extern void pseudo_client_touchgid(void);
+ extern int pseudo_client_shutdown(int);
+ extern int pseudo_fd(int fd, int how);
++extern int pseudo_client_path_lock(int shared);
++extern void pseudo_client_path_unlock(int fd);
+ #define MOVE_FD	0
+ #define COPY_FD	1
+ #define PSEUDO_MIN_FD	20
+diff --git a/templates/wrapfuncs.c b/templates/wrapfuncs.c
+index 9385a40..a57c997 100644
+--- a/templates/wrapfuncs.c
++++ b/templates/wrapfuncs.c
+@@ -68,7 +68,7 @@ ${maybe_async_skip}
+ 		} else {
+ 			/* exec*() use this to restore the sig mask */
+ 			pseudo_saved_sigmask = saved;
+-			${rc_assign} wrap_$name(${call_args});
++			${path_lock_begin}${rc_assign} wrap_$name(${call_args});${path_lock_end}
+ 		}
+ 	}
+ 	${variadic_end}
+-- 
+1.8.3.1
 
