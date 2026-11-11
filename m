@@ -1,145 +1,148 @@
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2493.1794370872144576497
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2584.1794370872124947678
  for <yocto-patches@lists.yoctoproject.org>;
  Tue, 10 Nov 2026 20:21:12 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6AB4L3m92428068
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Nov 2026 22:21:08 -0600
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6AB4L3mJ2428068
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Nov 2026 22:21:09 -0600
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [pseudo][PATCH 23/34] AGENTS.md: Add to assist future developers
-Date: Tue, 10 Nov 2026 22:20:51 -0600
-Message-Id: <1794370862-30908-24-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH 33/34] wrappers: Don't re-block signals in nested wrapper calls
+Date: Tue, 10 Nov 2026 22:21:01 -0600
+Message-Id: <1794370862-30908-34-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1794370862-30908-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1794370862-30908-1-git-send-email-mark.hatle@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by gate.crashing.org id 6AB4L3m92428068
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 04:21:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5289
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5290
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
 From: Mark Hatle <mark.hatle@amd.com>
 
-Based partially off of the Yocto Project standards, this is my attempt
-at documenting the configuration I use with agents during maintainer
-and development activities.
+pseudo's own calls to wrapped functions, such as fcntl() for the path
+lock, go through the full wrapper and block and restore signals again,
+although the outer wrapper already blocked them.  Skip that when this
+thread already holds the pseudo lock, and keep the outer wrapper's
+saved mask for exec*().
 
+On a tar/chown/find/ls/rm workload of 40,000 files this halves the
+rt_sigprocmask calls, from 3.1M to 1.5M.
+
+AI-Generated: Uses GitHub Copilot
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 ---
- AGENTS.md | 85 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
- 1 file changed, 85 insertions(+)
- create mode 100644 AGENTS.md
+ doc/program_flow      |  4 ++--
+ pseudo_wrappers.c     |  6 ++++++
+ templates/wrapfuncs.c | 21 ++++++++++++++++-----
+ 3 files changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/AGENTS.md b/AGENTS.md
-new file mode 100644
-index 0000000..c0d041a
---- /dev/null
-+++ b/AGENTS.md
-@@ -0,0 +1,85 @@
-+# AGENTS.md =E2=80=94 pseudo
+diff --git a/doc/program_flow b/doc/program_flow
+index 4137cf0..5fbdb5d 100644
+--- a/doc/program_flow
++++ b/doc/program_flow
+@@ -62,7 +62,7 @@ libpseudo execution flow:
+ 			return enosys
+ 		variadic setup (if necessary)
+ 		if pseudo_disabled  return real_*()
+-		pseudo_sigblock
++		pseudo_sigblock (unless this thread already holds the lock)
+ 		pseudo_getlock
+ 		if antimagic  rc = real_*()
+ 		else
+@@ -74,7 +74,7 @@ libpseudo execution flow:
+ 				drop path lock
+ 		variadic end (if necessary)
+ 		pseudo_droplock
+-		unmask signals
++		unmask signals (if they were blocked above)
+ 		return rc
+ 
+ pseudo execution flow:
+diff --git a/pseudo_wrappers.c b/pseudo_wrappers.c
+index a4e9015..13d7ede 100644
+--- a/pseudo_wrappers.c
++++ b/pseudo_wrappers.c
+@@ -58,6 +58,7 @@ static pthread_t pseudo_mutex_holder;
+ static int pseudo_mutex_recursion = 0;
+ static int pseudo_getlock(void);
+ static void pseudo_droplock(void);
++static int pseudo_lock_held(void);
+ static size_t pseudo_dechroot(char *, size_t);
+ static void pseudo_sigblock(sigset_t *);
+ 
+@@ -226,6 +227,11 @@ pseudo_getlock(void) {
+ 	}
+ }
+ 
++static int
++pseudo_lock_held(void) {
++	return pthread_equal(pseudo_mutex_holder, pthread_self());
++}
 +
-+Guidance for AI agents working in the `pseudo` repository.
-+
-+## Making changes
-+
-+- No web PR workflow. The project uses **patches on mailing lists**
-+  (yocto-patches@lists.yoctoproject.org). Don't assume GitHub PR
-+  conventions apply. Subject on the mailing list must include
-+  '[pseudo]'.
-+- One Git commit per logical change (e.g., one commit per fix, refactor =
-or new test).
-+- Split unrelated changes, even small ones found along the way: a bug
-+  noticed during a refactor gets its own commit.
-+- Keep every commit building cleanly, with tests passing, so the series
-+  bisects.  Put a new test after the fix it checks.
-+- Commit message format:
-+  - Summary line prefixed with the component or short file path,
-+    e.g. `pseudo_util: Remove stale with_libpseudo() comment`.
-+    Check `git log --oneline <path>` for the prefix convention already i=
-n use.
-+  - Body explains what/why/how, and how it was tested.
-+  - Prefer explaining *why* a change was made over restating what's
-+    already visible in the diff, unless the diff is long/hard to follow
-+    or the reason for the change isn't known =E2=80=94 in those cases, s=
-ummarize
-+    what changed instead.
-+  - Be succinct: use as few sentences and lines as possible while still
-+    covering what/why/how. Cut restatements, filler, and any detail a
-+    reviewer wouldn't need (e.g. exact test-run counts, step-by-step
-+    narration). One short paragraph is usually enough; only add a second
-+    if a distinct point (e.g. testing) needs it.
-+  - The most relevant information about the change should be presented f=
-irst.
-+  - Reference bugs as `[YOCTO #1234]` when applicable.
-+  - Use `Reported-by`, `Suggested-by`, `Tested-by`, `Reviewed-by`, `Cc` =
-tags
-+    where relevant.
-+
-+### AI-generated code
-+
-+- **Mandatory**: any AI-generated code/commit must add an `AI-Generated:=
-`
-+  tag line in the commit message, placed *before* `Signed-off-by` (if pr=
-esent),
-+  naming the tool used, e.g.:
-+
-+  ```
-+  component: Add the ability to ...
-+
-+  AI-Generated: Uses GitHub Copilot
-+  ```
-+
-+- **Mandatory** Do not automatically add a `Signed-off-by`. This tag mus=
-t
-+  always be written by the human contributor, never by the AI tool =E2=80=
-=94 the
-+  DCO/Developer's Statement of Origin still applies in full.
-+- Contributor is responsible for confirming the AI tool's terms don't
-+  conflict with the project's open source license/IP policy, and that
-+  any third-party copyrighted material in the AI output is properly
-+  licensed before contributing it. See the Linux Foundation generative A=
-I
-+  guidance: https://www.linuxfoundation.org/legal/generative-ai.
-+- `Co-authored-by` should be omitted in favor of the `AI-Generated` tag.
-+  Don't add other tool-specific trailers either (e.g. `Copilot-Session`).
-+
-+## Building and testing
-+
-+- Configure and build: `./configure --prefix=3D$(pwd)/test && make`
-+- Full test suite: `make test-verbose` (or `make test`).  Single tests:
-+  `./run_tests.sh -v test-name`.
-+- Tests are `test/test-*.sh`, with optional `test/test-*.c` programs tha=
-t
-+  the Makefile builds automatically.  A script exits 0 to pass and 255 t=
-o
-+  report a skip; C helpers conventionally exit 77 for "not supported"
-+  (for example ENOSYS), which the script maps to 255.  Create temporary
-+  trees below $PWD so pseudo tracks them.
-+- Changes to the server, locking or path handling: also run the
-+  test-parallel-* tests several times, as they are timing dependent.
-+
-+## Code layout
-+
-+- Wrappers are generated by `makewrappers` from `ports/*/wrapfuncs.in`,
-+  `templates/` and the guts in `ports/*/guts/`.  Don't edit the generate=
-d
-+  files (pseudo_wrapfuncs.*, pseudo_wrapper_table.c, pseudo_ports.h,
-+  port_wrappers.c).
-+- Linux is the only port.  Put port-specific definitions in
-+  `ports/<port>/portdefs.h`.  Where shared code needs something only one
-+  port provides, fail with `#error` for other ports rather than silently
-+  falling back.
-+- Keep pseudo.1 and README.security in step with behaviour changes:
-+  options, environment variables, diagnostics, security model.
-+
-+When in doubt about a convention, grep `git log --oneline <path>` in the
-+target repo for precedent before inventing a new style.
---=20
+ static void
+ pseudo_droplock(void) {
+ 	if (--pseudo_mutex_recursion == 0) {
+diff --git a/templates/wrapfuncs.c b/templates/wrapfuncs.c
+index d7fb548..2fa4212 100644
+--- a/templates/wrapfuncs.c
++++ b/templates/wrapfuncs.c
+@@ -20,6 +20,7 @@ ${maybe_skip}
+ ${type}
+ ${name}(${decl_args}) {
+ 	sigset_t saved;
++	int nested;
+ 	${variadic_decl}
+ 	${rc_decl}
+ 	${paths_decl}
+@@ -44,11 +45,17 @@ ${maybe_async_skip}
+ 	}
+ 
+ 	pseudo_debug(PDBGF_WRAPPER, "wrapper called: ${name}\n");
+-	pseudo_sigblock(&saved);
++	/* If this thread already holds the lock, an outer wrapper has
++	 * already blocked signals, so don't block and restore them again.
++	 */
++	nested = pseudo_lock_held();
++	if (!nested)
++		pseudo_sigblock(&saved);
+ 	pseudo_debug(PDBGF_WRAPPER | PDBGF_VERBOSE, "${name} - signals blocked, obtaining lock\n");
+ 	if (pseudo_getlock()) {
+ 		errno = EBUSY;
+-		sigprocmask(SIG_SETMASK, &saved, NULL);
++		if (!nested)
++			sigprocmask(SIG_SETMASK, &saved, NULL);
+ 		pseudo_debug(PDBGF_WRAPPER, "${name} failed to get lock, giving EBUSY.\n");
+ 		PROFILE_DONE;
+ 		${def_return}
+@@ -66,8 +73,11 @@ ${maybe_async_skip}
+ 			pseudo_debug(PDBGF_SYSCALL, "${name} ignored path, calling real syscall.\n");
+ 			${rc_assign} (*real_${name})(${call_args});
+ 		} else {
+-			/* exec*() use this to restore the sig mask */
+-			pseudo_saved_sigmask = saved;
++			/* exec*() use this to restore the sig mask; a
++			 * nested call keeps the outer wrapper's mask.
++			 */
++			if (!nested)
++				pseudo_saved_sigmask = saved;
+ 			${path_lock_begin}${rc_assign} wrap_$name(${call_args});${path_lock_end}
+ 		}
+ 	}
+@@ -76,7 +86,8 @@ quick_exit:
+ 	__attribute__((unused));
+ 	save_errno = errno;
+ 	pseudo_droplock();
+-	sigprocmask(SIG_SETMASK, &saved, NULL);
++	if (!nested)
++		sigprocmask(SIG_SETMASK, &saved, NULL);
+ 	pseudo_debug(PDBGF_WRAPPER | PDBGF_VERBOSE, "${name} - yielded lock, restored signals\n");
+ 	/* not strerror(), which can hang on systems using locale data for it */
+ 	pseudo_debug(PDBGF_WRAPPER, "wrapper completed: ${name} returns ${rc_format} (errno: %d)\n", ${rc_value}, save_errno);
+-- 
 1.8.3.1
 
