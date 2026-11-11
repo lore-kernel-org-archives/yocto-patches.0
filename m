@@ -1,86 +1,95 @@
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.562.1794413715440507565
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.549.1794413715591114584
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 11 Nov 2026 08:15:15 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6ABGFDdi2529923
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 10:15:14 -0600
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6ABGFDdj2529923
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 10:15:15 -0600
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [pseudo][pseudo-1.9]PATCH 03/10] ports/linux: Don't require <linux/mount.h>
-Date: Wed, 11 Nov 2026 10:15:05 -0600
-Message-Id: <1794413712-18072-4-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][pseudo-1.9]PATCH 04/10] configure: Require GCC 5 or later
+Date: Wed, 11 Nov 2026 10:15:06 -0600
+Message-Id: <1794413712-18072-5-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 16:15:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5301
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5302
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
 From: Mark Hatle <mark.hatle@amd.com>
 
-<linux/mount.h> only exists in kernel headers from 5.2, so pseudo no
-longer built on older hosts such as CentOS 7.  pseudo only needs
-OPEN_TREE_CLONE, which already has a fallback, and struct mount_attr,
-which is only used through pointers, so declare it instead of including
-the header.  The forward declaration is also needed without the header,
-or each prototype using the struct declares a different type.
+pseudo uses __has_include, which GCC only supports from version 5, so
+older compilers such as GCC 4.8 on CentOS 7 failed part way through the
+build.
+
+clang reports itself as GCC 4.2.1, so it is only checked for
+__has_include.
 
 AI-Generated: Uses GitHub Copilot
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
-(cherry picked from commit e545758f96dbe8a70623957009fd79502e638cd1)
+(cherry picked from commit 7add07ba4f5b5095a66614bb210e5d42cfe33555)
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 ---
- ports/linux/portdefs.h             | 7 +++++--
- test/test-open_tree_attr-syscall.c | 1 -
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ README    |  3 +++
+ configure | 25 +++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/ports/linux/portdefs.h b/ports/linux/portdefs.h
-index ac1d971..546c33b 100644
---- a/ports/linux/portdefs.h
-+++ b/ports/linux/portdefs.h
-@@ -35,7 +35,6 @@ GLIBC_COMPAT_SYMBOL(memcpy,2.0);
- #include <sys/prctl.h>
- #include <linux/seccomp.h>
- #include <sys/mount.h>
--#include <linux/mount.h>
+diff --git a/README b/README
+index c4cb997..039f960 100644
+--- a/README
++++ b/README
+@@ -11,6 +11,9 @@ environment, allowing ordinary users to run commands which give the illusion
+ of creating device nodes, changing file ownership, and otherwise doing
+ things necessary for creating distribution packages or filesystems.
  
- /* close_range()'s flags, and unshare(), are only declared by glibc under
-  * _GNU_SOURCE, which pseudo does not build with. <linux/close_range.h> is
-@@ -94,11 +93,15 @@ extern int unshare(int flags);
- #define SYS_open_tree __NR_open_tree
- #endif
++Building pseudo requires GCC 5 or later (or clang), which the configure
++script checks for.
++
+ To configure, run the provided configure script.  Note that this is
+ NOT an autoconf script.
  
--/* OPEN_TREE_CLONE may be missing from older host headers.
-+/* The new mount API is only in <sys/mount.h> from glibc 2.36, and
-+ * <linux/mount.h> is missing from older kernel headers (before 5.2), so
-+ * don't rely on either.  OPEN_TREE_CLONE is kernel ABI, and struct
-+ * mount_attr is only used through pointers, so it can stay incomplete.
-  */
- #ifndef OPEN_TREE_CLONE
- #define OPEN_TREE_CLONE (1U << 0)
- #endif
-+struct mount_attr;
+diff --git a/configure b/configure
+index 68c9962..f561dcb 100755
+--- a/configure
++++ b/configure
+@@ -232,6 +232,31 @@ if [ -z "$opt_sqlite_lib" ]; then
+     opt_sqlite_lib=$opt_lib
+ fi
  
- #ifndef SYS_open_tree_attr
- 
-diff --git a/test/test-open_tree_attr-syscall.c b/test/test-open_tree_attr-syscall.c
-index e4e652e..aead9d4 100644
---- a/test/test-open_tree_attr-syscall.c
-+++ b/test/test-open_tree_attr-syscall.c
-@@ -5,7 +5,6 @@
- #include <stdio.h>
- #include <unistd.h>
- #include <sys/syscall.h>
--#include <linux/mount.h>
- #include <sys/stat.h>
- 
- #ifndef SYS_open_tree_attr
++# pseudo uses __has_include, which needs GCC 5 or later.  clang reports
++# itself as GCC 4.2.1, so only check its support for __has_include.
++if ! cc_version=$(${CC:-cc} -dumpversion 2>/dev/null); then
++    echo >&2 "Error: can't run the C compiler '${CC:-cc}'."
++    exit 1
++fi
++cc_check=$(mktemp -d "${TMPDIR:-/tmp}/pseudo-configure.XXXXXX") || exit 1
++cat > "$cc_check/cc_check.c" <<EOF
++#if defined(__clang__)
++# if !defined(__has_include)
++#  error clang without __has_include
++# endif
++#elif !defined(__GNUC__) || __GNUC__ < 5
++# error GCC older than 5
++#endif
++int pseudo_cc_check;
++EOF
++if ! cc_check_out=$(${CC:-cc} -c -o "$cc_check/cc_check.o" "$cc_check/cc_check.c" 2>&1); then
++    echo >&2 "Error: pseudo requires GCC 5 or later (${CC:-cc} reports version $cc_version)."
++    echo >&2 "$cc_check_out"
++    rm -rf "$cc_check"
++    exit 1
++fi
++rm -rf "$cc_check"
++
+ if [ ! -f "${opt_sqlite}/include/sqlite3.h" ]; then
+     echo >&2 "SQLite3 headers not found in at ${opt_sqlite}/include/sqlite3.h. Please check that SQLite3 and SQLite3 headers are installed."
+     exit 1
 -- 
 1.8.3.1
 
