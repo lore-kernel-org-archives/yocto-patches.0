@@ -1,451 +1,145 @@
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2583.1794370872121178194
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2493.1794370872144576497
  for <yocto-patches@lists.yoctoproject.org>;
  Tue, 10 Nov 2026 20:21:12 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6AB4L3mK2428068
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Nov 2026 22:21:09 -0600
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6AB4L3m92428068
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Nov 2026 22:21:08 -0600
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [pseudo][PATCH 34/34] Wrap execvpe(), fexecve() and execveat()
-Date: Tue, 10 Nov 2026 22:21:02 -0600
-Message-Id: <1794370862-30908-35-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH 23/34] AGENTS.md: Add to assist future developers
+Date: Tue, 10 Nov 2026 22:20:51 -0600
+Message-Id: <1794370862-30908-24-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1794370862-30908-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1794370862-30908-1-git-send-email-mark.hatle@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by gate.crashing.org id 6AB4L3m92428068
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 04:21:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5288
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5289
 
 From: Mark Hatle <mark.hatle@amd.com>
 
-These weren't wrapped, so a program that ran another one through them
-with an environment lacking LD_PRELOAD or pseudo's variables, as
-env -i does through execve(), ran it outside pseudo: its files were
-created and changed as the real user, with nothing recorded.
+Based partially off of the Yocto Project standards, this is my attempt
+at documenting the configuration I use with agents during maintainer
+and development activities.
 
-Wrap them like execve(): restore pseudo's environment, honour
-PSEUDO_UNLOAD, and log the exec when the server is logging (execveat()
-only for absolute paths or AT_FDCWD).  Rename test-execl to test-exec
-and extend it to run env through each of them, checking the arguments
-get through, that an empty environment gets libpseudo back in
-LD_PRELOAD, and that PSEUDO_UNLOAD keeps it out.
-
-AI-Generated: Uses GitHub Copilot
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 ---
- ports/common/guts/execveat.c   |  29 +++++++++
- ports/common/guts/execvpe.c    |  29 +++++++++
- ports/common/guts/fexecve.c    |  21 ++++++
- ports/common/pseudo_wrappers.c | 141 +++++++++++++++++++++++++++++++++++++++++
- ports/common/wrapfuncs.in      |   3 +
- test/test-exec.c               |  50 +++++++++++++++
- test/test-exec.sh              |  31 +++++++++
- test/test-execl.c              |   4 --
- test/test-execl.sh             |  13 ----
- 9 files changed, 304 insertions(+), 17 deletions(-)
- create mode 100644 ports/common/guts/execveat.c
- create mode 100644 ports/common/guts/execvpe.c
- create mode 100644 ports/common/guts/fexecve.c
- create mode 100644 test/test-exec.c
- create mode 100755 test/test-exec.sh
- delete mode 100644 test/test-execl.c
- delete mode 100755 test/test-execl.sh
+ AGENTS.md | 85 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+ 1 file changed, 85 insertions(+)
+ create mode 100644 AGENTS.md
 
-diff --git a/ports/common/guts/execveat.c b/ports/common/guts/execveat.c
+diff --git a/AGENTS.md b/AGENTS.md
 new file mode 100644
-index 0000000..10e0d52
+index 0000000..c0d041a
 --- /dev/null
-+++ b/ports/common/guts/execveat.c
-@@ -0,0 +1,29 @@
-+/*
-+ * SPDX-License-Identifier: LGPL-2.1-only
-+ *
-+ * static int
-+ * wrap_execveat(int dirfd, const char *path, char *const *argv, char *const *envp, int flags) {
-+ *	int rc = -1;
-+ */
-+	char **new_environ;
++++ b/AGENTS.md
+@@ -0,0 +1,85 @@
++# AGENTS.md =E2=80=94 pseudo
 +
-+	/* as for execve(), the path is not canonicalized or redirected
-+	 * into the chroot environment
-+	 */
-+	if (antimagic == 0 && path && (path[0] == '/' || dirfd == AT_FDCWD)) {
-+		const char *path_guess = pseudo_exec_path(path, 0);
-+		pseudo_client_op(OP_EXEC, PSA_EXEC, -1, -1, path_guess, 0);
-+	}
++Guidance for AI agents working in the `pseudo` repository.
 +
-+	new_environ = pseudo_setupenvp(envp);
-+	if (pseudo_has_unload(new_environ))
-+		new_environ = pseudo_dropenvp(new_environ);
++## Making changes
 +
-+	sigprocmask(SIG_SETMASK, &pseudo_saved_sigmask, NULL);
-+	rc = real_execveat(dirfd, path, argv, new_environ, flags);
++- No web PR workflow. The project uses **patches on mailing lists**
++  (yocto-patches@lists.yoctoproject.org). Don't assume GitHub PR
++  conventions apply. Subject on the mailing list must include
++  '[pseudo]'.
++- One Git commit per logical change (e.g., one commit per fix, refactor =
+or new test).
++- Split unrelated changes, even small ones found along the way: a bug
++  noticed during a refactor gets its own commit.
++- Keep every commit building cleanly, with tests passing, so the series
++  bisects.  Put a new test after the fix it checks.
++- Commit message format:
++  - Summary line prefixed with the component or short file path,
++    e.g. `pseudo_util: Remove stale with_libpseudo() comment`.
++    Check `git log --oneline <path>` for the prefix convention already i=
+n use.
++  - Body explains what/why/how, and how it was tested.
++  - Prefer explaining *why* a change was made over restating what's
++    already visible in the diff, unless the diff is long/hard to follow
++    or the reason for the change isn't known =E2=80=94 in those cases, s=
+ummarize
++    what changed instead.
++  - Be succinct: use as few sentences and lines as possible while still
++    covering what/why/how. Cut restatements, filler, and any detail a
++    reviewer wouldn't need (e.g. exact test-run counts, step-by-step
++    narration). One short paragraph is usually enough; only add a second
++    if a distinct point (e.g. testing) needs it.
++  - The most relevant information about the change should be presented f=
+irst.
++  - Reference bugs as `[YOCTO #1234]` when applicable.
++  - Use `Reported-by`, `Suggested-by`, `Tested-by`, `Reviewed-by`, `Cc` =
+tags
++    where relevant.
 +
-+	pseudo_free_envp(new_environ);
++### AI-generated code
 +
-+/*	return rc;
-+ * }
-+ */
-diff --git a/ports/common/guts/execvpe.c b/ports/common/guts/execvpe.c
-new file mode 100644
-index 0000000..37e4927
---- /dev/null
-+++ b/ports/common/guts/execvpe.c
-@@ -0,0 +1,29 @@
-+/*
-+ * SPDX-License-Identifier: LGPL-2.1-only
-+ *
-+ * static int
-+ * wrap_execvpe(const char *file, char *const *argv, char *const *envp) {
-+ *	int rc = -1;
-+ */
-+	char **new_environ;
++- **Mandatory**: any AI-generated code/commit must add an `AI-Generated:=
+`
++  tag line in the commit message, placed *before* `Signed-off-by` (if pr=
+esent),
++  naming the tool used, e.g.:
 +
-+	/* as for execvp(), the file is not canonicalized or redirected
-+	 * into the chroot environment
-+	 */
-+	if (antimagic == 0) {
-+		const char *path_guess = pseudo_exec_path(file, 1);
-+		pseudo_client_op(OP_EXEC, PSA_EXEC, -1, -1, path_guess, 0);
-+	}
++  ```
++  component: Add the ability to ...
 +
-+	new_environ = pseudo_setupenvp(envp);
-+	if (pseudo_has_unload(new_environ))
-+		new_environ = pseudo_dropenvp(new_environ);
++  AI-Generated: Uses GitHub Copilot
++  ```
 +
-+	sigprocmask(SIG_SETMASK, &pseudo_saved_sigmask, NULL);
-+	rc = real_execvpe(file, argv, new_environ);
++- **Mandatory** Do not automatically add a `Signed-off-by`. This tag mus=
+t
++  always be written by the human contributor, never by the AI tool =E2=80=
+=94 the
++  DCO/Developer's Statement of Origin still applies in full.
++- Contributor is responsible for confirming the AI tool's terms don't
++  conflict with the project's open source license/IP policy, and that
++  any third-party copyrighted material in the AI output is properly
++  licensed before contributing it. See the Linux Foundation generative A=
+I
++  guidance: https://www.linuxfoundation.org/legal/generative-ai.
++- `Co-authored-by` should be omitted in favor of the `AI-Generated` tag.
++  Don't add other tool-specific trailers either (e.g. `Copilot-Session`).
 +
-+	pseudo_free_envp(new_environ);
++## Building and testing
 +
-+/*	return rc;
-+ * }
-+ */
-diff --git a/ports/common/guts/fexecve.c b/ports/common/guts/fexecve.c
-new file mode 100644
-index 0000000..a0162d3
---- /dev/null
-+++ b/ports/common/guts/fexecve.c
-@@ -0,0 +1,21 @@
-+/*
-+ * SPDX-License-Identifier: LGPL-2.1-only
-+ *
-+ * static int
-+ * wrap_fexecve(int fd, char *const *argv, char *const *envp) {
-+ *	int rc = -1;
-+ */
-+	char **new_environ;
++- Configure and build: `./configure --prefix=3D$(pwd)/test && make`
++- Full test suite: `make test-verbose` (or `make test`).  Single tests:
++  `./run_tests.sh -v test-name`.
++- Tests are `test/test-*.sh`, with optional `test/test-*.c` programs tha=
+t
++  the Makefile builds automatically.  A script exits 0 to pass and 255 t=
+o
++  report a skip; C helpers conventionally exit 77 for "not supported"
++  (for example ENOSYS), which the script maps to 255.  Create temporary
++  trees below $PWD so pseudo tracks them.
++- Changes to the server, locking or path handling: also run the
++  test-parallel-* tests several times, as they are timing dependent.
 +
-+	new_environ = pseudo_setupenvp(envp);
-+	if (pseudo_has_unload(new_environ))
-+		new_environ = pseudo_dropenvp(new_environ);
++## Code layout
 +
-+	sigprocmask(SIG_SETMASK, &pseudo_saved_sigmask, NULL);
-+	rc = real_fexecve(fd, argv, new_environ);
++- Wrappers are generated by `makewrappers` from `ports/*/wrapfuncs.in`,
++  `templates/` and the guts in `ports/*/guts/`.  Don't edit the generate=
+d
++  files (pseudo_wrapfuncs.*, pseudo_wrapper_table.c, pseudo_ports.h,
++  port_wrappers.c).
++- Linux is the only port.  Put port-specific definitions in
++  `ports/<port>/portdefs.h`.  Where shared code needs something only one
++  port provides, fail with `#error` for other ports rather than silently
++  falling back.
++- Keep pseudo.1 and README.security in step with behaviour changes:
++  options, environment variables, diagnostics, security model.
 +
-+	pseudo_free_envp(new_environ);
-+
-+/*	return rc;
-+ * }
-+ */
-diff --git a/ports/common/pseudo_wrappers.c b/ports/common/pseudo_wrappers.c
-index 2cbc946..2ad0814 100644
---- a/ports/common/pseudo_wrappers.c
-+++ b/ports/common/pseudo_wrappers.c
-@@ -331,6 +331,120 @@ execvp(const char *file, char *const *argv) {
- 	return rc;
- }
- 
-+int
-+execvpe(const char *file, char *const *argv, char *const *envp) {
-+	sigset_t saved;
-+
-+	int rc = -1;
-+	PROFILE_START;
-+
-+	if (!pseudo_check_wrappers() || !real_execvpe) {
-+		/* rc was initialized to the "failure" value */
-+		pseudo_enosys("execvpe");
-+		PROFILE_DONE;
-+		return rc;
-+	}
-+
-+	pseudo_debug(PDBGF_WRAPPER, "called: execvpe\n");
-+	pseudo_sigblock(&saved);
-+	if (pseudo_getlock()) {
-+		errno = EBUSY;
-+		sigprocmask(SIG_SETMASK, &saved, NULL);
-+		PROFILE_DONE;
-+		return -1;
-+	}
-+
-+	int save_errno;
-+
-+	/* exec*() use this to restore the sig mask */
-+	pseudo_saved_sigmask = saved;
-+	rc = wrap_execvpe(file, argv, envp);
-+
-+	save_errno = errno;
-+	pseudo_droplock();
-+	sigprocmask(SIG_SETMASK, &saved, NULL);
-+	pseudo_debug(PDBGF_WRAPPER, "completed: execvpe\n");
-+	errno = save_errno;
-+	PROFILE_DONE;
-+	return rc;
-+}
-+
-+int
-+fexecve(int fd, char *const *argv, char *const *envp) {
-+	sigset_t saved;
-+
-+	int rc = -1;
-+	PROFILE_START;
-+
-+	if (!pseudo_check_wrappers() || !real_fexecve) {
-+		/* rc was initialized to the "failure" value */
-+		pseudo_enosys("fexecve");
-+		PROFILE_DONE;
-+		return rc;
-+	}
-+
-+	pseudo_debug(PDBGF_WRAPPER, "called: fexecve\n");
-+	pseudo_sigblock(&saved);
-+	if (pseudo_getlock()) {
-+		errno = EBUSY;
-+		sigprocmask(SIG_SETMASK, &saved, NULL);
-+		PROFILE_DONE;
-+		return -1;
-+	}
-+
-+	int save_errno;
-+
-+	/* exec*() use this to restore the sig mask */
-+	pseudo_saved_sigmask = saved;
-+	rc = wrap_fexecve(fd, argv, envp);
-+
-+	save_errno = errno;
-+	pseudo_droplock();
-+	sigprocmask(SIG_SETMASK, &saved, NULL);
-+	pseudo_debug(PDBGF_WRAPPER, "completed: fexecve\n");
-+	errno = save_errno;
-+	PROFILE_DONE;
-+	return rc;
-+}
-+
-+int
-+execveat(int dirfd, const char *path, char *const *argv, char *const *envp, int flags) {
-+	sigset_t saved;
-+
-+	int rc = -1;
-+	PROFILE_START;
-+
-+	if (!pseudo_check_wrappers() || !real_execveat) {
-+		/* rc was initialized to the "failure" value */
-+		pseudo_enosys("execveat");
-+		PROFILE_DONE;
-+		return rc;
-+	}
-+
-+	pseudo_debug(PDBGF_WRAPPER, "called: execveat\n");
-+	pseudo_sigblock(&saved);
-+	if (pseudo_getlock()) {
-+		errno = EBUSY;
-+		sigprocmask(SIG_SETMASK, &saved, NULL);
-+		PROFILE_DONE;
-+		return -1;
-+	}
-+
-+	int save_errno;
-+
-+	/* exec*() use this to restore the sig mask */
-+	pseudo_saved_sigmask = saved;
-+	rc = wrap_execveat(dirfd, path, argv, envp, flags);
-+
-+	save_errno = errno;
-+	pseudo_droplock();
-+	sigprocmask(SIG_SETMASK, &saved, NULL);
-+	pseudo_debug(PDBGF_WRAPPER, "completed: execveat\n");
-+	errno = save_errno;
-+	PROFILE_DONE;
-+	return rc;
-+}
-+
- /* no profiling in fork because it wouldn't work anyway
-  * half the time
-  */
-@@ -403,6 +517,33 @@ wrap_execvp(const char *file, char *const *argv) {
- }
- 
- static int
-+wrap_execvpe(const char *file, char *const *argv, char *const *envp) {
-+	int rc = -1;
-+
-+#include "guts/execvpe.c"
-+
-+	return rc;
-+}
-+
-+static int
-+wrap_fexecve(int fd, char *const *argv, char *const *envp) {
-+	int rc = -1;
-+
-+#include "guts/fexecve.c"
-+
-+	return rc;
-+}
-+
-+static int
-+wrap_execveat(int dirfd, const char *path, char *const *argv, char *const *envp, int flags) {
-+	int rc = -1;
-+
-+#include "guts/execveat.c"
-+
-+	return rc;
-+}
-+
-+static int
- wrap_fork(void) {
- 	int rc = -1;
- 	
-diff --git a/ports/common/wrapfuncs.in b/ports/common/wrapfuncs.in
-index 9a44ac1..9b01bf2 100644
---- a/ports/common/wrapfuncs.in
-+++ b/ports/common/wrapfuncs.in
-@@ -7,3 +7,6 @@ int execvp(const char *file, char *const *argv); /* hand_wrapped=1 */
- int fork(void); /* hand_wrapped=1 */
- int posix_spawn(pid_t *pid, const char *path, const posix_spawn_file_actions_t *file_actions, const posix_spawnattr_t *attrp, char *const *argv, char *const *envp); /* hand_wrapped=1 */
- int posix_spawnp(pid_t *pid, const char *file, const posix_spawn_file_actions_t *file_actions, const posix_spawnattr_t *attrp, char *const *argv, char *const *envp); /* hand_wrapped=1 */
-+int execvpe(const char *file, char *const *argv, char *const *envp); /* hand_wrapped=1 */
-+int fexecve(int fd, char *const *argv, char *const *envp); /* hand_wrapped=1 */
-+int execveat(int dirfd, const char *path, char *const *argv, char *const *envp, int flags); /* hand_wrapped=1 */
-diff --git a/test/test-exec.c b/test/test-exec.c
-new file mode 100644
-index 0000000..82ceddf
---- /dev/null
-+++ b/test/test-exec.c
-@@ -0,0 +1,50 @@
-+/*
-+ * SPDX-License-Identifier: LGPL-2.1-only
-+ *
-+ * Run "/usr/bin/env A=A B=B C=C" through an exec function.
-+ *
-+ * usage: test-exec [execl|execvpe|fexecve|execveat [VAR=value...]]
-+ *
-+ * execl() keeps the caller's environment; the others pass only the
-+ * VAR=value arguments given, so pseudo has to add its own variables back
-+ * (or leave them out, if PSEUDO_UNLOAD is among them).
-+ */
-+#define _GNU_SOURCE
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+int main(int argc, char **argv) {
-+	char *args[] = { "env", "A=A", "B=B", "C=C", NULL };
-+	/* argv[2] onwards, followed by argv's terminating NULL */
-+	char **envp = argc > 2 ? argv + 2 : argv + argc;
-+	const char *fn = argc > 1 ? argv[1] : "execl";
-+	int fd;
-+
-+	if (!strcmp(fn, "execl")) {
-+		return execl("/usr/bin/env", "/usr/bin/env", "A=A", "B=B", "C=C", NULL);
-+	} else if (!strcmp(fn, "execvpe")) {
-+		/* searched for in the caller's PATH */
-+		execvpe("env", args, envp);
-+	} else if (!strcmp(fn, "fexecve")) {
-+		fd = open("/usr/bin/env", O_RDONLY | O_CLOEXEC);
-+		if (fd == -1) {
-+			perror("/usr/bin/env");
-+			return 2;
-+		}
-+		fexecve(fd, args, envp);
-+	} else if (!strcmp(fn, "execveat")) {
-+		fd = open("/usr/bin", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-+		if (fd == -1) {
-+			perror("/usr/bin");
-+			return 2;
-+		}
-+		execveat(fd, "env", args, envp, 0);
-+	} else {
-+		fprintf(stderr, "unknown function '%s'\n", fn);
-+		return 2;
-+	}
-+	perror(fn);
-+	return 2;
-+}
-diff --git a/test/test-exec.sh b/test/test-exec.sh
-new file mode 100755
-index 0000000..4308631
---- /dev/null
-+++ b/test/test-exec.sh
-@@ -0,0 +1,31 @@
-+#!/bin/bash
-+#
-+# SPDX-License-Identifier: LGPL-2.1-only
-+#
-+# Run env through each exec function pseudo wraps.  The arguments must
-+# get through, and for the functions given an explicit environment, an
-+# empty one must get libpseudo back in LD_PRELOAD (as with env -i), and
-+# one with PSEUDO_UNLOAD must not.
-+
-+test_exec="$(dirname "$0")/test-exec"
-+
-+"$test_exec" | grep -q "C=C" || { echo "FAILED: execl"; exit 1; }
-+
-+rc=0
-+for fn in execvpe fexecve execveat; do
-+    out=$("$test_exec" $fn)
-+    if ! grep -q "C=C" <<< "$out"; then
-+        echo "FAILED: $fn: arguments not passed"
-+        rc=1
-+    fi
-+    if ! grep -q "^LD_PRELOAD=.*libpseudo" <<< "$out"; then
-+        echo "FAILED: $fn: pseudo not restored to LD_PRELOAD"
-+        rc=1
-+    fi
-+    out=$("$test_exec" $fn PSEUDO_UNLOAD=1)
-+    if grep -q "^LD_PRELOAD=.*libpseudo" <<< "$out"; then
-+        echo "FAILED: $fn: PSEUDO_UNLOAD did not drop pseudo"
-+        rc=1
-+    fi
-+done
-+exit $rc
-diff --git a/test/test-execl.c b/test/test-execl.c
-deleted file mode 100644
-index 31b803c..0000000
---- a/test/test-execl.c
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#include <unistd.h>
--int main() {
--        return execl("/usr/bin/env", "/usr/bin/env", "A=A", "B=B", "C=C", NULL);
--}
-diff --git a/test/test-execl.sh b/test/test-execl.sh
-deleted file mode 100755
-index 8715822..0000000
---- a/test/test-execl.sh
-+++ /dev/null
-@@ -1,13 +0,0 @@
--#!/bin/bash
--#
--# SPDX-License-Identifier: LGPL-2.1-only
--#
--$(dirname "$0")/test-execl | grep -q "C=C"
--
--if [ "$?" = "0" ]
--then
--    #echo "Passed."
--    exit 0
--fi
--#echo "Failed"
--exit 1
--- 
++When in doubt about a convention, grep `git log --oneline <path>` in the
++target repo for precedent before inventing a new style.
+--=20
 1.8.3.1
 
