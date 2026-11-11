@@ -1,77 +1,235 @@
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.560.1794413715276216277
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.553.1794413716415653163
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Nov 2026 08:15:15 -0800
+ Wed, 11 Nov 2026 08:15:16 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6ABGFDdh2529923
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 10:15:14 -0600
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6ABGFDdo2529923
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 10:15:15 -0600
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [pseudo][pseudo-1.9]PATCH 02/10] makewrappers: Don't generate unused _int paths with noignore_path
-Date: Wed, 11 Nov 2026 10:15:04 -0600
-Message-Id: <1794413712-18072-3-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][pseudo-1.9]PATCH 09/10] README.security: Add information specific to file/process security
+Date: Wed, 11 Nov 2026 10:15:11 -0600
+Message-Id: <1794413712-18072-10-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 16:15:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5298
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5307
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
 From: Mark Hatle <mark.hatle@amd.com>
 
-With preserve_paths=1 the canonical path from pseudo_root_path() is
-stored in <path>_int rather than overwriting the path argument. The
-only reader of <path>_int is the ignore_paths() check, which is not
-generated when noignore_path=1 is also set.
+As noted in the README.security file, pseudo is not intended for
+secure computing, but to assist in build system workflows.
 
-open_tree, open_tree_attr and openat2 set both options, so path_int was
-assigned but never used, resulting in:
+During review the recent rewrite_proc_fd_ref it was noted that
+the way pseudo is working may be counter to the way selinux and
+similar tools are expecting the system to behave.  This behavior
+change is acceptable for the build environment workflow, but
+is not acceptable to a running/server workflow.
 
-  warning: variable 'path_int' set but not used [-Wunused-but-set-variable]
+See the README.security file for more details.
 
-It also meant an extra pseudo_root_path() call per invocation, as the
-guts for these functions resolve the path themselves.
-
-Skip the declaration and assignment of the _int paths when both options
-are set. The generated code for all other wrappers is unchanged.
-
-AI-Generated: Uses GitHub Copilot
+AI-Generated: Used GitHub Copilot to assist in writing the file
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
-(cherry picked from commit f86ca21137e8a846ba64e66243a54554be533c5e)
+(cherry picked from commit 019e93e03f7bb4fe2bacf3658f7dd6bf0d23fb65)
+
+Changes from the cherry-picked version, to match this branch:
+
+Section 1: mention DYLD_INSERT_LIBRARIES, as this branch still has the
+Darwin port, and note that the port is known not to work and is
+unlikely to be useful (see b550fd3, which removes it on master).
+
+Section 3: drop the /proc/self/fd/<n> and /dev/fd/<n> item, as
+rewrite_proc_fd_ref() (fcd8a81) is not on this branch.  fchmodat calls
+the real fchmodat(), not chmod, and mknodat is implemented by
+ports/linux/guts/__xmknodat.c, as the Linux guts override ports/unix;
+both corrections were made upstream in 81d4150 and dd69ed1.
+
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 ---
- makewrappers | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ README          |   3 ++
+ README.security | 152 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 155 insertions(+)
+ create mode 100644 README.security
 
-diff --git a/makewrappers b/makewrappers
-index 19508fa..4c99cf3 100755
---- a/makewrappers
-+++ b/makewrappers
-@@ -389,7 +389,8 @@ class Function:
-         return self.args.call()
+diff --git a/README b/README
+index 039f960..e4fb5ec 100644
+--- a/README
++++ b/README
+@@ -11,6 +11,9 @@ environment, allowing ordinary users to run commands which give the illusion
+ of creating device nodes, changing file ownership, and otherwise doing
+ things necessary for creating distribution packages or filesystems.
  
-     def paths_decl(self):
--        if self.preserve_paths:
-+        # path_int is only read by the ignore_paths() check
-+        if self.preserve_paths and not self.noignore_path:
-             return "\n\t".join("char *" + path + "_int;" for path in self.paths_to_munge)
-         return ""
++pseudo is not a security boundary and must not be used in security
++sensitive applications.  See README.security for details.
++
+ Building pseudo requires GCC 5 or later (or clang), which the configure
+ script checks for.
  
-@@ -420,6 +421,9 @@ class Function:
-                     "\t\t\t%s -1;\n"
-                     "\t\t\tgoto quick_exit;\n"
-                     "\t\t}\n" % (path, self.rc_assign()))
-+            if self.preserve_paths and self.noignore_path:
-+                # path_int is only read by the ignore_paths() check
-+                continue
-             fix_paths.append(
-                 "%s = pseudo_root_path(__func__, __LINE__, %s%s, %s, %s);" %
-                 (pathvar, prefix, self.dirfd, path, self.flags))
+diff --git a/README.security b/README.security
+new file mode 100644
+index 0000000..2cb124f
+--- /dev/null
++++ b/README.security
+@@ -0,0 +1,152 @@
++pseudo -- security considerations
++
++SUMMARY:
++
++pseudo is a build tool.  It exists so that ordinary users can produce
++packages and filesystem images containing files that appear to be owned
++by root, device nodes, special permissions and extended attributes.
++
++pseudo is NOT a security boundary and must not be used in security
++sensitive applications.  In particular, do not use pseudo:
++
++* to contain, confine or sandbox untrusted programs;
++* as a substitute for real privileges, a real chroot, a container or a
++  virtual machine;
++* to process filesystem trees that untrusted or concurrent processes can
++  modify while pseudo is running;
++* as the only guarantee that the ownership, permissions, SELinux labels
++  or file capabilities in a security critical image are correct.
++
++
++1. INTERCEPTION IS COOPERATIVE
++
++pseudo works by loading libpseudo with LD_PRELOAD (DYLD_INSERT_LIBRARIES
++on Darwin) and wrapping libc functions.  Anything that does not go
++through those wrappers reaches the real filesystem directly, with the
++real privileges of the user who started pseudo.  This includes:
++
++* statically linked programs;
++* programs that make system calls directly, including language runtimes
++  that do not use libc for file operations, and interfaces such as
++  io_uring;
++* setuid/setgid programs, for which the dynamic linker ignores
++  LD_PRELOAD;
++* any program that clears LD_PRELOAD, or that sets PSEUDO_UNLOAD or
++  PSEUDO_DISABLED (see pseudo_client.c), both of which are deliberately
++  supported ways to turn pseudo off.
++
++A program running under pseudo can therefore always step outside of it.
++pseudo cannot be used to restrict what a program does.
++
++The Darwin port is described as implemented, but it has not worked for
++a long time: System Integrity Protection and the hardened runtime block
++DYLD_INSERT_LIBRARIES, so it is unlikely to be useful.
++
++
++2. "ROOT" EXISTS ONLY IN THE DATABASE
++
++pseudo grants no privileges.  Files on disk remain owned by the real
++user, and the ownership and modes that programs see under pseudo are
++read back from pseudo's database.  The kernel does not enforce any of
++the emulated ownership or permissions.
++
++The real on-disk modes are also deliberately different from the
++emulated ones.  PSEUDO_FS_MODE (pseudo_client.h) always adds owner read
++and write permission (and owner execute for directories) so that the
++emulated root can access everything, and removes group/other write,
++setuid and setgid bits from the real file.  A file that is meant to be
++mode 0600 or 0000 and owned by root, for example /etc/shadow or a
++private key, is readable and writable on disk by the build user and by
++any process running as that user, whether or not it is under pseudo.
++
++Treat everything pseudo writes as accessible to the build user.
++
++
++3. FILE DESCRIPTORS BECOME PATHS (TOCTOU)
++
++Many security sensitive programs rely on the kernel resolving a file
++descriptor, or a path relative to a directory descriptor, to a specific
++inode.  This is how they avoid races where a path component is replaced
++with a symlink between checking a file and using it.  pseudo removes
++that protection in several ways:
++
++* Paths are canonicalized in user space.  pseudo_fix_path()
++  (pseudo_util.c) walks each path component with lstat() and readlink()
++  and builds an absolute path, and the real function is then called
++  with that absolute path (see doc/chroot).  A call such as
++  openat(dirfd, "file", ...) is no longer anchored to dirfd; it becomes
++  an operation on "<recorded path of dirfd>/file".  Kernel guarantees
++  such as O_NOFOLLOW on intermediate components or RESOLVE_BENEATH are
++  not reproduced by this resolution, except in the few wrappers marked
++  preserve_paths in wrapfuncs.in, which handle paths themselves.
++
++* The path pseudo recorded for a descriptor (fd_path() in
++  pseudo_client.c) is used to resolve paths relative to it.  That
++  record can be stale: the file or directory may have been renamed, or
++  the descriptor may have been inherited, received over a socket, or
++  opened by a call pseudo did not see.
++
++* Several wrappers check a path and then act on it by path in a second
++  step.  For example, fchmodat (ports/unix/guts/fchmodat.c) stats the
++  path and later calls the real fchmodat() on the same path, and mknodat
++  (ports/linux/guts/__xmknodat.c) removes the path again by name if the
++  database update fails.
++
++If anything else can change the tree while pseudo is working on it, an
++operation may be applied to a different file than the one that was
++checked, both in pseudo's database and on the real filesystem.  Only
++run pseudo on trees that are fully under the control of the build.
++
++
++4. THE CHROOT IS EMULATED
++
++pseudo's chroot() support only prepends a stored prefix to absolute
++paths and strips it from some results (see doc/chroot).  No real
++chroot() is performed, and the README notes the support is incomplete.
++Any of the bypasses in section 1, or any path pseudo resolves
++differently from the kernel, reaches the host filesystem.  pseudo's
++chroot must not be relied on to keep a program inside a directory.
++
++
++5. METADATA LIVES IN A DATABASE THAT CAN DRIFT
++
++Emulated ownership, modes, device nodes and extended attributes,
++including security.selinux and security.capability, exist only in
++pseudo's database until a packaging or image step copies them out.
++Entries are keyed by path and inode number.  When files are changed
++outside of pseudo, for example deleted or recreated without pseudo
++loaded, an inode number can be reused and the database can attach the
++old file's ownership, mode or attributes to a new file.  The server
++reports such cases as "inode mismatch" or "path mismatch" (pseudo.c),
++but cannot always know which side is correct.
++
++Accesses to paths listed in PSEUDO_IGNORE_PATHS are deliberately not
++tracked at all.
++
++Generated images should be verified independently if their ownership,
++permissions, labels or capabilities matter for security.  Do not
++ignore mismatch errors in pseudo's log.
++
++
++6. THE SERVER TRUSTS ITS CLIENTS
++
++The pseudo server listens on a Unix socket in its local state directory
++and does not authenticate clients beyond the filesystem permissions of
++that socket.  Any process running as the build user can connect and
++change the database, and the database files themselves are writable by
++that user.  The resulting metadata can only be trusted as much as every
++process running as the build user.
++
++
++RECOMMENDATIONS:
++
++* Run pseudo only on build output that is private to the build and is
++  not modified concurrently by anything outside of it.
++* Run untrusted build steps under a real isolation mechanism (a
++  container, a virtual machine, or a dedicated user), with pseudo inside
++  it if needed, never pseudo alone.
++* Do not store secrets in a pseudo-managed tree on a shared system;
++  they are readable by the build user regardless of their emulated
++  ownership and mode.
++* Verify the ownership, permissions, labels and capabilities of
++  security relevant files in the final image.
 -- 
 1.8.3.1
 
