@@ -1,91 +1,102 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7744.1794463250710156194
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8081.1794465410603903072
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Nov 2026 22:00:51 -0800
+ Wed, 11 Nov 2026 22:36:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wCnOt2RVfVq2esGAA--.32000S3;
-	Thu, 12 Nov 2026 13:58:42 +0800 (CST)
-Received: from [192.168.31.243] (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowABH2GgGVvVqsT80AA--.59336S2;
-	Thu, 12 Nov 2026 14:00:38 +0800 (CST)
-Message-ID: <811395f2-4874-4728-8c50-2ed887d21b27@cetc.com.cn>
-Date: Thu, 12 Nov 2026 14:00:31 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-selinux][PATCH v3] refpolicy: upgrade to
- 20261109+git
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=nZqFYjm0;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.168.131, mailfrom: wenwfu@qualcomm.com)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AC5nnUI442056
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 06:36:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=3KapgxHLj7O
+	D+vlJ0uOsngiplTrbXcWuhRIuzewGZ20=; b=nZqFYjm02nCIZmuXEMU0phIjtSi
+	MHHA8NE1Ykvl72FUamBBJ2Wg69gN4ZQl9I2ht1EI9qDTyUgL2D83rIa8hEoFwtHw
+	BedJBlAAJz8XHdtWnabGG3HO5oZgbNGmSXbOsjK/SWYm0lHVruVo69gD/cbHcEdH
+	PnybfacQNAOUE5TzKtBr52JFMZnaHHdSI4x+bwxK47lgTBSi22H6hBc34+UkKwXe
+	iJhGJXzCp9N3lo0uBjhxhdz3LuBABjrZEKrfWXlxs/q7PJB5IQkGCnJM2eX2Y6QF
+	lQddip2w5++mnbQi2/QdWJ/9+pJTviCnNFOAI7e+mkr5ryHfFy85LJThL8A==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hw7nc052q-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 06:36:49 +0000 (GMT)
+Received: from pps.filterd (aptaippmta02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.11/8.18.1.11) with ESMTP id 6AC6al4J3991025;
+	Thu, 12 Nov 2026 06:36:47 GMT
+Received: from perf-sh02-lnx.ap.qualcomm.com (smtphost-taiwan.qualcomm.com [10.249.136.33])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 6AC6ak4D3991016
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 12 Nov 2026 06:36:47 +0000 (GMT)
+Received: by perf-sh02-lnx.ap.qualcomm.com (Postfix, from userid 3975139)
+	id 15CC4AC6; Thu, 12 Nov 2026 14:36:46 +0800 (CST)
+From: Wenwen Fu <wenwfu@qti.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Wenwen Fu <wenwfu@qti.qualcomm.com>
-References: <4a8dcdf93c4a51793e95ba1e2ffa9ef1f12a37c4.1794453367.git.wenwfu@qti.qualcomm.com>
- <19810872a41f8dd6ac59dae1aa8e722866cea603.1794462087.git.wenwfu@qti.qualcomm.com>
-Content-Language: en-US
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
+Subject: [meta-selinux][PATCH v4] refpolicy: update to latest git rev
+Date: Thu, 12 Nov 2026 14:36:42 +0800
+Message-ID: <20261112063642.728190-1-wenwfu@qti.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 In-Reply-To: <19810872a41f8dd6ac59dae1aa8e722866cea603.1794462087.git.wenwfu@qti.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: C6CowABH2GgGVvVqsT80AA--.59336S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYJCmr0bxcT7wAAsd
-X-CM-DELIVERINFO: =?B?trngb6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoOBjikTaASO0jFnSVrl+VCd5eECpTUZ/686rR/WTCKRhLkhmjMgX4vj9/N5IJUutFMXov
-	iNbuq3l/1R8UqRNKhoJ2c0duxW6JhNXkW2Qrz3YgIRSZp2ONeknfqyEbZK9ZbQ==
-X-Coremail-Antispam: 1Uk129KBj93XoWrur1kWF48uFykGw1DJryxWFX_yoW8JF48pF
-	4ftF98CFW8X3WxJ3WxGF15uF12va45C3y3Zay8Cw42y398X3Wj9w48GFZrWr4F9w47trs7
-	t3sIyrZxXay8AFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GrJv73VFW2AG
-	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUU5R7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
-	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
-	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2
-	z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
-	Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CY02Avz4vE14v_GrWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
-	xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
-	1Y6r17MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42
-	IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jUiSLUUUUU=
+References: <19810872a41f8dd6ac59dae1aa8e722866cea603.1794462087.git.wenwfu@qti.qualcomm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-ORIG-GUID: bW-uS2BaoVXhFzImLF8ju997a0e_YTQ6
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEyMDAyNSBTYWx0ZWRfX4e+ZD195PZOr
+ ha2U2yKTna6yjtFNaawCZ0jS1kIq/ex/cjcJYXp9vtZlcsx35YhPZRPWG9bDJZuE26CiI4ohdfC
+ vJyA5/LV1tAOLxgDl/YZWNUaTCRcHe4=
+X-Proofpoint-GUID: bW-uS2BaoVXhFzImLF8ju997a0e_YTQ6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEyMDAyNSBTYWx0ZWRfXysW+lDnXzbEf
+ VkGIfnm/o7yqKzen8iH6lP0GvGKSaH9Ly3zG9+HKzK4tYRfrOjFinu73cUwz3eXZvVryK4FN6Lx
+ STyGheCFNsNbGS/frstDVOsP6UUhsz1u7mooU8Gydjh9ZMUtZODf0tyim9w7QUv9yPbmjN1f6vN
+ nuXXUtTES5uKeg5APucUOD3TcF3N0Djoyhu0F/HvTw61k9a0cxmaNha7RnGv899vUnwq6sIM1iP
+ XDs6MgIx2CpYaJhxtShTUgsf16TJTvEiYFRn8y5IhNRgx0xevoUUK6J0IBiUGX35J1+6vrY/ZtV
+ +8CR7Qr0ZolliSxEDz6iuN7eY2GYZd5PWbRZZJD24UTmwy0U48rhPCBlQ/peDqIw9SuQdlFC2g9
+ BQNnd+IfAAVQ3RirvkNuw8JFbMDKCKacAnOUuLatJKFf2epBMQkzOmnYvWK9OiOS95HdATb3N47
+ v0JpLNNaJQziLFVkz9w==
+X-Authority-Analysis: v=2.4 cv=A8b5rKWG c=1 sm=1 tr=0 ts=6af55e81 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8 a=NEAV23lmAAAA:8
+ a=JDKqbpYzA1WO7QUIf98A:9 a=ZXulRonScM0A:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-12_01,2026-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611120025
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 06:00:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5316
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 06:36:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5317
+Content-Type: text/plain; charset="utf-8"
 
-The PV number needs to match the release tag. So it needs to remain as 
-20260922 for now.
+* 6072cfa851a3 unconfined: allow perf event access for
+  unconfined domains
 
-```
-$ git tag | grep RELEASE_2_2026 | tail -5
-RELEASE_2_20260312
-RELEASE_2_20260616
-RELEASE_2_20260922
-```
+Assisted-by: Codex:GPT-6
+Signed-off-by: Wenwen Fu <wenwfu@qti.qualcomm.com>
+---
+ recipes-security/refpolicy/refpolicy_git.inc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Qi
-
-On 11/12/26 13:45, Wenwen Fu via yocto-patches wrote:
-> * 6072cfa851a3 unconfined: allow perf event access for unconfined
-> domains
->
-> Assisted-by: Codex:GPT-6
-> Signed-off-by: Wenwen Fu <wenwfu@qti.qualcomm.com>
-> ---
->   recipes-security/refpolicy/refpolicy_git.inc | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/recipes-security/refpolicy/refpolicy_git.inc b/recipes-security/refpolicy/refpolicy_git.inc
-> index dbc8cc8..de0bb56 100644
-> --- a/recipes-security/refpolicy/refpolicy_git.inc
-> +++ b/recipes-security/refpolicy/refpolicy_git.inc
-> @@ -1,8 +1,8 @@
-> -PV = "2.20260922+git"
-> +PV = "2.20261109+git"
->   
->   SRC_URI = "git://github.com/SELinuxProject/refpolicy.git;protocol=https;branch=main;name=refpolicy;destsuffix=refpolicy"
->   
-> -SRCREV_refpolicy = "acf41c52116fef3a9dcd8f1f39b133e0372fce7c"
-> +SRCREV_refpolicy = "8f247dafb92bd12cbfb53a11ff58be17a88df86a"
->   
->   UPSTREAM_CHECK_GITTAGREGEX = "RELEASE_(?P<pver>\d+_\d+)"
->   
+diff --git a/recipes-security/refpolicy/refpolicy_git.inc b/recipes-security/refpolicy/refpolicy_git.inc
+index dbc8cc8..67a727b 100644
+--- a/recipes-security/refpolicy/refpolicy_git.inc
++++ b/recipes-security/refpolicy/refpolicy_git.inc
+@@ -2,7 +2,7 @@ PV = "2.20260922+git"
+ 
+ SRC_URI = "git://github.com/SELinuxProject/refpolicy.git;protocol=https;branch=main;name=refpolicy;destsuffix=refpolicy"
+ 
+-SRCREV_refpolicy = "acf41c52116fef3a9dcd8f1f39b133e0372fce7c"
++SRCREV_refpolicy = "8f247dafb92bd12cbfb53a11ff58be17a88df86a"
+ 
+ UPSTREAM_CHECK_GITTAGREGEX = "RELEASE_(?P<pver>\d+_\d+)"
+ 
+-- 
+2.43.0
 
