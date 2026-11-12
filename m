@@ -1,64 +1,64 @@
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.8297.1794467631853412069
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.8349.1794467997028680777
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Nov 2026 23:13:51 -0800
+ Wed, 11 Nov 2026 23:19:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=khvCRN8v;
- spf=pass (domain: mvista.com, ip: 74.125.82.181, mailfrom: rsangam@mvista.com)
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-37628596783so3806539eec.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 23:13:51 -0800 (PST)
+ dkim=pass header.i=@mvista.com header.s=google header.b=ioQG3au+;
+ spf=pass (domain: mvista.com, ip: 74.125.82.171, mailfrom: rsangam@mvista.com)
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-372bdb942dbso5078170eec.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 23:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1794467631; x=1795072431; darn=lists.yoctoproject.org;
+        d=mvista.com; s=google; t=1794467996; x=1795072796; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
         bh=+DKTvwErMh7aX3h3EbvuXWSlwf0fV83RQqtlZwFuJdo=;
-        b=khvCRN8vGT0hQ1N6GB7xJ909gSA0yG4WCxt04xxy3kzRpyuA0m5N3K3VTWcBEoTdj0
-         Yj5sEdJZ0nZc4sDmaV/1h8hBvZKgwQSGnGDLwNrG/JXKxDtoVjh5dQIzcfUB4fHlDSx+
-         VyAZootQb4NvzVBlc15nBh7BE0bey/z48Z1Vs=
+        b=ioQG3au+yTAJdfKmBEYkC8QZkWcskuR68E6zUlNMIJfI9nCkpMFDvJ59c8jOfQ468Q
+         U0ii5Uih1lnZc5d/gQsH+ZSx+FWc3xSaoAnGuE/2g5T6Za7760s+TD389EPRnMxntfxt
+         bwkiO9ebbcOAkE7dI/VY5JdU56OI+tAZtFjso=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794467631; x=1795072431;
+        d=1e100.net; s=20260707; t=1794467996; x=1795072796;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to:content-type;
         bh=+DKTvwErMh7aX3h3EbvuXWSlwf0fV83RQqtlZwFuJdo=;
-        b=ZP7SS2ix6EP2KNSha8QYIQ7K/Y1DyHOXSbRbnnv48y0FEIuJ0rfw/1fl0/RLr411A0
-         e2xV/m7jeHOPE9AZDIRIYNWMBFkQz1rpYHT8IgtyqvlDm3i1Z1c8HekjSB2AbMSxci5d
-         guO4nqAFrV6+TuwBZDzpyudhtA3o8dpOJi+/QaPPGc6hBAyXY+HrtfLnkBUS5t0Zqf1D
-         KJxu79umGrvws86b4eb8yp17mxYUnTCr8N6jrHRB1jDyPir7RZCiYsdi5wK4nlIchEFv
-         Sod/zGa2YOzpHAFyGiwWLFrtCtpypu+BHA2t6ETJoyd6s0ZVSJkV620yjjXmd5Tt7zvy
-         8sZg==
-X-Gm-Message-State: APuU4Z81gcY14XoVwJvtpzTtx4KlZw6q46UC2E+YZw4W+W4vaFdO8UTV
-	9oQLD7kdCLiy4ka3qAvYg1oWbU9YeIcYnh06a4CGoHb9G78ubxD/VbTZ/EL5U6x/vvmMGaR/HWu
-	4BLe6QII=
-X-Gm-Gg: AYBFou2iEyC1qn4mjCSneyVFlncZv6gsPJwf6EraeBy0liVzCNkpzZ06wOkt/4i1cdw
-	EBYsIeBTls36k4XtGsxWgnuAKDraHu0pkZv1N12dCJCdfFI1p7bbiw5wRj0R8qUbL8a2/kfJkOu
-	ED2o3hMICk+IAtOxe6l4uG5ys1ofAlze0QUB+t+aiNPpUweNQ4fLML0zIinc/3Fx0/N3IERORbY
-	dCwDdMkhkRoOE5B8Ch05xB/3waKbXZUsCS4eQ0YywrAwXIv2wsvGtX4iYIru5+ifSpSLiOEZKGc
-	6xz5Sbtvk1+gU4GOGT7X94ZQhhnyoopXL4ozLLp9tEITeAVOpxwprwD69NdFth88luxstmPmoHx
-	bvnqOvRiVEoWnLVjDSfb1/Vuor+MuDHz3xMev67CjnecmxWSvLEhLb1QOWVsGVSMuDhal/R0zZI
-	ZWUkk804IlUvXdLkdX67B2vHLqHCSyRi7WxZW/3hx7VhEbqSLRXrk4xXmxqOdEdOw62421nWt/H
-	Z0hcRF26uMSk4mJHLzNyyQI3NXHZoXbzQXR2H68QvTYqRi6jVhdJe2xh5jHA+n9Bt5bRA+pIYtd
-	X/MivCIYu0HEYEqNYtwOaPXgvGCSVVhHfFdCjPTt
-X-Received: by 2002:a05:7022:b058:10b0:185:33ab:4d55 with SMTP id a92af1059eb24-1b3c137c87emr4174181c88.29.1794467630866;
-        Wed, 11 Nov 2026 23:13:50 -0800 (PST)
+        b=TQQxmqpTZ6mLcLHGG6nFjuEBgvOM3YGv2/yk7SdiYJ3jirqNrozmNIAoc8kHU2d24X
+         1Xz3+c/3ixoz1vOHVxITTWWF86VBwgoEu/iPeRlMagUeefWFcRQ3EmsXYh5hqYFLx9ID
+         mLSgnJGSAyvQHxipHmf3W8wyumRO2MLQhI6WUb3pzvFhFz9sHXoNP8Y8opgyFhdVyByU
+         c86klweaQepJMeX+/tbpYEaZheEAWG3ErmpU4aOtlBm8eIK+8oM5tbSdlsxi8QQXJ7Ev
+         aZsCjN9VHm/cSzZHKSPbzytSOjdI/Rs1Rjpl4yY2q9NMpsYjLRiT7+iEdaOcHWqHCLiO
+         pCDg==
+X-Gm-Message-State: APuU4Z9VnAI/MrwoYtZ4EfaLWFEf/+JSHopxhZnIAgqox2Xbrug9Tk6v
+	GbtfcvoK7LDsoe2CKOokzCntuJwU68ghXMPf5gr5DGZbfKdACEB3BKoVE1LHOYY5MyErAZ3TTX2
+	fkvxCgk4=
+X-Gm-Gg: AYBFou0DlGFUEz0TM9+xyI0Muor2qKdstaadvnHIb2LuC0FGimhILoerFj+Ubxwm7N+
+	kX6RPnI9l0t40XFdn8u2XyIqWSx1cjZjgHFgBc+J4bv5RlZ37mYv3EXqYICO9r10P8qTdnRApr3
+	N0t9a6szxuA/p2A8bmbIdXdw9yep9BFUTbP1BtbwKjD57j7SGX6iDPF5CTw3Yqpln9Sh3xVXh9Q
+	3REJDOjW7jWndzyLT6UR7vQZ+qUyPzmWHRKNz0Y2UyV3KHbtXqqKW24a/1nwdNy+nRahf5hGNdd
+	apnkSlkCrgYP7FqCqjzHfBeAos54nPdUT5EG83/1F76wr2cgB/UjbvItQCbgzUjbj1/r2gaeQgs
+	lXO176+j6CTTcHLNVaVDg4TLte5WzVQLd8R2uTmgEp1iBOgO5sENOJ1b+DwotXMhICABj6h0VGA
+	7v+XUryBMoOS6ipxGH9HbHK5u3MB0q7+Y6snCe+u0rhfylhaq9x/+Q8RhNCOJWlCp5irGU2mowf
+	cK4ZSr8x4FKou19N1kybYn00xP8Itgbb5D1ZAjuzQopbBbTqqegyeEdn+y8MOokpjTzRrGqNRKz
+	6H/q0WQwH2WKNcVpMCgcW8TJqa0O8BHW+bvSc/Yb
+X-Received: by 2002:a05:7300:d58b:b0:361:167c:2364 with SMTP id 5a478bee46e88-37685b80515mr5210379eec.8.1794467996089;
+        Wed, 11 Nov 2026 23:19:56 -0800 (PST)
 Return-Path: <rsangam@mvista.com>
 Received: from MVIN00040.mvista.com ([2405:201:d00d:401c:95e:7103:86c3:44e5])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b3b5b4ecccsm19512404c88.13.2026.11.11.23.13.48
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-37520cfdfc6sm25557153eec.17.2026.11.11.23.19.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2026 23:13:50 -0800 (PST)
+        Wed, 11 Nov 2026 23:19:55 -0800 (PST)
 From: Rohini Sangam <rsangam@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Rohini Sangam <rsangam@mvista.com>
 Subject: [meta-virtualization][scarthgap][PATCH] libvirt: Security fix for CVE-2026-18917
-Date: Thu, 12 Nov 2026 12:43:42 +0530
-Message-Id: <20261112071342.269791-1-rsangam@mvista.com>
+Date: Thu, 12 Nov 2026 12:49:45 +0530
+Message-Id: <20261112071945.270457-1-rsangam@mvista.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 07:14:01 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5318
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 07:20:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5319
 Content-Type: text/plain; charset="utf-8"
 
 Pick patch from [1] also mentioned at Debian tracker in [2]
