@@ -1,138 +1,106 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9348.1794473984559070716
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11463.1794483987702216272
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 12 Nov 2026 00:59:46 -0800
+ Thu, 12 Nov 2026 03:46:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wAXAdd_f_VqngUHAA--.28130S3;
-	Thu, 12 Nov 2026 16:57:36 +0800 (CST)
-Received: from [192.168.31.243] (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowABH2Gjtf_Vqe2I0AA--.59954S2;
-	Thu, 12 Nov 2026 16:59:26 +0800 (CST)
-Message-ID: <7f2c3bbe-b30d-49ea-8f21-3b868c54b54e@cetc.com.cn>
-Date: Thu, 12 Nov 2026 16:59:19 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-selinux][wrynose][PATCH v2] refpolicy:
- backport perf event access for unconfined domains
-To: yocto-patches@lists.yoctoproject.org
-Cc: Wenwen Fu <wenwfu@qti.qualcomm.com>
-References: <20261112055125.704676-1-wenwfu@qti.qualcomm.com>
- <f5bcd8a79a7056170c9c66855b032d44116490ee.1794472623.git.wenwfu@qti.qualcomm.com>
-Content-Language: en-US
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
-In-Reply-To: <f5bcd8a79a7056170c9c66855b032d44116490ee.1794472623.git.wenwfu@qti.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: C6CowABH2Gjtf_Vqe2I0AA--.59954S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYJCmr0bxcb4AABsb
-X-CM-DELIVERINFO: =?B?F8hqm6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoOBjikTaASO0jFnSVrl+VCd6xPlxPcuQlDV+xrx5IYrVsuFDYt7GdfsyuGeX50eWzCWLb
-	bbnPokMwBrGUmE5j3vJGnMs+Xb3Zai4VW29rbzKo27o0FgZzXs9kR1sH9P5HHw==
-X-Coremail-Antispam: 1Uk129KBj93XoWxZw4ruw48tr18XFWDAF4kKrX_yoWrWFW3pF
-	48CasYkF48XFn7Gan7CF15uF13K395Ja98W34jgr48uayUZF18u3Z5tw13WFsYyr17G347
-	A34S9F4fGa1UArXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GFDv73VFW2AG
-	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYO7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
-	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
-	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E
-	87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc2
-	xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E
-	5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXV
-	WUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY
-	1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7I
-	U8sXo7UUUUU==
+ dkim=pass header.i=@smile.fr header.s=google2 header.b=ipEQiTHp;
+ spf=pass (domain: smile.fr, ip: 209.85.128.53, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so32070345e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 03:46:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google2; t=1794483986; x=1795088786; darn=lists.yoctoproject.org;
+        h=in-reply-to:references:to:from:subject:message-id:date:content-type
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=XN87c2BhxtelVQjvmsvDOcl8DFtE+eyG3uNl/thmH0A=;
+        b=ipEQiTHpnIYNTuJlAnPUm4O/WK3U7x0Fik/8kjVltCwUb6+zIZ0wqOsbL9faZfzgzs
+         k3D4iUjgnh8xaVz/t8c7mAehYo21a4ID8gQDlliRZlPVaKIzAj5TRSWLRlQMwgumkQJ8
+         Z267ajh1dkL96lo/nckNsqjbf8DgRMCnmzJMSf3+NCy48l8soaKAMxumGMLNbpv5sm6L
+         snan5j+zoBCXskd84RqiyRfuwUBdRjdqUr6tES1bdVrp3YMp44NZC4HspaEcYPvjN1mv
+         cPnkaSplCMEZX+nPoTrfLNcRHCfwGeREc9UICbP/tnZAkwxx4aUtJYXbFxV7I4Iw2h/u
+         D+Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794483986; x=1795088786;
+        h=in-reply-to:references:to:from:subject:message-id:date:content-type
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=XN87c2BhxtelVQjvmsvDOcl8DFtE+eyG3uNl/thmH0A=;
+        b=1CCO08AiyQtT9nh+H69H1b0owZ9p8PGu3CQ7MOhZasspiCnRt3lB4tOTt29Ulzirqa
+         YlBiXe2sVIxWH/h2iOPndJv7awAS72Ffix9MXKJ614MVgx5Mzgmf8zWtg8SwabkEhuRM
+         Aa3ryPHWpRcWKqRLUiQGWMvJispkok99JfU8mmBLqLVSixbW6o5yIrZc9iYNAsiPKIIb
+         gEo5/4IT7otXEhM72P8/1xEEckJ4rrotPsztBqPn8jGrtYC/IiW+EpJ7dbpRx/2aMhMS
+         yAmtmpUYvBp4OcFK7sotSdYNq86tj/l83JKSPEeszIUZovJCQ4yWvF0jgRlys8EdoI4g
+         Bqpg==
+X-Gm-Message-State: APuU4Z9aJaL5Awn8An2tQrFlCOtXayJI5dIGAZW/dlTTTLTPx7/uguUi
+	Nt3nyIhQnNkEVScw5dBS2A0SNlvSt8e7T1rJHmLGSi9LzuiiFuwcGhpDZLPzGgKbfYTW4Ayhblh
+	QLpWgxgM=
+X-Gm-Gg: AYBFou1NnMO1IaU6WMcGRFGE3rECNR76xV0i7jgH5yGGvx5od6Z/Gb0NVvSvDxSMLC3
+	71ITOQ0v45A0VCTYu5jgM2uD8a+Qk8ngYsBwxLW2LQLDTEZfbfYp5pwNLhhMmjuJc6PU2HkxEfX
+	+TYWgPrPLtTr2nKwSxYirsK09RnV/6qU4TExVkfYuDD/8L/IkhFIz4FGVlGLmHymLx5nHMgEnuJ
+	1JW91tuGbZP/YPAJ7g/rfOVu5z2JbvznPZv9ppqh58i981VK0i1/H1pCht0AnPSvnMObKoeWM7p
+	f0eF+r5ECgQk/XtIh4/aASR94PPE9Kh8idGuDZa+dSk4XAMab1jRaCiUclPRiOH1tZ2+Mxrkwfg
+	UCJmAVC54yIhHJdHTGUvj7z3fY/4pYSaWVaAuKhIdC0v7DRiSnbIeXAM9kUlJ8IN+1Tsck6B13C
+	xPm9qIykrWARaIy1cFBfmnI1aIQMyohtJ+/dU3j9M+tcpYODjkRwrDj3YGCqlpu8iMsle4ZcsN/
+	bxh8BWn0KAYgx92xpz81GVXtBm5SRrACimuFoks5Qwt5D70dCp7a8y7THBcW/EFsxkORrhTEq8s
+	LYkjm8tiNOaN1ir9juaN8W2LWIq5kN0X5i0cKl97bZNH2mDHdonno5JnXEB9OPZn4K8P0HO1IVj
+	33QNC5QuqWq2cQhjx
+X-Received: by 2002:a05:600c:474f:b0:4a2:47:b79c with SMTP id 5b1f17b1804b1-4ba093abb32mr99766915e9.32.1794483985598;
+        Thu, 12 Nov 2026 03:46:25 -0800 (PST)
+Return-Path: <yoann.congal@smile.fr>
+Received: from localhost (2a01cb001331aa00a2e4fb7b0d887544.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:a2e4:fb7b:d88:7544])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba08e57504sm105707345e9.2.2026.11.12.03.46.25
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Nov 2026 03:46:25 -0800 (PST)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Nov 2026 12:46:24 +0100
+Message-Id: <DMT7HDZT3P6O.1DHC10SI0D1UB@smile.fr>
+Subject: Re: [yocto-patches] [pseudo][pseudo-1.9]PATCH 00/10] Backports from
+ master to 1.9 branch
+From: "Yoann Congal" <yoann.congal@smile.fr>
+To: <yocto-patches@lists.yoctoproject.org>
+X-Mailer: aerc 0.20.0
+References: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
+In-Reply-To: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 08:59:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5323
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 11:46:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5324
 
-Merged
+On Wed Nov 11, 2026 at 5:15 PM CET, Mark Hatle via yocto-patches wrote:
+> The following are backporting a small number of fixes:
+>  Add open_tree test case
+>  Fix makewrapper compilation warning
+>  Don't require linux/mount.h (part of the open_tree work)
+>  State a minimum gcc 5 requirement
+>  Add in the parallel rename/link locking
+>
+> It is also adding to new files:
+>  Add a README.security and AGENTS.md file
+>
+> Note, there is are a couple of additional pending changes likely
+> specifically for Yocto Bug 16493.  This is still in testing and
+> will be sent to the list once ready.
+>
+> Mark Hatle (10):
+>   test: Skip open_tree tests when the function or syscall is unavailable
+>   makewrappers: Don't generate unused _int paths with noignore_path
+>   ports/linux: Don't require <linux/mount.h>
+>   configure: Require GCC 5 or later
+>   pseudo_client: serialize path changes across clients
+>   ports: hold the path lock in create and metadata wrappers
+>   ports: check created files under the path lock before recording them
+>   test-parallel-ops: Add a parallel create/rename/link/chmod test
+>   README.security: Add information specific to file/process security
+>   AGENTS.md: Add to assist future developers
 
-Regards,
-Qi
+Hello,
 
-On 11/12/26 16:40, Wenwen Fu via yocto-patches wrote:
-> Unconfined domains lack the perf_event permissions needed by perf to
-> collect performance counters and tracepoints with SELinux enforcing.
->
-> Backport refpolicy commit 6072cfa851a3 ("unconfined: allow perf event
-> access for unconfined domains") to allow unconfined domains to access
-> their own perf events.
->
-> Apply the patch in refpolicy_common.inc because all refpolicy variants
-> use the unconfined module.
->
-> Assisted-by: Codex:GPT-6
-> Signed-off-by: Wenwen Fu <wenwfu@qti.qualcomm.com>
-> ---
-> Changes in v2:
-> - Apply the patch in refpolicy_common.inc for all refpolicy variants,
->    as suggested by Chen Qi.
-> - Renumber the patch to 0059 and truncate its filename to 63 characters
->    to follow the shared patch naming convention.
-> - Update the commit message to describe the shared scope.
->
->   ...-perf-event-access-for-unconfined-do.patch | 35 +++++++++++++++++++
->   .../refpolicy/refpolicy_common.inc            |  1 +
->   2 files changed, 36 insertions(+)
->   create mode 100644 recipes-security/refpolicy/refpolicy/0059-unconfined-allow-perf-event-access-for-unconfined-do.patch
->
-> diff --git a/recipes-security/refpolicy/refpolicy/0059-unconfined-allow-perf-event-access-for-unconfined-do.patch b/recipes-security/refpolicy/refpolicy/0059-unconfined-allow-perf-event-access-for-unconfined-do.patch
-> new file mode 100644
-> index 0000000..a356218
-> --- /dev/null
-> +++ b/recipes-security/refpolicy/refpolicy/0059-unconfined-allow-perf-event-access-for-unconfined-do.patch
-> @@ -0,0 +1,35 @@
-> +From 6072cfa851a3598bfa86622dff9c680c2e662901 Mon Sep 17 00:00:00 2001
-> +From: Wenwen Fu <wenwfu@qti.qualcomm.com>
-> +Date: Thu, 5 Nov 2026 10:02:03 +0800
-> +Subject: [PATCH] unconfined: allow perf event access for unconfined domains
-> +
-> +Unconfined domains have the perfmon capability but lack complete
-> +perf_event permissions. This prevents perf from collecting performance
-> +counters and tracepoints with SELinux enforcing.
-> +
-> +Allow unconfined domains to open, read and control their own perf
-> +events, including CPU, kernel and tracepoint collection. Add the rule
-> +to unconfined_domain_noaudit() alongside the other self access rules.
-> +
-> +Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/6072cfa851a3598bfa86622dff9c680c2e662901]
-> +
-> +Assisted-by: Codex:GPT-6
-> +Signed-off-by: Wenwen Fu <wenwfu@qti.qualcomm.com>
-> +---
-> + policy/modules/system/unconfined.if | 3 +++
-> + 1 file changed, 3 insertions(+)
-> +
-> +diff --git a/policy/modules/system/unconfined.if b/policy/modules/system/unconfined.if
-> +index 6c48561238..c627d38dcf 100644
-> +--- a/policy/modules/system/unconfined.if
-> ++++ b/policy/modules/system/unconfined.if
-> +@@ -59,6 +59,9 @@ interface(`unconfined_domain_noaudit',`
-> + 	# for io_uring
-> + 	allow $1 self:anon_inode { create map read write };
-> +
-> ++	# Access own perf events
-> ++	allow $1 self:perf_event { open cpu kernel tracepoint read write };
-> ++
-> + 	# Userland object managers
-> + 	allow $1 self:nscd { admin getgrp gethost getpwd getserv getstat shmemgrp shmemhost shmempwd shmemserv };
-> + 	allow $1 self:dbus { acquire_svc send_msg };
-> diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-> index 014714c..d896d88 100644
-> --- a/recipes-security/refpolicy/refpolicy_common.inc
-> +++ b/recipes-security/refpolicy/refpolicy_common.inc
-> @@ -74,6 +74,7 @@ SRC_URI += " \
->           file://0056-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
->           file://0057-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
->           file://0058-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-> +        file://0059-unconfined-allow-perf-event-access-for-unconfined-do.patch \
->           "
->   
->   S = "${UNPACKDIR}/refpolicy"
+FWIW, I plan to integrate these onto my stables branches to test them.
+
+Thanks!
+--=20
+Yoann Congal
+Smile ECS
 
