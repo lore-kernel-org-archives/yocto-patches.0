@@ -1,102 +1,166 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8081.1794465410603903072
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.8297.1794467631853412069
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Nov 2026 22:36:50 -0800
+ Wed, 11 Nov 2026 23:13:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=nZqFYjm0;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.168.131, mailfrom: wenwfu@qualcomm.com)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AC5nnUI442056
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 06:36:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=3KapgxHLj7O
-	D+vlJ0uOsngiplTrbXcWuhRIuzewGZ20=; b=nZqFYjm02nCIZmuXEMU0phIjtSi
-	MHHA8NE1Ykvl72FUamBBJ2Wg69gN4ZQl9I2ht1EI9qDTyUgL2D83rIa8hEoFwtHw
-	BedJBlAAJz8XHdtWnabGG3HO5oZgbNGmSXbOsjK/SWYm0lHVruVo69gD/cbHcEdH
-	PnybfacQNAOUE5TzKtBr52JFMZnaHHdSI4x+bwxK47lgTBSi22H6hBc34+UkKwXe
-	iJhGJXzCp9N3lo0uBjhxhdz3LuBABjrZEKrfWXlxs/q7PJB5IQkGCnJM2eX2Y6QF
-	lQddip2w5++mnbQi2/QdWJ/9+pJTviCnNFOAI7e+mkr5ryHfFy85LJThL8A==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hw7nc052q-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 06:36:49 +0000 (GMT)
-Received: from pps.filterd (aptaippmta02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.11/8.18.1.11) with ESMTP id 6AC6al4J3991025;
-	Thu, 12 Nov 2026 06:36:47 GMT
-Received: from perf-sh02-lnx.ap.qualcomm.com (smtphost-taiwan.qualcomm.com [10.249.136.33])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 6AC6ak4D3991016
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 12 Nov 2026 06:36:47 +0000 (GMT)
-Received: by perf-sh02-lnx.ap.qualcomm.com (Postfix, from userid 3975139)
-	id 15CC4AC6; Thu, 12 Nov 2026 14:36:46 +0800 (CST)
-From: Wenwen Fu <wenwfu@qti.qualcomm.com>
+ dkim=pass header.i=@mvista.com header.s=google header.b=khvCRN8v;
+ spf=pass (domain: mvista.com, ip: 74.125.82.181, mailfrom: rsangam@mvista.com)
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-37628596783so3806539eec.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Nov 2026 23:13:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mvista.com; s=google; t=1794467631; x=1795072431; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+DKTvwErMh7aX3h3EbvuXWSlwf0fV83RQqtlZwFuJdo=;
+        b=khvCRN8vGT0hQ1N6GB7xJ909gSA0yG4WCxt04xxy3kzRpyuA0m5N3K3VTWcBEoTdj0
+         Yj5sEdJZ0nZc4sDmaV/1h8hBvZKgwQSGnGDLwNrG/JXKxDtoVjh5dQIzcfUB4fHlDSx+
+         VyAZootQb4NvzVBlc15nBh7BE0bey/z48Z1Vs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794467631; x=1795072431;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+DKTvwErMh7aX3h3EbvuXWSlwf0fV83RQqtlZwFuJdo=;
+        b=ZP7SS2ix6EP2KNSha8QYIQ7K/Y1DyHOXSbRbnnv48y0FEIuJ0rfw/1fl0/RLr411A0
+         e2xV/m7jeHOPE9AZDIRIYNWMBFkQz1rpYHT8IgtyqvlDm3i1Z1c8HekjSB2AbMSxci5d
+         guO4nqAFrV6+TuwBZDzpyudhtA3o8dpOJi+/QaPPGc6hBAyXY+HrtfLnkBUS5t0Zqf1D
+         KJxu79umGrvws86b4eb8yp17mxYUnTCr8N6jrHRB1jDyPir7RZCiYsdi5wK4nlIchEFv
+         Sod/zGa2YOzpHAFyGiwWLFrtCtpypu+BHA2t6ETJoyd6s0ZVSJkV620yjjXmd5Tt7zvy
+         8sZg==
+X-Gm-Message-State: APuU4Z81gcY14XoVwJvtpzTtx4KlZw6q46UC2E+YZw4W+W4vaFdO8UTV
+	9oQLD7kdCLiy4ka3qAvYg1oWbU9YeIcYnh06a4CGoHb9G78ubxD/VbTZ/EL5U6x/vvmMGaR/HWu
+	4BLe6QII=
+X-Gm-Gg: AYBFou2iEyC1qn4mjCSneyVFlncZv6gsPJwf6EraeBy0liVzCNkpzZ06wOkt/4i1cdw
+	EBYsIeBTls36k4XtGsxWgnuAKDraHu0pkZv1N12dCJCdfFI1p7bbiw5wRj0R8qUbL8a2/kfJkOu
+	ED2o3hMICk+IAtOxe6l4uG5ys1ofAlze0QUB+t+aiNPpUweNQ4fLML0zIinc/3Fx0/N3IERORbY
+	dCwDdMkhkRoOE5B8Ch05xB/3waKbXZUsCS4eQ0YywrAwXIv2wsvGtX4iYIru5+ifSpSLiOEZKGc
+	6xz5Sbtvk1+gU4GOGT7X94ZQhhnyoopXL4ozLLp9tEITeAVOpxwprwD69NdFth88luxstmPmoHx
+	bvnqOvRiVEoWnLVjDSfb1/Vuor+MuDHz3xMev67CjnecmxWSvLEhLb1QOWVsGVSMuDhal/R0zZI
+	ZWUkk804IlUvXdLkdX67B2vHLqHCSyRi7WxZW/3hx7VhEbqSLRXrk4xXmxqOdEdOw62421nWt/H
+	Z0hcRF26uMSk4mJHLzNyyQI3NXHZoXbzQXR2H68QvTYqRi6jVhdJe2xh5jHA+n9Bt5bRA+pIYtd
+	X/MivCIYu0HEYEqNYtwOaPXgvGCSVVhHfFdCjPTt
+X-Received: by 2002:a05:7022:b058:10b0:185:33ab:4d55 with SMTP id a92af1059eb24-1b3c137c87emr4174181c88.29.1794467630866;
+        Wed, 11 Nov 2026 23:13:50 -0800 (PST)
+Return-Path: <rsangam@mvista.com>
+Received: from MVIN00040.mvista.com ([2405:201:d00d:401c:95e:7103:86c3:44e5])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b3b5b4ecccsm19512404c88.13.2026.11.11.23.13.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2026 23:13:50 -0800 (PST)
+From: Rohini Sangam <rsangam@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Wenwen Fu <wenwfu@qti.qualcomm.com>
-Subject: [meta-selinux][PATCH v4] refpolicy: update to latest git rev
-Date: Thu, 12 Nov 2026 14:36:42 +0800
-Message-ID: <20261112063642.728190-1-wenwfu@qti.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <19810872a41f8dd6ac59dae1aa8e722866cea603.1794462087.git.wenwfu@qti.qualcomm.com>
-References: <19810872a41f8dd6ac59dae1aa8e722866cea603.1794462087.git.wenwfu@qti.qualcomm.com>
+Cc: Rohini Sangam <rsangam@mvista.com>
+Subject: [meta-virtualization][scarthgap][PATCH] libvirt: Security fix for CVE-2026-18917
+Date: Thu, 12 Nov 2026 12:43:42 +0530
+Message-Id: <20261112071342.269791-1-rsangam@mvista.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-ORIG-GUID: bW-uS2BaoVXhFzImLF8ju997a0e_YTQ6
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEyMDAyNSBTYWx0ZWRfX4e+ZD195PZOr
- ha2U2yKTna6yjtFNaawCZ0jS1kIq/ex/cjcJYXp9vtZlcsx35YhPZRPWG9bDJZuE26CiI4ohdfC
- vJyA5/LV1tAOLxgDl/YZWNUaTCRcHe4=
-X-Proofpoint-GUID: bW-uS2BaoVXhFzImLF8ju997a0e_YTQ6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEyMDAyNSBTYWx0ZWRfXysW+lDnXzbEf
- VkGIfnm/o7yqKzen8iH6lP0GvGKSaH9Ly3zG9+HKzK4tYRfrOjFinu73cUwz3eXZvVryK4FN6Lx
- STyGheCFNsNbGS/frstDVOsP6UUhsz1u7mooU8Gydjh9ZMUtZODf0tyim9w7QUv9yPbmjN1f6vN
- nuXXUtTES5uKeg5APucUOD3TcF3N0Djoyhu0F/HvTw61k9a0cxmaNha7RnGv899vUnwq6sIM1iP
- XDs6MgIx2CpYaJhxtShTUgsf16TJTvEiYFRn8y5IhNRgx0xevoUUK6J0IBiUGX35J1+6vrY/ZtV
- +8CR7Qr0ZolliSxEDz6iuN7eY2GYZd5PWbRZZJD24UTmwy0U48rhPCBlQ/peDqIw9SuQdlFC2g9
- BQNnd+IfAAVQ3RirvkNuw8JFbMDKCKacAnOUuLatJKFf2epBMQkzOmnYvWK9OiOS95HdATb3N47
- v0JpLNNaJQziLFVkz9w==
-X-Authority-Analysis: v=2.4 cv=A8b5rKWG c=1 sm=1 tr=0 ts=6af55e81 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8 a=NEAV23lmAAAA:8
- a=JDKqbpYzA1WO7QUIf98A:9 a=ZXulRonScM0A:10 a=zZCYzV9kfG8A:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-12_01,2026-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611120025
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 06:36:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5317
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Nov 2026 07:14:01 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5318
 Content-Type: text/plain; charset="utf-8"
 
-* 6072cfa851a3 unconfined: allow perf event access for
-  unconfined domains
+Pick patch from [1] also mentioned at Debian tracker in [2]
 
-Assisted-by: Codex:GPT-6
-Signed-off-by: Wenwen Fu <wenwfu@qti.qualcomm.com>
+[1] https://gitlab.com/libvirt/libvirt/-/commit/5a62cbf2907d4590283597b46da9c0f41e7b4d4f
+[2] https://security-tracker.debian.org/tracker/CVE-2026-18917
+
+Signed-off-by: Rohini Sangam <rsangam@mvista.com>
 ---
- recipes-security/refpolicy/refpolicy_git.inc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../libvirt/libvirt/CVE-2026-18917.patch      | 70 +++++++++++++++++++
+ recipes-extended/libvirt/libvirt_10.0.0.bb    |  1 +
+ 2 files changed, 71 insertions(+)
+ create mode 100644 recipes-extended/libvirt/libvirt/CVE-2026-18917.patch
 
-diff --git a/recipes-security/refpolicy/refpolicy_git.inc b/recipes-security/refpolicy/refpolicy_git.inc
-index dbc8cc8..67a727b 100644
---- a/recipes-security/refpolicy/refpolicy_git.inc
-+++ b/recipes-security/refpolicy/refpolicy_git.inc
-@@ -2,7 +2,7 @@ PV = "2.20260922+git"
+diff --git a/recipes-extended/libvirt/libvirt/CVE-2026-18917.patch b/recipes-extended/libvirt/libvirt/CVE-2026-18917.patch
+new file mode 100644
+index 00000000..bf9c2e69
+--- /dev/null
++++ b/recipes-extended/libvirt/libvirt/CVE-2026-18917.patch
+@@ -0,0 +1,70 @@
++From 5a62cbf2907d4590283597b46da9c0f41e7b4d4f Mon Sep 17 00:00:00 2001
++From: Peter Krempa <pkrempa@redhat.com>
++Date: Wed, 12 Aug 2026 16:51:58 +0200
++Subject: [PATCH] remote: Fix integer overflow in RPC handler for
++ virNodeGetFreePages (CVE-2026-18917)
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++CVE-2026-18917
++
++The RPC handler 'remoteDispatchNodeGetFreePages' multiplies the 'npages'
++argument with the 'cellcount' argument passed to 'virNodeGetFreePages',
++both of which are declared as 'unsigned int' to both do an RPC limit
++check against the 'REMOTE_NODE_MAX_CELLS' constant and then to allocate
++the memory to hold the result from the actual hypervisor driver.
++
++Since both the values are 'unsigned int' the product is also unsigned
++int so big enough numbers can overflow, both passing the check and also
++allocating not enough memory for the result. The hypervisor driver
++assumes that the passed buffer is large enough and overwrites memory.
++
++When this happens the the hypervisor daemon crashes.
++
++This can be triggered e.g. by passing 1023 and 4198405 as values which
++multiply to 1019 after wrapping to 32 bit unsigned value.
++
++Use the VIR_INT_MULTIPLY_OVERFLOW macro in the check to avoid the issue
++the same way as we do for other APIs doing multiplication of arguments
++to determine amount of required memory.
++
++Fixes: 34f2d0319d2098c77c8cc27d8350616029125a2b (v1.2.5-164-g34f2d0319d)
++Closes: https://gitlab.com/libvirt/libvirt/-/work_items/903
++Signed-off-by: Peter Krempa <pkrempa@redhat.com>
++Reviewed-by: Daniel P. Berrangé <berrange@redhat.com>
++
++CVE: CVE-2026-18917
++Upstream-Status: Backport from https://gitlab.com/libvirt/libvirt/-/commit/5a62cbf2907d4590283597b46da9c0f41e7b4d4f
++
++Signed-off-by: Rohini Sangam <rsangam@mvista.com>
++---
++ src/remote/remote_daemon_dispatch.c | 9 +++++----
++ 1 file changed, 5 insertions(+), 4 deletions(-)
++
++diff --git a/src/remote/remote_daemon_dispatch.c b/src/remote/remote_daemon_dispatch.c
++index 7542caa..8bf5e7c 100644
++--- a/src/remote/remote_daemon_dispatch.c
+++++ b/src/remote/remote_daemon_dispatch.c
++@@ -6620,13 +6620,14 @@ remoteDispatchNodeGetFreePages(virNetServer *server G_GNUC_UNUSED,
++     if (!conn)
++         goto cleanup;
++ 
++-    if (args->pages.pages_len * args->cellCount > REMOTE_NODE_MAX_CELLS) {
++-        virReportError(VIR_ERR_INTERNAL_ERROR, "%s",
++-                       _("the result won't fit into REMOTE_NODE_MAX_CELLS"));
+++    if (VIR_INT_MULTIPLY_OVERFLOW(args->pages.pages_len, args->cellCount) ||
+++        args->pages.pages_len * args->cellCount > REMOTE_NODE_MAX_CELLS) {
+++        virReportError(VIR_ERR_INTERNAL_ERROR,
+++                       _("npages * cellcount > REMOTE_NODE_MAX_CELLS (%1$u)"),
+++                       REMOTE_NODE_MAX_CELLS);
++         goto cleanup;
++     }
++ 
++-    /* Allocate return buffer. */
++     ret->counts.counts_val = g_new0(uint64_t,
++                                     args->pages.pages_len * args->cellCount);
++ 
++-- 
++2.44.4
++
+diff --git a/recipes-extended/libvirt/libvirt_10.0.0.bb b/recipes-extended/libvirt/libvirt_10.0.0.bb
+index 4076a0cf..2bb725b1 100644
+--- a/recipes-extended/libvirt/libvirt_10.0.0.bb
++++ b/recipes-extended/libvirt/libvirt_10.0.0.bb
+@@ -39,6 +39,7 @@ SRC_URI = "http://libvirt.org/sources/libvirt-${PV}.tar.xz;name=libvirt \
+            file://CVE-2024-4418.patch \
+            file://CVE-2025-13193.patch \
+            file://CVE-2026-63622.patch \
++           file://CVE-2026-18917.patch \
+           "
  
- SRC_URI = "git://github.com/SELinuxProject/refpolicy.git;protocol=https;branch=main;name=refpolicy;destsuffix=refpolicy"
- 
--SRCREV_refpolicy = "acf41c52116fef3a9dcd8f1f39b133e0372fce7c"
-+SRCREV_refpolicy = "8f247dafb92bd12cbfb53a11ff58be17a88df86a"
- 
- UPSTREAM_CHECK_GITTAGREGEX = "RELEASE_(?P<pver>\d+_\d+)"
- 
+ SRC_URI[libvirt.sha256sum] = "8ba2e72ec8bdd2418554a1474c42c35704c30174b7611eaf9a16544b71bcf00a"
 -- 
-2.43.0
+2.34.1
 
