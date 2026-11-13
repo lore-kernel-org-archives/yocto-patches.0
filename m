@@ -1,119 +1,99 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1093.1794592959250287827
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1812.1794612495158766710
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 10:02:39 -0800
+ Fri, 13 Nov 2026 15:28:15 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google2 header.b=fJyR1toA;
- spf=pass (domain: smile.fr, ip: 209.85.221.50, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-491846221ffso1346767f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 10:02:39 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=DeGffZfb;
+ spf=pass (domain: gmail.com, ip: 209.85.215.179, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cdb2893531bso1483833a12.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 15:28:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google2; t=1794592957; x=1795197757; darn=lists.yoctoproject.org;
-        h=in-reply-to:references:to:from:subject:message-id:date:content-type
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=7yb5bO4xWlnch8DIAUq15cJ4z05R20l3bRwqQgWLPUs=;
-        b=fJyR1toAI48HPazkB/RjSOrt0InxGpstW/CVNDUOwyow4IQKVHFkK1mNxdJM4UduVW
-         tRKoUtqndfY/qRXIcAItaI9clLiwHfGlLoVSG2yVBDq0aByMiqoftmtZpl81wuA0H2lm
-         NXLkvzkakZOHGAtW5TUNBbaZpHnOvqJlFKsMsj1rtufZZ+4o56ZHmBJ3PUjXgvFHHJPv
-         KoA9UTfKjseeek4rwk6omT/RXHBLk7+y0HmgKYMrWO7JTQYPPqhK7svgus4JEcxHxLxN
-         zXMhZYYft+9HZYaz8wtMvitWxGZ37aEwC1Xc+cvaz4F7PzK8tF7ONox+gRYTU0X9iKQF
-         1HxA==
+        d=gmail.com; s=20260707; t=1794612494; x=1795217294; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=/5D3wnyWD9NqH56xK6zwrxIG0tQpTiuBOTkNCJ5S19M=;
+        b=DeGffZfbhBxMckMeO4XYbzigcmr5HyhK521TK7vfscfqBloNCCg30cPh0mzhgsRCaK
+         qZi+x7WJNnadFdi0lK6/FF5VEgPtLUJ1Yv3pNmBMSzDSL7aTm03BEWBR5B/GXIApJXXZ
+         WSq1Jj+WE6WM3yJRTz0AevceF6jqnycdm5FoX1q8Uj0XfX7Taj4V6AcnSjXsxXP75Yb+
+         MRUD3sdBODJFAxysOkJ9ilhnLio4kn1YP6S282x9WlSdouqKthYfQv/gISNCgzl4rivr
+         6gsvd2IQcMkUZE8dau6uPTeQqGQl04yCitzBceOzwaZVAabg791neOp/W0MKteyeUc1f
+         95cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794592957; x=1795197757;
-        h=in-reply-to:references:to:from:subject:message-id:date:content-type
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7yb5bO4xWlnch8DIAUq15cJ4z05R20l3bRwqQgWLPUs=;
-        b=1YigbAS870k13eeDpojxNoYpQVfFANSmXrVftu7V1UkAigTyOs/7f37VZvnSXHZb0C
-         LekfOmGg1OYBUlOGQ87SSN0sUP8ivDmhinQEpbuG+pG6KQwn3wPI9NmDRCjvO1JBt1lX
-         xjU6rXhITP7P7ejlHAtYlTLLN/SVxJlOdD8pkOlE1yyN/jWxQX3SxfWK8FpRW6KwM94Q
-         zZCnCs/X8sQ3StdbJCP9eD27T2u8ltFgEid/WGYCefELL0HP6q5ZfFjquoTxgC9Tas8b
-         s7MiwWnxfSSIrjDXfRiJeHzWa6UcppihFntvAS12jZM207vndIWbu5zpNufq4PHIEwUA
-         xKiw==
-X-Forwarded-Encrypted: i=1; AL+hErEwznElOfiqN5j/A4Jmww7vvkUsiHiDaLwgTReTuBd+x/8myvbvgUOjSAf6rml3uy5Hr0zA/FtcFvRTU2Pf@lists.yoctoproject.org
-X-Gm-Message-State: APuU4Z+83tqs7kETCtIRREMwqOg+OcT5SnP0YGztwVhpjRRxo+S0Y5QC
-	iovyxG33B+ieTG3SOZytHXomUaTip/zT/cSM8Nw6DsADjJlO0NLfl2kRzL/pvYBLS4o=
-X-Gm-Gg: AYBFou0uy8bFiZ9kJa7c5PTGfw9Z/d0iil9WOCCjJUFrcwEa8aCD3+UqEVe5fZSFOqt
-	l0mHN4BB7SOm4ITKQnXGMPBP+ZfEFXlvExvYzYz7JPJJh6PBf3SzJSa1VLj+89uAHsBnAdX4uve
-	qf+0gcgyD1jB+VjPaZWZ/f3nnZ8zpXnUn07QjyG4EzYEoL+GQsHQSCxrIbazauAeNFgfW3GzQKa
-	HlEWixp8T66pl1NxPOvotxUJHUR80nJoQa6SPmnUOpBUwbPrJuIDF/ha00gP1qT1d5aD7i5ghmc
-	2bI1u1jvwWm4L8a6ZavqCWlYbalSQVZRjj9RUOM6OxTtySEoxlHkSB8yQW+5cWQ2ZzM6JVfz2aO
-	o+tm2U0N3xwfVXakJ6ylrfZXLUZaB7TRXORKIrRy1XPhJqidgVd282akOYggfvQQ8WJH76ceKh6
-	5W3/L/sPOaEm367fQKVIrblHs4ldPMgHfRIhA6V/2LzPXeihOTE2wfqjIzTaHJAy18Z+JuF955A
-	qZ5fcIP7pzAPqQyoHc1OKTif9YigMVL21snmRIFpwV4a9M2Q/xfAJM/eVVoTIhUNZtHNzbF9+5k
-	PgdTf7vdJu5aRxVPp0qUSjmH+BKYno2s0eqQIE6trn0BHEyTKooR3b5AUNvR3ZZnm6KRXCyQ2Be
-	zT/4KvUjZrGchrrn4ug==
-X-Received: by 2002:a05:6000:24c8:b0:49c:9e8a:31b9 with SMTP id ffacd0b85a97d-49c9e8a3318mr6829978f8f.9.1794592957306;
-        Fri, 13 Nov 2026 10:02:37 -0800 (PST)
-Return-Path: <yoann.congal@smile.fr>
-Received: from localhost (2a01cb001331aa00d795e58479169e39.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:d795:e584:7916:9e39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f7828a4sm6685532f8f.23.2026.11.13.10.02.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Nov 2026 10:02:36 -0800 (PST)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 13 Nov 2026 19:02:36 +0100
-Message-Id: <DMUA3YZ5XCVE.34QEVSM08HIU2@smile.fr>
-Subject: Re: [yocto-patches] [pseudo][pseudo-1.9]PATCH 00/10] Backports from
- master to 1.9 branch
-From: "Yoann Congal" <yoann.congal@smile.fr>
-To: "Yoann Congal" <yoann.congal@smile.fr>,
- <yocto-patches@lists.yoctoproject.org>
-X-Mailer: aerc 0.20.0
-References: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org> <DMT7HDZT3P6O.1DHC10SI0D1UB@smile.fr>
-In-Reply-To: <DMT7HDZT3P6O.1DHC10SI0D1UB@smile.fr>
+        d=1e100.net; s=20260707; t=1794612494; x=1795217294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=/5D3wnyWD9NqH56xK6zwrxIG0tQpTiuBOTkNCJ5S19M=;
+        b=Gc4zqfHJhFwVVm9hF/a3xSiL7h5D7pJSFdp6AAslA94vdtIkI1ktrEiafIPH/ZXbdT
+         jqVgdeQb9hmkb+hP1K5xCt3qn4LKIvwhSqZXftRBOvzX2J5quzpA+q8imOj3PwZel9Vv
+         k10f6r4BPe+bNg75KMtBsHOEZMLnoDIdcwsw6nPNAdZoO1u7mTkQ4i3GvNlIgFYf/ZNG
+         LlVWOuo4uKaPLhqTjcgF8ooEXV8hthdSw8CqbjxxleNNeWnV0aCauTInlDyjKrQ2fZME
+         GmSZBYgeNv0y5vJFGQkqC6kqbdYpgVuTsMZK5UzPiNMSAjIdu725OMS+yzimJXVc3IOf
+         1OvQ==
+X-Gm-Message-State: APuU4Z+nXdDsB+++NmUXFcCCtfx0+AVbirqgiOBQjiWR79BJfGu0YF+N
+	+Q0XD9sDqTsV2dSZhceRuiwu/Y6zkPN7v3ZkN2SGEe5nm1WuemLTq0mDUTxdJw==
+X-Gm-Gg: AYBFou16axigTpMMSG1EQUBBDLI5EZfxFpvu1hyxVIqLGhOoDsucdo0u6myxdr/94t/
+	pKSIyYeujX3cd3uaIbhUCbhV/H9VbTBuUrsh4m2woW6G6BT9y3cXQwF/PeDISYAFDMohfAnEd4K
+	U9Rr2yUH/oGr3cyVh4MXAhU6p8Ro7gH2glMJh0tk9p8/h8JOaFRpn3OmNCKunDdQJpvejQjbpvr
+	PacMNUnxLjRkPHZkTq07t5iTKAj9Cu1PgGwVPdnV+xPTRsU1mDCWEiwDm3j0+BuaeVEFX6/QqpA
+	uCUgBk4RfKK6KG2q0SLdoTWxlllpRljHImVofPgrWljCM166r4V5enVLSHpkUr1VUjXR1qjDSyP
+	zMOc4CprFOWWDfk4BviG3/nQUTWuHy4V2Y3+Dka3mxTg97X2nnZGFiBbwD9FJt3i6zR0e8vY32m
+	Davzv00Rgzxcju7fjtxz5kV4gXLaA2CRbl9Ec7Y/5ITFzoYpRs0VMpv+8P8TGP/6SjyWEMWpxYG
+	rU8SORvkm5HDmExTSZFh9BEWcMc9zDECjtPYwSK2DEPQU+JIewZw96I7q9UikHB8uywTLI3wyHl
+	z7usy5qNF9NYB9XiKJY+Z3MwOxYfGlhtpkBRFqJtShqiyHtV93xEUmVIXTxI9g==
+X-Received: by 2002:a17:90b:1f81:b0:3b0:a38a:6715 with SMTP id 98e67ed59e1d1-3b1b0d753ebmr3791952a91.59.1794612494368;
+        Fri, 13 Nov 2026 15:28:14 -0800 (PST)
+Return-Path: <ticotimo@gmail.com>
+Received: from localhost.localdomain ([69.9.132.159])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1bfb607e7sm1279789a91.3.2026.11.13.15.28.13
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 13 Nov 2026 15:28:13 -0800 (PST)
+From: Tim Orling <ticotimo@gmail.com>
+X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 0/4] Dependency upgrades, and a fix for site notices
+Date: Fri, 13 Nov 2026 15:28:04 -0800
+Message-ID: <20261113232808.96792-1-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.56.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 18:02:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5338
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 23:28:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5339
+Content-Type: text/plain; charset="utf-8"
 
-On Thu Nov 12, 2026 at 12:46 PM CET, Yoann Congal wrote:
-> On Wed Nov 11, 2026 at 5:15 PM CET, Mark Hatle via yocto-patches wrote:
->> The following are backporting a small number of fixes:
->>  Add open_tree test case
->>  Fix makewrapper compilation warning
->>  Don't require linux/mount.h (part of the open_tree work)
->>  State a minimum gcc 5 requirement
->>  Add in the parallel rename/link locking
->>
->> It is also adding to new files:
->>  Add a README.security and AGENTS.md file
->>
->> Note, there is are a couple of additional pending changes likely
->> specifically for Yocto Bug 16493.  This is still in testing and
->> will be sent to the list once ready.
->>
->> Mark Hatle (10):
->>   test: Skip open_tree tests when the function or syscall is unavailable
->>   makewrappers: Don't generate unused _int paths with noignore_path
->>   ports/linux: Don't require <linux/mount.h>
->>   configure: Require GCC 5 or later
->>   pseudo_client: serialize path changes across clients
->>   ports: hold the path lock in create and metadata wrappers
->>   ports: check created files under the path lock before recording them
->>   test-parallel-ops: Add a parallel create/rename/link/chmod test
->>   README.security: Add information specific to file/process security
->>   AGENTS.md: Add to assist future developers
->
-> Hello,
->
-> FWIW, I plan to integrate these onto my stables branches to test them.
->
-> Thanks!
+1: Fixes four advisories against soupsieve 2.9.2 (CVE-2026-126190,
+   -126191, -126192, -126193). Soupsieve 4 needs Python 3.11.5 or
+   later, which the move to Ubuntu noble provides.
+2: Upgrades the other dependencies with newer patch or minor releases.
+   Celery 5.7 also needs click-repl 0.4.1 and the new tzlocal.
+3: Writing a test for the only use of Beautiful Soup turned up two
+   bugs in site notices: they showed a literal b'...', and a notice
+   with an attribute on an allowed tag, such as <p class="x">, failed
+   to render.
+4: Adds tests that run the Celery tasks without a broker, to cover the
+   Celery upgrade.
 
-This series passed a-full on scarthgap (on first try!):
-https://autobuilder.yoctoproject.org/valkyrie/#/builders/29/builds/5116
+The full test suite passes in the Docker image against MariaDB (83
+passed, 1 skipped), and the series is running on a test instance
+loaded with a copy of the layers.openembedded.org database.
 
-Integration was done with this patch:
-https://git.yoctoproject.org/poky-contrib/commit/?h=3Dstable/scarthgap-nut&=
-id=3D7a6ca5322b313aabf826b0105eaf37a0add2f3b0
+Tim Orling (4):
+  requirements.txt: upgrade soupsieve to 4.1
+  requirements.txt: upgrade patch and minor releases
+  layerindex/utils.py: fix sanitise_html() for Python 3 and current bs4
+  tests: add tests for the Celery tasks
 
-I plan to do the same for blacksail and wrynose. It might take 1-2 weeks
-to get sufficient testing on all those branches.
+ layerindex/utils.py |  6 +++---
+ requirements.txt    | 29 +++++++++++++++--------------
+ tests/test_tasks.py | 39 +++++++++++++++++++++++++++++++++++++++
+ tests/test_utils.py | 13 +++++++++++++
+ 4 files changed, 70 insertions(+), 17 deletions(-)
+ create mode 100644 tests/test_tasks.py
 
-Regards,
---=20
-Yoann Congal
-Smile ECS
+
+base-commit: 08e58cdece30019a6f9e5d14af16ebe20afa6177
+-- 
+2.56.0
 
