@@ -1,221 +1,105 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3231.1794617419022064784
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3956.1794620324550040919
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 16:50:19 -0800
+ Fri, 13 Nov 2026 17:38:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=Om4enaKM;
- spf=pass (domain: gmail.com, ip: 209.85.214.175, mailfrom: ticotimo@gmail.com)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2ede7cb02daso19063675ad.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 16:50:18 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=U4T/RUXf;
+ spf=pass (domain: gmail.com, ip: 209.85.216.54, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3ace1f3897cso838355a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 17:38:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794617418; x=1795222218; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ecAHffuk5bR9HtVYXfGrvMpEJnnD1E99vqmzvFV+qPE=;
-        b=Om4enaKMrICnD7f5PPPK+3vnkmBIEM5YdImGpHeQSwzJdB2bipihXJacjRolv7/CGa
-         MddtwtlTDMsimboxRBOJ+40VF+oLkMx7g3LmSz6nC/qZdwWy2of9wv6YSZUmjJTF4D6F
-         CfO7lnHNufwWChvjVXf4mdDNzfScjgqFt0vGGIYoJJsEwpzXaf85kbI1cJ5V/Bk77Ymn
-         khiq9k5pbIlYswU5F0iqjz7fEOqpsBuan9MtzRk1D+4ksu8sQfUV/wN/InmFASc724st
-         L65LX8qaB7J9W1AhKigCkh0g8pGMuo0HJ+86vXNw1V6virkna40CmFNAWI2AR6ofol3B
-         k5GA==
+        d=gmail.com; s=20260707; t=1794620324; x=1795225124; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=N+vaNcF3hJOjkISekh04eA1WWMkwjIROfjwqs1V/Hqs=;
+        b=U4T/RUXfZIwz8Tndx8D1F2fc+zGLQrnDjl6avzzjTCKeC1drqnZZBr5343G4VREuKf
+         ADD0QPqvxkOeIwGfTAo5nVLifMWF3jkoxQkQXTulaWlfPCLkVhQ8Y1Xrxsi1syXaMcUY
+         2yYvNe22nDF48V5vEd06aGUmVKblpZqj5l91WgQ9Rssl6cXNTzgkghhX9Hc8oV9gdbGi
+         uaXzFgvTsGBIwRxJK/ascahONiX2zcS3iRjT0lVq3jj98wZPymqbC8TVC7yMd1e2DeJj
+         MQB+iP1aAcXvQTQy91Qg1KLT2VAnwxHB9w1mbPIiDHIna2SYbH77QgMVsjPfJRxXnJlA
+         m1yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794617418; x=1795222218;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ecAHffuk5bR9HtVYXfGrvMpEJnnD1E99vqmzvFV+qPE=;
-        b=V6mPpPA0TLlCI+Wopd1qGSHbzKYdemIFFxO11YtnTnfBUhQPO5RNUQvAkvqG/JswtX
-         Aea2PYFyp5MBgxJrVP7XRjUPiyNBVOJvPkd/wxGo4cIpDtdfiyLnfcP3tSBRLNnJtNhb
-         gRWIL6w2KHYgCILJEHlKVjg2WXeNTMSaaT/j6+yMaGAMjCrBV/kqLTarjM1AbrlwtTSr
-         wTWEsSYjvIHCJcji3BS/4cKRr1Z3iAwZCG8m0Nd4P0cjs9hHWiB5amjuwOjML0RH0jjZ
-         qXsx7/44LBoJ26tNJ8jVpi5CcuT9A99/9zKa0Udfa5rmovLpKSHnVApXt1feiScXJ9eO
-         2NVQ==
-X-Gm-Message-State: APuU4Z9ulmsY2Hq3pp/sRgeL6ujUSwHvRxT0TgzWPIxttbO2if4gq4XK
-	B9MuKMHOnSgeybC0NLE1sne55CrwAvWH6XOBjRqIZZ3xyNhWlWU8W/m5ndYb7A==
-X-Gm-Gg: AYBFou2ECyIFEae6T+tYke4gQ11bvrSRGZsLHb7bzyV7wClmxHRjXMkZ5MamsJKnScf
-	/LfwJRP0NTEbU7yD9gceqb0fIvu/udfB7Y1E5cM8gjwKs2jKc+/RPvdMG9vx6VHmwLwultCNV8M
-	Wu5J2qEbExLQAONGKfTurYLU43NDFRlXw0ciRAuy+bMDq+5vyZhhBYz/K2PqHhgVSzh+/SiCfpq
-	ksjHjOk7yXk8ZLnPNEjOrmCVdoTu8YeqMsVyOy4Qk/4iVL83JUkOUiipOXSYr+8ftyBooHMnBz6
-	dM92njDHVw3/U0R9CjkonkRjmrhTQkyBuemV4jT/HCGliQ9XQL48wWKaZKeU5HkcwCCQLPzcJlY
-	PR0Is9gieaIC2SGyQh31ebEkD/o535nekolv4+AiTwX0tCkzLhSk0qS6dNZ0oO1+vQdvN7IhQIl
-	2vh36PjBSAs7B+cGuk0cO9ZqLdIyVdzk0LrymakgR0JH20AV2svSF4HPSsUNLWYrz5/RAykc3BH
-	4jTiqrk68p52PBftyRkl1KNWSvDi4/qzNHmYrTUV7BqQHwac81pyu6hSTpVCcN6BvywCgo/ZTiN
-	KtZuq9UsyEX5TXqDIHSJawzlZHr1ejfWt63oOHonH1OtfejGp1hECZeMKEn/gcQ=
-X-Received: by 2002:a17:90b:184b:b0:3ac:9ed8:f301 with SMTP id 98e67ed59e1d1-3b1b0ccf45cmr2674221a91.30.1794617418291;
-        Fri, 13 Nov 2026 16:50:18 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794620324; x=1795225124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=N+vaNcF3hJOjkISekh04eA1WWMkwjIROfjwqs1V/Hqs=;
+        b=S6TVPVnWgFkWe+4mCHRQQa1oD+VTwy+ddAnAh8mNpU8cyVb7miAEUsGM0j9OP5vzcw
+         CP3Tco8O1VeZvuiSXwMLtbXZ/PLgY9hi4tRan7vtXgPzA6KsPKbQimwCsD9rxen6d4G7
+         YamRJo8weUOqENcZuZlUPrOZ6Q/VYsA80UmyCZOwgZssVZpYWXnbfLy6vdHybfrPFg15
+         Vay5Pq2oyEUmbpF2KbdXCGD2pLQZLOgRO2j+GdE5JO+lZueNkgEX0vOH14M/+B5sDuSD
+         Sa9QhQja8Fiig3NVKHz0idcvpfCPFDveLan2O9jqcEROqq+9CM8uSHp+15GqlyXx/j8c
+         sA8w==
+X-Gm-Message-State: APuU4Z/lTfOLaL8xh1e0Lza+Q86PhGjY2XtbEA8mvrepX3LmFBKfke8+
+	CDKgxKZbHixRhO3MSSm56MlxqKP8YCeH6COSkbV2iqrELkrclGA4cyHQUAHh5g==
+X-Gm-Gg: AYBFou3+FuBrA8ik5Q6sCvELh/v74y8r4SnwH731WpgKy1W+slkMf/qPzeUYvvcL0jJ
+	b6C6u5RntfhsL1P5a9cJKH12gCe8TJX9xZBT7Bj8LWF9VJt7Wwg90Eq0mMbTwuYMVbL2kC06Vh3
+	yFDQ2y7k+lI5ejU5yFEZMbmk1SymQtDrddhb3acl7RR598aZbsvaBBnrq8jiL+rwHTqGNnSZK3J
+	lIXX6PR90GyCI+5jXooxsLJHA8naq6ZpXyCTawejq0dSrIk/MVnkFFsi5xu9UBXPEz+XBDLYQIa
+	MTbsha8/A5llq2rRgIvprnP3xwzYTQMVUWuz6yGWmr8V0cuolRwor+baaU4kQFZ2G3XmmznMmrb
+	uFrU3+5/mdsPhiAtrMT8FxHgbRg87vs+2lsJL7jlYWZJXAoVELPIQayGvU8dzFAeatD/LQoHijw
+	/ILzwTckcpO5VCj4c9n5BTRjK6pON5VW5xhauhSfKLhvo1K04H8No44p76Q7p1tCOczxf8XOuz7
+	NwOgbw5BhW4BXy8yYBjw3w4mJYH/INqRI/ytFcST/DXEkbUqsSX7sOXjfzx0OBNzRhsddskjX0P
+	ExGmTGiOTck42B+8jAX+B0U4i89hzcyCQ03j5CpdCpzxHZygDe8OrirE4SPoxw==
+X-Received: by 2002:a17:90b:3c45:b0:3a8:cb54:e135 with SMTP id 98e67ed59e1d1-3b1b0a1efd5mr4229427a91.19.1794620323819;
+        Fri, 13 Nov 2026 17:38:43 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197ce55c1sm11790295a91.3.2026.11.13.16.50.15
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aeb18b73sm6593679a91.3.2026.11.13.17.38.41
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Nov 2026 16:50:16 -0800 (PST)
+        Fri, 13 Nov 2026 17:38:41 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: mhalstead@linuxfoundation.org,
-	Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][RFC PATCH 2/2] docker-compose.nginx-proxy.yml: add a production setup using nginx-proxy
-Date: Fri, 13 Nov 2026 16:50:06 -0800
-Message-ID: <20261114005006.28193-3-tim.orling@konsulko.com>
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 0/2] Remove dependencies dropped from conf/layer.conf
+Date: Fri, 13 Nov 2026 17:38:37 -0800
+Message-ID: <20261114013839.51312-1-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261114005006.28193-1-tim.orling@konsulko.com>
-References: <20261114005006.28193-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 00:50:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5352
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 01:38:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5353
 Content-Type: text/plain; charset="utf-8"
 
-Add docker-compose.nginx-proxy.yml, which uses nginx-proxy and
-acme-companion in place of the layersweb and layerscertbot containers
-of docker-compose.prod.yml: the Let's Encrypt certificate is obtained
-and renewed automatically, without a hand-edited nginx configuration,
-and layersapp serves the static files. The host name and email address
-go in .env.prod.proxy.
+1: Fixes bug 14348: when a layer drops a dependency from LAYERDEPENDS
+   or LAYERRECOMMENDS, the update only warned about it. The existing
+   REMOVE_LAYER_DEPENDENCIES setting would remove it, but also removes
+   the dependencies added by hand in the edit form, since nothing
+   recorded where a dependency came from. This records which
+   dependencies came from conf/layer.conf (new field, migration 0056)
+   and removes those when they are no longer there. Dependencies added
+   by hand, and all existing ones until the next update finds them in
+   conf/layer.conf, are kept and warned about as before.
+2: A typo in an error message that raised AttributeError instead.
 
-AI-Generated: Claude Opus 5.5
-Signed-off-by: Tim Orling <tim.orling@konsulko.com>
----
- .env.prod.proxy                |  7 +++
- README.md                      | 12 +++++
- docker-compose.nginx-proxy.yml | 90 ++++++++++++++++++++++++++++++++++
- 3 files changed, 109 insertions(+)
- create mode 100644 .env.prod.proxy
- create mode 100644 docker-compose.nginx-proxy.yml
+Tested on a test instance loaded with a copy of the layers.openembedded.org
+database: the migration applied, and updating meta-security (whose
+conf/layer.conf now lists only core and openembedded-layer) marked
+those two as coming from conf/layer.conf, kept the older meta-perl
+and meta-python with a warning, and removed meta-perl once it was
+marked as having come from conf/layer.conf. The test suite passes in
+the Docker image (80 passed, 1 skipped).
 
-diff --git a/.env.prod.proxy b/.env.prod.proxy
-new file mode 100644
-index 0000000..1350f27
---- /dev/null
-+++ b/.env.prod.proxy
-@@ -0,0 +1,7 @@
-+# For docker-compose.nginx-proxy.yml. Set real values in a local commit on the
-+# server; never push them.
-+# The site's host name, for nginx-proxy and for the certificate
-+#VIRTUAL_HOST=<set this here>
-+#LETSENCRYPT_HOST=<set this here>
-+# The email address Let's Encrypt sends expiry notices to
-+#LETSENCRYPT_EMAIL=<set this here>
-diff --git a/README.md b/README.md
-index a1f6087..c912034 100644
---- a/README.md
-+++ b/README.md
-@@ -101,6 +101,18 @@ credentials, email server, `DEBUG`) from `.env.<context>.<service>` files, where
-   docker compose -f docker-compose.prod.yml up -d --build
-   ```
- 
-+- `docker-compose.nginx-proxy.yml` is a production setup that uses
-+  [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) and
-+  [acme-companion](https://github.com/nginx-proxy/acme-companion) in place of
-+  the `layersweb` and `layerscertbot` containers: the certificate is obtained
-+  and renewed automatically, and `layersapp` serves the static files. It uses
-+  the `.env.prod.*` files, and `.env.prod.proxy` for the host name and the
-+  email address for Let's Encrypt:
-+
-+  ```sh
-+  docker compose -f docker-compose.nginx-proxy.yml up -d --build
-+  ```
-+
- The `.env*` files are excluded from the Docker images.
- 
- Other settings the app and celery files can set:
-diff --git a/docker-compose.nginx-proxy.yml b/docker-compose.nginx-proxy.yml
-new file mode 100644
-index 0000000..b9deb44
---- /dev/null
-+++ b/docker-compose.nginx-proxy.yml
-@@ -0,0 +1,90 @@
-+# Production setup with nginx-proxy and acme-companion in place of the
-+# layersweb (nginx) and layerscertbot containers of docker-compose.prod.yml:
-+# nginx-proxy forwards requests to layersapp, which also serves the static
-+# files, and acme-companion gets and renews its Let's Encrypt certificate.
-+# Set the host name and email in .env.prod.proxy (see README.md).
-+services:
-+  layersdb:
-+    image: mariadb:lts
-+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --max_allowed_packet=128M
-+    volumes:
-+      - mariadb_data:/var/lib/mysql
-+    env_file:
-+     - ".env.prod.db"
-+    restart: unless-stopped
-+
-+  layersapp:
-+    depends_on:
-+      - layersdb
-+    build: .
-+    image: halstead/layerindex-app
-+    hostname: localhost
-+    volumes:
-+     - layersmeta:/opt/workdir
-+     - logvolume:/opt/layerindex-task-logs
-+    env_file:
-+     - ".env.prod.app"
-+     # Only layersapp may read this file: nginx-proxy forwards requests to
-+     # every container that has VIRTUAL_HOST set
-+     - ".env.prod.proxy"
-+    environment:
-+      VIRTUAL_PORT: 5000
-+    restart: unless-stopped
-+
-+  layersproxy:
-+    depends_on:
-+      - layersapp
-+    image: nginxproxy/nginx-proxy:1.9-alpine
-+    container_name: layersproxy
-+    ports:
-+     - "443:443"
-+     - "80:80"
-+    volumes:
-+     - certs:/etc/nginx/certs
-+     - acmehtml:/usr/share/nginx/html
-+     - vhost:/etc/nginx/vhost.d
-+     - /var/run/docker.sock:/tmp/docker.sock:ro
-+    restart: unless-stopped
-+
-+  layersacme:
-+    depends_on:
-+      - layersproxy
-+    image: nginxproxy/acme-companion
-+    environment:
-+      NGINX_PROXY_CONTAINER: layersproxy
-+    volumes:
-+     - /var/run/docker.sock:/var/run/docker.sock:ro
-+     - certs:/etc/nginx/certs
-+     - acmehtml:/usr/share/nginx/html
-+     - vhost:/etc/nginx/vhost.d
-+     - acme:/etc/acme.sh
-+    restart: unless-stopped
-+
-+  layersrabbit:
-+    image: rabbitmq:alpine
-+    restart: unless-stopped
-+    env_file:
-+     - ".env.prod.rabbit"
-+
-+  layerscelery:
-+    depends_on:
-+      - layersdb
-+      - layersapp
-+      - layersrabbit
-+    image: halstead/layerindex-app
-+    volumes:
-+     - layersmeta:/opt/workdir
-+     - logvolume:/opt/layerindex-task-logs
-+    env_file:
-+     - ".env.prod.celery"
-+    restart: unless-stopped
-+    command: /usr/local/bin/celery --workdir=/opt/layerindex --app layerindex.tasks worker --loglevel=INFO
-+
-+volumes:
-+  layersmeta:
-+  mariadb_data:
-+  logvolume:
-+  certs:
-+  acmehtml:
-+  vhost:
-+  acme:
+Dependencies that are already stale are not removed automatically;
+they are still only warned about.
+
+Tim Orling (2):
+  layerindex: remove dependencies that are dropped from conf/layer.conf
+  layerindex/utils.py: fix the error message for a bad dependency
+    version
+
+ .../0056_layerdependency_from_layer_conf.py   |  16 +++
+ layerindex/models.py                          |   3 +
+ layerindex/utils.py                           |  52 +++++----
+ tests/test_add_dependency.py                  | 104 ++++++++++++++++++
+ 4 files changed, 153 insertions(+), 22 deletions(-)
+ create mode 100644 layerindex/migrations/0056_layerdependency_from_layer_conf.py
+ create mode 100644 tests/test_add_dependency.py
+
+
+base-commit: 08e58cdece30019a6f9e5d14af16ebe20afa6177
 -- 
 2.56.0
 
