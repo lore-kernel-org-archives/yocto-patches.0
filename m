@@ -1,229 +1,164 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4397.1794623207737837535
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4398.1794623210130432502
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 18:26:47 -0800
+ Fri, 13 Nov 2026 18:26:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=nJ0wrK0K;
- spf=pass (domain: gmail.com, ip: 209.85.215.176, mailfrom: ticotimo@gmail.com)
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-cdac6d19ddaso775757a12.2
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 18:26:47 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=VtZyDzyF;
+ spf=pass (domain: gmail.com, ip: 209.85.216.50, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3b0b3754f57so1268824a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 18:26:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794623207; x=1795228007; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1794623209; x=1795228009; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=lxpxJhmrTPKiUsWn+1bZKE9C8zKMHvbWmVyClj+3v6M=;
-        b=nJ0wrK0KhKGW+/XNQcukuuRadLDJXxLdup9/hU0goQqbbsbaoaLgncrvo+ZQ1QtUsk
-         oDhFMdWyv6IAH9ghxyanPmbFzaoDpks5sk+DBLBlM0qAC656H2NpQzTtKhPYF6v19xmz
-         zpS4M4NHhPkRh8JY1LwYp+dUK1kV0FEGy4j3QbhP+/ktg/b5XK6p23v+DSWOMAfMscTC
-         ZGmp3uDVh6UCkpaTV1Qz6oELela5WwbG1qIqafdvi/LVIIytSUHhqdfVGiaflSk2uwV0
-         Rp9cE49MJGG69DxIhdMiXEnWhCd8cbW4Ksc384wx+wR5SE7T7vW+AoNBYs4o6XBUPel+
-         KGyw==
+        bh=N2NlTLTGa4I6/VNdZ6lRUoV4eve3rX5drX/bFg/U1lw=;
+        b=VtZyDzyFkmQFP7pP/jYHpXPJoAYO9Hb/1b1GaJFVNpplm/QqLeAyMc6ICQu1TA7VW0
+         5cu5Mfr0y/r2r1XMy88bJcTk2isac2besau67ngxLI4VcT06c5GRu4gry+wMASorJktt
+         aAsfhniEATkVn7uc6tBbM8JCiN9KlbeRoaNxE5HbsSUty6LyYssKREb9IHmGUhz599oO
+         gbAs/p0WWsHxqAgDolq/GYDnlfUtQkhdapgCuTmJc70AWUQI9t+IrasZXqQ71URYoEsE
+         qfyO6nbQVtcIF1X1GvAS3EN6/b7eSR/6FPaw/fdm/+hCPBm5qV983amoOdvan6nK4M/A
+         gphQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794623207; x=1795228007;
+        d=1e100.net; s=20260707; t=1794623209; x=1795228009;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=lxpxJhmrTPKiUsWn+1bZKE9C8zKMHvbWmVyClj+3v6M=;
-        b=FW9kjstwUdZQoJI9s6wX5EJAqILD0Wia1tbCXrtPe7dyhU/8AxL/OoqaFiuHTZaGwg
-         9OnpD7jIAhRDN14YIqWjrvxG38SbVT44KN1EfDrz6o6TU33ABh/2R68zbrM3xTayH/UO
-         IflU3PtleJnEVjGyw98Fq1tL0ejPYri0oJfDKDtCYVfXzs/iQtx58py12wnFv7XEzgDR
-         wts4QXSIySqqJwERcE5G/peF1Y+gO33SzHPiM1qY8bwU6P6OcBSPIyF4scTJs3Ct9iMQ
-         0AVCY40SgDEimBUaO1Ngsr3dGtyit/Y2K08bWWNWsGCWPBeu26uyML3C65yhrIk0LcMV
-         G/ww==
-X-Gm-Message-State: APuU4Z/GHWyAdWaUpnHO9DSqE5OczYF8CKJDhlaKvJfN9a+C/19mU6ej
-	poJbg87kcqGT6wKovREF3sHkq64/mIeMO80GIMA4CPyjuLfoBmU4C8GKINX93iK8
-X-Gm-Gg: AYBFou3YKTs/RUpKUZkfqNSVdMOLrFZ7whfRXlDGBJtxFkLXP3T864CDKAeUeP67i5D
-	jtu6uVOWuaACF4yu3pmCrW5L4XBwkpgoslJGQHY6V8dlqTNCEU/X5lxhrnLkERfaKmI5pbb/Hex
-	utTKu3l60m8shKet6BE+CmZgnC4OgS3cyPhIXa/cKtDPKekrbtyr5trIvGNS1l5qeLnY8ypTp6L
-	Eln7+Na5HH06obNR4YuwDJnULHt9JnNdSDSR+uciR2bF5WAQlEj99IjAh4BOIY07Sl9tegcDYfJ
-	OlMQ6318/8NKnEIAEsl3LU+PnRy5Gh8ZvNKqW0VSqHSknw3iE4zD3sMZBgiHnd1xKNJFAzvM/3P
-	rKWN04Yb7N5wRcU+G0V66BW3233PpBxrSDjgMwubNZ1ef4I4loZ6NGOFt/T3XOvhjz7xKmjMb/k
-	xKbFLMZCwn9T+G1WtJ8/VmqCdDeUGy3DCsI5awdtg/lvpv80eRFIdzWi3oFetIdpzLVHnfyfuWZ
-	Ud5SQmnQrLDqPwfe1PANhpUcbemREKNtwQrk1erah9AlVfFyf8qUw/f9dNpCLR8R2Gj+Sg7rKwE
-	8Ab3HTqbMr5R0fHp/fh08OBf9Hz4dHqYqYzHtFANUlpqVk43yYPAjNkNOc+iabbGaudOXqFQIux
-	j94IBqBo=
-X-Received: by 2002:a17:90b:1650:b0:3ab:3437:554f with SMTP id 98e67ed59e1d1-3b1b0a0db3bmr4354767a91.29.1794623206866;
-        Fri, 13 Nov 2026 18:26:46 -0800 (PST)
+        bh=N2NlTLTGa4I6/VNdZ6lRUoV4eve3rX5drX/bFg/U1lw=;
+        b=k5spgBzWram+9N964g6UWmd5cii9xsuVJ+EZgckXwPRhGk/O0KaxVK2FeonsEz10al
+         csObiYIUYRuQjIgP3n5nE3behJJUduo8JdpSmwf3wujJt2c7qHDX8ZkYnzj2H41ZgAFw
+         03ZXa2qhwhzmhOk04GKcLXlfghakcxZcltGN5hgeXBsEeYoCMPV43u5jJG5GLwSts19P
+         3hoMJbVrpLKgi/rPTFxknr8sonQEWPNliMhFRoH2HOZAr04srKbSVzrfRQlGTbfJl3tx
+         cuauiZV87LTZNsZ3+ZXL0lmEWAC9hY4mgZeU4i460+FrpuepRe+KZ83sqAfMk6Vs33zX
+         Wcmw==
+X-Gm-Message-State: APuU4Z9i0sq3qvtcJauchFlJG8x9igAiLDcJCAk9nDNCC+R2bvSioqk5
+	09DF81Sp8zCMhHPWboIfd6A+FiisNYk6GFkoYY5j6LTG/Q8asVYVwxJ+7vF4VnaO
+X-Gm-Gg: AYBFou1bwY/RwDK13LdGe73bWgWIaIm5AJPZbfGhpUGOZdRK+83IBTlEEpio3MuorJC
+	+wgo2AUFul7WT3QZMy9H9notJM7bpR067oucRbtrp9rb5N1uPN9dSZjsf0WVbiookbs7acHUf19
+	HUFfwUc1uWLxi6tZEmsD+lwIQiI9r1+3Upc+uKquESqdsPvunxFDrRcX0lV2QyQ9m1GAwJ7aBXo
+	1RND5Ho9dARcPz6eUZBjjWly2VqTLbHhcHDzSxL81t7pFpWv6qPOdtzYsgS8LZuvAYKoHJLUDd5
+	JSFbrhvVoXJnGjCijW6zRMACO258aCemixudztwuKmX4RL2tTumIiGzbe3sm/oTWlcDsez6l4Fx
+	KsAtP7QQFXPyETbhmczD9BhtxsO6SOgbHMuHaZhWqm1Jp5+9wqDNSRyjDGlMATrwpLxZjP8dRHv
+	Wm0qCMpm+s74s2CSzbU99nRC0Nb+fFNGZGG2ENV2miECcjoybnEtfmpHZs7YWxDr5qrnsrrGu5g
+	fWBanUQZTw6/AzAhaSSQix3JkC8ZhHcXjDJ2coBQUL+mV6WcSE9d6RQaB1TRQWvsvVbeH4Sjub5
+	em6gNDurLN80d0btBQvMB9h3cv802W9O+mu2zl87NOzrVSadw6Hbi607lpct/w==
+X-Received: by 2002:a17:90b:4d0d:b0:3ad:d4aa:8559 with SMTP id 98e67ed59e1d1-3b1b09f37d9mr3777275a91.17.1794623209438;
+        Fri, 13 Nov 2026 18:26:49 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aec622b6sm7433636a91.11.2026.11.13.18.26.44
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aec622b6sm7433636a91.11.2026.11.13.18.26.47
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Nov 2026 18:26:45 -0800 (PST)
+        Fri, 13 Nov 2026 18:26:48 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 2/3] update: record errors in a layer's first parse against the layer
-Date: Fri, 13 Nov 2026 18:26:36 -0800
-Message-ID: <20261114022637.60789-3-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 3/3] templates: warn on the layer page when the first parse failed
+Date: Fri, 13 Nov 2026 18:26:37 -0800
+Message-ID: <20261114022637.60789-4-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261114022637.60789-1-tim.orling@konsulko.com>
 References: <20261114022637.60789-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 02:26:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5358
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 02:26:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5359
 Content-Type: text/plain; charset="utf-8"
 
-When update.py could not parse a layer's conf/layer.conf in its first
-pass (fetch failed, subdirectory or conf/layer.conf missing, no
-BBFILE_COLLECTIONS, LAYERDEPENDS not satisfied), it only logged the
-error in the overall update log, so nothing showed in the layer's own
-update history. Record these as layer updates with the error, as is
-already done when update_layer.py itself fails.
+The page of a layer branch that has not been indexed always said that
+indexing should happen within a few hours, even when the update had
+already failed, e.g. because of a bad conf/layer.conf. Show a warning
+with a link to the failed update's log instead.
 
-[YOCTO #13490]
+[YOCTO #13489]
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/update.py | 40 +++++++++++++++++++++++++++++++---------
- tests/test_update.py | 23 +++++++++++++++++++++++
- 2 files changed, 54 insertions(+), 9 deletions(-)
+ templates/layerindex/detail.html |  8 ++++++
+ tests/test_first_parse_status.py | 49 ++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
+ create mode 100644 tests/test_first_parse_status.py
 
-diff --git a/layerindex/update.py b/layerindex/update.py
-index ccf44a3..dd794dd 100755
---- a/layerindex/update.py
-+++ b/layerindex/update.py
-@@ -124,10 +124,12 @@ def print_subdir_error(newbranch, layername, vcs_subdir, branchdesc):
-     # This will error out if the directory is completely invalid or had never existed at this point
-     # If it previously existed but has since been deleted, you will get the revision where it was
-     # deleted - so we need to handle that case separately later
-+    # Returns the error, if it is one, for the caller to record
-     if newbranch:
-         logger.info("Skipping update of layer %s for branch %s - subdirectory %s does not exist on this branch" % (layername, branchdesc, vcs_subdir))
-     elif vcs_subdir:
--        logger.error("Subdirectory for layer %s does not exist on branch %s - if this is legitimate, the layer branch record should be deleted" % (layername, branchdesc))
-+        return "Subdirectory for layer %s does not exist on branch %s - if this is legitimate, the layer branch record should be deleted" % (layername, branchdesc)
-+    return None
+diff --git a/templates/layerindex/detail.html b/templates/layerindex/detail.html
+index 6c20f47..cc86ff3 100644
+--- a/templates/layerindex/detail.html
++++ b/templates/layerindex/detail.html
+@@ -193,10 +193,18 @@
+         </div> <!-- end of container-fluid -->
  
- def extract_value(valuename, output):
-     res = re.search("^%s = \"(.*)\"" % valuename, output, re.M)
-@@ -277,6 +279,18 @@ def main():
-         update.reload = False
-     if not options.dryrun:
-         update.save()
+         {% if not layerbranch.vcs_last_commit %}
++        {% with lastupdate=updates.first %}
++        {% if lastupdate.errors %}
++        <div class="alert alert-danger">
++            <b>Warning:</b> The content of this layer on branch {{ url_branch }} could not be indexed: the last update, on {{ lastupdate.started }}, failed. See <a href="{% url 'layerupdate' lastupdate.id %}">its log</a> for the errors.
++        </div>
++        {% else %}
+         <div class="alert alert-info">
+             <b>Note:</b> The content of this layer on branch {{ url_branch }} has not yet been indexed. Indexing should take place within a few hours.
+         </div>
+         {% endif %}
++        {% endwith %}
++        {% endif %}
+ 
+         <ul class="nav nav-tabs" id="layertabbar">
+             {% if layerbranch.recipe_set.count > 0 %}
+diff --git a/tests/test_first_parse_status.py b/tests/test_first_parse_status.py
+new file mode 100644
+index 0000000..186f64d
+--- /dev/null
++++ b/tests/test_first_parse_status.py
+@@ -0,0 +1,49 @@
++# layerindex-web - test the layer page of a layer that has not been indexed
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
 +
-+    def record_layer_error(layer, branchobj, msg, log=True):
-+        """Record an error that stops a layer being updated against the layer,
-+        so that it shows in its update history, not only in this update's log"""
++from datetime import datetime
++
++import pytest
++from django.urls import reverse
++
++from layerindex.models import Branch, LayerBranch, LayerItem, LayerUpdate, Update
++
++
++@pytest.fixture
++def new_layer(db):
++    master, _ = Branch.objects.get_or_create(name='master', defaults={'bitbake_branch': 'master'})
++    layer = LayerItem.objects.create(name='meta-new', status='P', layer_type='A', summary='new',
++                                     description='new', vcs_url='git://example.com/meta-new.git')
++    LayerBranch.objects.create(layer=layer, branch=master)
++    return layer
++
++
++def add_update(layer, log):
++    update = Update.objects.create(started=datetime.now(), finished=datetime.now())
++    layerupdate = LayerUpdate(update=update, layer=layer, branch=Branch.objects.get(name='master'),
++                              started=datetime.now(), finished=datetime.now(), log=log)
++    layerupdate.save()
++    return layerupdate
++
++
++@pytest.mark.django_db
++def test_failed_first_parse_shows_warning(client, new_layer):
++    # [YOCTO #13489]
++    layerupdate = add_update(new_layer, 'ERROR: conf/layer.conf not found for layer meta-new')
++    page = client.get(reverse('layer_item', args=('master', 'meta-new'))).content.decode()
++    assert 'could not be indexed' in page
++    assert reverse('layerupdate', args=(layerupdate.id,)) in page
++    assert 'has not yet been indexed' not in page
++
++
++@pytest.mark.django_db
++def test_not_yet_indexed(client, new_layer):
++    for log in (None, 'WARNING: something'):
 +        if log:
-+            logger.error(msg)
-+        layerupdate = LayerUpdate(update=update, layer=layer, branch=branchobj,
-+                                  started=datetime.now(), finished=datetime.now(),
-+                                  log='ERROR: %s' % msg, retcode=1)
-+        if not options.dryrun:
-+            layerupdate.save()
-+
-     try:
-         lockfn = os.path.join(fetchdir, "layerindex.lock")
-         lockfile = utils.lock_file(lockfn, options.timeout, logger)
-@@ -363,7 +377,8 @@ def main():
- 
-                 for layer in layerquery:
-                     if layer.vcs_url in failedrepos:
--                        logger.info("Skipping update of layer %s - fetch failed" % layer.name)
-+                        # fetch_repo() has already logged the error
-+                        record_layer_error(layer, branchobj, "Fetch of layer %s failed: %s" % (layer.name, failedrepos[layer.vcs_url]), log=False)
-                         continue
- 
-                     layerbranch = layer.get_layerbranch(branch)
-@@ -400,7 +415,7 @@ def main():
-                     repodir = os.path.join(fetchdir, urldir)
-                     repo = git.Repo(repodir)
-                     if repo.bare:
--                        logger.error('Repository %s is bare, not supported' % repodir)
-+                        record_layer_error(layer, branchobj, 'Repository %s is bare, not supported' % repodir)
-                         continue
-                     try:
-                         # Allow stable branches to be created if actual_branch exists
-@@ -425,9 +440,11 @@ def main():
-                         # A bit odd to do it this way but apparently there's no other way in the GitPython API
-                         topcommit = next(repo.iter_commits('origin/%s' % branchname, paths=layerbranch.vcs_subdir), None)
-                         if not topcommit:
--                            print_subdir_error(newbranch, layer.name, layerbranch.vcs_subdir, branchdesc)
-+                            errmsg = print_subdir_error(newbranch, layer.name, layerbranch.vcs_subdir, branchdesc)
-+                            if errmsg:
-+                                record_layer_error(layer, branchobj, errmsg)
-                             if not (newbranch and layerbranch.vcs_subdir):
--                                logger.error("Failed to get last revision for layer %s on branch %s" % (layer.name, branchdesc))
-+                                record_layer_error(layer, branchobj, "Failed to get last revision for layer %s on branch %s" % (layer.name, branchdesc))
-                             continue
- 
-                     if layerbranch.vcs_last_rev == topcommit.hexsha and not update.reload:
-@@ -443,11 +460,13 @@ def main():
-                                 utils.checkout_layer_branch(layerbranch, repodir, actual_branch=options.actual_branch, logger=logger)
-                         layerdir = os.path.join(repodir, layerbranch.vcs_subdir)
-                         if layerbranch.vcs_subdir and not os.path.exists(layerdir):
--                            print_subdir_error(newbranch, layer.name, layerbranch.vcs_subdir, branchdesc)
-+                            errmsg = print_subdir_error(newbranch, layer.name, layerbranch.vcs_subdir, branchdesc)
-+                            if errmsg:
-+                                record_layer_error(layer, branchobj, errmsg)
-                             continue
- 
-                         if not os.path.exists(os.path.join(layerdir, 'conf/layer.conf')):
--                            logger.error("conf/layer.conf not found for layer %s (branch %s) - is subdirectory set correctly?" % (layer.name, branch))
-+                            record_layer_error(layer, branchobj, "conf/layer.conf not found for layer %s (branch %s) - is subdirectory set correctly?" % (layer.name, branch))
-                             continue
- 
-                     fd, initial_fn = tempfile.mkstemp(prefix='layerindex-initial-')
-@@ -479,7 +498,7 @@ def main():
- 
-                     col = extract_value('BBFILE_COLLECTIONS', initial_values)
-                     if not col:
--                        logger.error('Unable to find BBFILE_COLLECTIONS value in initial values')
-+                        record_layer_error(layer, branchobj, 'Unable to find BBFILE_COLLECTIONS value for layer %s - is it set in conf/layer.conf?' % layer.name)
-                         # Assume (perhaps naively) that it's an error specific to the layer
-                         continue
-                     ver = extract_value('LAYERVERSION', initial_values)
-@@ -548,7 +567,10 @@ def main():
-                         for layer, value in deps_dict_all.items():
-                             logger.warn('%s: LAYERDEPENDS: %s LAYERRECOMMENDS: %s' % (layer.name, value['deps'], value['recs']))
-                             if value['deps']:
--                                failed_layers[branch].append('%s: Failed to add since LAYERDEPENDS [%s ...] is not satisfied' % (layer.name, next(iter(value['deps']))))
-+                                failed_msg = '%s: Failed to add since LAYERDEPENDS [%s ...] is not satisfied' % (layer.name, next(iter(value['deps'])))
-+                                failed_layers[branch].append(failed_msg)
-+                                # Reported with the other issues at the end
-+                                record_layer_error(layer, branchobj, failed_msg, log=False)
-                             else:
-                                 # Should never come here
-                                 logger.error("Unexpected errors when sorting layers")
-diff --git a/tests/test_update.py b/tests/test_update.py
-index 1e1db0d..3266d44 100644
---- a/tests/test_update.py
-+++ b/tests/test_update.py
-@@ -173,6 +173,29 @@ def test_initial_values_not_in_output(import_layer):
-     assert 'BBFILE_COLLECTIONS = ' not in result.stdout
-     assert 'Unable to find BBFILE_COLLECTIONS' not in result.stdout
- 
-+def set_layerbranch(subdir, last_rev):
-+    # In a separate process, so that update.py sees the change: the tests run
-+    # in a transaction
-+    run_cmd('python3 manage.py shell -c "from layerindex.models import LayerBranch; '
-+            'LayerBranch.objects.filter(layer__name=\'meta-layerindex-test\').update('
-+            'vcs_subdir=\'%s\', vcs_last_rev=\'%s\')"' % (subdir, last_rev), cwd=basepath)
-+
-+def test_first_parse_error_recorded_against_layer(import_layer, repo, db_access_without_rollback_and_truncate):
-+    # [YOCTO #13490] an error that stops a layer being parsed is recorded
-+    # in the layer's update history, not only in the overall update log
-+    from layerindex.models import LayerBranch, LayerUpdate
-+    layerbranch = LayerBranch.objects.get(layer__name='meta-layerindex-test')
-+    set_layerbranch('meta-layerindex-test/recipes-example', '')
-+    try:
-+        result = subprocess.run("layerindex/update.py -l meta-layerindex-test --nofetch --nocheckout",
-+                                shell=True, cwd=basepath, stdout=subprocess.PIPE,
-+                                stderr=subprocess.STDOUT, text=True)
-+        layerupdate = LayerUpdate.objects.filter(layer=layerbranch.layer).order_by('-id').first()
-+        assert 'conf/layer.conf not found for layer meta-layerindex-test' in layerupdate.log, result.stdout
-+        assert layerupdate.errors == 1
-+    finally:
-+        set_layerbranch(layerbranch.vcs_subdir, layerbranch.vcs_last_rev)
-+
- 
- 
- 
++            add_update(new_layer, log)
++        page = client.get(reverse('layer_item', args=('master', 'meta-new'))).content.decode()
++        assert 'has not yet been indexed' in page
++        assert 'could not be indexed' not in page
 -- 
 2.56.0
 
