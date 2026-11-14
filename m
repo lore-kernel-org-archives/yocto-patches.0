@@ -1,164 +1,136 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4398.1794623210130432502
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4561.1794624058090782178
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 18:26:50 -0800
+ Fri, 13 Nov 2026 18:40:58 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=VtZyDzyF;
- spf=pass (domain: gmail.com, ip: 209.85.216.50, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3b0b3754f57so1268824a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 18:26:50 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=e4yCmCD5;
+ spf=pass (domain: gmail.com, ip: 209.85.214.172, mailfrom: ticotimo@gmail.com)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2ed06b725fdso18718995ad.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 18:40:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794623209; x=1795228009; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=N2NlTLTGa4I6/VNdZ6lRUoV4eve3rX5drX/bFg/U1lw=;
-        b=VtZyDzyFkmQFP7pP/jYHpXPJoAYO9Hb/1b1GaJFVNpplm/QqLeAyMc6ICQu1TA7VW0
-         5cu5Mfr0y/r2r1XMy88bJcTk2isac2besau67ngxLI4VcT06c5GRu4gry+wMASorJktt
-         aAsfhniEATkVn7uc6tBbM8JCiN9KlbeRoaNxE5HbsSUty6LyYssKREb9IHmGUhz599oO
-         gbAs/p0WWsHxqAgDolq/GYDnlfUtQkhdapgCuTmJc70AWUQI9t+IrasZXqQ71URYoEsE
-         qfyO6nbQVtcIF1X1GvAS3EN6/b7eSR/6FPaw/fdm/+hCPBm5qV983amoOdvan6nK4M/A
-         gphQ==
+        d=gmail.com; s=20260707; t=1794624057; x=1795228857; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=cnHEYSnWkZEK2v2CJKPg6/dAkBrLVAD0yIyCx/x5J3A=;
+        b=e4yCmCD5DewqwLGERD+NpLcaXSWm/qHM7wW2xUQ43IexQis/DYJaDN0qcxWGhGGdIf
+         JH0CAqcWEyINIMUBmMYz/9hWbvswaRbG7gdE4ObJn9xO+qTKC1OP9jrEm5bYJ5T5Jg2k
+         vGvJTLDdHVQW/dVYvB9BYc1hJVFhLIinUGlsbtA3IZ4ikhh1Ot/OHC4FPiBneq6TAA3x
+         T09scGbATuqB2o594meClaqE+fNRhlU/PPjLelZmyh2RmCYltqw8jSWIPtvvCVDYLpcr
+         pdBjOvKXH5mN4NYLfnWvKpvNURBwa9C77HgVQ7TYlz1AoNASOwrEcq/oB6joYt3SrKIx
+         WSbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794623209; x=1795228009;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=N2NlTLTGa4I6/VNdZ6lRUoV4eve3rX5drX/bFg/U1lw=;
-        b=k5spgBzWram+9N964g6UWmd5cii9xsuVJ+EZgckXwPRhGk/O0KaxVK2FeonsEz10al
-         csObiYIUYRuQjIgP3n5nE3behJJUduo8JdpSmwf3wujJt2c7qHDX8ZkYnzj2H41ZgAFw
-         03ZXa2qhwhzmhOk04GKcLXlfghakcxZcltGN5hgeXBsEeYoCMPV43u5jJG5GLwSts19P
-         3hoMJbVrpLKgi/rPTFxknr8sonQEWPNliMhFRoH2HOZAr04srKbSVzrfRQlGTbfJl3tx
-         cuauiZV87LTZNsZ3+ZXL0lmEWAC9hY4mgZeU4i460+FrpuepRe+KZ83sqAfMk6Vs33zX
-         Wcmw==
-X-Gm-Message-State: APuU4Z9i0sq3qvtcJauchFlJG8x9igAiLDcJCAk9nDNCC+R2bvSioqk5
-	09DF81Sp8zCMhHPWboIfd6A+FiisNYk6GFkoYY5j6LTG/Q8asVYVwxJ+7vF4VnaO
-X-Gm-Gg: AYBFou1bwY/RwDK13LdGe73bWgWIaIm5AJPZbfGhpUGOZdRK+83IBTlEEpio3MuorJC
-	+wgo2AUFul7WT3QZMy9H9notJM7bpR067oucRbtrp9rb5N1uPN9dSZjsf0WVbiookbs7acHUf19
-	HUFfwUc1uWLxi6tZEmsD+lwIQiI9r1+3Upc+uKquESqdsPvunxFDrRcX0lV2QyQ9m1GAwJ7aBXo
-	1RND5Ho9dARcPz6eUZBjjWly2VqTLbHhcHDzSxL81t7pFpWv6qPOdtzYsgS8LZuvAYKoHJLUDd5
-	JSFbrhvVoXJnGjCijW6zRMACO258aCemixudztwuKmX4RL2tTumIiGzbe3sm/oTWlcDsez6l4Fx
-	KsAtP7QQFXPyETbhmczD9BhtxsO6SOgbHMuHaZhWqm1Jp5+9wqDNSRyjDGlMATrwpLxZjP8dRHv
-	Wm0qCMpm+s74s2CSzbU99nRC0Nb+fFNGZGG2ENV2miECcjoybnEtfmpHZs7YWxDr5qrnsrrGu5g
-	fWBanUQZTw6/AzAhaSSQix3JkC8ZhHcXjDJ2coBQUL+mV6WcSE9d6RQaB1TRQWvsvVbeH4Sjub5
-	em6gNDurLN80d0btBQvMB9h3cv802W9O+mu2zl87NOzrVSadw6Hbi607lpct/w==
-X-Received: by 2002:a17:90b:4d0d:b0:3ad:d4aa:8559 with SMTP id 98e67ed59e1d1-3b1b09f37d9mr3777275a91.17.1794623209438;
-        Fri, 13 Nov 2026 18:26:49 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794624057; x=1795228857;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=cnHEYSnWkZEK2v2CJKPg6/dAkBrLVAD0yIyCx/x5J3A=;
+        b=LU7tWAE42sgb38k4BbNvKjPm07AnFqQTGVUn1dicZAL0jWY+tMO2weCnu1HB6fnd5D
+         oNH5Cd56ZaaMW1BuHX5rumxWYHGsGowdmgOoGylC3kFHFcZlmw44GMjQ5woNDShjeHLS
+         uGJfbzviyoPR3tdDbC1mgBUa+nt3T+A5z7OUkdbvjg07ZsRoAkUMrH97XOzOqM/6i4Fo
+         IO/zmaQT9rWve/X3iZuZ1alVZaOuQn9zRY+X8IXVjbWfvg5mF6ZK2g9QJm4zNA+xWN8L
+         YSgh/FlJ8aEdpEUGygQ0+ecAMNpyx/BcoqQPhoGEa/5TxOfzNQ27vVggUXkPI8kHenYa
+         dUcg==
+X-Gm-Message-State: APuU4Z/ehytFonzgaYyyjZQhPPHgz6r4sJeprg3282CVWIyAQNNKaF4n
+	aOrofxN9pR+54nbjNq9OWjxI57G7ydUc2GPbbbIfrDyINF38GQIdX58nE/viJMPc
+X-Gm-Gg: AYBFou04k9xhS6qM+uEX6pNcCIcm2Ch+FfunNErPjec6JQFxRiEITqLGZj02gljRQW3
+	YbvKWjLNAFK2QwbBa576ZcePcqlprLLk2AWelpmkIK4cl890rpSULdl7WyrZRVSAIttVoskgKWc
+	/e5wEAkHwBj4otcPMS/CHcpCsBdcGsbVeR5ILBRRd/YBY0zDKNe3dEkWraVhKlrH3EykQEHfy9l
+	71vXPfXqCaIocinIo3iMdBYWKJCu1WRy1k3e6L8KbshYyJ9hHuWzm6300g3askl0ZCi7joMT0J1
+	FEwSOKQBhNyQioDQ/5jXimMUGMNDXFHjxJR0d9gzpYnYEsyZX/wcda/xs6jmJeKXSffhkRggM68
+	ic32BWn/DnifQrHB/PO2GPFey25LBtA8FBC/MCQm5teLTYS8zeEB7oUkOS9E3vsdc+tWAM/XMN7
+	Q7jCNxTixaz2TxRM9LOm6bUK2V6YsClp24WeBmmDg/So01Ie4UTIOMBuGKj2Tj+v/7WBru9/EW+
+	2VxKzXqngLq/6J3T5/nx4CZJf0QhfrIXOxSVVSiy8lxctMmCzc+CfHAM+BdM2WoW/eIthMsS0nB
+	V5HkAFk9YCSotVbWrl5EjYbWOcJZdXdjXwXaSkh0sQn1J2Dv6GQov00OPVjzJUQ43ZSqEPuP+Uj
+	nnMFMAEs=
+X-Received: by 2002:a17:903:3886:b0:2ea:dee6:d672 with SMTP id d9443c01a7336-2edf1f2a656mr53542185ad.19.1794624057266;
+        Fri, 13 Nov 2026 18:40:57 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aec622b6sm7433636a91.11.2026.11.13.18.26.47
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ee0f7d0d1fsm16686025ad.30.2026.11.13.18.40.56
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Nov 2026 18:26:48 -0800 (PST)
+        Fri, 13 Nov 2026 18:40:56 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 3/3] templates: warn on the layer page when the first parse failed
-Date: Fri, 13 Nov 2026 18:26:37 -0800
-Message-ID: <20261114022637.60789-4-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH] dockersetup: move TASK_LOG_DIR with --app-dir
+Date: Fri, 13 Nov 2026 18:40:50 -0800
+Message-ID: <20261114024050.63499-1-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261114022637.60789-1-tim.orling@konsulko.com>
-References: <20261114022637.60789-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 02:26:55 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5359
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 02:41:05 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5360
 Content-Type: text/plain; charset="utf-8"
 
-The page of a layer branch that has not been indexed always said that
-indexing should happen within a few hours, even when the update had
-already failed, e.g. because of a bad conf/layer.conf. Show a warning
-with a link to the failed update's log instead.
-
-[YOCTO #13489]
+With --app-dir, dockersetup.py mounts the task logs volume under the
+application directory, but left TASK_LOG_DIR in docker/settings.py at
+/opt/layerindex-task-logs, so the Celery worker wrote the task logs
+outside the volume and the task page could not show them. Set
+TASK_LOG_DIR from the application directory, as is already done for
+LAYER_FETCH_DIR.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- templates/layerindex/detail.html |  8 ++++++
- tests/test_first_parse_status.py | 49 ++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
- create mode 100644 tests/test_first_parse_status.py
+Found while reviewing the task logs volume for the Update Layer button
+series ("Dockerfile: create the task logs directory" creates
+${APP_DIR}/layerindex-task-logs, which this matches). Covered by a new
+test in tests/test_dockersetup.py.
 
-diff --git a/templates/layerindex/detail.html b/templates/layerindex/detail.html
-index 6c20f47..cc86ff3 100644
---- a/templates/layerindex/detail.html
-+++ b/templates/layerindex/detail.html
-@@ -193,10 +193,18 @@
-         </div> <!-- end of container-fluid -->
+ dockersetup.py            |  3 +++
+ tests/test_dockersetup.py | 14 ++++++++++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/dockersetup.py b/dockersetup.py
+index 406bdf9..9e4d05e 100755
+--- a/dockersetup.py
++++ b/dockersetup.py
+@@ -427,6 +427,9 @@ def edit_settings_py(emailaddr, app_dir='/opt'):
+         elif line.lstrip().startswith('LAYER_FETCH_DIR'):
+             newlines.append("LAYER_FETCH_DIR = \"%s/workdir\"\n" % app_dir)
+             continue
++        elif line.lstrip().startswith('TASK_LOG_DIR'):
++            newlines.append("TASK_LOG_DIR = \"%s/layerindex-task-logs\"\n" % app_dir)
++            continue
+         newlines.append(line + "\n")
+     writefile("docker/settings.py", ''.join(newlines))
  
-         {% if not layerbranch.vcs_last_commit %}
-+        {% with lastupdate=updates.first %}
-+        {% if lastupdate.errors %}
-+        <div class="alert alert-danger">
-+            <b>Warning:</b> The content of this layer on branch {{ url_branch }} could not be indexed: the last update, on {{ lastupdate.started }}, failed. See <a href="{% url 'layerupdate' lastupdate.id %}">its log</a> for the errors.
-+        </div>
-+        {% else %}
-         <div class="alert alert-info">
-             <b>Note:</b> The content of this layer on branch {{ url_branch }} has not yet been indexed. Indexing should take place within a few hours.
-         </div>
-         {% endif %}
-+        {% endwith %}
-+        {% endif %}
+diff --git a/tests/test_dockersetup.py b/tests/test_dockersetup.py
+index 0109c80..97a78f6 100644
+--- a/tests/test_dockersetup.py
++++ b/tests/test_dockersetup.py
+@@ -22,6 +22,7 @@ TRACKED_FILES = [
+     '.env.dev.app', '.env.dev.celery', '.env.dev.db', '.env.dev.rabbit',
+     'Dockerfile',
+     'docker/git-proxy', 'docker/.gitconfig', 'docker/nginx-ssl.conf',
++    'docker/settings.py',
+ ]
  
-         <ul class="nav nav-tabs" id="layertabbar">
-             {% if layerbranch.recipe_set.count > 0 %}
-diff --git a/tests/test_first_parse_status.py b/tests/test_first_parse_status.py
-new file mode 100644
-index 0000000..186f64d
---- /dev/null
-+++ b/tests/test_first_parse_status.py
-@@ -0,0 +1,49 @@
-+# layerindex-web - test the layer page of a layer that has not been indexed
-+#
-+# Licensed under the MIT license, see COPYING.MIT for details
-+#
-+# SPDX-License-Identifier: MIT
-+
-+from datetime import datetime
-+
-+import pytest
-+from django.urls import reverse
-+
-+from layerindex.models import Branch, LayerBranch, LayerItem, LayerUpdate, Update
+ 
+@@ -115,6 +116,19 @@ def test_compose_uses_local_env_files(workdir):
+     assert 'layerscertbot' not in services
+ 
+ 
++def test_app_dir_moves_task_logs_with_the_volume(workdir):
++    # The task logs volume and TASK_LOG_DIR must agree, or the task log page
++    # can't find the logs the Celery worker writes
++    dockersetup.edit_dockercompose('layers.example.com', '8080:80,8081:443', False, app_dir='/srv/li')
++    dockersetup.edit_settings_py(None, app_dir='/srv/li')
++    services = load_compose(workdir)['services']
++    settings = (workdir / 'docker' / 'settings.py').read_text()
++    for service in ('layersapp', 'layerscelery'):
++        assert 'logvolume:/srv/li/layerindex-task-logs:z' in services[service]['volumes']
++    assert 'TASK_LOG_DIR = "/srv/li/layerindex-task-logs"' in settings
++    assert 'LAYER_FETCH_DIR = "/srv/li/workdir"' in settings
 +
 +
-+@pytest.fixture
-+def new_layer(db):
-+    master, _ = Branch.objects.get_or_create(name='master', defaults={'bitbake_branch': 'master'})
-+    layer = LayerItem.objects.create(name='meta-new', status='P', layer_type='A', summary='new',
-+                                     description='new', vcs_url='git://example.com/meta-new.git')
-+    LayerBranch.objects.create(layer=layer, branch=master)
-+    return layer
-+
-+
-+def add_update(layer, log):
-+    update = Update.objects.create(started=datetime.now(), finished=datetime.now())
-+    layerupdate = LayerUpdate(update=update, layer=layer, branch=Branch.objects.get(name='master'),
-+                              started=datetime.now(), finished=datetime.now(), log=log)
-+    layerupdate.save()
-+    return layerupdate
-+
-+
-+@pytest.mark.django_db
-+def test_failed_first_parse_shows_warning(client, new_layer):
-+    # [YOCTO #13489]
-+    layerupdate = add_update(new_layer, 'ERROR: conf/layer.conf not found for layer meta-new')
-+    page = client.get(reverse('layer_item', args=('master', 'meta-new'))).content.decode()
-+    assert 'could not be indexed' in page
-+    assert reverse('layerupdate', args=(layerupdate.id,)) in page
-+    assert 'has not yet been indexed' not in page
-+
-+
-+@pytest.mark.django_db
-+def test_not_yet_indexed(client, new_layer):
-+    for log in (None, 'WARNING: something'):
-+        if log:
-+            add_update(new_layer, log)
-+        page = client.get(reverse('layer_item', args=('master', 'meta-new'))).content.decode()
-+        assert 'has not yet been indexed' in page
-+        assert 'could not be indexed' not in page
+ def test_compose_enables_certbot_for_letsencrypt(workdir):
+     dockersetup.edit_dockercompose('layers.example.com', '80:80,443:443', True)
+     services = load_compose(workdir)['services']
+
+base-commit: 08e58cdece30019a6f9e5d14af16ebe20afa6177
 -- 
 2.56.0
 
