@@ -1,104 +1,114 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2818.1794616256792154079
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3227.1794617411131339129
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 16:30:56 -0800
+ Fri, 13 Nov 2026 16:50:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=wRR4g2VF;
- spf=pass (domain: gmail.com, ip: 209.85.216.46, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3ac78f4c10bso783489a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 16:30:56 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=wUQfI7mp;
+ spf=pass (domain: gmail.com, ip: 209.85.216.44, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3b08cf16decso832720a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 16:50:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794616256; x=1795221056; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=vXupL0ztoOIo/Vj6Rc1jRSQDEp1Xp2+GY0VKbvVJ+eU=;
-        b=wRR4g2VF7xHzvZX+YIvURXaEzqaxVBiyANZZ1AkTzsfiL9QfBCbSsa8tixaf4RVMYd
-         Srz0/3i+DsKHD8pn6ybR9O1vFOYYF3XubSiF6pLQ6GvfJ2NLr+MKPWPRcccAyHzHc36s
-         ejm9g1sp9dIzcvJP/CD0D9UKmpT6qPnFsfs681ByeZEqVDm4MbtFkF0JEpAdSlew4QvT
-         IWRhIVR1RDxYek/9UIucoH9+7vrWj96EBjl3lPNVGfE/yxXblta3yszzfYoqDNTCcW1z
-         ToGE3YRzN3+Tc76y0tByDsSBzgXFXmmh8g8g3bpZmnrYyivgm9KsfXDc+zyZSwEEz0ra
-         4tzA==
+        d=gmail.com; s=20260707; t=1794617410; x=1795222210; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=itEFWd03zb92uX2upywOgrmiNOhU9daAI6HhFbeRHpQ=;
+        b=wUQfI7mpWtVNvTc0cqZiIv0jav8zusrQoBAu5n/i/DAz/71rktpyuyRPZSZZJtOpu8
+         +EyQn6Qcv7UnU7hQRFF3Wvt9ehmZEcFuNjo0neI3hzCeKBOsK659khabDLQxy+358ynI
+         EJaR6yt+UXfz8yI/h3hPTDKP1Lh6ABqRZnD0c98bvyBV7ZpLcrfGvpBTpjt2+MVOJkit
+         PssMj5ailTu3eqJtqKVv777vgg0M7kTUo7yhlIsV9rN/SFAQXu9jFZUOHm/mMryPmu6s
+         F3nCShx7CYfO0ddv4OPnJpUvGbMsbKbYXjudVpFLCc2+xVOI0NwVrGaJgLswFWeW9ezg
+         0vPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794616256; x=1795221056;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=vXupL0ztoOIo/Vj6Rc1jRSQDEp1Xp2+GY0VKbvVJ+eU=;
-        b=gSVkIGP1HHB4r0jnT7R3s51fJ9orxCXDqj8Dbq6SMVmrg8aglNflfxOTsOUt4LNIke
-         oYBxibLzZv5QuZKSJaIRL8jLCNzhzR1MHM0j6XWm2ao26yV7FvId8D4I+Q2/CkSZT8or
-         x+trcZ77oFbXPI2zbMmYMJPusK7PY9xVzQNefwMJU7oC26W44ddo4eZ4trtcfVEiE3ue
-         QmJe7lf1c0eiRfXtKuKJ/clPtXW1FF8eeLrHHlNuu8MK6LzjQ3dkkLoAK/mX13J1uBAX
-         cO60OG84uC8NmELVfJgrBvsfCN2Z1F8th1fmPXT7mTyK21m3WDUoquCiGSMp7H788zEM
-         /Y0A==
-X-Gm-Message-State: APuU4Z/LspswtwklA1qLHVpYJB3kfygNMYQ5McqB31eBCGzI8Tan6kn1
-	p61J0qBKFSKuee/lWrcBWokufdTxDPvTO7VqSUb4ZQabKcJUfjbu2bf2lJ/5qWif
-X-Gm-Gg: AYBFou09L2dU0lRX7XizfszoG5FFiTFyZ8eVSpQAfuPGR33Z3P5vduGtTMh9JQP3mSK
-	P9Ui7lzTucJimMW53ueaCyCOXQ2M6FK1PW2/O/icebRpa4iAVbIOFkiGrDibUAjNXSPxlSbL3y6
-	z8idAQ52rNV+byTDGEGfUMOs6LFBBN/4QuaXiCnRHwINTZVYsrjlbyTQidevxK5FodU0avG7fUN
-	OEfoVOJdFpVA3G29H8SNoFuYx+knAwpow0iNk4to5eLbZAncrYFGYEpYM17KG6BbmtMSVkL4+9c
-	iupYQrXPQkKRlBVVLHRLTF21vShMMvYFcGspnb75C+Rte/HessMr+ihE6kgLkWGcU1XzCkZZppy
-	O4t1UuHX9qDSFvPb95wrd+KI+dYNy6c6KPEBcx4AWYEUPPlkGT3z9yXhJDbslEdGt+ow3VtyzXr
-	+inE+SjyoXY/i+nM/KidwmQ+5ZuVZ2r9aVSVaKvP/UjvAL3lQAaV3TLJ5q1xH7cMvsUeTAT9Lgl
-	+0hxKVJC0zRjSLPPiDJlNPI4/eHiU4EotsfoN6OWOAYsJNCldmGroT4wvE6IQyhd8wptWq+5swx
-	7DdAr+7r6wdXNnSdD1Qz7qj2FG18LTrd9nPo0aiYYoyRk+w7IEfWImVeXtXN4w==
-X-Received: by 2002:a17:90b:1807:b0:3aa:fdad:7d6c with SMTP id 98e67ed59e1d1-3b1b0ca59a4mr3886517a91.58.1794616256123;
-        Fri, 13 Nov 2026 16:30:56 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794617410; x=1795222210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=itEFWd03zb92uX2upywOgrmiNOhU9daAI6HhFbeRHpQ=;
+        b=y+/KwEgGdguceYSsBLAl8VakLR7JRYa3A5SQFB34kHhi1hZA8Z3P9snSwHMbj0HqvR
+         Jm/xxkd1FrLC1Vc6fC8GJjRMDwPiWB+J8f62QBkjxit5eKIz3YfUs89/l3Kl06y+5AFy
+         vZu5fRI+/1sVPeTv2ClMyVMW8nx/YpyfgqIHh7LdVDYTHpmLJSUfGsDYXI88KYebniJC
+         SpFOWtPeXnWyhnTUdjFdv/SOZ3XhWA27rZMtL9gbApGrwKihP1+efftqStZNegWXZXL+
+         kI7AhkjLaMJRgxx13LHhxMEAs0USHdzaNl4v1WCdHUUCSN2bIcxYHcjIonwMoY7Lu9uK
+         ELYw==
+X-Gm-Message-State: APuU4Z+KEK8FFZSHmnR+bSeayfkHMR9h7NQ6QAwszb5FXcnpF1gwZUUI
+	XocZrMbOJyWBcREpzr3EoyK4PzvrI7dQeOWP8KT4cphqzcLyk64UgFJtuVLp4A==
+X-Gm-Gg: AYBFou355jLIxveJ6VgACfzZnaHCumgrsQegj+vy2rQXmapA/AuP2lWv74WCeiPTDk/
+	WOGgWn8Fp2VfDskePyzSSB8ZYvdIq1wnPE0stG1gJvNyarHrEDG5rvjqvo5ukOoHZ+pmhkMbjWP
+	fYOCLRT7HnYhoM7AZbQbMEMTb1LTbgjhG/GrUgEnpfHh+2AWH8TIb3WmzfV9vzNTE8Sx5uEhYU+
+	M++UVKft/HP5obmOXMRuOc3AF1ozWb4z7nnNPMBHvLMqvmLxwYtDpBrAPLVMRZiLdHgKxXS9pqX
+	UkRTG4SYwn7e3dspHWw2vRsWYK9+mB0SZnyZ9/5qrKNAtKlT4TJQcH3KY+aDTh84trqWgX0Ckxw
+	2Qeg1gshTIdOqSD3glNN2BsML1UwWGow1zK6nVWkAXxg0SxJ/wWZfE2oYhuvYFkK3FoLPqrdIzX
+	Tl5cwUAi5xNSdrD6vcqBUYgVNlwZ5h+Ir8BIXmSS4TXtMh+m84RtcYZOo17jcxytYtm3jiV8pfD
+	C9+/8O7Yqxnbp+i3u8CmfO7glmD8Dqozh4snrXyZQPkYTml+1uA5ppH33inv9XYBBTdd8FPQrrf
+	j6Ds8b/WaG5qxybpUcAGwyS15OxvGgEAdvIw7QL5Tge0myVmyPQcn16lYkUpfgzsr4koyPVatZu
+	S+FZOT9Ui
+X-Received: by 2002:a17:90b:5687:b0:3b0:91ce:672e with SMTP id 98e67ed59e1d1-3b1b0a407d6mr4097112a91.17.1794617410407;
+        Fri, 13 Nov 2026 16:50:10 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aec63b9bsm6684787a91.12.2026.11.13.16.30.54
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197ce55c1sm11790295a91.3.2026.11.13.16.50.09
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Nov 2026 16:30:54 -0800 (PST)
+        Fri, 13 Nov 2026 16:50:09 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 3/3] Dockerfile: create the task logs directory
-Date: Fri, 13 Nov 2026 16:30:41 -0800
-Message-ID: <20261114003041.15197-4-tim.orling@konsulko.com>
+Cc: mhalstead@linuxfoundation.org,
+	Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][RFC PATCH 0/2] uWSGI, and a docker-compose setup with nginx-proxy
+Date: Fri, 13 Nov 2026 16:50:04 -0800
+Message-ID: <20261114005006.28193-1-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261114003041.15197-1-tim.orling@konsulko.com>
-References: <20261114003041.15197-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 00:31:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5349
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 00:50:14 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5350
 Content-Type: text/plain; charset="utf-8"
 
-The docker-compose setups mount a volume at the task logs directory in
-layersapp and layerscelery. The image did not have that directory, so
-the volume belonged to root, and the Celery worker, running as the
-layers user, could not write the task log: an update started with the
-Update Layer button failed without any log. Create the directory, owned
-by the layers user, so that a new volume takes its ownership.
+This is an RFC: I run the layer index test instance I use for these
+patches this way, and would like to know if this is useful upstream,
+and in particular whether the production site would use it.
 
-[YOCTO #15395]
+1: Serves the application with uWSGI instead of gunicorn. uWSGI speaks
+   HTTP, so the existing nginx configurations are unchanged. It also
+   serves the static files, now collected into the image at build time.
+2: Adds docker-compose.nginx-proxy.yml, with nginx-proxy and
+   acme-companion in place of the layersweb (nginx) and layerscertbot
+   containers: the certificate is obtained and renewed automatically,
+   with no hand-edited nginx configuration. The existing compose files
+   are unchanged.
 
-AI-Generated: Claude Opus 5.5
-Signed-off-by: Tim Orling <tim.orling@konsulko.com>
----
- Dockerfile | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Patch 1 can be taken on its own; patch 2 needs it for the static
+files.
 
-diff --git a/Dockerfile b/Dockerfile
-index f4d19ab..85918d0 100644
---- a/Dockerfile
-+++ b/Dockerfile
-@@ -68,9 +68,11 @@ COPY docker/updatelayers.sh ${APP_DIR}/updatelayers.sh
- COPY docker/migrate.sh ${APP_DIR}/migrate.sh
- COPY docker/connectivity_check.sh ${APP_DIR}/connectivity_check.sh
- 
--RUN mkdir ${APP_DIR}/workdir \
-+# The task logs directory is a volume shared with layerscelery; create it
-+# here so that the volume belongs to the layers user
-+RUN mkdir ${APP_DIR}/workdir ${APP_DIR}/layerindex-task-logs \
- 	&& adduser --system --uid=500 --home /home/layers layers \
--	&& chown -R layers ${APP_DIR}/workdir
-+	&& chown -R layers ${APP_DIR}/workdir ${APP_DIR}/layerindex-task-logs
- USER layers
- 
- # Always copy in .gitconfig and proxy helper script (they need editing to be active)
+Tested: the test suite passes in the image (75 passed, 1 skipped);
+uWSGI starts, serves static files and stops cleanly on SIGTERM; and
+the nginx-proxy setup serves pages and static files over HTTP locally.
+The test instance has run uWSGI behind nginx-proxy, with Let's
+Encrypt, since October.
+
+Open questions:
+- Should uWSGI replace gunicorn, or be an option?
+- dockersetup.py does not know about the nginx-proxy setup; should it?
+- The test instance also waits for the database and runs migrate and
+  collectstatic when the container starts, instead of in
+  dockersetup.py. I left that out; is it wanted?
+
+Tim Orling (2):
+  Dockerfile: serve the application with uWSGI
+  docker-compose.nginx-proxy.yml: add a production setup using
+    nginx-proxy
+
+ .env.prod.proxy                |  7 +++
+ Dockerfile                     | 15 ++++--
+ README.md                      | 12 +++++
+ docker-compose.nginx-proxy.yml | 90 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 119 insertions(+), 5 deletions(-)
+ create mode 100644 .env.prod.proxy
+ create mode 100644 docker-compose.nginx-proxy.yml
+
+
+base-commit: 08e58cdece30019a6f9e5d14af16ebe20afa6177
 -- 
 2.56.0
 
