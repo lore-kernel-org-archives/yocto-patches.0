@@ -1,66 +1,66 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4982.1794625323937100793
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5305.1794626918243633559
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 19:02:03 -0800
+ Fri, 13 Nov 2026 19:28:38 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=rc7kTGSm;
- spf=pass (domain: gmail.com, ip: 209.85.216.50, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3ac78f4c10bso814217a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 19:02:03 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=Fsdq2P/p;
+ spf=pass (domain: gmail.com, ip: 209.85.216.49, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3b08cf16decso867203a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 19:28:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794625323; x=1795230123; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1794626917; x=1795231717; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Sr/gHu6SkbmQZQDix2B6hMxJm+wuEx+STOCe9XFlI9c=;
-        b=rc7kTGSmI6haOy0vr2iM4ukNXgLyVw6KSH7uj1OxWtvsRLqjdde89uf1f/3E9s2OeN
-         FKb2wo4SNPCXkmyznLSaOW2A01TGq0zV3bYJJdFm7kvnsi2Eq5o+G4SEdCkFSFB82P10
-         H8gq4hS23fKgXWfoLlmUUSnmnqWnIzbLPEePGKFSW78pzm38cQ0v+LevM7aA/Fn+J7hv
-         RDAFiqh4wTzP/P1xV/Q5VeTzIKFvrZf01brYF9aEiUCJ9ehRL83DdyR5Sk9jfMlfnlqd
-         62MMp1+XgBEw4WxVtMhQVriRAEPzS2iwj9JzZM9b2RcYGd7kC/1ETHVFdjAgj3bPZGiv
-         PR5Q==
+        bh=/akgZZNgczcsbXKgEoyzk/t7tsfE02tnv1WIP50DMEc=;
+        b=Fsdq2P/pBs9lI0W0aFnLA3NEprc3Jin9Drpedeyvdwt+BB4OT0H8xcrbpTaF1ycJ9n
+         jJ2RfqYr2wvHvD/VMGNcnCx0IHT+8ZvQh9/wg17tdkIO9F7eukcfSIpyrY11wS7OlZkt
+         HwSxb5aLB/vO8ZfpQpqZQmplW1w7N9AGO+R3VcCiErur61xLa5g7MB9JCIfKQmImZdrg
+         loet+uPACexyQsODwNWnP51/cDCLD80t2qo/EWNBtop3uZnNX/mflH4YCORlpTnXoi/Q
+         mkl+nmVBQhVzxpUJs2OvJIpLZy6pmBCsqI3oUeCab2obJNgeQvyErIqSP1jYVhpoT3AU
+         vm8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794625323; x=1795230123;
+        d=1e100.net; s=20260707; t=1794626917; x=1795231717;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Sr/gHu6SkbmQZQDix2B6hMxJm+wuEx+STOCe9XFlI9c=;
-        b=e1DMCscmgzIxjQpSfhHEGao31dSm4cC+PwkCu3SS5XQ3Fdm6HGNCn3OY37qxt9jBQZ
-         dj1ewGVI0uqNFCq6N/agPbyaIcgp5ajwDCIhOpe3wBwEhWp9npkqFndJaCKYq+fwFo3M
-         3sKkh6tJHRIpAolNhgEJs3P6j9gBZv5cJkFXTZ+Gles4e6xk8ssgHzq772S4xSm5r4vb
-         ijWVSwWcrd7go8cOpwnUejYQZH2bra1nKhhE28x28nQJjXwo13DadXud3m7cHYOLoZ3o
-         o841vZnvQR9E5xGpQSNmpartsbcEyWV15ko1hyT79rlKBW0jh1LPFOm4O+rpgVP8zPQ+
-         +gSw==
-X-Gm-Message-State: APuU4Z+x7VRbYDD7/h4mVWTUFPnQ8ERkYQgY+7tRLGipm8KCuSOvMLm8
-	PSD/15hvLuE9Xj86MSDY1LdmePV/AxeRqjEVGVNNFK3xOoffpkgh61Fh5rQMQPvK
-X-Gm-Gg: AYBFou03zn1EO06AMUFDNk//Sy4gmKpdhctFsSVsMGcz4Eimu8Y9dqRe1G3Mgj3J+HB
-	wgeRl6s1BOI87F9o2HLd1/zcCxaTRAXyG4E1TryWVfW2RnXCIiAWHfG0pCzRfpdqulMUI6z8J0u
-	HLwXlEFppd5vYVZVC1WYpLOzgPKYPzS1pu7+pZoTzd1UT3pl+UxnQrmgdjv46VjdQULaF65tBUr
-	yp6MxP+BSTmJd7Y6MHnCHfeRrH63itdJloAujfeakbvGMMb6DiE2kb2YCBH0E3l42ZuUKD9yWHM
-	ZrKTZLLjP3/laoZCglWqxVGxKx8rr1e424dSVpvp/Zz1saZ1nlKQDfd4+YXXhEF1mCDPSdyx3xx
-	rvOW9zpF0DrOs5ju5NiApFOgeonNiPOE08fvDbOtVIydBPKCTV5F9lmjCF1UtlNFoPcCzPdjp8F
-	5uS5zmWfBYPmZijsQB/TvWd1AmwicWUwgMrBNeBWwARqcIIIQB26G5AShyUXFeUpuGHC73EMsBP
-	4XeiPh5OIg3axuwFLEAbdMacUk0UvdmRpq7EMKAUeIwArkJC57zcBpcUvJ2iZX62B4I/UpkYQa9
-	7h6PJhObzhVpeE6xQLhG7e9nyOw9sbp+6hSSdGvbJjYkctLg/23YkKak3VulMQ==
-X-Received: by 2002:a17:90a:dfc6:b0:39e:6a7e:ee18 with SMTP id 98e67ed59e1d1-3b1b0b65a3cmr3962037a91.36.1794625321786;
-        Fri, 13 Nov 2026 19:02:01 -0800 (PST)
+        bh=/akgZZNgczcsbXKgEoyzk/t7tsfE02tnv1WIP50DMEc=;
+        b=EJN2+P7RQvF9gFnANxday1h16Zftr/zGiHUqepJTgdNRUjNK+mq0rtFHSkDWI8/b/k
+         TIRg4fD4cRg/wdEHiuzHgpl5JoozAg7LYOhvqC87NJu/F6iBtKLOWxEcI48B7wa1tOEL
+         jUtQgA6B4KebtPrMKzo/eRLuIwoB6ZKeQA65iHDNc6kxrcDMDBLR5c/XHYCQUhllUsEv
+         UyYV+TaTRxUUJptV/D6iZ/4u7VynfoJIYqUXIaNljkOWzx640iD1gEp24WOzO+gkEESV
+         +wlsyMYL6uiHo8crs3qBl8a7EF6NepG0OwBEOfnBHVRJ3X1OBXqKyqIZZqyy/nJPTH7X
+         IrTw==
+X-Gm-Message-State: APuU4Z8SOTUZB8e8b0JSHfsSOge4ICVix39Jo7oxCHSONU6scwwoDrPo
+	H9pDtDRXHkrecBL8V0+gjPJeFMNYG0hcTTXwyfK8gmEhxiyuZO/wg8X2I5+jMUWQ
+X-Gm-Gg: AYBFou3BFO1RHDrgAc2UX/+Y2DAx5i/UtrkGJUrkZn4ZbL6/s68a1sMtLhka3EzgcWm
+	Iwy21AlwOec7C7h3fKxMaIvElaxJNjTnaYorrKabPiw/TAHhcut13lcR/m+oIfW7orbG6BfI84u
+	clfPwW9j8wH27qiDdmA46QxQKGRLCnYRCHm/5ZO+jraRVEq2agBH2dQImlUc6eipgb9Wj2nAapU
+	I1nAtoCQHG/soFfjmrHxcpcA2vT3SEHQ3cgqxLlL2OjvjF0mEAYdFyHAurxwfyYsfTdtS4QEuRL
+	BXOv/wd6yg0Wv/UqA8G+kOiUFCHCU6905S9rwyHk8pNH+Ppnf4cZLStd3cAUP9rs/Nl99UaVh+T
+	5EtZPd2ZXtCcO6uHdIlOCHIPEAwbnvIhL0zNLp9aET7mhnRcwpuwE9AQN+vzi5/zNhJXhFD3DhH
+	It04ILwlho8wELhJ5hVRGCOsntP0uTiaSjfPdEbjQbBij0HxleCnH/6OJE3lc8U8mic4V3Mlyf4
+	Wl4jBqRP1n89dQELjLQMpPM1mZoc4uQ9JDopZGxOHgwgfbAtaE0So+fMa4tGcsu7jIaSJ40KQrK
+	Rx6BpHjwZB41y5/sWnAaSun+uhFJ6W4k+uyUhpXZkqb7rclZSfDJ7H0Pjl47SA==
+X-Received: by 2002:a17:90a:e016:b0:3b1:b9ed:5dd0 with SMTP id 98e67ed59e1d1-3b1b9ed5e3fmr2237460a91.35.1794626917445;
+        Fri, 13 Nov 2026 19:28:37 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197d32ea0sm11834158a91.15.2026.11.13.19.01.58
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aec3af2dsm6995078a91.9.2026.11.13.19.28.36
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Nov 2026 19:01:59 -0800 (PST)
+        Fri, 13 Nov 2026 19:28:36 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH] layerindex: show when a layer branch is no longer updated
-Date: Fri, 13 Nov 2026 19:01:53 -0800
-Message-ID: <20261114030153.68645-1-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH v2] layerindex: show when a layer branch is no longer updated
+Date: Fri, 13 Nov 2026 19:28:32 -0800
+Message-ID: <20261114032832.73642-1-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 03:02:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5361
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 03:28:45 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5362
 Content-Type: text/plain; charset="utf-8"
 
 Updates can be turned off for a layer, a branch or a layer branch, but
@@ -74,18 +74,18 @@ on the layer page.
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
-On a test instance loaded with a copy of the layers.openembedded.org
-database, 171 layer branches on master get the label: 57 layers marked
-"No update" (e.g. meta-ros2-foxy) and 114 layer branches with updates
-turned off (e.g. meta-efikamx, which has no LAYERSERIES_COMPAT).
-Applies to master and to master-next.
+v2: use a lighter grey for the "not updated" label (light grey with dark
+grey text instead of Bootstrap's label-default), which was too bold with
+171 of them in the master layer list. The label keeps label-default, so
+a browser with an older copy of additional.css still shows it.
 
- layerindex/models.py             | 11 ++++++++
- layerindex/views.py              |  2 +-
- templates/layerindex/detail.html |  7 +++++
- templates/layerindex/layers.html |  1 +
- tests/test_updates_disabled.py   | 45 ++++++++++++++++++++++++++++++++
- 5 files changed, 65 insertions(+), 1 deletion(-)
+ layerindex/models.py                 | 11 +++++++
+ layerindex/static/css/additional.css |  8 +++++
+ layerindex/views.py                  |  2 +-
+ templates/layerindex/detail.html     |  7 +++++
+ templates/layerindex/layers.html     |  1 +
+ tests/test_updates_disabled.py       | 45 ++++++++++++++++++++++++++++
+ 6 files changed, 73 insertions(+), 1 deletion(-)
  create mode 100644 tests/test_updates_disabled.py
 
 diff --git a/layerindex/models.py b/layerindex/models.py
@@ -110,6 +110,22 @@ index 1d72c55..d071788 100644
      def get_checkout_branch(self):
          """Get the branch that we actually need to check out in the repo"""
          if self.actual_branch:
+diff --git a/layerindex/static/css/additional.css b/layerindex/static/css/additional.css
+index a3c0a3a..dcab5cd 100644
+--- a/layerindex/static/css/additional.css
++++ b/layerindex/static/css/additional.css
+@@ -321,3 +321,11 @@ td.info {
+     height: 400px;
+     overflow-y: scroll;
+ }
++
++/* "not updated" label: lighter than label-default, still readable. It also
++   has label-default, so a browser with an older copy of this file still
++   shows it. */
++.label-default.label-not-updated {
++    background-color: #e8e8e8;
++    color: #555;
++}
 diff --git a/layerindex/views.py b/layerindex/views.py
 index 592311f..85c82d6 100644
 --- a/layerindex/views.py
@@ -124,7 +140,7 @@ index 592311f..85c82d6 100644
      def get_context_data(self, **kwargs):
          context = super(LayerListView, self).get_context_data(**kwargs)
 diff --git a/templates/layerindex/detail.html b/templates/layerindex/detail.html
-index 6c20f47..910499f 100644
+index 6c20f47..b14d030 100644
 --- a/templates/layerindex/detail.html
 +++ b/templates/layerindex/detail.html
 @@ -125,6 +125,13 @@
@@ -134,7 +150,7 @@ index 6c20f47..910499f 100644
 +                    {% with reason=layerbranch.updates_disabled_reason %}
 +                    {% if reason %}
 +                    <p>
-+                    <span class="label label-default">not updated</span> <small class="text-muted">{{ reason }}, so the information here may be out of date.</small>
++                    <span class="label label-default label-not-updated">not updated</span> <small class="text-muted">{{ reason }}, so the information here may be out of date.</small>
 +                    </p>
 +                    {% endif %}
 +                    {% endwith %}
@@ -142,14 +158,14 @@ index 6c20f47..910499f 100644
                      {% if layerbranch.active_maintainers.count > 0 %}
                      <h3>{% if layerbranch.active_maintainers|length == 1 %}Maintainer{% else %}Maintainers{% endif %}</h3>
 diff --git a/templates/layerindex/layers.html b/templates/layerindex/layers.html
-index daae8cb..73792f4 100644
+index daae8cb..fb07d90 100644
 --- a/templates/layerindex/layers.html
 +++ b/templates/layerindex/layers.html
 @@ -75,6 +75,7 @@
                      {% for layerbranch in layerbranch_list %}
                      <tr class="layertype_{{ layerbranch.layer.layer_type }}">
                          <td><a href="{% url 'layer_item' url_branch layerbranch.layer.name %}">{{ layerbranch.layer.name }}</a>
-+                            {% with reason=layerbranch.updates_disabled_reason %}{% if reason %}<span class="label label-default" title="{{ reason }}">not updated</span>{% endif %}{% endwith %}
++                            {% with reason=layerbranch.updates_disabled_reason %}{% if reason %}<span class="label label-default label-not-updated" title="{{ reason }}">not updated</span>{% endif %}{% endwith %}
                              {% if layerbranch.yp_compatible_version %}
                              <a href="{{layerbranch.yp_compatible_version.link_url}}"><img src="{{layerbranch.yp_compatible_version.image_url}}" alt="{{layerbranch.yp_compatible_version.description}}" class="yp-icon" title="{{layerbranch.yp_compatible_version.description}}" ></a>
                              {% endif %}
