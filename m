@@ -1,109 +1,120 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6321.1794635543558768645
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6483.1794635546582340515
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 21:52:23 -0800
+ Fri, 13 Nov 2026 21:52:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=L35t/tAV;
- spf=pass (domain: gmail.com, ip: 209.85.215.170, mailfrom: ticotimo@gmail.com)
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-cdb2e0062bbso871324a12.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 21:52:23 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=kePrG2iV;
+ spf=pass (domain: gmail.com, ip: 209.85.210.182, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-8b4c8b51b58so1981888b3a.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 21:52:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794635543; x=1795240343; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8oOWLYZPNJ9nFaa2Gr/QxGhiXPppztgws4NEFpUfE7U=;
-        b=L35t/tAVgJMlFD8eGgV264K+bJsMGHC9QrgdpGbrWUkqBMwl9XII1yKEdm6GGSGfpb
-         v2BfNoJ6FRiiiJl/6kepmJ0+A+VlZSzv6BdyilzbdGPZ/ralSS0hD6LX6WK9qLvqa/qX
-         x0q5BZBINn4i1JVB0sPV+5+T94yF76F/2qZcfG/Qnd0rm7+g3MCIMU95kYJR88FloKzv
-         t/EZGcIoxvlqh1uokPUTqU68X+h+3PQWnsSFyRSTujq7TX2S9YD6y9Ff4zoQJQzZ7yeI
-         DFeqNQP6e7oqCKKEXJLJ6bcZIcMfzSwfvB8u53pdYhmiCsiLQPYmpqJihVxZHRu0iMz5
-         ldWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794635543; x=1795240343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20260707; t=1794635546; x=1795240346; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=8oOWLYZPNJ9nFaa2Gr/QxGhiXPppztgws4NEFpUfE7U=;
-        b=gqPEB+5zNZFe4hbVSDsP/nHfRaMXfpb+xc+0nnm4W6AoL7avt26IencUmVqAshN5/p
-         T0rLSKH2C7s/+lKg4i0O1VfFYkJE3ac326ZTrilziyLH35GIGWyErQ3aDmIy4ex+OnTf
-         fEdCPW4KRUIppkGGETWgDRalRWyfHgvMw2Slx7LPeyYH5kNICnS5mUyd4i/PRh463dmp
-         Zxf02U1wI3Y7zmodqm9OZli95UhkBPzOsOYuwDiurRhQZEtuv0Gy1B0klLrDtHrYMj+i
-         HQpsESvjnn+mHdB2Snho7DOVaox/0rIjjn1scZ9AgqDsac73FoyKUUBkiZWvHTsoTCp/
-         SOnw==
-X-Gm-Message-State: APuU4Z8FEEoDJTqVO4ycN6gq3/68cJXY7K+gyMFjilpq9v77dKrGPBJu
-	LBG5ggHLqDXhjGBWcaDx8FDDKTSZhrIO39TjKLMleSHLrTemjS+oXmy4pwkcSlZo
-X-Gm-Gg: AYBFou0Yt0aQ68+Dxzr2kcEWcA7bAlCNbyx4NdZgmtgT9lPjcERDpgDW+Vao8AariqY
-	qZiMmqHAm/KRlTaahcVoeuOOVLjIHInQ1fNVW73jVyR6h+QpYrklC49jpTkdOHPOLWdN/NCm1/1
-	KBUVD8qw/9sZvHU+UUgd/fhdmeFAsKgK6nupZ9Qnsl0cGIPkdaFIjqBcMXE4Pebyh3RlwRseX88
-	nZ44pRt0Vytafqf+iY4ghJqInKDJoFAmhl7Le2KZRpFAGu46ldGDcJzU4egO8w4sK20hLuZ3rkr
-	XFgASm5O3n39P9SWYzTO3GbVcGpwk/Z2FW4A+F/AmEjxd2zHMCE0hC94q00CM8rSo8zYrtULIdJ
-	lWF65DTKCi2oQdAz3flPF6TfhlGQwGT/YumVvsWeIhwt9WaZStQfxGmOkPi/FCzPTALYs2BXW52
-	Wpi2wTfuF235deBr2L3nnb7e+LuJFTW3KuSFy4JvdC7Eh/WWryoypIjWrRntyBz3XfDZLqsSrVl
-	FTs4lwq/mhaiD6wpd4JIHYUGGCaQdfeGYnxql9ygNeZcD1YMAPzQrCXf0KVGkEFz8o7V9GDu/uG
-	VOF36lkSRyk2EPaFwYlBgSxHPbzw8aQYlgA5GMI6nuyeJssgJjhDaMH9Zx8UFw==
-X-Received: by 2002:a05:6a20:9381:b0:3e1:a4ac:2d5b with SMTP id adf61e73a8af0-3f7a7aca9d8mr4091310637.41.1794635542477;
-        Fri, 13 Nov 2026 21:52:22 -0800 (PST)
+        bh=0Zd9iOnEIfZFf5LlEBxslxkV2EBiL3lnZdSBbw5e6kc=;
+        b=kePrG2iV4epushc6Q36nAEI3mhBqoG/mBIo70iPQMDQRLJAkw8f+sMd9ZHJvFgnKyo
+         +X5rszqP5eKIRI3XB9QsegPQVoEu0D1CfwH5Ix2E/IzLkhS/MTSJiQ7Ugfa8ihkj5ikD
+         NxkECOVkWCZnEui25xer8ppGx+K8/F+k4ocIzgVsdcFn3iOI/77u4f4LY3qRJNVKkwwW
+         H99hXBcFcwOq1uHYYKEv5jILzAXEMkcooXdZU9iGYXJeobR69OhPbbEEFRQoGfjEhpUf
+         mZLVwIMheZvtneCFSHtjPsqAESvQ1Mzi2vMRBWuuafB5p9hkX8dCPIQBnsquWquQWs4I
+         bihQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794635546; x=1795240346;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=0Zd9iOnEIfZFf5LlEBxslxkV2EBiL3lnZdSBbw5e6kc=;
+        b=smxBndtHZMaUpHBvU8IKToArAcEm4RqcuAaRYgSiXD7grH6NQEbhFdMg1qXxIzEbRe
+         t2TBg7i67fOzcdb6fU2gQkB+PtK3D6ize+Cj/F3zS+TbuQeXaXp3E+z0xk92Ej3O0jin
+         wlyEFZ8k0b2qRR5Pdih1J7B9HxkOgGsfk6cv6q5Iuq+Fss2JezTHHSTi46FKLGQG3nPk
+         LTyLJvvN6nxIk/Pf0WVSDgwikwhKHXusbCA0Vfs+LH434L5DP8YNpFGzkGgxhBevzg/P
+         jqYz/WA3KwdFhoI0j7ss4bNrmyuJbDvCmo74HypMTylz6hZlhVvPFFXyd++E5GPKkBrq
+         dmbA==
+X-Gm-Message-State: APuU4Z8OB8Wetl+hwsUItQw4glcp7USzJWFzCc41RREO394pPImdN+cf
+	tgIHbV/tAGx50bRuBgmXdlVfU72odm+uSUljiUSD+32CLNC6U9PYNaI35X0PT1YN
+X-Gm-Gg: AYBFou1VXNN4YppkPw/178qiw+ukHpcejTQ43ieAbWhKVNgW2kjr+ep/0pzZRtLiICW
+	mqkv+z09sgddwyxLtdi8LWAhMSsMP98e2nGI3DfY4999aqWVmU5phrjNbocIY/Gtcm071HUI3ec
+	PcwGjeSQvpIC//xstv74f2xWYa0l5jQIWjRx8vuofVPQrYTMm5PaH3FLsNY8niyRdqWm9kNhNKp
+	2bxzUHqD7MkOv1GkBtKzeBCb9CncPDCPUQ8RLznKljT5fGgPJU9yZF1nMcbswiAAG+BCePbwLus
+	viA89Gu+vbcG69w0yHK+E/HV42ThN/5k20KIuHVeXVXChzrICitWoLNu6NrxmRnV6Rz/2smb3dH
+	eHpq6LeeXmT4HkNmNzPqJlr88V7XI0JQE+QbyH0l5xfAMsEdu/xy50Rc3xtPNzPXQmGwnGWulx7
+	sDEzAsi6UbVR4EVeD/sjjIqSwwnP1VRluHsQd6TKL+pD0jlwrJQFyK6S2wxLH0IjCli44UMkh7X
+	1Tv9fhIcwt33Zx41FOkiPJuEsPE6ImVFSnRJaHBONH4xjntVHExTweSdhRvQ2dvpgmGh9OeIepR
+	5CceXarDGVxK7gf/Te66bbOBozmVKr7GzA/OclAr9n/tmwhuQFVmbgNuZs2lt8E=
+X-Received: by 2002:a05:6a00:929c:b0:89f:1b32:29a5 with SMTP id d2e1a72fcca58-8beb20cec32mr4810088b3a.7.1794635545890;
+        Fri, 13 Nov 2026 21:52:25 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed2635285sm1957746b3a.44.2026.11.13.21.52.20
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed2635285sm1957746b3a.44.2026.11.13.21.52.23
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Nov 2026 21:52:21 -0800 (PST)
+        Fri, 13 Nov 2026 21:52:24 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 0/2] Let maintainers change their email address safely
-Date: Fri, 13 Nov 2026 21:52:14 -0800
-Message-ID: <20261114055216.2636-1-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 1/2] layerindex/views: require login for the profile page
+Date: Fri, 13 Nov 2026 21:52:15 -0800
+Message-ID: <20261114055216.2636-2-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261114055216.2636-1-tim.orling@konsulko.com>
+References: <20261114055216.2636-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 05:52:26 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5369
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 05:52:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5370
 Content-Type: text/plain; charset="utf-8"
 
-Bug 11195: a maintainer who changes the email address on their profile
-loses access to their layers, because edit rights come from matching
-the user's address against the layers' maintainer records.
+The profile page had no login check of its own, so a visitor who was
+not logged in got an Internal Server Error (500) for both GET and POST
+instead of the login page. Require login.
 
-Moving the maintainer records to the new address moves edit rights, so
-this is done carefully. Changing the email already logs the user out
-and needs the new address to be confirmed. On top of that:
-- changing the email now needs the current password, so a logged-in
-  session alone is not enough, and the old address is told about it;
-- the maintainer records only move after an admin approves it, with the
-  "Approve moving maintainer records" action on the user's profile; the
-  admins are emailed when a confirmed change is waiting.
-Users who don't maintain layers are not held up.
+AI-Generated: Claude Opus 5.5
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+---
+ layerindex/views.py         | 3 ++-
+ tests/test_profile_email.py | 9 +++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-1: The profile page had no login check, so a visitor who was not
-   logged in got an Internal Server Error instead of the login page.
-2: The maintainer email change itself (bug 11195). It adds migration
-   0057, so it applies on top of "[PATCH 0/2] Remove dependencies
-   dropped from conf/layer.conf" (bug 14348), which adds 0056.
-
-The test suite passes in the Docker image at each patch (83 passed,
-1 skipped at the end); the tests go through the profile form, the
-activation link and the admin action.
-
-Tim Orling (2):
-  layerindex/views: require login for the profile page
-  layerindex: let a maintainer keep their layers when they change email
-
- layerindex/admin.py                           | 26 ++++-
- layerindex/forms.py                           |  8 ++
- .../0057_userprofile_previous_email.py        | 16 ++++
- layerindex/models.py                          | 20 ++++
- layerindex/views.py                           | 45 ++++++++-
- tests/test_profile_email.py                   | 94 +++++++++++++++++--
- 6 files changed, 200 insertions(+), 9 deletions(-)
- create mode 100644 layerindex/migrations/0057_userprofile_previous_email.py
-
-
-base-commit: 08e58cdece30019a6f9e5d14af16ebe20afa6177
-prerequisite-patch-id: 6c677e4190187d389840d2a94b4d857a69c0d647
-prerequisite-patch-id: 282bc018dfe6528deb8363d3cbd1b31671c4b606
+diff --git a/layerindex/views.py b/layerindex/views.py
+index 592311f..35186e6 100644
+--- a/layerindex/views.py
++++ b/layerindex/views.py
+@@ -19,6 +19,7 @@ from django import forms
+ from django.contrib import messages
+ from django.contrib.auth import logout
+ from django.contrib.auth.decorators import login_required
++from django.contrib.auth.mixins import LoginRequiredMixin
+ from django.contrib.auth.hashers import make_password
+ from django.contrib.auth.models import Permission, User
+ from django.contrib.messages.views import SuccessMessageMixin
+@@ -1001,7 +1002,7 @@ class HistoryListView(ListView):
+         return Revision.objects.all().order_by('-date_created')
+ 
+ 
+-class EditProfileFormView(SuccessMessageMixin, UpdateView):
++class EditProfileFormView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+     form_class = EditProfileForm
+ 
+     @method_decorator(never_cache)
+diff --git a/tests/test_profile_email.py b/tests/test_profile_email.py
+index 79e4adf..57feee5 100644
+--- a/tests/test_profile_email.py
++++ b/tests/test_profile_email.py
+@@ -65,3 +65,12 @@ class TestProfileEmailChange(TestCase):
+         self.user.refresh_from_db()
+         self.assertTrue(self.user.is_active)
+         self.assertEqual(len(mail.outbox), 0)
++
++    def test_profile_requires_login(self):
++        self.client.logout()
++        for method in ('get', 'post'):
++            response = getattr(self.client, method)(reverse('profile'))
++            self.assertEqual(response.status_code, 302, method)
++            self.assertIn(reverse('login'), response['Location'])
++        self.user.refresh_from_db()
++        self.assertEqual(self.user.email, 'old@example.com')
 -- 
 2.56.0
 
