@@ -1,253 +1,171 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2814.1794616251038710094
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2817.1794616253875251727
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Nov 2026 16:30:51 -0800
+ Fri, 13 Nov 2026 16:30:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=iaSgxp7g;
- spf=pass (domain: gmail.com, ip: 209.85.210.170, mailfrom: ticotimo@gmail.com)
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8b9c51097e2so871910b3a.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 16:30:50 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=KRoa7gn8;
+ spf=pass (domain: gmail.com, ip: 209.85.215.178, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-cdb45e96d2bso660330a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Nov 2026 16:30:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794616250; x=1795221050; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1794616253; x=1795221053; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=aQOCk2CEQN1vobMATiYp1oJ7NLZopj2J9d7k/lDKlm8=;
-        b=iaSgxp7grYQeQgtfkuSo8iFI/MXBTQ6Dbt/AA/pMqWA1bOVncl+PGmBNsrcQS1e5lr
-         GAOCIjkJehJ/TUESLwEPEOmkaBbmRhhc25LvViuAarBF17spp0O9mKwAmDRkr8PUxKxL
-         4snnZGl1bnwSZXQW3QQzhBid6XUMS3TNql+N2OTFH3QEl1rXQPAW2qb2Ndp2ZqPpVbv+
-         L7bzXC7ugv5AFZIC0v1kGyhaj5AJ0OOMwGE5k6kVo7GjVGWJQ7eSPI361DRoLu3jZPF6
-         mH2g6z1TPfbGdP/d06eSEtCzdkUmBCplZjejczcakS6AT00kxO7GIDydNuf6l2o1hRl/
-         zChQ==
+        bh=emhFVJAzBMycAoeUqXgwlj0bhwRKhT/S2Rh8ambTnJ4=;
+        b=KRoa7gn89e2FlDQmzmsjH2nUuZUBhlbqQsLbLqXR5sl5dow3QkiyzK84RkaWr6QTma
+         UFIyqbeiyynY2oTDyOmOfNFeMyWx+N2r99GdYBBJGw3sqz0uAJUBAKQtKGZ2SD9k+6b4
+         RCQY9B6v+nrcihetCBRfrWGnRB8QVBccyvxCkDW19CJIUXuE/jtBOtG+jKnC7vxkP3/p
+         3gh/hAF4Ir4vzEVfmhsVYFfJURefZ7tSl5zY/bWRiWd9ewOFMsg7J0egoitHhwC2RMVR
+         m2wAwgUWwFuzMqvbrtf33UeizsdcHPIdWM0YlDgx9jCrl56pDAr6L2fQI5TU63VWogBd
+         XeZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794616250; x=1795221050;
+        d=1e100.net; s=20260707; t=1794616253; x=1795221053;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=aQOCk2CEQN1vobMATiYp1oJ7NLZopj2J9d7k/lDKlm8=;
-        b=LxxM8A4xtjOffL3SpCfRIS3ShsvQj/tXIvLo8iSrIbAE5+AmOavGF89fxCVf6lZ8J8
-         TZW/Z7S/7ZoZB/yt9dsQpj7qhKkbvGZPlFIyBFHYfsxYsos/vIgWtoVgr8v8UbJ6oqUx
-         iMt/GZuZWS6hZ9aeYOg9d0quSxJDQXdPmSnvtFfkruTma8RyV+sQV/e0GYmDtORJtzt3
-         hNRLlCB8gh0AKx1ILJXyaxu6h7fxhiZjpTzTuZIbmRxszQVTgBzu+87pssNxft0Ev7NF
-         KfX0nVVC//myKGifz6bPt86OncG4+UjMmbSw5Z46ZyrpGulAkQNuLAS+ey7WvuxWl85q
-         Ax3A==
-X-Gm-Message-State: APuU4Z+TAL+G90ZjBcJs9La2v5J2yz9t9d3z6Y07zZ4BuZ23VBGFhYya
-	WE8ul4ep5JGflKJ4bQI+RbBWMLrhSYVxx5eG90vEsN0yUnj9IhxS2F11f7xg6M1o
-X-Gm-Gg: AYBFou16ZO+4Ds2AjBErHvkp/J24lyDkAlno51ovmooc/Ofd2DNvCtie6G4DCg5jV+w
-	zM9foEG2M+FjcUXOxiJgfb8Xm9k593rhiPIsgAGU1DnxE4yuFbdPBcHCvr7sEd+YatuSGz2AWvF
-	U94OSqi/efsrN6nB0puZa+tIhnJWDh95Q2ocYygRQdC3lWi0sysd5U8Hmu7k7/792WLimPBxf6Q
-	DqKGKfrhHV++40aXD02Sk1rgvjFfZhDE564L5VUshBdp8uFglWncMZja1lKCPpY/R9DWAEEyHhH
-	EpkcZy7f1QK3+fF+r/XhEGTVpj6faAEUrLZSlbhsdrCO89aUyR8IUvcb/lfTATRrsJyyd/RkIsh
-	NT7Fqo9ut70+IYEk99NZ5hlhHAE5/5DTCBskvDdgtYEypbtDdlxE0TckqK4NZ+UotvPHYZBiDz/
-	hOWzqom9ZENmvUtXpzIktu2aCIIRq+ZfEepfKqKaibEwULaYAig5Uoz0sWD9uHJLiLb0ebRVBnU
-	XFZcc/pM2wHStWEYIsVDmG62Iti6Q+huxXP52+DkUp5c0xK7pZDDykrac/Ug1VjU1OeFtkuFYka
-	LLCl4ukXV6dSZ+L4wSErVF5qTn6bvnWkRTBwhUvFqCXIAtW308z5iMkxgf+wFA==
-X-Received: by 2002:a17:90b:3146:b0:3ab:f38:2b43 with SMTP id 98e67ed59e1d1-3b1b0a4513emr3630697a91.34.1794616250171;
-        Fri, 13 Nov 2026 16:30:50 -0800 (PST)
+        bh=emhFVJAzBMycAoeUqXgwlj0bhwRKhT/S2Rh8ambTnJ4=;
+        b=dJVUUB91xublhKpkFjflnsW8Vg1iPPbUCD8YiOX69o3+HDj05rXdc1kdO11ETjylUu
+         le1hHvcCIlER450vEpdO499TFISdOvvCLIg3mor6hDLHo0vLQtUsVuuMTsUoM5wsYsqH
+         AHhb5mCVDzhk3nJiKCz7rtj+/cAwq46nfHfqK0UeSDBlKNaOmgdKvgFcGE8khw9gG2UD
+         incUjaEEOTCf6jVFuxXCRre0i01SDz5mmukfsPBbSY3fzHtl6QawnCg+FOdqr5V3M/9k
+         6zK4Dmjmqs2c0mwYOBv4d8dqccKNDsyZNHvSVkcJD00lp6SHL2FHMzar0Hl8nTOh8Ta+
+         XGCg==
+X-Gm-Message-State: APuU4Z/toyKHVSRvEO7cm3s9v78zfX1H9f+yhdz1ydkKMiJTwnZ2baNH
+	1bj6HoMIJ8s0R6q/WhdvnUaCcj2NIOnfGUGG5rQHaiAIJMFyXdgJEwHCEJZcFQ==
+X-Gm-Gg: AYBFou26Kd+7X6wO5V20WlF655cQqGkj5Uabibnuz8wK5OunU1Qfk5Ct659GOBijpkR
+	DxATZala+bxIl2li8XMUL/GeOVTnJaAJjLHdfYCOvisnLTT/9sb1OwZW0M3tAbuQp4R8SRw4mya
+	XX++zxJIihDiLVS8jV87iKbU8z5opyX+GhakX279IH7sHWUxY5GTL+yE4dCspav1kF2u84YejhA
+	RYvkMd1AXGjr6fINZZxABmDwy1QJ02BF2w7X76E6gYv0sw4g/yBLm4nIBNl7tFtEJUeky4FD6uS
+	3eMMRhn8m6/GJzxeKbQ0c1R/pvV0ujAp7RhvS9CvdmNbFEMfgY7z6+CxnWooJoenbe/+OJBQ5OR
+	UyHOH4ZSushuGAgZMmdGboyf2BVXp8t+J42Z0OH1rMhikSLJM9jvRhFWKUDITmUzrf51lWusysa
+	XLnUtBzBMIMON3/8HDhmJ7aKGhkDDjtx5y6BGiXTVwO+HJJy/rTZS0Q5OZFrAoL3mBTaM0Ky3kW
+	he02ojH0rhnu6OaWMg2oWE4LAMCCruwAhg/LKbw1MnS6jqxa9grBzZ5qAZnGWgf7ujYrDK/C/BY
+	hevHEmoUovVHp3ehkwi4XwxvVwZFW0EvL5EfEgyqNRhuc1WldOTuvdjAsXpxnja4HjMlxM2qgw7
+	M1dooDJg=
+X-Received: by 2002:a17:90a:d2c7:b0:3a8:86b7:ad95 with SMTP id 98e67ed59e1d1-3b1b0cabc2dmr3792262a91.60.1794616253024;
+        Fri, 13 Nov 2026 16:30:53 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aec63b9bsm6684787a91.12.2026.11.13.16.30.47
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aec63b9bsm6684787a91.12.2026.11.13.16.30.51
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Nov 2026 16:30:49 -0800 (PST)
+        Fri, 13 Nov 2026 16:30:51 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/3] layerindex: record Update Layer runs in a single update record
-Date: Fri, 13 Nov 2026 16:30:39 -0800
-Message-ID: <20261114003041.15197-2-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 2/3] layerindex/views: fix the live log on the task status page
+Date: Fri, 13 Nov 2026 16:30:40 -0800
+Message-ID: <20261114003041.15197-3-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261114003041.15197-1-tim.orling@konsulko.com>
 References: <20261114003041.15197-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 00:30:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5347
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 00:31:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5348
 Content-Type: text/plain; charset="utf-8"
 
-The Update Layer button created two update records: one from the view,
-with the task id and log, and another from update.py, with the layer
-updates. Add a --update option to update.py, as other update tools
-have, to record its work in an existing record, and use it from the
-view. Save only the fields each side sets, so that the task and
-update.py don't overwrite each other's changes.
+The task status page showed the log as a Python bytes literal, because
+escape() no longer decodes bytes since Django 3.0, and did not see the
+task finish when the poll reached another process than the one that
+started it, because the rpc:// result backend only returns results to
+that process. Decode the log, and take whether the task finished and
+its exit status from the update record, which the task already sets.
 
 [YOCTO #15395]
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/tasks.py         |  6 ++--
- layerindex/update.py        | 30 +++++++++++++-----
- layerindex/views.py         |  2 +-
- tests/test_update_button.py | 62 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 90 insertions(+), 10 deletions(-)
- create mode 100644 tests/test_update_button.py
+ layerindex/views.py         | 24 ++++++++----------------
+ tests/test_update_button.py | 22 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 16 deletions(-)
 
-diff --git a/layerindex/tasks.py b/layerindex/tasks.py
-index 4af9466..b6aa0ae 100644
---- a/layerindex/tasks.py
-+++ b/layerindex/tasks.py
-@@ -42,7 +42,9 @@ def run_update_command(self, branch_name, update_command):
-     from layerindex.models import Update
-     updateobj = Update.objects.get(task_id=self.request.id)
-     updateobj.started = datetime.now()
--    updateobj.save()
-+    # Save only the fields set here: the update command may write to the
-+    # same record (update.py --update)
-+    updateobj.save(update_fields=['started'])
-     output = ''
-     shell = False
-     if isinstance(update_command, str):
-@@ -71,5 +73,5 @@ def run_update_command(self, branch_name, update_command):
-         updateobj.log = output
-         updateobj.finished = datetime.now()
-         updateobj.retcode = retcode
--        updateobj.save()
-+        updateobj.save(update_fields=['log', 'finished', 'retcode'])
-     return {'retcode': retcode, 'output': erroutput}
-diff --git a/layerindex/update.py b/layerindex/update.py
-index ca68e3e..8a76084 100755
---- a/layerindex/update.py
-+++ b/layerindex/update.py
-@@ -183,6 +183,9 @@ def main():
-     parser.add_option("-q", "--quiet",
-             help = "Hide all output except error messages",
-             action="store_const", const=logging.ERROR, dest="loglevel")
-+    parser.add_option("-u", "--update",
-+            help = "Record the update in this existing update record instead of creating a new one",
-+            type="int", action="store", dest="update_id")
-     parser.add_option("", "--keep-temp",
-             help = "Preserve temporary directory at the end instead of deleting it",
-             action="store_true")
-@@ -267,14 +270,23 @@ def main():
-     listhandler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-     logger.addHandler(listhandler)
- 
--    update = Update()
--    update.started = datetime.now()
-+    if options.update_id:
-+        update = Update.objects.filter(id=options.update_id).first()
-+        if not update:
-+            logger.error("Specified update id %s does not exist in database" % options.update_id)
-+            sys.exit(1)
-+    else:
-+        update = Update()
-+        update.started = datetime.now()
-     if options.fullreload or options.reload:
-         update.reload = True
-     else:
-         update.reload = False
-     if not options.dryrun:
--        update.save()
-+        if options.update_id:
-+            update.save(update_fields=['reload'])
-+        else:
-+            update.save()
-     try:
-         lockfn = os.path.join(fetchdir, "layerindex.lock")
-         lockfile = utils.lock_file(lockfn, options.timeout, logger)
-@@ -611,10 +623,14 @@ def main():
-         logger.error(traceback.format_exc().rstrip())
-         sys.exit(1)
-     finally:
--        update.log = ''.join(listhandler.read())
--        update.finished = datetime.now()
--        if not options.dryrun:
--            update.save()
-+        # With --update, whatever runs this command (e.g. the
-+        # run_update_command task) records the log and when it finished,
-+        # together with the exit status
-+        if not options.update_id:
-+            update.log = ''.join(listhandler.read())
-+            update.finished = datetime.now()
-+            if not options.dryrun:
-+                update.save()
- 
-     if not options.dryrun:
-         # Purge old update records
 diff --git a/layerindex/views.py b/layerindex/views.py
-index 592311f..9f238fd 100644
+index 9f238fd..e7728ca 100644
 --- a/layerindex/views.py
 +++ b/layerindex/views.py
-@@ -147,7 +147,7 @@ def update_layer_view(request, template_name, branch='master', slug=None):
+@@ -1671,7 +1671,6 @@ class TaskStatusView(TemplateView):
+         return context
  
-     from celery import uuid
+ def task_log_view(request, task_id):
+-    from celery.result import AsyncResult
+     if not request.user.is_authenticated:
+         raise PermissionDenied
  
--    cmd = 'layerindex/update.py --layer %s --branch %s;' % (layeritem.name, branch)
-+    cmd = 'layerindex/update.py --layer %s --branch %s --update %%update%%;' % (layeritem.name, branch)
+@@ -1679,7 +1678,11 @@ def task_log_view(request, task_id):
+         # Block anything that looks like a path
+         raise Http404
  
-     task_id = uuid()
-     # Create this here first, because inside the task we don't have all of the required info
+-    result = AsyncResult(task_id)
++    # The task records when it finished and its result in the Update. Read
++    # that before the log, which is complete by the time it is set. (The
++    # Celery result backend is no use here: with rpc:// only the process
++    # that started the task can read the result.)
++    updateobj = get_object_or_404(Update, task_id=task_id)
+     start = int(request.GET.get('start', 0))
+     try:
+         f = open(os.path.join(settings.TASK_LOG_DIR, 'task_%s.log' % task_id), 'rb')
+@@ -1693,24 +1696,13 @@ def task_log_view(request, task_id):
+         datastr = re.sub(b'\n[^\n]+\r', b'\n', datastr)
+         # We need to escape this or else things that look like tags in the output
+         # will be interpreted as such by the browser
+-        data = escape(datastr)
++        data = escape(datastr.decode('utf-8', errors='replace'))
+         response = HttpResponse(data)
+-        try:
+-            ready = result.ready()
+-        except ConnectionResetError:
+-            # FIXME this shouldn't be happening so often, but ultimately we don't care -
+-            # the frontend is polling so it'll likely succeed in a subsequent request
+-            ready = False
+-        if ready:
++        if updateobj.finished:
+             response['Task-Done'] = '1'
+-            updateobj = get_object_or_404(Update, task_id=task_id)
+             response['Task-Duration'] = utils.timesince2(updateobj.started, updateobj.finished)
+             response['Task-Progress'] = 100
+-            if result.info:
+-                if isinstance(result.info, dict):
+-                    response['Task-Result'] = result.info.get('retcode', None)
+-                else:
+-                    response['Task-Result'] = -1
++            response['Task-Result'] = updateobj.retcode
+         else:
+             response['Task-Done'] = '0'
+             preader = utils.ProgressReader(settings.TASK_LOG_DIR, task_id)
 diff --git a/tests/test_update_button.py b/tests/test_update_button.py
-new file mode 100644
-index 0000000..b518bc2
---- /dev/null
+index b518bc2..bb3b84a 100644
+--- a/tests/test_update_button.py
 +++ b/tests/test_update_button.py
-@@ -0,0 +1,62 @@
-+# layerindex-web - tests for the Update Layer button and its task status page
-+#
-+# Licensed under the MIT license, see COPYING.MIT for details
-+#
-+# SPDX-License-Identifier: MIT
-+
-+from datetime import datetime
-+
-+import pytest
-+from django.urls import reverse
-+
-+from layerindex import tasks, views
-+from layerindex.models import Branch, LayerBranch, LayerItem, Update
-+
-+
-+@pytest.fixture
-+def staff_client(client, django_user_model):
-+    user = django_user_model.objects.create_user('staff', 'staff@example.com', 'pw', is_staff=True)
-+    client.force_login(user)
-+    return client
+@@ -60,3 +60,25 @@ def test_run_update_command_keeps_fields_set_by_command(settings, tmp_path, monk
+     assert update.reload
+     assert (update.log, update.retcode) == ('output', 0)
+     assert update.finished is not None
 +
 +
 +@pytest.mark.django_db
-+def test_update_layer_creates_one_update(staff_client, monkeypatch):
-+    branch, _ = Branch.objects.get_or_create(name='master', defaults={'bitbake_branch': 'master'})
-+    layer = LayerItem.objects.create(name='meta-test', status='P', layer_type='A',
-+                                     summary='test', description='test',
-+                                     vcs_url='git://example.com/meta-test.git')
-+    LayerBranch.objects.create(layer=layer, branch=branch)
-+    queued = []
-+    monkeypatch.setattr(views.tasks.run_update_command, 'apply_async',
-+                        lambda args, task_id: queued.append((args, task_id)))
-+    before = Update.objects.count()
-+
-+    response = staff_client.get(reverse('update_layer', args=('master', 'meta-test')))
-+
-+    assert response.status_code == 302
-+    (branch_name, cmd), task_id = queued[0]
-+    assert Update.objects.count() == before + 1
-+    assert Update.objects.filter(task_id=task_id).exists()
-+    # update.py records its work in the view's Update rather than a new one
-+    assert '--update %update%' in cmd
-+
-+
-+@pytest.mark.django_db
-+def test_run_update_command_keeps_fields_set_by_command(settings, tmp_path, monkeypatch):
++@pytest.mark.parametrize('finished, retcode, done, result', [
++    (False, 0, '0', None),
++    (True, 0, '1', '0'),
++    (True, 2, '1', '2'),
++])
++def test_task_log_reports_status_from_update(client, django_user_model, settings, tmp_path,
++                                             finished, retcode, done, result):
 +    settings.TASK_LOG_DIR = str(tmp_path)
-+    update = Update.objects.create(started=datetime.now(), task_id='test-task')
++    (tmp_path / 'task_test-task.log').write_text('line 1 <b>\n', encoding='utf-8')
++    Update.objects.create(started=datetime.now(), task_id='test-task', retcode=retcode,
++                          finished=datetime.now() if finished else None)
++    client.force_login(django_user_model.objects.create_user('user', 'user@example.com', 'pw'))
 +
-+    def fake_runcmd(cmd, destdir, outfile, shell):
-+        # Stands in for update.py --update, writing to the same record
-+        assert cmd == 'update.py --update %d' % update.id
-+        Update.objects.filter(id=update.id).update(reload=True)
-+        return 'output'
-+    monkeypatch.setattr(tasks.utils, 'runcmd', fake_runcmd)
++    response = client.get(reverse('task_log', args=('test-task',)))
 +
-+    tasks.run_update_command.apply(('master', 'update.py --update %update%'), task_id='test-task')
-+
-+    update.refresh_from_db()
-+    assert update.reload
-+    assert (update.log, update.retcode) == ('output', 0)
-+    assert update.finished is not None
++    assert response.status_code == 200
++    assert response.content == b'line 1 &lt;b&gt;\n'
++    assert response['Task-Done'] == done
++    assert response.get('Task-Result') == result
 -- 
 2.56.0
 
