@@ -1,238 +1,120 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.12927.1794770290169873063
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.13009.1794770286823350575
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 15 Nov 2026 11:18:10 -0800
+ Sun, 15 Nov 2026 11:18:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=Y9yqWNos;
- spf=pass (domain: gmail.com, ip: 209.85.216.45, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3b0e0e65adbso1227976a91.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 11:18:10 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=zaBOqkg2;
+ spf=pass (domain: gmail.com, ip: 209.85.215.174, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-cc4be0e5351so968502a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 11:18:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794770289; x=1795375089; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1794770286; x=1795375086; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=trKPoHHfmcWC2GPMk76z+1ezqHrJDqzl+KxKQyQYAEQ=;
-        b=Y9yqWNosIRx+assqmZkbVrE6+IlQEilK6rZYMM/+Xp+eAajl1VPr0Cc6PCUL8xI8M2
-         cw72Vh3iSYp/PsvYEH+meBFYb4dqmDsb+tJbjrZa0IuM34Mr10hbhocsd6T5f+I5PnJ3
-         e6iTg7ziEuBAUU55J6/rbM9Taan5fsUNbj9wdMJ10aHYN/E/+qGi9iKUP/EjfRr6gUcx
-         QBnBbQ8gKvNt+Odd+CX94a48w/Af6kyLtEdJW2y8ISssEGNS9oSioPP6GSnFfwoJbV1t
-         LEQtMpdFKtmBFZHkZ/E2vHPSBlMFKkGWJ+9DbFLgo7q3ZFuJNJmaBEcEgw1/4rUBRP0L
-         ULaA==
+        bh=a3BMKvtT94aNr+kGdd+j6ZpTK7kd40ViMj0e8EkX7hk=;
+        b=zaBOqkg2mcdUD9yeA1ZhTn0W3RgTRqoKrWDz6dreAGQJ2YqvX8tdoS4qpuLW1lUOBY
+         VuI3seFONbt2/0VdO+nIav+t6sDQ5m1qpgiLYfR+wO1I2wiRJex9+fn3eSd263eDlb5x
+         JGPyItUR28PIIHU8qGsdCO2cLXI5nkqaW5v9UaLMZp4qV2wANNwcSf1Vb/wChrI8PEZk
+         ZLqo61j5WYmoerTLCp6zTrhcLK+VGIP84zpFsuCC/bcWLRYsOCi1D3qnyq7c+zOJjLAo
+         4flWbgKZS7GUhQfe9ruEk9YzvhbujEWidYtMKM0c4fERp2YU8qboKGPyTTv8dVFV/KQ9
+         WtOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794770289; x=1795375089;
+        d=1e100.net; s=20260707; t=1794770286; x=1795375086;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=trKPoHHfmcWC2GPMk76z+1ezqHrJDqzl+KxKQyQYAEQ=;
-        b=dJX1yxSQHrAiqHmFWtmHjsNgKEfedbPJ7+ZFFgvdbspm7GxGPkLxw2dwnjqgPRw3zW
-         c3csW+ytv8gjcZLJNvuPSVjXVZOKI2QGg21uX5RVHaXzcCDsFXUVn2jH2ijUKZnbo7/Y
-         kh9b8ZyjThz1SDE4gyxSO5DTPxBhrhVgCVJtHk4bNiXSRbMNM3vlDtAqRIq4D8WNO43F
-         BazlYSPSaBpdNA2G0gH1R8BmE0CGkZwai5CMjGhIh3+ZP3nrwansOm71LFGPQNx/vQdg
-         x9fIzFXCeCqtBF8Z7BUbVZX6u0zH1+O2goU3eoTbZpC+54qk+S/k5IoJ1XprX6f7wjcQ
-         C8Dw==
-X-Gm-Message-State: APuU4Z9++A2oncG6MRGqZeapxnoJG6TLJcm+sv1/HW9PVeQFXhliNAcH
-	Yv8HVUCa1GQLLR6C2mXbS/h25RZhpFlun9dHnMrDFijUiqFjpW30F0m5qL79lg==
-X-Gm-Gg: AYBFou3WNBqKjpuvrXkB6D+C9rdZeJJcuj0k0GqATnkjL4LFAsaFFZnikjjuqmsR6qW
-	Za8iKjkPEj+5oCG6NGTJolT6JQoBqA3c6C4qyo9rYqP/WsRnuxIwbtR22vi2NBqrt9dCfUGU8wa
-	BkkVUEvLr9FHyuT8ywk9doTmWxoROymHRpW8aJriGHjdJGC5qnutx84X3gCzqs18tagRoKaCt0b
-	OZv19WKncK5SxEzNhDRGDDcDuvfkBY3agODI5yUfDBdMHYT0jgLQJOdjCKYMubWSvsj5Cj5vm0B
-	ZYJT9pEdtJLEDCya26R+5SzhlvKRkipuWAsLDBTtvzrrawYPS7YIPZ0Kdcn7WfVejAPpS39LXRM
-	sqja2YbSb14GRCfs3IvkNY3N+KoectMaG7zT/ZrjWhyOzWidpYN9pmQ1aWzNS6aFbGYaCDJfc5P
-	eYPqOoakHyazta7A3qsXba77AkIJKl0zOBG7Gfb5y1Xq65jxHHl4ll+aByoL24KADd6CO4/BJ1G
-	owmicVkhbw4iBDX0yDDw1PGWcyIccqA9RlSQsIyKrACAyAMoguiCr+cLJ5AxFHyroRqTiSPZDfO
-	0r1FlHp+pvIVojBvA4q3zYC+isNqGkEJ9GjZjrqzWy4iC7WpprzsRsToXAOloQ==
-X-Received: by 2002:a17:90b:5806:b0:3a7:e11c:4e6e with SMTP id 98e67ed59e1d1-3b1b0b8b064mr7992958a91.59.1794770289478;
-        Sun, 15 Nov 2026 11:18:09 -0800 (PST)
+        bh=a3BMKvtT94aNr+kGdd+j6ZpTK7kd40ViMj0e8EkX7hk=;
+        b=jq9Pv2XrD1Dt0Bz+tWLquHeYDAOU0DthJVu7Y4/J0vANrbdrUfnKGVgqWTJvMbJL1z
+         +CyDO9q5oWhWYOgns0xrvfK00SoD0DVufXC96yZ5Uem8HpyNv+HyxcGHHcDcbEd2izDK
+         KpaHLGd4aHVcovEqe+9ldqQHntSz+71rUffGW+roD1RBZ4964MkiPJ9Sd493hPk20O/1
+         S7DU/6+Nck6yINttNV83od5vjS13WU3Lae+Y102N5vhm5cB9Lwqwitd3Qh4qKtKu8paK
+         2LztXvY/og5z75VFXvNDs/jM5uTsusbqE93QJvfPlBOa8tQXB8glNRmDtdsiARxTYmYl
+         JkGg==
+X-Gm-Message-State: APuU4Z8QNH6uUUis8fWWfB5yIAR4dlaisg6q2Sw/oe6asWKWwaufPI85
+	hdctMN3L7PC18uvspZqwF3pz6E5sNY+PNhTxOjyrLSfCJ2zvfJyug9N50fP/tg==
+X-Gm-Gg: AYBFou1f1c6DOirpJJv9SMzpTqQFlcmV3cLljdjq3kdSNbNMQ3vX2oWc54D9wlCc3c2
+	b7SV1eAz4T4fcOiEuXfP020RX5GvppPxihPP5B1QEFstnR20eXipdcoOyRDMUlTlIcD2+CCZO9q
+	WUDGRMGVILqpP5PI9OwI3cRbhLwEBWe8o2UNubH3D9FQnMIS2U/AkjSh+IlumdVNP77V/R3CEQT
+	IA5oSVembgW36/CwVYpVODLvs85GTCzzLaQP8ZhT3d3SSUOgaebWcxjNZX7GpdgGsIenA5T3sXU
+	XpSRxPLCSfe4ODHX6i6wj+8lxsm47RAIsDOb4Vhy9YtDCsiMP/5HRnwoJuvbbt2rjsLORGXXuUe
+	D/BAX3BX6qhosa7MOobLqDwbXl7QMqsMOhX90lmsZV3K1LBA522PFQcudZwr0OlLVzeAoPRD5Hz
+	N0/vXUyfa/MFv3aqSGrUBFEC6lD50/7msAi0YyX7ADGtaswp+2+QfMxU/v0IOvIJ0OerSl63suW
+	bE+sP4c+PjgpFFdmoe8cwYlh1Yufh2vOkvW8x/dE9ZfiZncorCSMwtIbvV/XrJJM4ccUFRv8dzR
+	KH3W2jsPto8j06lkLhI2/XunL9LZHCiNKb9mMdT+YB3pTmX+KS0ACR6bpvQtWQ==
+X-Received: by 2002:a17:90b:1b06:b0:3ac:b44c:2d84 with SMTP id 98e67ed59e1d1-3b1b0a0e8d1mr8872219a91.13.1794770285971;
+        Sun, 15 Nov 2026 11:18:05 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197c6dd2dsm17977070a91.2.2026.11.15.11.18.07
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197c6dd2dsm17977070a91.2.2026.11.15.11.18.03
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 15 Nov 2026 11:18:08 -0800 (PST)
+        Sun, 15 Nov 2026 11:18:04 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][RFC PATCH v2 2/2] docker-compose.nginx-proxy.yml: add a production setup using nginx-proxy
-Date: Sun, 15 Nov 2026 11:17:34 -0800
-Message-ID: <20261115191734.23604-3-tim.orling@konsulko.com>
+Subject: [layerindex-web][RFC PATCH v2 1/2] Dockerfile: serve the application with uWSGI
+Date: Sun, 15 Nov 2026 11:17:33 -0800
+Message-ID: <20261115191734.23604-2-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261115191734.23604-1-tim.orling@konsulko.com>
 References: <20261115191734.23604-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 19:18:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5397
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 19:18:16 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5396
 Content-Type: text/plain; charset="utf-8"
 
-Add docker-compose.nginx-proxy.yml, which uses nginx-proxy and
-acme-companion in place of the layersweb and layerscertbot containers
-of docker-compose.prod.yml: the Let's Encrypt certificate is obtained
-and renewed automatically, without a hand-edited nginx configuration,
-and layersapp serves the static files. The host name and email address
-go in .env.prod.proxy.
+Replace gunicorn with uWSGI, keeping 4 workers and the 60 second
+request timeout. uWSGI serves HTTP, as gunicorn did, so the nginx
+configurations work unchanged. It also serves the static files, which
+are now collected into the image, for proxies that don't serve them,
+such as nginx-proxy.
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- .env.prod.proxy                |  7 +++
- README.md                      | 12 +++++
- docker-compose.nginx-proxy.yml | 93 ++++++++++++++++++++++++++++++++++
- tests/test_dockersetup.py      |  3 +-
- 4 files changed, 114 insertions(+), 1 deletion(-)
- create mode 100644 .env.prod.proxy
- create mode 100644 docker-compose.nginx-proxy.yml
+ Dockerfile | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/.env.prod.proxy b/.env.prod.proxy
-new file mode 100644
-index 0000000..1350f27
---- /dev/null
-+++ b/.env.prod.proxy
-@@ -0,0 +1,7 @@
-+# For docker-compose.nginx-proxy.yml. Set real values in a local commit on the
-+# server; never push them.
-+# The site's host name, for nginx-proxy and for the certificate
-+#VIRTUAL_HOST=<set this here>
-+#LETSENCRYPT_HOST=<set this here>
-+# The email address Let's Encrypt sends expiry notices to
-+#LETSENCRYPT_EMAIL=<set this here>
-diff --git a/README.md b/README.md
-index a1f6087..c912034 100644
---- a/README.md
-+++ b/README.md
-@@ -101,6 +101,18 @@ credentials, email server, `DEBUG`) from `.env.<context>.<service>` files, where
-   docker compose -f docker-compose.prod.yml up -d --build
-   ```
+diff --git a/Dockerfile b/Dockerfile
+index f4d19ab..35c49fc 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -53,7 +53,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+ 	&& locale-gen en_US.UTF-8 \
+ 	&& update-locale \
+     && pip3 install --ignore-installed setuptools wheel \
+-    && pip3 install gunicorn \
++    && pip3 install uwsgi \
+     && pip3 install -r /requirements.txt \
+     && apt-get purge -y autoconf g++ make python3-dev pkg-config libjpeg-dev \
+ 	&& apt-get autoremove -y \
+@@ -68,14 +68,19 @@ COPY docker/updatelayers.sh ${APP_DIR}/updatelayers.sh
+ COPY docker/migrate.sh ${APP_DIR}/migrate.sh
+ COPY docker/connectivity_check.sh ${APP_DIR}/connectivity_check.sh
  
-+- `docker-compose.nginx-proxy.yml` is a production setup that uses
-+  [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) and
-+  [acme-companion](https://github.com/nginx-proxy/acme-companion) in place of
-+  the `layersweb` and `layerscertbot` containers: the certificate is obtained
-+  and renewed automatically, and `layersapp` serves the static files. It uses
-+  the `.env.prod.*` files, and `.env.prod.proxy` for the host name and the
-+  email address for Let's Encrypt:
-+
-+  ```sh
-+  docker compose -f docker-compose.nginx-proxy.yml up -d --build
-+  ```
-+
- The `.env*` files are excluded from the Docker images.
+-RUN mkdir ${APP_DIR}/workdir \
++RUN mkdir ${APP_DIR}/workdir ${APP_DIR}/static \
+ 	&& adduser --system --uid=500 --home /home/layers layers \
+-	&& chown -R layers ${APP_DIR}/workdir
++	&& chown -R layers ${APP_DIR}/workdir ${APP_DIR}/static
+ USER layers
  
- Other settings the app and celery files can set:
-diff --git a/docker-compose.nginx-proxy.yml b/docker-compose.nginx-proxy.yml
-new file mode 100644
-index 0000000..7ce1ec4
---- /dev/null
-+++ b/docker-compose.nginx-proxy.yml
-@@ -0,0 +1,93 @@
-+# Production setup with nginx-proxy and acme-companion in place of the
-+# layersweb (nginx) and layerscertbot containers of docker-compose.prod.yml:
-+# nginx-proxy forwards requests to layersapp, which also serves the static
-+# files, and acme-companion gets and renews its Let's Encrypt certificate.
-+# Set the host name and email in .env.prod.proxy (see README.md).
-+services:
-+  layersdb:
-+    image: mariadb:lts
-+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --max_allowed_packet=128M
-+    volumes:
-+      - mariadb_data:/var/lib/mysql
-+    env_file:
-+     - ".env.prod.db"
-+    restart: unless-stopped
++# Collect the static files for uWSGI to serve (see below)
++RUN cd ${APP_DIR}/layerindex \
++	&& SECRET_KEY=collectstatic STATIC_ROOT=${APP_DIR}/static python3 manage.py collectstatic --noinput -v0
 +
-+  layersapp:
-+    depends_on:
-+      - layersdb
-+    build: .
-+    image: halstead/layerindex-app
-+    # "docker compose run" of update.py and the RRS tools: reap the
-+    # bitbake servers that recipe parsing leaves behind
-+    init: true
-+    hostname: localhost
-+    volumes:
-+     - layersmeta:/opt/workdir
-+     - logvolume:/opt/layerindex-task-logs
-+    env_file:
-+     - ".env.prod.app"
-+     # Only layersapp may read this file: nginx-proxy forwards requests to
-+     # every container that has VIRTUAL_HOST set
-+     - ".env.prod.proxy"
-+    environment:
-+      VIRTUAL_PORT: 5000
-+    restart: unless-stopped
-+
-+  layersproxy:
-+    depends_on:
-+      - layersapp
-+    image: nginxproxy/nginx-proxy:1.9-alpine
-+    container_name: layersproxy
-+    ports:
-+     - "443:443"
-+     - "80:80"
-+    volumes:
-+     - certs:/etc/nginx/certs
-+     - acmehtml:/usr/share/nginx/html
-+     - vhost:/etc/nginx/vhost.d
-+     - /var/run/docker.sock:/tmp/docker.sock:ro
-+    restart: unless-stopped
-+
-+  layersacme:
-+    depends_on:
-+      - layersproxy
-+    image: nginxproxy/acme-companion
-+    environment:
-+      NGINX_PROXY_CONTAINER: layersproxy
-+    volumes:
-+     - /var/run/docker.sock:/var/run/docker.sock:ro
-+     - certs:/etc/nginx/certs
-+     - acmehtml:/usr/share/nginx/html
-+     - vhost:/etc/nginx/vhost.d
-+     - acme:/etc/acme.sh
-+    restart: unless-stopped
-+
-+  layersrabbit:
-+    image: rabbitmq:alpine
-+    restart: unless-stopped
-+    env_file:
-+     - ".env.prod.rabbit"
-+
-+  layerscelery:
-+    depends_on:
-+      - layersdb
-+      - layersapp
-+      - layersrabbit
-+    image: halstead/layerindex-app
-+    volumes:
-+     - layersmeta:/opt/workdir
-+     - logvolume:/opt/layerindex-task-logs
-+    env_file:
-+     - ".env.prod.celery"
-+    restart: unless-stopped
-+    command: /usr/local/bin/celery --workdir=/opt/layerindex --app layerindex.tasks worker --loglevel=INFO
-+
-+volumes:
-+  layersmeta:
-+  mariadb_data:
-+  logvolume:
-+  certs:
-+  acmehtml:
-+  vhost:
-+  acme:
-diff --git a/tests/test_dockersetup.py b/tests/test_dockersetup.py
-index 4d61ee7..d94ab05 100644
---- a/tests/test_dockersetup.py
-+++ b/tests/test_dockersetup.py
-@@ -203,7 +203,8 @@ def test_compose_command(monkeypatch, result, expected):
+ # Always copy in .gitconfig and proxy helper script (they need editing to be active)
+ COPY docker/.gitconfig /home/layers/.gitconfig
+ COPY docker/git-proxy ${APP_DIR}/bin/git-proxy
  
- 
- @pytest.mark.parametrize('compose_file', ['docker-compose.yml', 'docker-compose.prod.yml',
--                                          'docker-compose.staging.yml'])
-+                                          'docker-compose.staging.yml',
-+                                          'docker-compose.nginx-proxy.yml'])
- def test_compose_layersapp_has_init(compose_file):
-     # [YOCTO #16515] in "docker compose run --rm layersapp ..." the script is
-     # process 1; without an init process the bitbake servers started by
+-# Start Gunicorn
+-CMD ["/bin/sh", "-c", "/usr/local/bin/gunicorn wsgi:application --workers=4 --bind=:5000 --timeout=60 --log-level=debug --chdir=${APP_DIR}/layerindex"]
++# Start uWSGI, serving HTTP so that it works behind any proxy. It also serves
++# the static files, for proxies that don't (e.g. nginx-proxy).
++CMD ["/bin/sh", "-c", "exec /usr/local/bin/uwsgi --http-socket :5000 --master --workers 4 --enable-threads --harakiri 60 --die-on-term --need-app --chdir ${APP_DIR}/layerindex --module wsgi:application --static-map /static=${APP_DIR}/static"]
 -- 
 2.56.1
 
