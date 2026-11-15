@@ -1,100 +1,149 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1515.1794712730392159578
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1596.1794712754518295921
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 14 Nov 2026 19:18:50 -0800
+ Sat, 14 Nov 2026 19:19:14 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=jRXNpg4t;
- spf=pass (domain: gmail.com, ip: 209.85.210.174, mailfrom: ticotimo@gmail.com)
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-8b67f25e6e1so1225116b3a.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 19:18:50 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=k3Y8RVsB;
+ spf=pass (domain: gmail.com, ip: 209.85.210.178, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8b4c8b51b58so2347859b3a.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 19:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794712729; x=1795317529; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=vUpVLrgI6bfjLOcCN4NATVqbIqXRUHv1+8M40dVX0c8=;
-        b=jRXNpg4tuONKutnoVbN12ONRuwA1B7PPz8F4l/nOQr9Hi9ag1B2GLCtqgQJczRJwAb
-         yqlqDSU0M45PbHZc/PwCYZYdmGjn3Ond7HIlIvohtua71KtzBx4BKCuguQp876o04fTg
-         dAv0OZ6z2vm5jCkBZHXJIvszGipXzO6ojmN9q+RCT/IKik2x/jvmLLXXBS3zH30K42Uf
-         nm0wQitEgdgPcNgIxZ9THYAjlr3XFnGG2UScyHxsrRTmzAwD/uHMtV4klllCu7Wu4vP9
-         6X9Z12uP0KtFZtqvmnxBg4m4xXyeS7JBgmYCGjEw08Uwv3hLUGcXwBYapzNmaoVREuZU
-         mitQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794712729; x=1795317529;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20260707; t=1794712754; x=1795317554; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=vUpVLrgI6bfjLOcCN4NATVqbIqXRUHv1+8M40dVX0c8=;
-        b=2Wm7HcxwS0OOUFAC+dEBinO32WrKWlcKHQK0Nt22CQToOaHtvpGiarMKEzRuYV1uin
-         SbRZRZViYR6/ewNauORdJji09MCoPV9Mlz1LWXMtMabi9TPFbH8KyXWo0+CEJ/oPDcgF
-         HyTTeLy4RjWjY4zPrF919faSP5PfhvT0q0a3xlmpVlmLvI4J/lc1ae3//xTescbWfUdb
-         tS1/Z+W+5qz2R3dVBfKSeWUN4kqgZ5EojTuEXIR0GJ2YPxNkNRR+ZKAVe8FOK8ank9TH
-         nT5y5XPEAzwdzbUWlHUzg1zLXohS135kg0AzJ28xlVQakym2/OOVpJLuPMthlKGOgKk0
-         NXxw==
-X-Gm-Message-State: APuU4Z9756r55Au4NFBQXF3V8BYtbeTU+KPoFnvyxYcPpF+cm7DQpIz+
-	u7Ew0baLrAK57K1HvtR3esMS/ympot9p3UQmclN6VXc2lQ7JhURb0XCV5YNfGQ==
-X-Gm-Gg: AYBFou3mBnKbNts4Kbf2OWXwezlwm5Y+T95RcJtYFdYpvyiA9fIlDxlOe/0IrsPhKco
-	bTAqejmSpDZ1fSNyQc3RGU6vbqlf2VDv7kjebTJalVOFTv3Am+UK6PFioIWvF3iQweTf19P9HjW
-	fluJfiGk/yspyHHGysmjvQ7upQeFgY1rKnu0G+ZBd2u8t1ytqcG0mv1Dd+owIyx8he2o6hK9HHo
-	nx049nIQFfQ9iO46t5g9UNxFY8z/3vixqZKAGEMwAxsN4oftEqyKaHt1yRvihdFGZl9X2uDeZeo
-	LPENbMz+NQz8+qIiMTs7TxtZpUTA4zi+OV8mGJ1TaQR1+jzidrBI5svjCpO9xJyWiED11z2QaWt
-	H4xPn2VpoBfWvW7My+xfnh93HUnvIfDIhx49i71l955BrfstGHnSflk+15FhNt47HDuIprwAGkt
-	BbW7snTipjS8OaVMfQYKwwFCBpRGtAlsvEKSi3YHTfG9tF0G+398I3pt2flYO+HcMFWFoMTRxDW
-	fkila7gJv9papXZ2WEu5F9u2pqlW7Husu9w4FFZHa/YCCCEFNqi3CP9kRFsq70waZPJ0s2lGmgy
-	TZKFAKNtAwJvovsABVCnayx1lZfGG2ExSpyFIVom12N6zSfXD4p7gmZ8UYa/4A==
-X-Received: by 2002:a05:6a21:e109:b0:3e2:97ac:274e with SMTP id adf61e73a8af0-3f7a9cff089mr6745434637.65.1794712729411;
-        Sat, 14 Nov 2026 19:18:49 -0800 (PST)
+        bh=TyGlmTfWInQEPXD6KY+611Vf2W/MDfrV8me1NdVX8nY=;
+        b=k3Y8RVsB1Yr8DOCnBS7dDIqvvb4uSButKXDo/BmhikvSEhcu6UXljNr20hQu1ta4kw
+         HdqHgS45rfF2XDxnliE33m5j1lcJLJm6BLfFEXrek31g6z15N0RUdf4LxrrjAlYSviyN
+         dD28leVOO2O4qW4hOINkuDcrUFLpnhMR4OK/xbFCybq+pYxKHGogxAnsKFRw+oPr1uHW
+         8G5UXO50FC/vrelpexfcI18ZopPEx1qfFe8EGq1ajUYhpCSglh8r4M1UIcJeqLq7WDjq
+         Of+3YfbeVEU3RRuGHtCE68GKMAD/YgKqds2d2f5Pkrn1Nb8jnrxdfu5nwpcYnTsddTCw
+         u0Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794712754; x=1795317554;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=TyGlmTfWInQEPXD6KY+611Vf2W/MDfrV8me1NdVX8nY=;
+        b=pIfm4x0KQxjfzADbzPPTfSb/sG/cYzX+nUygtb7an4fmjKeCyJzoo1k7Oh3OgcTDYf
+         mMozdUoEcF1m2S3yBVk8g1wTcNeTA5OuAFO25uF/jWGdNTubDgH/QgfnnNB6ANKe7e9b
+         1az3ZHA/t3JbqBHpOpz7ZldpzoA/7LQHl5BmgEHHeuWDwP40fY0bQVc/McxNWBPl2n6z
+         ryd0a7hCXJqcs3CF/qVolDMnqRMTpJBUqNntehm4gpF5e2JFoqgpQYoP+UgglU3vz9I8
+         G01TWhGlY80bTwf3TPgxpTGaxus+HCbg7oPIZjqhHp4ZB/mtmXKzsS1o7o/p1tKSEmao
+         9Hkg==
+X-Gm-Message-State: APuU4Z8GGQ0E9h9m2S7PxcBrCiAxjXRtp766T/kx9LkfJ4oOYCdDv7EL
+	fPHQWE5G4NBkJJHTyAwSmVgABwsVreMnWpRU4a6bNTm9Oz7/mCREV0NyIvVVEw==
+X-Gm-Gg: AYBFou13KkPfv3l85Kxr3w33Lmv8G+9Y5PjjG/PhMB8gMtS90JgNwOaUsJUXHW6m82R
+	JyCzCmf/QVM7zaB4o3jQm9gy0ru7T/6QdWm3GMZ4UpRaozIVMOEWg3mI8uz4Bcpx8eAofThud54
+	1ANleJaa55CaX8LTUwclR4ZJ4USTb/79AVtARVBDu8vRWU8V4M0BfrW4L5OdAp8mp4PNR8BQo2f
+	KM7wguLDUEHdkawlCrJ9uzETrhmHNAdad0eLLKRL5IIrCTLRvJsyqdSEp43GhwIM2qmVyiGBGpb
+	0D2pIBTae23dyNhB66Ib9sKVMlOxWcXjHlyR9Jcb7pxwDcwv0vvFAes9XPbpZFxSg7RrvXJ/SRc
+	rYixQIAWCtBd6V+jvAMYr6xC1EjlAWM1Xe2uZWPILpi75JofCFg6NfK7EUES0Z6lE0LNp1ipjND
+	yUZ++W39Owkmy9ni2UOUFj9jbnXkGr9CH1chhkQVuWQfsDuTtspQE3TI+3qMbGWz7OdrV1Z4sCX
+	zqYsbEl/BS4oyG94GEx6yWNAKWW6ulHwuzhEDHVwnLw5epn8E06CmuvIx3JSucBbNdvvY6EfV4q
+	2UQeTL7qrpUGebIyYwG25/Cm2mZtbueP3xX4MjCasW9lAgrPvpAs6/MKod9wyg==
+X-Received: by 2002:a05:6a20:6a1b:b0:3eb:8c85:92b8 with SMTP id adf61e73a8af0-3f7a74c34f2mr7575556637.19.1794712753909;
+        Sat, 14 Nov 2026 19:19:13 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cddc1898afbsm2761560a12.19.2026.11.14.19.18.46
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cddc1898afbsm2761560a12.19.2026.11.14.19.19.10
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 14 Nov 2026 19:18:47 -0800 (PST)
+        Sat, 14 Nov 2026 19:19:12 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 0/2] rrs_distros: match python3-* recipes to distro packages
-Date: Sat, 14 Nov 2026 19:18:02 -0800
-Message-ID: <20261115031803.74076-2-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 1/2] rrs_distros: strip the native/cross suffixes before matching distro packages
+Date: Sat, 14 Nov 2026 19:18:04 -0800
+Message-ID: <20261115031803.74076-4-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.1
+In-Reply-To: <20261115031803.74076-2-tim.orling@konsulko.com>
+References: <20261115031803.74076-2-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 03:19:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5388
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 03:19:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5389
 Content-Type: text/plain; charset="utf-8"
 
-Almost no python3-* recipe was matched to a distro package: OE names
-Python modules python3-<name>, Fedora and openSUSE name the source
-package python-<name>, and Debian and Ubuntu name the binary package
-python3-<name>. On a test instance, 7 meta-python recipes matched.
+search_package_in_distros() meant to strip nativesdk-, -native, -cross
+and -initial from the recipe name, but discarded the result of
+str.replace(). Keep it.
 
-1: Fix the suffix stripping in search_package_in_distros(), which
-   discarded the result of str.replace().
-2: Also look for python-<name>, and record the name that matched. Debian
-   and Ubuntu's python3-<name> binary packages are matched once OE-Core's
-   distro_check lists them, which is sent separately to openembedded-core
-   (bug 16512).
+[YOCTO #16513]
 
-With both, on the test instance, 574 of meta-python's 727 recipes on
-master matched at least one distro (7 before), and recipe-to-distro
-matches went from 4177 to 6045, with no false matches seen in a sample
-(e.g. python3-lz4 matches python-lz4, not the lz4 C library). The test
-suite passes in the Docker image.
-
-This applies on top of the series "Get the RRS update scripts working
-again" (patchwork 104071-104076), which also changes rrs_distros.py:
-https://lore.kernel.org/all/20261115003506.53654-1-tim.orling@konsulko.com/
-
-Tim Orling (2):
-  rrs_distros: strip the native/cross suffixes before matching distro
-    packages
-  rrs_distros: match python3-* recipes to distro packages
-
- rrs/tools/rrs_distros.py  | 15 +++++++----
- tests/test_rrs_distros.py | 55 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+), 5 deletions(-)
+AI-Generated: Claude Opus 5.5
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+---
+ rrs/tools/rrs_distros.py  |  2 +-
+ tests/test_rrs_distros.py | 45 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 1 deletion(-)
  create mode 100644 tests/test_rrs_distros.py
 
+diff --git a/rrs/tools/rrs_distros.py b/rrs/tools/rrs_distros.py
+index 3dc745d..55f5aeb 100755
+--- a/rrs/tools/rrs_distros.py
++++ b/rrs/tools/rrs_distros.py
+@@ -59,7 +59,7 @@ def search_package_in_distros(pkglst_dir, recipe, data):
+ 
+     removes = ['nativesdk-', '-native', '-cross', '-initial']
+     for r in removes:
+-        recipe_name.replace(r, '')
++        recipe_name = recipe_name.replace(r, '')
+ 
+     distro_alias = data.getVar('DISTRO_PN_ALIAS', True)
+     if distro_alias:
+diff --git a/tests/test_rrs_distros.py b/tests/test_rrs_distros.py
+new file mode 100644
+index 0000000..419b44d
+--- /dev/null
++++ b/tests/test_rrs_distros.py
+@@ -0,0 +1,45 @@
++# layerindex-web - tests for matching recipes to distro packages in rrs/tools/rrs_distros.py
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
++
++import os
++import sys
++import types
++
++import pytest
++
++sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'rrs', 'tools'))
++
++
++@pytest.fixture
++def rrs_distros(monkeypatch):
++    # The test settings don't install the rrs app, which the script imports
++    monkeypatch.setitem(sys.modules, 'rrs.models', types.SimpleNamespace(RecipeDistro=None, MaintenancePlan=None))
++    monkeypatch.delitem(sys.modules, 'rrs_distros', raising=False)
++    import rrs_distros
++    return rrs_distros
++
++
++@pytest.fixture
++def pkglst_dir(tmp_path):
++    # Package lists as OE-Core's distro_check writes them: <distro>-<release>, "<name>:<section>" lines
++    (tmp_path / 'Debian-13.7').write_text('brotli:main\npython3-brotli:main\nlz4:main\nfoo:main\n')
++    (tmp_path / 'Fedora-45').write_text('python-brotli:main\nlz4:main\n')
++    return tmp_path
++
++
++def search(rrs_distros, pkglst_dir, pn, alias=None):
++    recipe = types.SimpleNamespace(pn=pn)
++    data = types.SimpleNamespace(getVar=lambda name, expand=True: alias if name == 'DISTRO_PN_ALIAS' else None)
++    return rrs_distros.search_package_in_distros(str(pkglst_dir), recipe, data)
++
++
++def test_native_suffix_is_ignored(rrs_distros, pkglst_dir):
++    assert search(rrs_distros, pkglst_dir, 'foo-native') == {'Debian-main': 'foo'}
++
++
++def test_distro_pn_alias(rrs_distros, pkglst_dir):
++    assert search(rrs_distros, pkglst_dir, 'liblz4', alias='Debian=lz4 Fedora=lz4') == {'Debian-main': 'lz4', 'Fedora-main': 'lz4'}
++
 -- 
 2.56.1
 
