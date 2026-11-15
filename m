@@ -1,217 +1,171 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7558.1794702930682029185
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7560.1794702933215221601
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 14 Nov 2026 16:35:30 -0800
+ Sat, 14 Nov 2026 16:35:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=erVy9lRf;
- spf=pass (domain: gmail.com, ip: 209.85.215.180, mailfrom: ticotimo@gmail.com)
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-cdab938dc83so1089449a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 16:35:30 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=fR/YSCLg;
+ spf=pass (domain: gmail.com, ip: 209.85.215.176, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-cd60c5da24cso2059125a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 16:35:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794702930; x=1795307730; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1794702932; x=1795307732; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=EJnI+aNKMFlsVqR1hCwKw1ABy0I+ha6c8y5pPwE561A=;
-        b=erVy9lRfoFQG1De/4ny3ROsRXwdQgFJJZt8dM7NqELkBZfzcC+178e2GRfCgDX95Wb
-         uBNvADhpaOaLfsDbhDAZiS6GCoXv2Sa63WD/I7Ci8ITkHX/ztusqbnmfkcQQf19xU91t
-         qV7jIJX38HO4PBFWzmHPbEpQwkhm/I8sWP8jyZVBYxka8Sn4hUJcLkijVmMKUShDri9s
-         T5TrYGeZny95+B0W+jUZ9N6bJ2y75XO0K5D/DFqqBPDnAKm4slRi+v3xcGrTQSeAISvm
-         8vZLRIJf7jaVhivoqCjN+SN5o9+dDFOK871hY7/agPJMvYTME5f9eoQLFBNtKIAffceQ
-         1LHA==
+        bh=H269tTLNyZkqNS3gkiZLESQ/LQl4VTTA4YBp8IkThLI=;
+        b=fR/YSCLgHvJS6Enf5v9+ouvsCn1jqJCrVGkoIxKTh1zrS74dtUGaRPVkk5h6TNWNtk
+         n0s/T+N4osKhBNy2ZETvt5e6nIQjWV1zmZd6Dk0t7yrwDwSrnvC4lCe5VNCCHLIYBwP/
+         VqN4I0fGQClMwIMJbNZUNhYwfG0XR6s7cPp/DUVrOnka0RLeEK5aHFSbkCtm3HnMPzjF
+         b1rH/H/zavRVLqhV6VSVmBkN5GZajdXzyo0WXNzqMUh1IACfp9FJhb3KzomfsQ8dH9on
+         tMJViV/R5SBIACKdCDxweuHOJnX9puPbbxWgnjCjkNizVd0uBP8SCvTg36DynGhNrwCw
+         XXJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794702930; x=1795307730;
+        d=1e100.net; s=20260707; t=1794702932; x=1795307732;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EJnI+aNKMFlsVqR1hCwKw1ABy0I+ha6c8y5pPwE561A=;
-        b=tM2G6UuZncJ/66kZsF1CtbZouRRhnaEQtdvv5bX3pG+HUZrU7eGFhjQbBlh2q+U2tH
-         tHfg6ERA7Iwb4sxoRY6+ddFVqRTDY9+eRvv6vpJon498YNghzFuP6n8cRH2mr3DP6GAo
-         fPot1H4himqVN4TjiOsoU59XXzD29qqrxZSY96SSfUVlsoGh891uqy7zCnTF1HUMCRSf
-         Vb9+etNr9OnxNvPYF4ReCrvJix0LEjr5uwdH0ZLkM8WmpzMSHv+Vvgt0696uGstV9b2N
-         oAFbsrIjcHtRO1IzxvRnh3YznJDXZ//D0EjOtbWUSBSTqyIWYAuzIWZeAIhIJq/7xzej
-         z1pA==
-X-Gm-Message-State: APuU4Z+fOAPaE/aeXmi1W+r1it2rnMzhz5/DXsHojQFJfufP5gK7+/jF
-	lBaQzU+uix4oJNEmT+Z0bTb24+XEvkjZB8cZ7mO37XtX7mG/PTxQ1J66W4c2Eg==
-X-Gm-Gg: AYBFou2FElQaJsDKkdgegs8UX9F9MYfAzl/SE45Xf3uT/+rwQ7udzylWcMh0lzvmkaj
-	pm9BvFFgdftfi1/q+fedaeCsVIhXJI4+WmDP3vjwYyPh3zXcgvd75seLhMW5FMWpJgwW8/x+sI0
-	YtJy4p3IL14VQS/D9vzECHWqHWfcxy34AeOqfXkf8yFm7RQzIdq17mJyET9FWhh0r9px9eTsMjg
-	qvNzZP7IWsCIOA7zQTB6JYxk7RYG7e5vAtrG7FKINRsVNJrxfm3iy5KA6wVVh5KIMBsWzBsNvj8
-	xirxglP2TtTy2kqet0mqjY7Ej5Ton39RIMFEdHAAt+JD+bwumybX8I98JBdrfwLenaB/ax/gW9N
-	rL+wm99/YT/75HH62r2w2lRE3JrY8idKfCXuYijd8BUdKtqje6CLXLy1uusEJE3wgWbzLtahBW5
-	BEZQNkSJioBh9EXwXUT2WqVixtdRwrsXXFVYXWdCkJKk7VPc9WSZKvWdZVKwG3O+3Rzhh6nZ7wf
-	J+dZ5ijMWdo7fjirceTkKo1I5HUh1OntHIqAmHjFJ2aQvtEKfvKnpDYY8D3NWcw9OAryZy9SMe+
-	T3oMGp0AxZXzEEeguotiMJcqNfGWHF9jzX9e9V7JRpmspVZPlc+489hFJM8Gfw==
-X-Received: by 2002:a17:90a:c88b:b0:3ac:8741:e2e4 with SMTP id 98e67ed59e1d1-3b1b0a4e341mr6527182a91.52.1794702929885;
-        Sat, 14 Nov 2026 16:35:29 -0800 (PST)
+        bh=H269tTLNyZkqNS3gkiZLESQ/LQl4VTTA4YBp8IkThLI=;
+        b=getNAxtzF2zul3eYVVc93w43bhh9it/Pta/2AFc7j17h3eOMcUj2d5jV1WDQxYtuxp
+         PJSwl41knY2JxuNcXEhAp7KH4J920X2GLL3brc6erlK2j7wcsHcgCusnw+kj8wKff/b/
+         8MZ0FfIYQDDv4UW1EMceHVe+qegIbGFkq1xfR16ZRSDWuxgI/QQuxISoPtimHeLW+mCG
+         8UU85uf5QHhAT6J7qLhTM+XzcnoVKKhkWcda4aEtyZ32Xw/OOuLudhzX6izavpmZdIYt
+         yfjV+r5ITZNAV5bkQAYwh+IrfBQAOESfyaL4ekSbOMXcYc047GOuMuQ5B80OaiNxGDsN
+         x/jA==
+X-Gm-Message-State: APuU4Z9s34tuD6qt5/GuiifJUeNQkPWFBv2wzV0/zbdIvLZu8/KSt6dw
+	ZulNgvW7WH0NRm6pZIQiNyhyd7554qskiqSpvS2TTgcSu0O4rHMHtwY+wrFwBA==
+X-Gm-Gg: AYBFou3n6GBDwJ1hosxwJLlKrMmp9Y4vNWvbYDlmrpnbWmnqbTlIqB4dEMShWXwI4EU
+	p6NnDL9bbtxOUEKkkt/Hhny+rmQdIkrNlKEflLSdJ0CLMXyHf0Cir3cN8kGB3kNPr2z6BatgFXx
+	HocbIRXCtgGTvr3JyQZmrguW9Mz5pfIqgRS3ZJ7yWOTZpiMpra/psUxaD8x9u2A1LCr8iPaLf5x
+	uUKjxnJCQWMSYGzxuo5aIBwBY2LS3Jlf5bYH/0DiRL0hDQ7/t4p9K7DNgUFpWLDhzbFKwESDeQ9
+	0XC9b1ErKUiB3HmlRNAFta3Wz7A9RFeUEQ+3FESt++78Ka6FdDXnyR84+h/8TQcbOr+bjwvb2qD
+	32innQSDdmVyaiccQpWZ+5/+mtS6cUbd/lv2uPm7iod/YV5BZi/Z69sku9m1JktmlHjkcfZlPpT
+	mFpnttm+46ElbSLsQ5b5lDyol5Cvu989GCKJdhmGaNIC3PKrVGEJoUh2usDzosM/1v1lkTDbiok
+	uqC4GJxth6aLb0Bz7N5W6T1heILIgGyXTaknJdeu5dFGyeue0kN8ayvcGsfG5fZfpxRP7t+w9Fp
+	T4XCq4dPAFABgKC3H19iWXmXj3KavSQm5Ei67oP8OEzD0iPvix5/NwmqeO15rV0=
+X-Received: by 2002:a17:90b:5910:b0:3b0:a378:1cf with SMTP id 98e67ed59e1d1-3b1b09e7b8dmr5793688a91.22.1794702932487;
+        Sat, 14 Nov 2026 16:35:32 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1b39fb9a3sm5464089a91.3.2026.11.14.16.35.27
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1b39fb9a3sm5464089a91.3.2026.11.14.16.35.31
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 14 Nov 2026 16:35:27 -0800 (PST)
+        Sat, 14 Nov 2026 16:35:31 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 3/6] rrs_upgrade_history: use the right BitBake around the 2025 fragments change
-Date: Sat, 14 Nov 2026 16:35:03 -0800
-Message-ID: <20261115003506.53654-4-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 4/6] rrs/tools/common.py: check out the layer branch before parsing it
+Date: Sat, 14 Nov 2026 16:35:04 -0800
+Message-ID: <20261115003506.53654-5-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261115003506.53654-1-tim.orling@konsulko.com>
 References: <20261115003506.53654-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 00:35:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5381
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 00:35:37 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5382
 Content-Type: text/plain; charset="utf-8"
 
-BitBake 3b9d7bea9 ("parse/ast: add support for 'built-in' fragments",
-2025-06-18) changed the addfragments syntax, which OE-Core only
-followed in e959f916b4 (2025-06-20). The OE-Core commits in between got
-that BitBake, could not be parsed with it, and the BitBake server then
-waited for ever, so the upgrade history never got past them.
+load_recipes() let init_parser() check out BitBake and the core layer,
+but not the layer itself or the layers it depends on, so
+rrs_upstream_history.py and rrs_distros.py parsed whichever branch the
+layer index updates had left them on, e.g. meta-openembedded at dunfell
+while working on master. Check out the layer branch and its
+dependencies' unless nocheckout is set.
 
-Use the BitBake revision before the change for those commits. The
-table of BitBake ranges to replace only matched on the BitBake
-revision, so let an entry apply only to commits before a given date,
-since OE-Core commits from e959f916b4 on need the new revision.
-
-[YOCTO #16500]
+[YOCTO #16502]
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- rrs/tools/rrs_upgrade_history.py  | 32 ++++++++++++++++++-----
- tests/test_rrs_upgrade_history.py | 43 +++++++++++++++++++++++++++++++
- 2 files changed, 68 insertions(+), 7 deletions(-)
- create mode 100644 tests/test_rrs_upgrade_history.py
+ rrs/tools/common.py            | 13 +++++++++-
+ tests/test_rrs_load_recipes.py | 45 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+), 1 deletion(-)
 
-diff --git a/rrs/tools/rrs_upgrade_history.py b/rrs/tools/rrs_upgrade_history.py
-index 6326914..6bf230b 100755
---- a/rrs/tools/rrs_upgrade_history.py
-+++ b/rrs/tools/rrs_upgrade_history.py
-@@ -16,7 +16,7 @@ import sys
- import os.path
- import optparse
- import logging
--from datetime import date, datetime, timedelta
-+from datetime import date, datetime, timedelta, timezone
+diff --git a/rrs/tools/common.py b/rrs/tools/common.py
+index ccdbe62..f97d4e1 100644
+--- a/rrs/tools/common.py
++++ b/rrs/tools/common.py
+@@ -92,7 +92,7 @@ def get_recipe_files(layerdir):
  
- sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__))))
- from common import common_setup, get_logger
-@@ -42,6 +42,16 @@ bitbakepath = os.path.join(fetchdir, bitbakeitem.get_fetch_dir())
- if getattr(settings, 'BITBAKE_PATH', ''):
-     bitbakepath = os.path.join(bitbakepath, settings.BITBAKE_PATH)
+ def load_recipes(layerbranch, bitbakepath, fetchdir, settings, logger,
+         recipe_files=None, nocheckout=False):
+-    from layerindex import recipeparse
++    from layerindex import recipeparse, utils
  
-+def remapped_bitbake_rev(bitbake_rev, commitdate, bitbake_map, logger):
-+    """The bitbake revision to use for a layer commit made at commitdate
-+    (local time), given the latest bitbake revision before it"""
-+    check_rev, until = bitbake_map.get(bitbake_rev, (None, None))
-+    # until is timezone-aware, so compare as timestamps
-+    if check_rev and (until is None or commitdate.timestamp() < until.timestamp()):
-+        logger.debug('Preferring bitbake revision %s over %s' % (check_rev, bitbake_rev))
-+        return check_rev
-+    return bitbake_rev
-+
- def run_internal(maintplanlayerbranch, commit, commitdate, options, logger, bitbake_map, initial=False):
-     from layerindex.models import PythonEnvironment
-     from rrs.models import Release
-@@ -63,10 +73,7 @@ def run_internal(maintplanlayerbranch, commit, commitdate, options, logger, bitb
+     try:
+         (tinfoil, tempdir) = recipeparse.init_parser(settings,
+@@ -110,6 +110,17 @@ def load_recipes(layerbranch, bitbakepath, fetchdir, settings, logger,
+     repodir = os.path.join(fetchdir, urldir)
+     layerdir = os.path.join(repodir, str(layerbranch.vcs_subdir))
  
-     bitbake_rev = utils.runcmd(['git', 'rev-list', '-1', '--before=%s' % str(commitdate), 'origin/master'],
-                     bitbakepath, logger=logger)
--    check_rev = bitbake_map.get(bitbake_rev, None)
--    if check_rev:
--        logger.debug('Preferring bitbake revision %s over %s' % (check_rev, bitbake_rev))
--        bitbake_rev = check_rev
-+    bitbake_rev = remapped_bitbake_rev(bitbake_rev, commitdate, bitbake_map, logger)
++    if not nocheckout:
++        # The repositories are left on whichever branch was updated last;
++        # check out this branch of the layer and of the layers it depends on
++        # (init_parser() has done BitBake and the core layer)
++        utils.checkout_layer_branch(layerbranch, repodir, logger=logger)
++        for dep in layerbranch.dependencies_set.all():
++            deplayerbranch = dep.dependency.get_layerbranch(layerbranch.branch.name)
++            if deplayerbranch:
++                utils.checkout_layer_branch(deplayerbranch,
++                        os.path.join(fetchdir, dep.dependency.get_fetch_dir()), logger=logger)
++
+     d = recipeparse.setup_layer(tinfoil.config_data, fetchdir, layerdir,
+             layer, layerbranch, logger)
  
-     cmd = '%s upgrade_history_internal.py %s %s' % (cmdprefix, maintplanlayerbranch.layerbranch.id, commit)
-     if initial:
-@@ -174,7 +181,10 @@ def upgrade_history(options, logger):
-                 commit_list = commits.split('\n')
- 
-                 bitbake_map = {}
--                def remap_range(start, end, replacewith=None):
-+                def remap_range(start, end, replacewith=None, until=None):
-+                    """Use replacewith (by default end) instead of the
-+                    bitbake revisions from start up to end, for layer
-+                    commits before until (all if None)"""
-                     if replacewith is None:
-                         replacewith = end
-                     bitbake_commits = utils.runcmd(['git', 'rev-list', '%s^..%s^' % (start, end)],
-@@ -182,12 +192,20 @@ def upgrade_history(options, logger):
-                                         logger=logger)
-                     bitbake_commit_list = bitbake_commits.splitlines()
-                     for commit in bitbake_commit_list:
--                        bitbake_map[commit] = replacewith
-+                        bitbake_map[commit] = (replacewith, until)
- 
-                 # Filter out some bad commits
-                 remap_range('fef18b445c0cb6b266cd939b9c78d7cbce38663f', '39780b1ccbd76579db0fc6fb9369c848a3bafa9d')
-                 remap_range('5796ed550d127853808f38257f8dcc8c1cf59342', '547128731e62b36d2271c4390b3fee2b16c535dc')
-                 remap_range('a06619951a43acb80b80d92e0caac560657ca249', '2117db3146ce38bb4a6e2df40b6cd2ab11b514d5')
-+                # "parse/ast: add support for 'built-in' fragments" changed the
-+                # addfragments syntax, which OE-Core only followed in
-+                # e959f916b4 "bitbake.conf: enable built-in fragments for MACHINE
-+                # and DISTRO" (2025-06-20 11:03:34 UTC); before that use the
-+                # bitbake revision before the change
-+                remap_range('3b9d7bea915dc7f10e845854f1dae325743f9456', 'f1175778108a559e1dd0d55cb68f42816c86f393',
-+                            replacewith='378db0fdd95f8704fccd852452555bfddcad384d',
-+                            until=datetime(2025, 6, 20, 11, 3, 34, tzinfo=timezone.utc))
- 
-                 if options.stop_commit and (options.stop_commit not in [x.split()[0] for x in commit_list]):
-                     logger.error('Stop commit %s is not in repository %s' % (options.stop_commit, repodir))
-diff --git a/tests/test_rrs_upgrade_history.py b/tests/test_rrs_upgrade_history.py
-new file mode 100644
-index 0000000..6bf3582
---- /dev/null
-+++ b/tests/test_rrs_upgrade_history.py
-@@ -0,0 +1,43 @@
-+# layerindex-web - tests for the BitBake revision rrs_upgrade_history.py uses
-+#
-+# Licensed under the MIT license, see COPYING.MIT for details
-+#
-+# SPDX-License-Identifier: MIT
-+
-+import logging
-+import os
-+import sys
-+from datetime import datetime, timezone
-+
-+import pytest
-+
-+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'rrs', 'tools'))
-+
-+NEW = '3b9d7bea915dc7f10e845854f1dae325743f9456'   # changed the addfragments syntax
-+OLD = '378db0fdd95f8704fccd852452555bfddcad384d'   # the revision before it
-+SWITCH = datetime(2025, 6, 20, 11, 3, 34, tzinfo=timezone.utc)
+diff --git a/tests/test_rrs_load_recipes.py b/tests/test_rrs_load_recipes.py
+index 97f3d26..8322350 100644
+--- a/tests/test_rrs_load_recipes.py
++++ b/tests/test_rrs_load_recipes.py
+@@ -33,3 +33,48 @@ def test_load_recipes_checks_out_bitbake_before_importing_it(monkeypatch):
+     with pytest.raises(Stop):
+         common.load_recipes(types.SimpleNamespace(branch=None), '/nonexistent', '/nonexistent',
+                             types.SimpleNamespace(), None)
 +
 +
-+def local(dt):
-+    # The script works with naive local times (datetime.fromtimestamp())
-+    return datetime.fromtimestamp(dt.timestamp())
++@pytest.mark.django_db
++@pytest.mark.parametrize('nocheckout', [False, True])
++def test_load_recipes_checks_out_the_layer_branch(monkeypatch, nocheckout):
++    # [YOCTO #16502] parse the branch being worked on, not whichever branch
++    # the repositories were left on
++    import common
++    monkeypatch.syspath_prepend(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'layerindex'))
++    from layerindex import recipeparse, utils
++    from layerindex.models import Branch, LayerBranch, LayerDependency, LayerItem
 +
++    master, _ = Branch.objects.get_or_create(name='master', defaults={'bitbake_branch': 'master'})
++    layers = {}
++    for name in ('meta-oe', 'meta-python'):
++        layer = LayerItem.objects.create(name=name, status='P', layer_type='A', summary=name,
++                                         description=name, vcs_url='git://example.com/%s.git' % name)
++        layers[name] = LayerBranch.objects.create(layer=layer, branch=master, actual_branch='main')
++    LayerDependency.objects.create(layerbranch=layers['meta-oe'], dependency=layers['meta-python'].layer)
 +
-+@pytest.mark.parametrize('commitdate, expected', [
-+    # [YOCTO #16500] OE-Core commits before it switched need the old revision
-+    (local(datetime(2025, 6, 19, 10, 5, 42, tzinfo=timezone.utc)), OLD),
-+    # ... and those from the switch on need the new one
-+    (local(SWITCH), NEW),
-+    (local(datetime(2025, 6, 21, 9, 0, 0, tzinfo=timezone.utc)), NEW),
-+])
-+def test_bitbake_revision_for_commit(commitdate, expected):
-+    from rrs_upgrade_history import remapped_bitbake_rev
-+    bitbake_map = {NEW: (OLD, SWITCH)}
-+    assert remapped_bitbake_rev(NEW, commitdate, bitbake_map, logging.getLogger('test')) == expected
++    class Stop(Exception):
++        pass
 +
++    def fake_setup_layer(*args, **kwargs):
++        raise Stop()
 +
-+def test_bitbake_revision_without_limit():
-+    from rrs_upgrade_history import remapped_bitbake_rev
-+    log = logging.getLogger('test')
-+    assert remapped_bitbake_rev('a', datetime(2030, 1, 1), {'a': ('b', None)}, log) == 'b'
-+    assert remapped_bitbake_rev('c', datetime(2030, 1, 1), {'a': ('b', None)}, log) == 'c'
++    # load_recipes() imports bb.fetch once init_parser() has checked out BitBake
++    bb = types.ModuleType('bb')
++    bb.fetch = types.ModuleType('bb.fetch')
++    bb.fetch.FetchError = Exception
++    monkeypatch.setitem(sys.modules, 'bb', bb)
++    monkeypatch.setitem(sys.modules, 'bb.fetch', bb.fetch)
++
++    checkouts = []
++    monkeypatch.setattr(recipeparse, 'init_parser', lambda *args, **kwargs: (types.SimpleNamespace(config_data=None), '/tmp'))
++    monkeypatch.setattr(recipeparse, 'setup_layer', fake_setup_layer)
++    monkeypatch.setattr(utils, 'checkout_repo', lambda repodir, ref, logger=None: checkouts.append((os.path.basename(repodir), ref)))
++    with pytest.raises(Stop):
++        common.load_recipes(layers['meta-oe'], '/bitbake', '/fetch', types.SimpleNamespace(), None,
++                            recipe_files=[], nocheckout=nocheckout)
++    if nocheckout:
++        assert checkouts == []
++    else:
++        assert checkouts == [('git___example_com_meta-oe_git', 'origin/main'),
++                             ('git___example_com_meta-python_git', 'origin/main')]
 -- 
 2.56.1
 
