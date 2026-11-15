@@ -1,61 +1,61 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7627.1794702926434182393
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7626.1794702923357278221
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 14 Nov 2026 16:35:26 -0800
+ Sat, 14 Nov 2026 16:35:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=b4D+UPDd;
- spf=pass (domain: gmail.com, ip: 209.85.216.46, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3b09c07b3d2so1367424a91.3
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 16:35:26 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=UPAySoeZ;
+ spf=pass (domain: gmail.com, ip: 209.85.216.42, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3ada4c06b7bso1183437a91.2
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 14 Nov 2026 16:35:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794702926; x=1795307726; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1794702923; x=1795307723; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=665cj0vIDvZBoTuppu7mw0+WJXCrB4+Kd0zZU7Qz+D8=;
-        b=b4D+UPDde87TUcCfnvAcGfXhB0iPrcPi5viTNzpIm7eXG6bHPJJ/MCffaWczMqJZ1+
-         XVmqZ4fL86Pe58MA+6h6xHvpubB2JtcmlIj7QAyt2pRnIZsQb24dS+PkiX2qlDSTyNOS
-         bBnWfOXa5tyoO2s4cA4pRp/f56vvTt/mEYXh2xQTpGkE3bIVS/SmhJt6gjqZRdbvqobx
-         mymk/C+ovadxf2ykjudx4QAhb4z26h7smEooOVxQ7kEIUhRYzAcbpaARMx5nC8or171Q
-         kWg8sEWoES5ZRarjdZFIaK+Iq+DyuLjGXf+Fh4xCJDEFtfyvuO0jrsoFtF+62aWj3MTZ
-         1UfA==
+        bh=5zQIlcf6igv8ZMfOTPYoi4S+xdDj9g/4a1seM7IGeaI=;
+        b=UPAySoeZZgRUiHe4FE+3/9NSDuX3AHWyN5uaPC9PGKhPuM4BjqnmFyzeWkLS8aScRR
+         AWHxbBgFmusWoJBv7NQ+8uKe3odq/u3unanWySxFTg6NO/5pEe3sbDo6fkOXKCDbhtFz
+         DSQUuBfGsl6NzGJw3LtU2Y7XWPgOoNjX16Usaif3k91gbWb+8BmupxPZtK7xwGms0V5Z
+         4mhXIeOKmp48bCEjfTImKnpONmYhnxwsmaSDiAfNkkKlqXbOrGaMa2tW/LDAh4Nxe6tc
+         mpocmK+luBtS6tV0LWlooS6J9UkxnjwAHOG4+S43PzQnJkOvv0UiXfC2jGDhOEqBPmHs
+         pTaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794702926; x=1795307726;
+        d=1e100.net; s=20260707; t=1794702923; x=1795307723;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=665cj0vIDvZBoTuppu7mw0+WJXCrB4+Kd0zZU7Qz+D8=;
-        b=RQ96VKmfhj4S250uD6DgDSwP6KKme2O1DCfzjecIKRPBIKPQIinBQxPXTuYl7c453c
-         BqIrCfkYBCaTNRE6s6bPLxe4frnIIzb3n20eISdVqrgKgfGBNP+uebAn7GlzkeBnFmfp
-         n07/oLq677BbQMhq3XiRE1b01sx1UxnamPvyPi4EdudQom4TOj52YZNWiZJezWUmhgUi
-         K4IfwZ6I8i35Y9QDueXhcn7zEnyUBejWETh0AnsOmLQeYiwqv1+yU0b2r9TGtHP8qM3I
-         Ai00J40vThFMQqhDsVjAXwrQQemzYT4HXrIrtF7J9T9KN2LbMDq6Ea8IkfSxmcHcYdK+
-         tx4g==
-X-Gm-Message-State: APuU4Z86arSNvZnqfgG34GymmH3yg4N6jNSHzfqWCma6rzH4JWjLI51Z
-	otfURdCDSsiSTzcFN8rTfpDdHP2v5wV+glT1psePMHtaOPmY4tzMb4m2nt3jR3LM
-X-Gm-Gg: AYBFou3m+FHmXW2BTrbwxX2Ew8YQrK3fvq4sE2TGiVdAukPejvt2r3B6f4Jy8KysVQH
-	gsrrttVxjVRfR8bU7De1RNsx2nam33+J0Lq6fLLbgx/6AIXZguPIKLoT6m6h6yrOMJV/+thWPVf
-	zIqURh+iLeZ9VNpKF80eOCGLEwu+avMAtLVzzK25CjgyBFGuwaFKpZddtSsgfPptWs8TkILvbrl
-	G7roqERQ14tsrqIWusOvWvREaZlQSRb6gmePOwrN/R96MJo7lKSXaPJITcj0jYVBdIKmCkQY1N9
-	ff20AX1M7ogUkJsM3gghK+5/xJJyddARyi6L/coNlR9pdGixPLfkwN/u4rRqrvCoj94zZeq15Sc
-	GcoMBWvoEwy183IpBvUHEN7TyNu+D7oQZwG3ZLS/utNwRJ3jIOJz+chEkOoIhnPmkf5WvfO8CVA
-	BOJNaONRk7olz8Twqd/0nD49Mxeq3TPfnHtv22zRz/DWWuqy/b7EJTJ8NPhd9Fb8W9fh4v2HjFn
-	yGQf0HcTQKv5gP0JuhvoyYr+NH/GrgfwQbsUDVEUz9KXEUJxcbkfkZ2Tk/K43xmkZRWxJGZSa9C
-	va32Zy8mBziQWWkraSoqElkT+fRD8Vl8Z/geo1447YvnSR4c8PK8VfTEQccx6g==
-X-Received: by 2002:a17:90a:c2d0:b0:3aa:f2c4:12ea with SMTP id 98e67ed59e1d1-3b1b0a43396mr5927983a91.20.1794702925787;
-        Sat, 14 Nov 2026 16:35:25 -0800 (PST)
+        bh=5zQIlcf6igv8ZMfOTPYoi4S+xdDj9g/4a1seM7IGeaI=;
+        b=WWqUrhQ9vSOBsDTJPq2nxJkUKu2QZdIB9Y6XQnZkb2wcLNsZ2fmyqSCX0dfclLErVR
+         iiSdN9SM4r8q/NJ0htVoocyq3Duwywk5qZMI+5D+eo3qnt2WTApHjbTJMqUndXpR7E4p
+         1xdzdht7DiFdMfmIzF3BGEzVf95k+B/aIZKmZ5WgSr4B9a+AAH9x47xnSlwNXwrpCzlN
+         wtcjom9K2AIf5d8hEuM+O1CkFjpf1LuImDSW1V4LlweedzkCxc2E3rcR9XzMbyyolbiQ
+         2c/jnuMA8XJZfJMYWTJdV2/LzQkWXX8rJ1DpzCwngCb5hUhIhCQ3PtSJjc6ldYnzPIi/
+         WrQA==
+X-Gm-Message-State: APuU4Z8fC0FfK9uAOApeOhE1xIKPZSm+nHXLS+wAh8siKrJngsjQX/8x
+	0Exm0wUGM/JQdLZEY5WNyphXy8X7A/9N0xFbzm/OZaIg7XYq8WdUWDbkH76LZKCK
+X-Gm-Gg: AYBFou2HIU1HbDrsj8jDAdYGY9e6fVuvPSwemKgXiTVnWseYKO8tjESihcIAf3OijFd
+	TaZpRHStN2iSsYbBxHaBzNLagZ5zjHZyLXE6sffhuIzo9HlImXYG96Sqqc2WTFfHrUCTy3P7oh8
+	Sn1lQC1d3SqKsfpOmdyeXl/MrmcHGhSMhCvNHPFt/5kJ6mq2enIwRXtav/StkvlMJLevVbKBHlg
+	iNsMDKKFptvmCKjIOOgo8ISig9w1n4KkxR2SpepZXnSQAuoDbcgEn0wAS1pd2j379EN4jigRcA/
+	HtXtuL8GVeOYFA8dWvtvj0eHJf8I9k6bCypUiGgPyOQoPGjeeYmKDxpoYTTsfdxkTixCvqoDevI
+	7g5icdlf1tXd1STkBZivbT6ItUWwzj6M1vMIFI1o6JRF5navd/JHApeUhM5HxIxhO8INGfLK7Iz
+	4nnglmI4+a7SmD1Ztpf8OUin+BPArHexYTjl+P24owdK2TzPgyUPRmr9NCedtiPcgRGoe/NTsH/
+	/VjGRSsF5wtw0hSdkj08+2pnKJ29Iaq7PYkCqiOZ7LptfamdXguwwqGE3mfaVbnrExfWDKQb+ZL
+	KZ2OKmfyFw03xlWDN5r5OgFVRhLD6qWPRFJgYa7nZWEB1s5FWsO9BlJ4jU+H9g==
+X-Received: by 2002:a17:90b:574b:b0:3ae:2969:903f with SMTP id 98e67ed59e1d1-3b1b0b8bcb7mr6057137a91.45.1794702922483;
+        Sat, 14 Nov 2026 16:35:22 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1b39fb9a3sm5464089a91.3.2026.11.14.16.35.23
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1b39fb9a3sm5464089a91.3.2026.11.14.16.35.21
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 14 Nov 2026 16:35:24 -0800 (PST)
+        Sat, 14 Nov 2026 16:35:21 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 2/6] rrs/tools/common.py: import BitBake after checking out its revision
-Date: Sat, 14 Nov 2026 16:35:02 -0800
-Message-ID: <20261115003506.53654-3-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 1/6] rrs/tools/common.py: don't write a log file without TOOLS_LOG_DIR
+Date: Sat, 14 Nov 2026 16:35:01 -0800
+Message-ID: <20261115003506.53654-2-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261115003506.53654-1-tim.orling@konsulko.com>
 References: <20261115003506.53654-1-tim.orling@konsulko.com>
@@ -63,60 +63,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Nov 2026 00:35:26 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5380
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5379
 Content-Type: text/plain; charset="utf-8"
 
-load_recipes() imported bb.fetch before recipeparse.init_parser() checks
-out the BitBake revision for the branch, so the bb package came from
-whichever revision was checked out before, e.g. an old one left by
-rrs_upgrade_history.py, while the rest of BitBake came from the new
-one. rrs_upstream_history.py then failed with "cannot import name
-'multiprocessing' from 'bb'". Import it after init_parser().
+get_logger() always added a log file at TOOLS_LOG_DIR/<name>, but
+TOOLS_LOG_DIR is empty by default, so the file was created in the
+current directory. In the Docker image that is /opt/layerindex, which
+the layers user can't write to, so every RRS update script failed as
+soon as it started. Only log to the console when TOOLS_LOG_DIR is not
+set.
 
-[YOCTO #16501]
+[YOCTO #16499]
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- rrs/tools/common.py            |  4 +++-
- tests/test_rrs_load_recipes.py | 35 ++++++++++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+), 1 deletion(-)
- create mode 100644 tests/test_rrs_load_recipes.py
+ docker/settings.py       |  2 +-
+ rrs/tools/common.py      | 16 ++++++++++------
+ settings.py              |  2 +-
+ tests/test_rrs_logger.py | 38 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 50 insertions(+), 8 deletions(-)
+ create mode 100644 tests/test_rrs_logger.py
 
+diff --git a/docker/settings.py b/docker/settings.py
+index a610052..9f18a55 100644
+--- a/docker/settings.py
++++ b/docker/settings.py
+@@ -309,7 +309,7 @@ AXES_COOLOFF_TIME = 1
+ # Full path to directory to store logs for dynamically executed tasks
+ TASK_LOG_DIR = "/opt/layerindex-task-logs"
+ 
+-# Full path to directory where rrs tools stores logs
++# Full path to a directory where the rrs tools also write their logs, if any
+ TOOLS_LOG_DIR = ""
+ 
+ USE_X_FORWARDED_HOST = True
 diff --git a/rrs/tools/common.py b/rrs/tools/common.py
-index 0caf1c9..ccdbe62 100644
+index 0cac1f7..0caf1c9 100644
 --- a/rrs/tools/common.py
 +++ b/rrs/tools/common.py
-@@ -93,7 +93,6 @@ def get_recipe_files(layerdir):
- def load_recipes(layerbranch, bitbakepath, fetchdir, settings, logger,
-         recipe_files=None, nocheckout=False):
-     from layerindex import recipeparse
--    from bb.fetch import FetchError
+@@ -34,12 +34,16 @@ def get_logger(name, settings):
+     handler.setFormatter(formatter)
+     logger.addHandler(handler)
  
-     try:
-         (tinfoil, tempdir) = recipeparse.init_parser(settings,
-@@ -102,6 +101,9 @@ def load_recipes(layerbranch, bitbakepath, fetchdir, settings, logger,
-     except recipeparse.RecipeParseError as e:
-         logger.error(str(e))
-         sys.exit(1)
-+    # Only now that init_parser() has checked out the BitBake revision for the
-+    # branch, or bb would be loaded from whichever one was checked out before
-+    from bb.fetch import FetchError
+-    filename = os.path.join(settings.TOOLS_LOG_DIR, name)
+-    maxBytes = 8388608 # 8MB
+-    handler = RotatingFileHandler(filename, maxBytes=maxBytes)
+-
+-    handler.setFormatter(formatter)
+-    logger.addHandler(handler)
++    # Also log to a file if a directory is set for it; otherwise the console
++    # output is all there is (as collected by cron, systemd or docker)
++    log_dir = getattr(settings, 'TOOLS_LOG_DIR', '')
++    if log_dir:
++        filename = os.path.join(log_dir, name)
++        maxBytes = 8388608 # 8MB
++        handler = RotatingFileHandler(filename, maxBytes=maxBytes)
++
++        handler.setFormatter(formatter)
++        logger.addHandler(handler)
  
-     layer = layerbranch.layer
-     urldir = str(layer.get_fetch_dir())
-diff --git a/tests/test_rrs_load_recipes.py b/tests/test_rrs_load_recipes.py
+     logger.setLevel(logging.INFO)
+ 
+diff --git a/settings.py b/settings.py
+index 324ad50..495af1e 100644
+--- a/settings.py
++++ b/settings.py
+@@ -298,5 +298,5 @@ AXES_COOLOFF_TIME = 1
+ # Full path to directory to store logs for dynamically executed tasks
+ TASK_LOG_DIR = "/tmp/layerindex-task-logs"
+ 
+-# Full path to directory where rrs tools stores logs
++# Full path to a directory where the rrs tools also write their logs, if any
+ TOOLS_LOG_DIR = ""
+diff --git a/tests/test_rrs_logger.py b/tests/test_rrs_logger.py
 new file mode 100644
-index 0000000..97f3d26
+index 0000000..b03c928
 --- /dev/null
-+++ b/tests/test_rrs_load_recipes.py
-@@ -0,0 +1,35 @@
-+# layerindex-web - tests for load_recipes() in rrs/tools/common.py
++++ b/tests/test_rrs_logger.py
+@@ -0,0 +1,38 @@
++# layerindex-web - tests for the RRS tools' logger
 +#
 +# Licensed under the MIT license, see COPYING.MIT for details
 +#
 +# SPDX-License-Identifier: MIT
 +
++import logging
 +import os
 +import sys
 +import types
@@ -124,28 +156,30 @@ index 0000000..97f3d26
 +import pytest
 +
 +sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'rrs', 'tools'))
++from common import get_logger
 +
 +
-+def test_load_recipes_checks_out_bitbake_before_importing_it(monkeypatch):
-+    # [YOCTO #16501] bb must come from the revision init_parser() checks out
-+    import common
-+    # As common_setup() does for the scripts: recipeparse imports utils
-+    monkeypatch.syspath_prepend(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'layerindex'))
-+    from layerindex import recipeparse
++@pytest.fixture
++def readonly_cwd(tmp_path, monkeypatch):
++    os.chmod(tmp_path, 0o555)
++    monkeypatch.chdir(tmp_path)
++    yield tmp_path
++    os.chmod(tmp_path, 0o755)
 +
-+    class Stop(Exception):
-+        pass
 +
-+    def fake_init_parser(*args, **kwargs):
-+        assert 'bb.fetch' not in sys.modules
-+        raise Stop()
++def test_no_log_file_without_tools_log_dir(readonly_cwd):
++    # [YOCTO #16499] the scripts run in a directory they can't write to
++    logger = get_logger('RRSTestNoDir', types.SimpleNamespace(TOOLS_LOG_DIR=''))
++    assert not [h for h in logger.handlers if isinstance(h, logging.FileHandler)]
++    assert os.listdir(readonly_cwd) == []
 +
-+    for name in [m for m in sys.modules if m == 'bb' or m.startswith('bb.')]:
-+        monkeypatch.delitem(sys.modules, name)
-+    monkeypatch.setattr(recipeparse, 'init_parser', fake_init_parser)
-+    with pytest.raises(Stop):
-+        common.load_recipes(types.SimpleNamespace(branch=None), '/nonexistent', '/nonexistent',
-+                            types.SimpleNamespace(), None)
++
++def test_log_file_in_tools_log_dir(tmp_path):
++    logger = get_logger('RRSTestDir', types.SimpleNamespace(TOOLS_LOG_DIR=str(tmp_path)))
++    logger.info('hello')
++    for h in logger.handlers:
++        h.flush()
++    assert 'hello' in (tmp_path / 'RRSTestDir').read_text()
 -- 
 2.56.1
 
