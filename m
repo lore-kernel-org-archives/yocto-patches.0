@@ -1,92 +1,81 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.30125.1794841877669075152
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.33967.1794850853355220286
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 07:11:17 -0800
+ Mon, 16 Nov 2026 09:40:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=ViyuZFBH;
- spf=pass (domain: gmail.com, ip: 209.85.161.43, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-70b875f6f13so3797519eaf.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 07:11:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794841877; x=1795446677; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=O2EJJwIUj6tJdGMBRlr7L9y1wW0NcVB5Tuk5qLq81/U=;
-        b=ViyuZFBHz52ntwzsgv8B6tMV61gXaRfzg/USfij8j3DRbmI6Uq/pdV7vlOjZ+Zh7LM
-         kfDHFDTllJsdsKo8vQgYECe1DYez+5ECk6SNfofTq9Kse60L17ihx8loJIahVjc65cyo
-         83MHtPwLqdKLPSYj1rnY3ljJhFb9XVZfAPouPLSin0d74e1x9BYEYH5fMZLdMJGQQFjU
-         85eYrBFBbyb0cmpl792xYldbdJkiwwRFf2bdnQdOzQp76tqDBlT3F/gAVLXxGMTfh2z4
-         Qo7oaVf2VxKR50ut109NlOdYj0F79xqlqHawIJBL1KFiEYZ4Dq2ED4Ccf86d8qOEZAk6
-         xRug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794841877; x=1795446677;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=O2EJJwIUj6tJdGMBRlr7L9y1wW0NcVB5Tuk5qLq81/U=;
-        b=brNcP9xmTcjxWyDYPD0hPnr2j+Vok6owUgxOYK81uXlwOrY/FLeAO5+s1NKbZlBak7
-         xkojXe/iLZidv/VdazgOC21I0S6NsXN2qZ5vktGKiY/NRrCk/8ZL0zwkF2/2GysHtpRW
-         Z3QY2vA/UnsQunNieN+mPsUpOY/qlX28Y7CWmKiZTRc30oHkVykdPvFEdPiosIN59m92
-         3CnUdd/gs7rpHPOpif2qreK6A3YLxFq9+thRVnTY7VVA3VFyZYzwOtvu7kuLH0OyKQIC
-         UfIQpK8bSyP7KbXuRYsKFLE2hAZxgUkxYcB2M3Ypp+RVy9zBAaOCYslOQGBNdbSVMNff
-         csLg==
-X-Forwarded-Encrypted: i=1; AL+hErExo66VVGz8x9xi/PhukUO/IDNvVzVekk36PbEO4DziFij6zrG3NYQsgF5RzQqV5RqX83an4sKXts9Q9F5N@lists.yoctoproject.org
-X-Gm-Message-State: APuU4Z9/02JRGs+1zh3W0Sp31hup5TlxYHgfvP2RsnsSg0RWwrrsXg4P
-	ngA+LlNB1WewVuS7HHVblxGzFFW0vMqZ3hXenNRHJWfvVJfYoBQJIJkL
-X-Gm-Gg: AYBFou3fhsZQLtYvC2tyf1+LsOpxizlECzNE1XPvnpMifehjv16Zahu+dGsacgsgPEf
-	ghWICtps+OVbCdb40mDJH6XR1b3DKm7gl2iwAsQcD+1uPIMbTFm6f4/gJhvhVr4r5DRiEM38tb2
-	0RopRoJr4Zpwae3KTMeoEyLJ5n4v78OK7YCC6rinWDmR987Wk8xMAiyDvBJo2t8rCV7+AtaV+EG
-	DPfBk4r7gir3eYgQAAc9cXS++nkwjC7gb2Z+gymbOkHV+qinUADmEA+S6VxGLXDYB/HepE34PUY
-	wU5wTxGLs0waQVebv5TprCIG5o9dARA7/X+uxCRnSNfd9yycA4uGFHFO4FdiyIrJcu/T+XZ2bFF
-	dsEEFo4cRFkzK1uiHYPPO5beVdCixCSuOjFnlWIwUCfWn2p+fyQn5cVZ44pJSYO8+LpqmQhVCsI
-	jBzYC4PckNSchHGiY2ZDK04mz2ze6dOHrl48QFTCdpQPrBzM8TEuAojdm29JatXCdJYocCZr71L
-	m8ivumyxp4uY2Sqm5rfi4gQeeYswuDVB4esNOyKgMCS0GmhDXRelNmT9bCHe1S+/Me+l/jv5pTZ
-	IHw64F12GEG2zrL5RvN4pVjK+S/TBhwaGvGng2G3VZX68FUK88P0
-X-Received: by 2002:a05:6820:3382:20b0:700:52ae:7e48 with SMTP id 006d021491bc7-71ab507b913mr5079519eaf.47.1794841876754;
-        Mon, 16 Nov 2026 07:11:16 -0800 (PST)
-Return-Path: <majortomtosourcecontrol@gmail.com>
-Received: from [172.26.252.72] ([73.229.151.109])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71ab4335912sm8630316eaf.13.2026.11.16.07.11.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Nov 2026 07:11:15 -0800 (PST)
-Message-ID: <ac2f592c-a707-4bad-ac36-3f003ba449a5@gmail.com>
-Date: Mon, 16 Nov 2026 08:11:14 -0700
+ dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
+Received: from kernel.crashing.org (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6AGHeqBu3497279;
+	Mon, 16 Nov 2026 11:40:52 -0600
+Received: from [192.168.2.97] ([192.168.2.97])
+	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 6AGHepAn001521;
+	Mon, 16 Nov 2026 11:40:51 -0600
+Message-ID: <ee9c9aba-d3e0-4819-ba5e-bc1c87ac8655@kernel.crashing.org>
+Date: Mon, 16 Nov 2026 11:40:51 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [PATCH 3/6] refpolicy_common: ensure we start
- from a clean state in do_compile
-To: Chen Qi <chenqi_hycx@cetc.com.cn>, yocto-patches@lists.yoctoproject.org
-Cc: chen_q07@163.com
-References: <20261116025620.2558594-1-chenqi_hycx@cetc.com.cn>
- <20261116025620.2558594-4-chenqi_hycx@cetc.com.cn>
+Subject: Re: [yocto-patches] [pseudo][pseudo-1.9]PATCH 00/10] Backports from
+ master to 1.9 branch
+To: yocto-patches@lists.yoctoproject.org, Yoann Congal <yoann.congal@smile.fr>
+References: <1794413712-18072-1-git-send-email-mark.hatle@kernel.crashing.org>
+ <DMT7HDZT3P6O.1DHC10SI0D1UB@smile.fr> <DMUA3YZ5XCVE.34QEVSM08HIU2@smile.fr>
 Content-Language: en-US
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-In-Reply-To: <20261116025620.2558594-4-chenqi_hycx@cetc.com.cn>
-Content-Type: text/plain; charset=UTF-8
+From: Mark Hatle <mark.hatle@kernel.crashing.org>
+In-Reply-To: <DMUA3YZ5XCVE.34QEVSM08HIU2@smile.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 15:11:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5408
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 17:40:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5409
 
-Hi, Qi
+I've pushed this version and declared a 1.9.13 tag.
 
->@
-> The `bare` make target is to "delete all remaining generated files,
-> including modules.conf, and booleans.conf."[1]
->@
-> If we don't do 'make bare' at the start of do_compile, legacy build
-> artifacts such as booleans.conf, generated_definitions.conf, etc.
-> will remain there, making the building results unexpected.
+Commit is: 26afebdaafa416eefa51553fc28d827719c5aed5
 
-This may be the correct thing to do but would likely break my current
-workflow.
+--Mark
 
-In a private layer, I keep a "booleans.conf" that I apply via 
-do_configure:prepend.
-
-Thanks!
-
-Clayton Casciato
+On 11/13/26 12:02 PM, Yoann Congal via yocto-patches wrote:
+> On Thu Nov 12, 2026 at 12:46 PM CET, Yoann Congal wrote:
+>> On Wed Nov 11, 2026 at 5:15 PM CET, Mark Hatle via yocto-patches wrote:
+>>> The following are backporting a small number of fixes:
+>>>   Add open_tree test case
+>>>   Fix makewrapper compilation warning
+>>>   Don't require linux/mount.h (part of the open_tree work)
+>>>   State a minimum gcc 5 requirement
+>>>   Add in the parallel rename/link locking
+>>>
+>>> It is also adding to new files:
+>>>   Add a README.security and AGENTS.md file
+>>>
+>>> Note, there is are a couple of additional pending changes likely
+>>> specifically for Yocto Bug 16493.  This is still in testing and
+>>> will be sent to the list once ready.
+>>>
+>>> Mark Hatle (10):
+>>>    test: Skip open_tree tests when the function or syscall is unavailable
+>>>    makewrappers: Don't generate unused _int paths with noignore_path
+>>>    ports/linux: Don't require <linux/mount.h>
+>>>    configure: Require GCC 5 or later
+>>>    pseudo_client: serialize path changes across clients
+>>>    ports: hold the path lock in create and metadata wrappers
+>>>    ports: check created files under the path lock before recording them
+>>>    test-parallel-ops: Add a parallel create/rename/link/chmod test
+>>>    README.security: Add information specific to file/process security
+>>>    AGENTS.md: Add to assist future developers
+>>
+>> Hello,
+>>
+>> FWIW, I plan to integrate these onto my stables branches to test them.
+>>
+>> Thanks!
+> 
+> This series passed a-full on scarthgap (on first try!):
+> https://autobuilder.yoctoproject.org/valkyrie/#/builders/29/builds/5116
+> 
+> Integration was done with this patch:
+> https://git.yoctoproject.org/poky-contrib/commit/?h=stable/scarthgap-nut&id=7a6ca5322b313aabf826b0105eaf37a0add2f3b0
+> 
+> I plan to do the same for blacksail and wrynose. It might take 1-2 weeks
+> to get sufficient testing on all those branches.
+> 
+> Regards,
