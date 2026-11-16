@@ -1,59 +1,60 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6166.1794870779359546509
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6167.1794870780229464495
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 15:12:59 -0800
+ Mon, 16 Nov 2026 15:13:00 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=fuhQtU+U;
- spf=pass (domain: konsulko.com, ip: 209.85.221.181, mailfrom: scott.murray@konsulko.com)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5ead9f60e26so275896e0c.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 15:12:59 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=DbUjCiY7;
+ spf=pass (domain: konsulko.com, ip: 209.85.221.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5ee3e658c72so1887962e0c.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 15:13:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1794870778; x=1795475578; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1794870779; x=1795475579; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=RJT/m9n6Fpi+SgSMyfsJ4TqBOqv2a3h7NITRz83Fw0Y=;
-        b=fuhQtU+UEPzE/6HyZiilocny9bH2AZPPIf8ryAKQunbB8kIkQMvt/vN5Krs7Ggh8+C
-         m/UjvPMUlL3RvZSj0nQwp3mwjfaII42ybCHqhAiKVy+bMk//OJoIy6kTL8ACbvDmEy32
-         uF7ulcmoqCVky3IvhEmQ2xVZcvzwAim39L0ic=
+        bh=nDH6n0d2XqWRj0XBEFH3BWDYe4ThDRF50FWYiZNZyyw=;
+        b=DbUjCiY78glq4RywLFj3X4oxkP3XxfDqiTLGo+0EpggiENizcQm/O+O0iMaoGdaL6l
+         +e4wY34YP+/QOwKADDuwHoKistIaXi0gHy6DrrT32IexWg7Ee76/MG6pcvYzPgNDdp0C
+         N82GPkwKs4q3a570BVfyuHvLVdooH1JJpxUYo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794870778; x=1795475578;
+        d=1e100.net; s=20260707; t=1794870779; x=1795475579;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=RJT/m9n6Fpi+SgSMyfsJ4TqBOqv2a3h7NITRz83Fw0Y=;
-        b=EndqpiAlCFEbkZFjL/43x5AdDep31JQLlg1/scc3PuSBDgLxf3EQd0ROQRwCwST9Sg
-         32Hkx0PxGafUSbn7K6/ESE5lQ47Q3SxUiCY3KZiAcNlT1catVKATcD/Sku+VXTi+rOm2
-         /71/5T1C0ke9wWPie6rD+BZTpzBs8luDUZadMmUeZl9KxQolw8HmqT451iif+i1ty7H7
-         f2ypskBObPBPJqgCSAzER3WbYt3OHmzGvGut8ZS0uS+vNggDoQVk719WBviHlgLq0F0P
-         RUqZZNJBYYr5Op/9617qSiMgOPjwn3cXjKHTB8KtnFVjLqhXl9FZ7iREReLHpVO5l6as
-         3c2A==
-X-Gm-Message-State: APuU4Z9CNcfoEW0EBiSFTRZkYHPRQ3YSsrT8bquWHFKTHR/XOr2uBGPf
-	GeAD139sN6rwfwPYwn3OyGwF7smTk5NkN88fDrv2J+Mk8Yp4JSCMqO8LM68URCcHBPbjL2qLUvA
-	ptDS+asM=
-X-Gm-Gg: AZFdTZep187whmEsBKda3K+nub/4XLgapA+6KzRxbWZyxK5PeO+XiBHx5gCq9YjKE3m
-	Bm9sUrKxcGSgGVNxWyZfY5LRTiMZ3dabq9Fgj3W3p63EJPJp0N0cHEeomzjAZzuUIjum8irl0Yy
-	SXKO+Wj++ZHd/2stfxEfwLgr6kgk1Tm+E8+wiOm2v9zrvEPBDaAIT/ZrxbcrZRkHeF01EEztsTq
-	cSLMbnOBN2LzBJhOrwd2W5+rJ5jm6zZyF1MRMppngw4xx9CXGyAt99541tRpdXcR0s8jm65Fley
-	rllLjYbSx+wFYHtY05QRkj8HI0/WLHqx4BymtzZEO9I+aHSe1ePfkemRoQEiF5nzZPui70TjIhq
-	A1C8n/tijCzqc7PnmODxPwYCwzF8hIR+KcBHkz7KnDHK8c78ZMeNNMFffWqZr/xAnQ4Ujk+/lNL
-	uJ2GKbTnNkwLPsEBsyw0VS/gyHWn1H8xB/S/HCe/FIyQMLCokyPaagu7E0DGAiwT1yjp3KrSIf8
-	kGn58PX2F9VBxGWUvplb4IzYqy851FF5XhOKBtl99p/iPDMIx9F/8EI+9w7//J2Kz7CF6fcrCtV
-	MQOc10A7LZuO7SoIWlypJhZSQLfdn+nRo1Y1OVE1t8XGJSfBR92We6TPvIsgiapRr9VUEipySvL
-	JnNkoQRxFLMzKBOk7Ahki4RJ42gXCJ1JSFPONFzHAXeK13iAosI5RJ4qWEBRg7TfHGw==
-X-Received: by 2002:ac5:c4cf:0:b0:5ed:c029:411d with SMTP id 71dfb90a1353d-5ee5b7e9adcmr236496e0c.19.1794870778109;
+        bh=nDH6n0d2XqWRj0XBEFH3BWDYe4ThDRF50FWYiZNZyyw=;
+        b=V79mTxD0pn/urmte+abjtyew2orgX5vfsVn/FAuXoxinln1hHNqIbi8LFkKeAMBtCr
+         lAKDkBcBgXaYDtbvxCgQRCq3tOTH3CMnRsS7sCJ+sUlYWvKVU3/TPnBmnmLMtPcU9BYY
+         cA1EkQ1VLnMH7zGbz0Q7sYzFfRXQLNvUbCpppAk+tKsV5bqGhFcXRO/hNEM/i8JZOcLB
+         xWa8rmeAiOVtomKj9rCQ7qqSyMQuA3E59+v/vkA/qWOe5/H93dkMeGn3MZBfSHxKeXgN
+         oRBsKcxGSNeXLLX9eo626T7yAiIN2EUjTOYZOefEIQ+rGNN8A3EAWHblvL/uAlRrNv8K
+         OYLw==
+X-Gm-Message-State: APuU4Z8YYX67FQu5pSJhsH3g7e/AAr4qeWeNAEjVnPVoYzQuHAHSOkqn
+	mosMvB5ssNEfsg0yyhG7wu5CglUkcHX5CBNdG6AoTa35sA2RBpgNPNg2uUVWtMPyZEdsXrQ9Dpe
+	LbWDShEw=
+X-Gm-Gg: AYBFou0fbeGwlrXwE2D7G7LqLQugn+sVEuQVDK8qFfGuHw8mK2pEI2u1wxaSG7kIH3O
+	BJ35LRO80mZawb9RRC6r7jpdK37vx4LM0MCTYoCFcRvGlMzoy9KBy1Rt9PGSvxtOZDYnQnjWOdP
+	VIhKb7F4WLN6R/sgS3h4s9e/yxWmnjuGfPNeyWXQB42gRCFWi4d2PX0B/50ViWXfivuSaL3mERv
+	H3LnnJuYShGOrXgLZVbc/OQIgk7qoz6xzJHyyaekIwoT9AK0zO7AEs0GKjGUGwJCH+oW9YRuYNL
+	NeIly/beJvYaYEPd+HGV9rsWATAu7CVI/0xdqAzlrfJ2T5JtxHS9J1SXiBae6NlR+Y/mMc/rk5N
+	d1ENxsInMfd4J11Owz0qvmxHOtAR9BzTOV/kB/9483qAC1TBjOPuiCtyFOIvw4K1MZLbHT16nV1
+	AtYX13Uo4c16KMKvX5dXMpIQPTEHKl1Au31WmCehRnBU8RxOSl7hmH48CF+RPbuzkl1HUnJTGih
+	BX3Y1fUklOSF4eKkGSpARYXodgRgbWRw/+OLv8JD6DeJudmPA8nuBTmqFV0HZR1IIwGBDaHy9ZD
+	jiZs4G9sMeq1y3msCYmd1YHHFvHC8yYcSChd13GR6ZoMS2blT/+s6KiE/Wcc43SZy5N/i7kwZ4Z
+	9jlsi3cDZpWKAmpWaqfgiyPKXoXy9GymRHLI5BxIFCopVSPfM7nFOkvrHIwDolC28EJJuji9BXg
+	i/jU2ltNEJxw8=
+X-Received: by 2002:a05:6122:4b18:b0:5e9:721c:72a8 with SMTP id 71dfb90a1353d-5ee344f0330mr4942618e0c.0.1794870778951;
         Mon, 16 Nov 2026 15:12:58 -0800 (PST)
 Return-Path: <scott.murray@konsulko.com>
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee34e9516dsm7575235e0c.12.2026.11.16.15.12.57
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee34e9516dsm7575235e0c.12.2026.11.16.15.12.58
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 15:12:57 -0800 (PST)
+        Mon, 16 Nov 2026 15:12:58 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][wrynose/rust][PATCH 07/19] rust: backport deterministic DocLinkResMap serialisation
-Date: Mon, 16 Nov 2026 18:12:28 -0500
-Message-ID: <203375664141e8e5b9af36385df101e8c45315bd.1794870526.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][wrynose/rust][PATCH 08/19] rust: sort hygiene data before it is encoded
+Date: Mon, 16 Nov 2026 18:12:29 -0500
+Message-ID: <075607fd42aafd71aaeb09d91687ac975626e38b.1794870526.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <cover.1794870526.git.scott.murray@konsulko.com>
 References: <cover.1794870526.git.scott.murray@konsulko.com>
@@ -61,86 +62,112 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 23:13:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5446
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5447
 Content-Type: text/plain; charset="utf-8"
 
 From: Sunil Dora <sunilkumar.dora@windriver.com>
 
-Backport of rust-lang/rust commit f9d9939 [1] by jprochazk and mejrs.
-DocLinkResMap was an UnordMap, so its iteration order varied with the
-build host and that order reached the encoded rmeta. An FxIndexMap keeps
-it stable. The commit is in rust 1.99, so this only carries it until the
-next rust upgrade.
+HygieneEncodeContext::encode walks a hash set while it writes the syntax
+context and expansion records into the rmeta, so the byte order of the
+records follows the iteration order of the set and differs between
+builds on the arm workers. The added patch sorts both sets before they
+are written.
 
-[1] https://github.com/rust-lang/rust/commit/f9d9939467a5185a72f0ee8da778a0b71fc966ae
+Upstream tracks this as rust-lang/rust issue 129094 [1] and has fixed
+it differently in pull request 161450 [2], merged after 1.99 branched.
+That change is too big to backport to 1.98 safely, so carry this small
+sort until a rust upgrade contains it.
+
+[1] https://github.com/rust-lang/rust/issues/129094
+[2] https://github.com/rust-lang/rust/pull/161450
 
 [YOCTO #16376]
 
+Signed-off-by: Alejandro Enedino Hernandez Samaniego <alejandro@enedino.org>
 Signed-off-by: Sunil Dora <sunilkumar.dora@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 6bc5642801f0ac8960f5f65cf47c7f24d3d565c1)
+(adapted from oe-core commit 7f97e87e41b49899ecdbde1ed5205f4b6f033c89)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- ...oc-link-metadata-order-deterministic.patch | 40 +++++++++++++++++++
+ ...hygiene-encoding-order-deterministic.patch | 59 +++++++++++++++++++
  recipes-devtools/rust/rust-source.inc         |  1 +
- 2 files changed, 41 insertions(+)
- create mode 100644 recipes-devtools/rust/files/0008-rustc-hir-make-doc-link-metadata-order-deterministic.patch
+ 2 files changed, 60 insertions(+)
+ create mode 100644 recipes-devtools/rust/files/0009-rustc-span-make-hygiene-encoding-order-deterministic.patch
 
-diff --git a/recipes-devtools/rust/files/0008-rustc-hir-make-doc-link-metadata-order-deterministic.patch b/recipes-devtools/rust/files/0008-rustc-hir-make-doc-link-metadata-order-deterministic.patch
+diff --git a/recipes-devtools/rust/files/0009-rustc-span-make-hygiene-encoding-order-deterministic.patch b/recipes-devtools/rust/files/0009-rustc-span-make-hygiene-encoding-order-deterministic.patch
 new file mode 100644
-index 0000000..8cd64f2
+index 0000000..47a713f
 --- /dev/null
-+++ b/recipes-devtools/rust/files/0008-rustc-hir-make-doc-link-metadata-order-deterministic.patch
-@@ -0,0 +1,40 @@
-+From 6630363e7bc9bc0926300e242aa538b8d92cdb95 Mon Sep 17 00:00:00 2001
-+From: jprochazk <pjanv42@gmail.com>
++++ b/recipes-devtools/rust/files/0009-rustc-span-make-hygiene-encoding-order-deterministic.patch
+@@ -0,0 +1,59 @@
++From 9c190d14f93bf27c7f1c94d400cda6f48f285a34 Mon Sep 17 00:00:00 2001
++From: Alejandro Enedino Hernandez Samaniego <alejandro@enedino.org>
 +Date: Tue, 15 Sep 2026 17:05:36 +0530
-+Subject: [PATCH] make DocLinkResMap an FxIndexMap
++Subject: [PATCH] rust: sort syntax contexts and expansions before encoding
 +
-+DocLinkResMap was an UnordMap, so its iteration order varied with the build
-+host and that order ended up in the encoded rmeta. An FxIndexMap keeps the
-+serialisation stable. Only the code change is carried here, not the
-+upstream run-make test.
++HygieneEncodeContext encodes the pending syntax contexts and expansions in
++hash-map order, so the encoded rmeta depends on the build host. Sort both
++before encoding. Upstream has fixed the same problem with a different
++approach in https://github.com/rust-lang/rust/pull/161450, merged after
++rust 1.99 branched, so this stays a local fix rather than a backport
++until a rust upgrade contains it.
 +
-+Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/f9d9939467a5185a72f0ee8da778a0b71fc966ae]
++Patch by Alejandro Enedino Hernandez Samaniego, from his strict-version-hash
++v5 series for openembedded-core:
++https://lists.openembedded.org/g/openembedded-core/topic/120939810
 +
++Upstream-Status: Inappropriate [OE-specific]
++
++Signed-off-by: Alejandro Enedino Hernandez Samaniego <alejandro@enedino.org>
 +Signed-off-by: Sunil Dora <sunilkumar.dora@windriver.com>
 +---
-+ compiler/rustc_hir/src/def.rs | 6 ++++--
-+ 1 file changed, 4 insertions(+), 2 deletions(-)
++ compiler/rustc_span/src/hygiene.rs | 10 ++++++----
++ 1 file changed, 6 insertions(+), 4 deletions(-)
 +
-+diff --git a/compiler/rustc_hir/src/def.rs b/compiler/rustc_hir/src/def.rs
-+index d0300d6..e903c0c 100644
-+--- a/compiler/rustc_hir/src/def.rs
-++++ b/compiler/rustc_hir/src/def.rs
-+@@ -4,7 +4,7 @@ use std::fmt::Debug;
++diff --git a/compiler/rustc_span/src/hygiene.rs b/compiler/rustc_span/src/hygiene.rs
++index 1c74205..a464eca 100644
++--- a/compiler/rustc_span/src/hygiene.rs
+++++ b/compiler/rustc_span/src/hygiene.rs
++@@ -1313,12 +1313,12 @@ impl HygieneEncodeContext {
 + 
-+ use rustc_ast as ast;
-+ use rustc_ast::NodeId;
-+-use rustc_data_structures::unord::UnordMap;
-++use rustc_data_structures::fx::FxIndexMap;
-+ use rustc_error_messages::{DiagArgValue, IntoDiagArg};
-+ use rustc_macros::{Decodable, Encodable, StableHash};
-+ use rustc_span::Symbol;
-+@@ -969,4 +969,6 @@ pub enum LifetimeRes {
-+     ElidedAnchor { start: NodeId, end: NodeId },
-+ }
++             // Consume the current round of syntax contexts.
++             // Drop the lock() temporary early.
++-            // It's fine to iterate over a HashMap, because the serialization of the table
++-            // that we insert data into doesn't depend on insertion order.
++             #[allow(rustc::potential_query_instability)]
++-            let latest_ctxts = { mem::take(&mut *self.latest_ctxts.lock()) }.into_iter();
+++            let mut latest_ctxts: Vec<_> = { mem::take(&mut *self.latest_ctxts.lock()) }.into_iter().collect();
+++            latest_ctxts.sort_by_key(|ctxt| ctxt.0);
++             let all_ctxt_data: Vec<_> = HygieneData::with(|data| {
++                 latest_ctxts
+++                    .into_iter()
++                     .map(|ctxt| (ctxt, data.syntax_context_data[ctxt.0 as usize].key()))
++                     .collect()
++             });
++@@ -1330,9 +1330,11 @@ impl HygieneEncodeContext {
 + 
-+-pub type DocLinkResMap = UnordMap<(Symbol, Namespace), Option<Res<NodeId>>>;
-++// FxIndexMap is necessary because its data ends up in .rmeta files, so its
-++// iteration order must be consistent. See #159677 for context.
-++pub type DocLinkResMap = FxIndexMap<(Symbol, Namespace), Option<Res<NodeId>>>;
++             // Same as above, but for expansions instead of syntax contexts.
++             #[allow(rustc::potential_query_instability)]
++-            let latest_expns = { mem::take(&mut *self.latest_expns.lock()) }.into_iter();
+++            let mut latest_expns: Vec<_> = { mem::take(&mut *self.latest_expns.lock()) }.into_iter().collect();
+++            latest_expns.sort_by_key(|expn| (expn.krate, expn.local_id));
++             let all_expn_data: Vec<_> = HygieneData::with(|data| {
++                 latest_expns
+++                    .into_iter()
++                     .map(|expn| (expn, data.expn_data(expn).clone(), data.expn_hash(expn)))
++                     .collect()
++             });
 +-- 
 +2.43.0
 diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index a294201..a50a3fd 100644
+index a50a3fd..562f4af 100644
 --- a/recipes-devtools/rust/rust-source.inc
 +++ b/recipes-devtools/rust/rust-source.inc
-@@ -10,6 +10,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://0004-Backport-commits-from-rust-Fix-selftest-llvm23.patch;patchdir=${RUSTSRC} \
+@@ -11,6 +11,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
              file://0005-rustc_codegen_llvm-Do-not-pass-amx-tf32-to-LLVM-23.patch;patchdir=${RUSTSRC} \
              file://0007-cargo-omit-host-triple-from-unit-metadata-hash.patch;patchdir=${RUSTSRC} \
-+            file://0008-rustc-hir-make-doc-link-metadata-order-deterministic.patch;patchdir=${RUSTSRC} \
+             file://0008-rustc-hir-make-doc-link-metadata-order-deterministic.patch;patchdir=${RUSTSRC} \
++            file://0009-rustc-span-make-hygiene-encoding-order-deterministic.patch;patchdir=${RUSTSRC} \
  "
  SRC_URI[rust.sha256sum] = "be1816e7f6c40abb90245ad6e024bed2a7e88d7dda4561e4d5470207df616b9f"
  
