@@ -1,127 +1,146 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (BL0PR03CU003.outbound.protection.outlook.com [52.101.53.67])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.919.1794856612132253582
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1443.1794857992424374506
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 11:16:52 -0800
+ Mon, 16 Nov 2026 11:39:52 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=g6TF2gus;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.53.67, mailfrom: mark.hatle@amd.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OabWdeqM2FErnn4WlfMNhdui+BTTqZxvDAQoT1I9PY8ji67/hF7PoW+YRtULEhbGFD/5qsa1pfJ4nyDQRplncD14knR3L7N0ElPIQDZugJf5RbQvLDoQn0DqNrEncJ6AJCS3DiEena7tZReugq3xFIcPGPTN+hdQJCijO+5vypMsaykj/9Z5l1kRJtOYchH0dp0UzXSxyGZoVQCgK8JXBTT9anIAR//DmADMMnPoB49KqoaWJxOYQbiFRAjHzRho2XvKYDcrNbm5nAz707qMu6SQsDPfkMWb1GA/fDnv7JkG0LEfL/Ix5vBHag4ecOmnoFf/pG5UJNuAdOegCN6ozQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HqWLNHXPHjQw65bk2BHFvLgQOPdihJyIBo1MpBhwBQc=;
- b=Qkt+5vjXOlu+sGrJEagMJrwmXY/dGMTr+bBlGWHnlNsfqbvt6L0XWBwe4qGAIwfj169KztN2EwAKx+8gqMmX3xRC82MJn94XH4FAQnr6Ip9sJ6FcakHT5ngZQOKFwYmH2yO+vT1RZ79XycTTakHdSsiupE/LvOi0NKMWro1fLiYt/aKe+nW1GzjCuMjZEEdg6ZhkCE5iRKJjcfnlR4iQiI7bBI08B46ZQz7fzYQVatkqh7XASM7gOo18E5C1cTuWo68T4BmUM7cn4Wut8QAklvtnEdkMOSeVlSd7/skxabcJ0mXndwgeXlqR5/P9vP6arL2r5kr9TqfTbqrmyrNqug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
- smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
- action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HqWLNHXPHjQw65bk2BHFvLgQOPdihJyIBo1MpBhwBQc=;
- b=g6TF2gus1RuQehs7gshkfc8CLqkg8iDmq++fWebArmcGyZN7/94RFhVZehFVAp3RjfIx5mGtgGjKS2qqBRD57wF4hf2p1Yr3hd4sfHC6iDZxR0jm2Lxf9AmXb3tNWwqAf6jxrq73oSlnFSRQs1WsSYC53C75SRRum89iiIKxwuk=
-Received: from SJ0PR13CA0135.namprd13.prod.outlook.com (2603:10b6:a03:2c6::20)
- by SA5PPFCB4F033D6.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e2) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Mon, 16 Nov
- 2026 19:02:45 +0000
-Received: from CO1PEPF00018863.namprd03.prod.outlook.com
- (2603:10b6:a03:2c6:cafe::4c) by SJ0PR13CA0135.outlook.office365.com
- (2603:10b6:a03:2c6::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.0 via Frontend Transport; Mon, 16
- Nov 2026 19:02:45 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CO1PEPF00018863.mail.protection.outlook.com (10.167.249.148) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.639.5 via Frontend Transport; Mon, 16 Nov 2026 19:02:45 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 16 Nov
- 2026 13:02:44 -0600
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 16 Nov
- 2026 13:02:44 -0600
-Received: from xcolc230100.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.57 via Frontend
- Transport; Mon, 16 Nov 2026 13:02:44 -0600
-From: Mark Hatle <mark.hatle@amd.com>
-To: <yocto-patches@lists.yoctoproject.org>
-Subject: [pseudo][PATCH 0/2] Attempt to prevent selinux related failures
-Date: Mon, 16 Nov 2026 12:02:42 -0700
-Message-ID: <20261116190244.2205781-1-mark.hatle@amd.com>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
+ dkim=pass header.i=@konsulko.com header.s=google header.b=BtDI5H4P;
+ spf=pass (domain: konsulko.com, ip: 209.85.216.50, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3b3a914e4c8so278382a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 11:39:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1794857991; x=1795462791; darn=lists.yoctoproject.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=CuO8pyiT3mrI1V7EPywclF15lzVkVzxAzIWzzuypzgE=;
+        b=BtDI5H4PuxacQLfgZ5oV9yBB7kkzR6LT6vlFjW3UOJZNB15u6fhyhDP4hE+ZnUCQ4a
+         KFOIxD8q5u5O8cqCnhCFK4PaILSl4MCcSV2B1RQfoto+7lIJ6nfz4jZySxEQ9SDQxPHk
+         wqpK3XGfSQOORDlGj5nUgY0rrOMigJpggYdqo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794857991; x=1795462791;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=CuO8pyiT3mrI1V7EPywclF15lzVkVzxAzIWzzuypzgE=;
+        b=VD0pjInD02MCG5sbja++5xa5ORk6NbqUTO4jt5eG1HCEwxAJo02h34dBZ9rmW8UxCS
+         gjOL1xIf2VSvzXP/Ps0saP9lllimM/5s5+RJqmQqkPOSbfsiUWY/rDUWmL16TVhUp1F7
+         TOnbZfCzN8V4X3SCtHluCVjJPiA0/fuXRygZqnr0UaJdap1SYv5VjNME3XQrKf/dGJKC
+         aBuSsbUdzO4bZESNH2CJSNiBlssX93sENpTExg2behyZnX+oIwCx1qMEmk6W6PyND2/z
+         s1jJ5ClMSOHYeSTaKaE198G1BWrsh/NKOctBxWbANZsSrjSRHTODeXIuyfJIIa3HiOdW
+         m9ug==
+X-Forwarded-Encrypted: i=1; AL+hErFP7ETA/ytEhtJUwRHoXGN/ea8JH+xQFw/m4bH9MBaH101Va0DHaZp2Zg8I5WMgyJ7UD6lJ1KYyNVhX7TsU@lists.yoctoproject.org
+X-Gm-Message-State: APuU4Z8D27d8/FNy+kp2Vz0aUu1K8mDLn+JZUcTEbKswRCJXoLO63yM3
+	OcCeaDfRP3hvyGSWjJzUZbIz9R627qi3V1bN0SdjdL35GNvcMmNt7J0U0sRMk0rGZFw=
+X-Gm-Gg: AZFdTZcWHj5cnfdMEW2ZxGajjnPa4SIToqI0HTLrUAmV1uCtF7FXtTjInfEIBvW3ikL
+	PgAy3qJeeicgF/M6QCRSZLstRq0JcxU4ZZP9Lbnf8OUKePIcUgQfn4aPYe1xhputzgIiR4VjVdh
+	n5DsOEmiSWwA5bKmJDGqImauR86QQRw2BiGibrKlAreDm3SFc0Od/KdhX6IfA3ltaorAmNBXOqc
+	V1PzK3cpHdfBQcMNGNkqYWBjVRgaotxuokbQLZaLtFZ5eercR5nSl1La0QVg1i/ZyCCqohwtKrN
+	NK18sVgZlyAIoBCVaLPYNWXMr3nf2wcfnMWn1VDRttddsXgHcwLcecpa/Q30n1thBNq9jxPff9B
+	I+Ip1goqFkKhCcwna2QyJ2sC3NOAPVkbdDf9xRgKT4KkFvSIw07oN8FWwoKsoatidI51PEnN8pm
+	dW82S4P3cYmkvZTavaxj80SLzXhx0CWWX7VkugOUoVnaKtR35JZfvNhUI1oEu1S/PJUJDr9eczo
+	+UYsd/DwHwZHdah9b1M7upw0CivgvRbSAK47OoCR/GLihSdVOoMJfvPs8vXpA4NoG1pEdS1w5/m
+	tK8dDR2znjs64G1TipRgQoxujqDCVcEnDj4MBcXlBJnP2pp2iWkjyrmcDk00S6kDq/wkQX6W3Ss
+	M3BbAc4BybpFFgp+l0BmOB+RJwSY=
+X-Received: by 2002:a17:90b:4d0b:b0:3ac:7556:8eed with SMTP id 98e67ed59e1d1-3b1b0a46811mr10660094a91.44.1794857991405;
+        Mon, 16 Nov 2026 11:39:51 -0800 (PST)
+Return-Path: <tim.orling@konsulko.com>
+Received: from localhost ([69.9.132.159])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b3abb786f7sm602275a91.1.2026.11.16.11.39.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Nov 2026 11:39:51 -0800 (PST)
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-Path: mark.hatle@amd.com
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF00018863:EE_|SA5PPFCB4F033D6:EE_
-X-MS-Office365-Filtering-Correlation-Id: c65232a6-f36a-4f19-f13f-08df441432be
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|36860700016|23010399003|82310400026|10067099003|56012099006|11063799006|261009223027099003|261021123027099003|261022075727099003|261021121427099003|261022105027099003|261026121527099003|261026140227099003|261028144727099003|261102123227099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: 7WaEVU+wug4OEmAjqDUkMMDChwzdHsMSmO6GUrZGoKsN11LHVLDPnLkyEFPjjKnQ2XSZbehn6N+xzzGog0az4M8GFJI+hmZDVAL1l1/rBk4+ys+YPmLA7quh48Dq+wHLEkZO8xLNRzbK+K5lAVmxHWZ01RsQ6Hb/vmKe6GF6g3g+fdDLhQuAiE/N16kq91Rd2i1mKmkkByjWnqDSl757DhMLJbI2U++5W2yVPRm3YSz50lHQCciL3wf4oKOTr03va77PxYPPWls7cYByezcdsPj90vXppEOeqB70uiKB8Jz4Lk7H25KamSXxQ22DFZOlABpPlXg0dCilPly3nPsXHqOyT00I0V6gi8yAVpQ9SUyDyb9rMpjdB1J1Hnd/jl28Tzl3yStMyKHDNuwtlQgZaCzQzjj2K5g/z6bxSivLH4AUuppC20R3eh96+NZchypdHPC77hal2QDjgF1XJwbfhBkE1Xb4+vSXgGRpnbHcxOqmqUWDnMCbyTKPXUtw3fzHqt6S+dt9KN6l1wLo/7y9Zn1CksEcKHJXf+jJuyK4Y/1Y/+yzq0yPMj5LuZCMKmeiv3hDSWeSB/7ZweY6WXcWAH0xdcDasXYL0JIokcBxVoFBakF19g3XGCrwCa10Omv1Xdq87WDQLhzAO/xQgI2XUG0r4avW2NzATdXym7TwYo7MDBnqc0js+AM54yBn2LfcZocTnpRCgmYfyO5uBJzs2A==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700016)(23010399003)(82310400026)(10067099003)(56012099006)(11063799006)(261009223027099003)(261021123027099003)(261022075727099003)(261021121427099003)(261022105027099003)(261026121527099003)(261026140227099003)(261028144727099003)(261102123227099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: QCvoZA6Dd30SuZQZqwPkGo6OYLf0j6HIEn2c1+1fRZAoeH1t5dZItCmtCkOSp68gVYp2S8fDWkjh8pY45EbwO0/yyrvVlbWhwDSGxTj17JhRAycCKuqQCcCxujOchtPhOXB19zyyt/1jMg6BRKnnKSjHlp2ru5fNW11Wlu/rYI6zGy+SCmTOHmxc+cIW6DahWXN1eb+cCRZ6YrLddNwHFJBIuSfsFas0RW8Dpsmm/9vIxX/rsIyB7/qC/8pQFS8L4SX87dOE3Idgl8s3NERqa3P7mH33XcU/uHC7oDvwjOdUKw7kNgcMVEXpfE+0+PMLUAwDjH3QJKlGdZ3A/ZPxWa9qSvzH8Msda5Rvt5iXwh/MMEkhc3s1smVPSZAphX7WhYunVHcJYvVXkmKRP4jcYqR1ncnaTuweVH+5F9kR1iUIVypRt8ZqulneWM99/Za+
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2026 19:02:45.0274
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c65232a6-f36a-4f19-f13f-08df441432be
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF00018863.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFCB4F033D6
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 16 Nov 2026 11:39:50 -0800
+Message-Id: <DMWW21TXTMA0.U1J8251C8C9R@konsulko.com>
+Cc: "Tim Orling" <tim.orling@konsulko.com>
+Subject: Re: [layerindex-web][RFC PATCH v2 0/2] uWSGI, and a docker-compose
+ setup with nginx-proxy
+From: "Tim Orling" <tim.orling@konsulko.com>
+To: "Tim Orling" <ticotimo@gmail.com>,
+ <yocto-patches@lists.yoctoproject.org>
+X-Mailer: aerc 0.22.0
+References: <20261115191734.23604-1-tim.orling@konsulko.com>
+In-Reply-To: <20261115191734.23604-1-tim.orling@konsulko.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 19:16:55 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5418
-Content-Type: text/plain; charset="utf-8"
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 19:39:56 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5419
 
-[YOCTO #6580]
+On Sun Nov 15, 2026 at 11:17 AM PST, Tim Orling wrote:
+> This is an RFC: I run the layer index test instance I use for these
+> patches this way, and would like to know if this is useful upstream,
+> and in particular whether the production site would use it.
 
-This is the oldest open pseudo related bug in the bugzilla.  The change
-adds some code that will tell users that SELinux is always in a
-non-enforcing mode.  This should cause various tools to avoid doing
-stupid things, even if the user is in a configuration that otherwise
-works.
+After some discussion with halstead and some additional research, I am
+dropping this series and moving to 'gunicorn' on my test bench(es).
 
-Additionally, a check was added that tries to identify if we are in a
-confined environment, and logs this with a warning.  The idea is if
-someone is trying to debug what is going wrong, they'll at least get
-information that the environment is confined, and it might not be a
-pseudo bug.
+Key takeaways:
 
-Mark Hatle (2):
-  ports/linux: Report SELinux as disabled under pseudo
-  pseudo_server: Log when running in a confined SELinux domain
+* uWSGI is maintenance only since 2022 [1][2]:
 
- .gitignore                                |  1 +
- Makefile.in                               | 10 +++-
- README.security                           | 20 ++++++++
- ports/linux/guts/is_selinux_enabled.c     | 24 +++++++++
- ports/linux/guts/is_selinux_mls_enabled.c | 16 ++++++
- ports/linux/pseudo_wrappers.c             | 23 +++++++++
- ports/linux/wrapfuncs.in                  |  2 +
- pseudo_server.c                           | 60 +++++++++++++++++++++++
- test/fake-selinux.c                       | 15 ++++++
- test/test-selinux-disabled.c              | 49 ++++++++++++++++++
- test/test-selinux-disabled.sh             | 20 ++++++++
- 11 files changed, 239 insertions(+), 1 deletion(-)
- create mode 100644 ports/linux/guts/is_selinux_enabled.c
- create mode 100644 ports/linux/guts/is_selinux_mls_enabled.c
- create mode 100644 test/fake-selinux.c
- create mode 100644 test/test-selinux-disabled.c
- create mode 100755 test/test-selinux-disabled.sh
+  "Note The project is in maintenance mode (only bugfixes and updates for
+   new languages apis). Do not expect quick answers on github issues
+   and/or pull requests (sorry for that) A big thanks to all of the users
+   and contributors since 2009."
 
---=20
-2.34.1
+* 'gunicorn' is recommended over 'granian' (and some other providers) for
+   most users [2]. The article says to keep gunicorn with sync workers
+   for a Django app like ours. Bigger gains come from the application:
+   caching, query optimisation and removing N+1 queries "typically yield
+   10=C3=97 the improvement of switching application servers".
+
+[1] https://uwsgi-docs.readthedocs.io/en/latest/
+[2] https://www.deployhq.com/blog/python-application-servers-wsgi-vs-asgi-g=
+uide
+
+>
+> 1: Serves the application with uWSGI instead of gunicorn. uWSGI speaks
+>    HTTP, so the existing nginx configurations are unchanged. It also
+>    serves the static files, now collected into the image at build time.
+> 2: Adds docker-compose.nginx-proxy.yml, with nginx-proxy and
+>    acme-companion in place of the layersweb (nginx) and layerscertbot
+>    containers: the certificate is obtained and renewed automatically,
+>    with no hand-edited nginx configuration. The existing compose files
+>    are unchanged.
+>
+> Patch 1 can be taken on its own; patch 2 needs it for the static
+> files.
+>
+> This series is based on "docker-compose: run layersapp with an init
+> process", sent separately, which isn't an RFC.
+>
+> Changes in v2:
+> - 2: layersapp runs with "init: true", as in the other compose files
+>   after the patch above, and the compose file test covers
+>   docker-compose.nginx-proxy.yml too.
+>
+> Tested: the test suite passes in the image; the test instance has run
+> uWSGI behind nginx-proxy, with Let's Encrypt, since October.
+>
+> Open questions:
+> - Should uWSGI replace gunicorn, or be an option?
+> - dockersetup.py does not know about the nginx-proxy setup; should it?
+> - The test instance also waits for the database and runs migrate and
+>   collectstatic when the container starts, instead of in
+>   dockersetup.py. I left that out; is it wanted?
+>
+> Tim Orling (2):
+>   Dockerfile: serve the application with uWSGI
+>   docker-compose.nginx-proxy.yml: add a production setup using
+>     nginx-proxy
+>
+>  .env.prod.proxy                |  7 +++
+>  Dockerfile                     | 15 ++++--
+>  README.md                      | 12 +++++
+>  docker-compose.nginx-proxy.yml | 93 ++++++++++++++++++++++++++++++++++
+>  tests/test_dockersetup.py      |  3 +-
+>  5 files changed, 124 insertions(+), 6 deletions(-)
+>  create mode 100644 .env.prod.proxy
+>  create mode 100644 docker-compose.nginx-proxy.yml
+>
+>
+> base-commit: 08e58cdece30019a6f9e5d14af16ebe20afa6177
+> prerequisite-patch-id: 4ad6ed99d0c42ce111a25d4731d953218337e7cc
+
 
