@@ -1,146 +1,86 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1443.1794857992424374506
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2406.1794860554839526611
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 11:39:52 -0800
+ Mon, 16 Nov 2026 12:22:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=BtDI5H4P;
- spf=pass (domain: konsulko.com, ip: 209.85.216.50, mailfrom: tim.orling@konsulko.com)
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3b3a914e4c8so278382a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 11:39:52 -0800 (PST)
+ dkim=pass header.i=@snap.com header.s=google header.b=PGpUogdr;
+ spf=pass (domain: snapchat.com, ip: 209.85.128.46, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4bb70074ab2so14610505e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 12:22:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1794857991; x=1795462791; darn=lists.yoctoproject.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=CuO8pyiT3mrI1V7EPywclF15lzVkVzxAzIWzzuypzgE=;
-        b=BtDI5H4PuxacQLfgZ5oV9yBB7kkzR6LT6vlFjW3UOJZNB15u6fhyhDP4hE+ZnUCQ4a
-         KFOIxD8q5u5O8cqCnhCFK4PaILSl4MCcSV2B1RQfoto+7lIJ6nfz4jZySxEQ9SDQxPHk
-         wqpK3XGfSQOORDlGj5nUgY0rrOMigJpggYdqo=
+        d=snap.com; s=google; t=1794860553; x=1795465353; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ZvfK9DKFGINryZm1itVPmloBLih5sCQVd+50gFC/BZY=;
+        b=PGpUogdrzMdH4g6gk7uSPS2j4nbOU6S0qQ3H2p5l4l5/rSZoeB0dIc8Bosd9NhR3Q7
+         +PnqDP/j3z6weJ+KqY1rfCpG5Eg+DdlSiNgkWGoWzQAqrUsyN7mHK7aeQZPjRqAzcpS+
+         czjSCjL1ZjQBbzACMEfH7LSYQ0gKdC3cq8QBk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794857991; x=1795462791;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CuO8pyiT3mrI1V7EPywclF15lzVkVzxAzIWzzuypzgE=;
-        b=VD0pjInD02MCG5sbja++5xa5ORk6NbqUTO4jt5eG1HCEwxAJo02h34dBZ9rmW8UxCS
-         gjOL1xIf2VSvzXP/Ps0saP9lllimM/5s5+RJqmQqkPOSbfsiUWY/rDUWmL16TVhUp1F7
-         TOnbZfCzN8V4X3SCtHluCVjJPiA0/fuXRygZqnr0UaJdap1SYv5VjNME3XQrKf/dGJKC
-         aBuSsbUdzO4bZESNH2CJSNiBlssX93sENpTExg2behyZnX+oIwCx1qMEmk6W6PyND2/z
-         s1jJ5ClMSOHYeSTaKaE198G1BWrsh/NKOctBxWbANZsSrjSRHTODeXIuyfJIIa3HiOdW
-         m9ug==
-X-Forwarded-Encrypted: i=1; AL+hErFP7ETA/ytEhtJUwRHoXGN/ea8JH+xQFw/m4bH9MBaH101Va0DHaZp2Zg8I5WMgyJ7UD6lJ1KYyNVhX7TsU@lists.yoctoproject.org
-X-Gm-Message-State: APuU4Z8D27d8/FNy+kp2Vz0aUu1K8mDLn+JZUcTEbKswRCJXoLO63yM3
-	OcCeaDfRP3hvyGSWjJzUZbIz9R627qi3V1bN0SdjdL35GNvcMmNt7J0U0sRMk0rGZFw=
-X-Gm-Gg: AZFdTZcWHj5cnfdMEW2ZxGajjnPa4SIToqI0HTLrUAmV1uCtF7FXtTjInfEIBvW3ikL
-	PgAy3qJeeicgF/M6QCRSZLstRq0JcxU4ZZP9Lbnf8OUKePIcUgQfn4aPYe1xhputzgIiR4VjVdh
-	n5DsOEmiSWwA5bKmJDGqImauR86QQRw2BiGibrKlAreDm3SFc0Od/KdhX6IfA3ltaorAmNBXOqc
-	V1PzK3cpHdfBQcMNGNkqYWBjVRgaotxuokbQLZaLtFZ5eercR5nSl1La0QVg1i/ZyCCqohwtKrN
-	NK18sVgZlyAIoBCVaLPYNWXMr3nf2wcfnMWn1VDRttddsXgHcwLcecpa/Q30n1thBNq9jxPff9B
-	I+Ip1goqFkKhCcwna2QyJ2sC3NOAPVkbdDf9xRgKT4KkFvSIw07oN8FWwoKsoatidI51PEnN8pm
-	dW82S4P3cYmkvZTavaxj80SLzXhx0CWWX7VkugOUoVnaKtR35JZfvNhUI1oEu1S/PJUJDr9eczo
-	+UYsd/DwHwZHdah9b1M7upw0CivgvRbSAK47OoCR/GLihSdVOoMJfvPs8vXpA4NoG1pEdS1w5/m
-	tK8dDR2znjs64G1TipRgQoxujqDCVcEnDj4MBcXlBJnP2pp2iWkjyrmcDk00S6kDq/wkQX6W3Ss
-	M3BbAc4BybpFFgp+l0BmOB+RJwSY=
-X-Received: by 2002:a17:90b:4d0b:b0:3ac:7556:8eed with SMTP id 98e67ed59e1d1-3b1b0a46811mr10660094a91.44.1794857991405;
-        Mon, 16 Nov 2026 11:39:51 -0800 (PST)
-Return-Path: <tim.orling@konsulko.com>
-Received: from localhost ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b3abb786f7sm602275a91.1.2026.11.16.11.39.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Nov 2026 11:39:51 -0800 (PST)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 16 Nov 2026 11:39:50 -0800
-Message-Id: <DMWW21TXTMA0.U1J8251C8C9R@konsulko.com>
-Cc: "Tim Orling" <tim.orling@konsulko.com>
-Subject: Re: [layerindex-web][RFC PATCH v2 0/2] uWSGI, and a docker-compose
- setup with nginx-proxy
-From: "Tim Orling" <tim.orling@konsulko.com>
-To: "Tim Orling" <ticotimo@gmail.com>,
- <yocto-patches@lists.yoctoproject.org>
-X-Mailer: aerc 0.22.0
-References: <20261115191734.23604-1-tim.orling@konsulko.com>
-In-Reply-To: <20261115191734.23604-1-tim.orling@konsulko.com>
+        d=1e100.net; s=20260707; t=1794860553; x=1795465353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ZvfK9DKFGINryZm1itVPmloBLih5sCQVd+50gFC/BZY=;
+        b=KpG8na156asTp6RJSuNkohpL9S8Vi9/Fy9pP+1mLaVk7+3xEH7EkRGKbFuxvOfSdmf
+         pKrJlQNPkD6l88ZRewd4qTmMGvz1pOAw/SbB8rhXYqL65GkGAuiX7FbA4PTYTPqwW5vL
+         gjr5n/VdUt3rfXyK3CZYeUgTuDngsoHSnIL9DUhhD+qKM0UPIP6khRj24D53XOV9k8Aj
+         SGL0VjTIM3PjMjfOWA12e7M7YCXkOyo53zEo3kt6Jic0pWqi+Q9GAd3C/i79aZXKfjZA
+         QN0jFwBzSyzUNwaRY4VRes7+9j0F3p8jwLddl+JdnkT++5DPn9ouvC8TR7XbSbOu2J1y
+         5OZg==
+X-Gm-Message-State: APuU4Z9hsLnRK+SZlrOwHuwz1zxiF5VGlRHR93TQvFMVuGwCDIbevh0j
+	DxHYuPGR3++XAo/IK91STJYUvqP8RVlTxA+h40qrocLtn5g4N/c1b676J52uW3m29zMGg20QhM8
+	TneEMshU=
+X-Gm-Gg: AYBFou2VgeDXICjqqebkJ6IYgfZ7UdePAUwzAwA28YceuG6yOZGNFm3AdjXfksfPgt1
+	o4VsfWACZ1FKeOYEQ7fpaXUwnkdoBpH2h9kXSIRbOdvhYuSfu/+5nwRf0gs/+rAiGqQ2C6GPAIc
+	WspxGk256OGITOGaVjUT0/Ya8Jh6CdxFoLWAk42nWmCnk/XnieQxLWBhxn72VKWh6URlvb0Bdvv
+	RkSxLPwzThjCDaFmw3YckOrdlWFlbGOaefWzM7yMiA3pIh0B8CoPDxI2SGbi9fs94BWw6AcxBqu
+	9dhHnDv8gvdo6qhnbe3UdsUgEwthYRYpJAlN0+r6Ma5NCG3ruqItLgRYPi+3RUBgi1SLeJaIg4i
+	edmIKYpoRC4KzM2E2BpcsaBy0SYa+hdJyfUft737ki0FrXvipwdDBYcvR4v6+uLHFc9C1Ur+aZK
+	h7VOeLQkOTy7yK030M9sRcuRquIHtQT2beND95nHctdU+ITzvG8HkyUz28ywqoZ5uXqmGWRaCJL
+	mPfcS4Gr5cRbwhSFKANz7nfYC6ZAzc1+jlG7lkBIp0YgVjqfpMKlWw+YIZ/fwhOEF2BVoj06EJw
+	N3B//NpUPSmfa/bNU+ckKf5k9p+Zaw3tw3jAQ5nPU6ZsBtK8W0kEZRCeLw+hYVcJ5HN5jM+/GoE
+	U/KvysPfAgXEFmjLfeUmqtijYRFF0JuUlPXo7guKUSsuB5FOP4c/i8OrowQOGyJbxcb2u+dgw7+
+	4arCv9a2ShnH2NWy3XWmH0
+X-Received: by 2002:a05:600c:46d1:b0:4a7:7f3f:6f8e with SMTP id 5b1f17b1804b1-4bb76d62556mr46641865e9.0.1794860552849;
+        Mon, 16 Nov 2026 12:22:32 -0800 (PST)
+Return-Path: <ecordonnier@snapchat.com>
+Received: from localhost.localdomain (80-108-196-96.cable.dynamic.surfer.at. [80.108.196.96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb78430918sm10724165e9.13.2026.11.16.12.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 12:22:32 -0800 (PST)
+From: ecordonnier@snap.com
+To: yocto-patches@lists.yoctoproject.org
+Cc: Etienne Cordonnier <ecordonnier@snap.com>
+Subject: [meta-darwin][PATCH 1/5] file: disable lzlib
+Date: Mon, 16 Nov 2026 21:22:19 +0100
+Message-ID: <20261116202223.654-1-ecordonnier@snap.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 19:39:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5419
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 20:22:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5420
+Content-Type: text/plain; charset="utf-8"
 
-On Sun Nov 15, 2026 at 11:17 AM PST, Tim Orling wrote:
-> This is an RFC: I run the layer index test instance I use for these
-> patches this way, and would like to know if this is useful upstream,
-> and in particular whether the production site would use it.
+From: Etienne Cordonnier <ecordonnier@snap.com>
 
-After some discussion with halstead and some additional research, I am
-dropping this series and moving to 'gunicorn' on my test bench(es).
+Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
+---
+ recipes-devtools/file/file_%.bbappend | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 recipes-devtools/file/file_%.bbappend
 
-Key takeaways:
-
-* uWSGI is maintenance only since 2022 [1][2]:
-
-  "Note The project is in maintenance mode (only bugfixes and updates for
-   new languages apis). Do not expect quick answers on github issues
-   and/or pull requests (sorry for that) A big thanks to all of the users
-   and contributors since 2009."
-
-* 'gunicorn' is recommended over 'granian' (and some other providers) for
-   most users [2]. The article says to keep gunicorn with sync workers
-   for a Django app like ours. Bigger gains come from the application:
-   caching, query optimisation and removing N+1 queries "typically yield
-   10=C3=97 the improvement of switching application servers".
-
-[1] https://uwsgi-docs.readthedocs.io/en/latest/
-[2] https://www.deployhq.com/blog/python-application-servers-wsgi-vs-asgi-g=
-uide
-
->
-> 1: Serves the application with uWSGI instead of gunicorn. uWSGI speaks
->    HTTP, so the existing nginx configurations are unchanged. It also
->    serves the static files, now collected into the image at build time.
-> 2: Adds docker-compose.nginx-proxy.yml, with nginx-proxy and
->    acme-companion in place of the layersweb (nginx) and layerscertbot
->    containers: the certificate is obtained and renewed automatically,
->    with no hand-edited nginx configuration. The existing compose files
->    are unchanged.
->
-> Patch 1 can be taken on its own; patch 2 needs it for the static
-> files.
->
-> This series is based on "docker-compose: run layersapp with an init
-> process", sent separately, which isn't an RFC.
->
-> Changes in v2:
-> - 2: layersapp runs with "init: true", as in the other compose files
->   after the patch above, and the compose file test covers
->   docker-compose.nginx-proxy.yml too.
->
-> Tested: the test suite passes in the image; the test instance has run
-> uWSGI behind nginx-proxy, with Let's Encrypt, since October.
->
-> Open questions:
-> - Should uWSGI replace gunicorn, or be an option?
-> - dockersetup.py does not know about the nginx-proxy setup; should it?
-> - The test instance also waits for the database and runs migrate and
->   collectstatic when the container starts, instead of in
->   dockersetup.py. I left that out; is it wanted?
->
-> Tim Orling (2):
->   Dockerfile: serve the application with uWSGI
->   docker-compose.nginx-proxy.yml: add a production setup using
->     nginx-proxy
->
->  .env.prod.proxy                |  7 +++
->  Dockerfile                     | 15 ++++--
->  README.md                      | 12 +++++
->  docker-compose.nginx-proxy.yml | 93 ++++++++++++++++++++++++++++++++++
->  tests/test_dockersetup.py      |  3 +-
->  5 files changed, 124 insertions(+), 6 deletions(-)
->  create mode 100644 .env.prod.proxy
->  create mode 100644 docker-compose.nginx-proxy.yml
->
->
-> base-commit: 08e58cdece30019a6f9e5d14af16ebe20afa6177
-> prerequisite-patch-id: 4ad6ed99d0c42ce111a25d4731d953218337e7cc
-
+diff --git a/recipes-devtools/file/file_%.bbappend b/recipes-devtools/file/file_%.bbappend
+new file mode 100644
+index 0000000..7324ecd
+--- /dev/null
++++ b/recipes-devtools/file/file_%.bbappend
+@@ -0,0 +1,5 @@
++# lzlib does not support Darwin: its build system hardcodes ELF shared library
++# naming (liblz.so.N), which doesn't match SOLIBS=".dylib" and makes
++# nativesdk-lzlib fail do_package with [installed-vs-shipped]. Disable the
++# optional lzlib support (lzip decompression for "file -z") on darwin21.
++PACKAGECONFIG:remove:darwin21 = "lzlib"
+-- 
+2.43.0
 
