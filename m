@@ -1,86 +1,96 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2406.1794860554839526611
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2507.1794860556185876153
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 12:22:35 -0800
+ Mon, 16 Nov 2026 12:22:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=PGpUogdr;
- spf=pass (domain: snapchat.com, ip: 209.85.128.46, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4bb70074ab2so14610505e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 12:22:34 -0800 (PST)
+ dkim=pass header.i=@snap.com header.s=google header.b=FXtRprQl;
+ spf=pass (domain: snapchat.com, ip: 209.85.128.54, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a1b07c3c5fso44590175e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 12:22:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1794860553; x=1795465353; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ZvfK9DKFGINryZm1itVPmloBLih5sCQVd+50gFC/BZY=;
-        b=PGpUogdrzMdH4g6gk7uSPS2j4nbOU6S0qQ3H2p5l4l5/rSZoeB0dIc8Bosd9NhR3Q7
-         +PnqDP/j3z6weJ+KqY1rfCpG5Eg+DdlSiNgkWGoWzQAqrUsyN7mHK7aeQZPjRqAzcpS+
-         czjSCjL1ZjQBbzACMEfH7LSYQ0gKdC3cq8QBk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794860553; x=1795465353;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=snap.com; s=google; t=1794860554; x=1795465354; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=ZvfK9DKFGINryZm1itVPmloBLih5sCQVd+50gFC/BZY=;
-        b=KpG8na156asTp6RJSuNkohpL9S8Vi9/Fy9pP+1mLaVk7+3xEH7EkRGKbFuxvOfSdmf
-         pKrJlQNPkD6l88ZRewd4qTmMGvz1pOAw/SbB8rhXYqL65GkGAuiX7FbA4PTYTPqwW5vL
-         gjr5n/VdUt3rfXyK3CZYeUgTuDngsoHSnIL9DUhhD+qKM0UPIP6khRj24D53XOV9k8Aj
-         SGL0VjTIM3PjMjfOWA12e7M7YCXkOyo53zEo3kt6Jic0pWqi+Q9GAd3C/i79aZXKfjZA
-         QN0jFwBzSyzUNwaRY4VRes7+9j0F3p8jwLddl+JdnkT++5DPn9ouvC8TR7XbSbOu2J1y
-         5OZg==
-X-Gm-Message-State: APuU4Z9hsLnRK+SZlrOwHuwz1zxiF5VGlRHR93TQvFMVuGwCDIbevh0j
-	DxHYuPGR3++XAo/IK91STJYUvqP8RVlTxA+h40qrocLtn5g4N/c1b676J52uW3m29zMGg20QhM8
-	TneEMshU=
-X-Gm-Gg: AYBFou2VgeDXICjqqebkJ6IYgfZ7UdePAUwzAwA28YceuG6yOZGNFm3AdjXfksfPgt1
-	o4VsfWACZ1FKeOYEQ7fpaXUwnkdoBpH2h9kXSIRbOdvhYuSfu/+5nwRf0gs/+rAiGqQ2C6GPAIc
-	WspxGk256OGITOGaVjUT0/Ya8Jh6CdxFoLWAk42nWmCnk/XnieQxLWBhxn72VKWh6URlvb0Bdvv
-	RkSxLPwzThjCDaFmw3YckOrdlWFlbGOaefWzM7yMiA3pIh0B8CoPDxI2SGbi9fs94BWw6AcxBqu
-	9dhHnDv8gvdo6qhnbe3UdsUgEwthYRYpJAlN0+r6Ma5NCG3ruqItLgRYPi+3RUBgi1SLeJaIg4i
-	edmIKYpoRC4KzM2E2BpcsaBy0SYa+hdJyfUft737ki0FrXvipwdDBYcvR4v6+uLHFc9C1Ur+aZK
-	h7VOeLQkOTy7yK030M9sRcuRquIHtQT2beND95nHctdU+ITzvG8HkyUz28ywqoZ5uXqmGWRaCJL
-	mPfcS4Gr5cRbwhSFKANz7nfYC6ZAzc1+jlG7lkBIp0YgVjqfpMKlWw+YIZ/fwhOEF2BVoj06EJw
-	N3B//NpUPSmfa/bNU+ckKf5k9p+Zaw3tw3jAQ5nPU6ZsBtK8W0kEZRCeLw+hYVcJ5HN5jM+/GoE
-	U/KvysPfAgXEFmjLfeUmqtijYRFF0JuUlPXo7guKUSsuB5FOP4c/i8OrowQOGyJbxcb2u+dgw7+
-	4arCv9a2ShnH2NWy3XWmH0
-X-Received: by 2002:a05:600c:46d1:b0:4a7:7f3f:6f8e with SMTP id 5b1f17b1804b1-4bb76d62556mr46641865e9.0.1794860552849;
-        Mon, 16 Nov 2026 12:22:32 -0800 (PST)
+        bh=SsLnUdCauqqyqeVi348BmK6DjeaSVWmzAumyWOlPoGo=;
+        b=FXtRprQl5xuEjF0Q/yIom2GBjGKVDwBLRblR3VYz0X3cIfaHcHYGs5XtTiWGhtCEHk
+         tB2lAQGeQ6puu7XCimskk2rKKXLDjPbx5p5fiPkBmBPXrrT0trGO6FgEhb9zFRffnyLO
+         4dB9/BhVYm2dQslpJDkMgJWPEvi+hFVbI4kYg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794860554; x=1795465354;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SsLnUdCauqqyqeVi348BmK6DjeaSVWmzAumyWOlPoGo=;
+        b=u/sGaKn9RGAUbYkSUMgFvK8SuQ4QmtUs8WdfRGKm1dVxqnc72u4RSxTSomRg1PDXdZ
+         Q5rVv2H5v5RA3lkdERFM1DoNGCTAm7rrS1wk2ZtKlJquA2OBT3djwKvjokDKeUppYCzi
+         pZhO6pR954pxnPfwd/V7K3ZbevvsIj2Oqe0fd4oBrqSJvC0W6fDYaioxBw91L0DiCyfA
+         d9DW1PVZmArgd+KsIIe1TCRVmEazz+AstThVJi+gXEcRGW30VNYiQ5y+ymweAnbmAAnW
+         F3rETOCeIq5qIm2QORvmkHtMl0mrhaDG6WoCdR+maPt9pfxCPlUZieYYxibFF54Y+URO
+         oMiA==
+X-Gm-Message-State: APuU4Z9sp3tWdyrjs9MwT+ibPcmVRv2/ZRzxBIlns0lZzx+qp8Kre+kS
+	idso9eflViBnANKmKIOupVmY5ZxJL4wXl1dAM8NM+Th0o0dVACd6e0J8JShZFpMxPWgTvlxwXuh
+	y3G3wU1Q=
+X-Gm-Gg: AYBFou2tWAV6BvnnGvq0xfI94F6Ool0IZQNFpDtv5kL7J71oX8KSDtG7ZEGFED5ACkD
+	ZiDPk1M/5ctiGA00sN9Y77mFlZmsIqxAjyJ4oZqL7hzaR9KSCRHJa3BAQjrV3yLEryhiq3bzf4O
+	MmpCAoHCG0ZyLETEd/8WWWtvOY9gQa9gHY3tAgeSlXBEmE2Q7HGJg+m6YvuTlzEKKLQYbJWk487
+	nk7KlWIqddSnYNT5DLJjpzRPgfRgX6qjMc2XiCNls7QDPYCgfZ1hKGZ2jSuFdhzxUmk3wyg4aaf
+	EUq+4VrXkbP48DmBb1SonuboqAdgfyTf7vJTVOrGRDDRrN/JH2WeuMKqITbJ16QFNJVa2Rv+ZeZ
+	BBzAVnegIDWkVC66jADz+b2k2Ddo6BOX0lvZmQor9PetXQk2p/XJIuGLDSXu0fGHorcj2vx+unS
+	3e7SwfWmaU8OjvfSqBryTAAYn7g3zjr8YVu3H3/zvRPoxgjwq1A0zr2s7mjGpWxRx/G5+mhQ4Kp
+	aL72Nzlg366T21QUkO5EcwKdpXhvwyeHjsO+hNc6AZjQUIt/7sGgwTdV/+Zdje7p/L3kItac2qA
+	5zi5iFCjdOlscCkIMd8udRtgkTXyquksIDmreFSvpJldVkrj+IgoEL8Exdw4NLwb6Q87ah9490d
+	qDPdqdg4KNg5VCUjYVs/skcgZaybgw4BGLn81/Q+rs7P/OGwUD92hjx1zrV1W843jqWNwQbmbeW
+	0=
+X-Received: by 2002:a05:600c:482:b0:4a5:75d2:c104 with SMTP id 5b1f17b1804b1-4bb55a59c9dmr182886935e9.22.1794860554279;
+        Mon, 16 Nov 2026 12:22:34 -0800 (PST)
 Return-Path: <ecordonnier@snapchat.com>
 Received: from localhost.localdomain (80-108-196-96.cable.dynamic.surfer.at. [80.108.196.96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb78430918sm10724165e9.13.2026.11.16.12.22.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb78430918sm10724165e9.13.2026.11.16.12.22.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 12:22:32 -0800 (PST)
+        Mon, 16 Nov 2026 12:22:33 -0800 (PST)
 From: ecordonnier@snap.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Etienne Cordonnier <ecordonnier@snap.com>
-Subject: [meta-darwin][PATCH 1/5] file: disable lzlib
-Date: Mon, 16 Nov 2026 21:22:19 +0100
-Message-ID: <20261116202223.654-1-ecordonnier@snap.com>
+Subject: [meta-darwin][PATCH 2/5] darwin-common: disable debuginfod
+Date: Mon, 16 Nov 2026 21:22:20 +0100
+Message-ID: <20261116202223.654-2-ecordonnier@snap.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261116202223.654-1-ecordonnier@snap.com>
+References: <20261116202223.654-1-ecordonnier@snap.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 20:22:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5420
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5421
 Content-Type: text/plain; charset="utf-8"
 
 From: Etienne Cordonnier <ecordonnier@snap.com>
 
+debuginfod needs elfutils, which doesn't compile for darwin at the moment.
+
 Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
 ---
- recipes-devtools/file/file_%.bbappend | 5 +++++
- 1 file changed, 5 insertions(+)
- create mode 100644 recipes-devtools/file/file_%.bbappend
+ conf/machine-sdk/darwin-common.inc | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/recipes-devtools/file/file_%.bbappend b/recipes-devtools/file/file_%.bbappend
-new file mode 100644
-index 0000000..7324ecd
---- /dev/null
-+++ b/recipes-devtools/file/file_%.bbappend
-@@ -0,0 +1,5 @@
-+# lzlib does not support Darwin: its build system hardcodes ELF shared library
-+# naming (liblz.so.N), which doesn't match SOLIBS=".dylib" and makes
-+# nativesdk-lzlib fail do_package with [installed-vs-shipped]. Disable the
-+# optional lzlib support (lzip decompression for "file -z") on darwin21.
-+PACKAGECONFIG:remove:darwin21 = "lzlib"
+diff --git a/conf/machine-sdk/darwin-common.inc b/conf/machine-sdk/darwin-common.inc
+index a23c605..6c8a85a 100644
+--- a/conf/machine-sdk/darwin-common.inc
++++ b/conf/machine-sdk/darwin-common.inc
+@@ -44,6 +44,12 @@ BUILDSDK_LDFLAGS = " \
+ 
+ MACHINEOVERRIDES .= ":darwinsdk"
+ 
++# debuginfod needs elfutils (libdebuginfod/libelf), which upstream only supports
++# on Linux/glibc hosts: its configure fails on Darwin (e.g. the linker has no
++# --build-id and there is no readelf). Don't let the distro's debuginfod feature
++# reach nativesdk recipes until elfutils is ported.
++DISTRO_FEATURES_FILTER_NATIVESDK:remove:darwin21 = "debuginfod"
++
+ TOOLCHAIN_SHAR_EXT_TMPL ?= "${DARWINBASE}/conf/files/darwin-toolchain-shar-extract.sh"
+ 
+ SDK_POSTPROCESS_COMMAND:append = "${@bb.utils.contains('DARWIN_INSTALLER_PKG', '1', ' create_macos_pkg', '', d)}"
 -- 
 2.43.0
 
