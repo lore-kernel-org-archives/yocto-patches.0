@@ -1,34 +1,34 @@
 Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.20043.1794797799803784406
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.20044.1794797801023615592
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 15 Nov 2026 18:56:40 -0800
+ Sun, 15 Nov 2026 18:56:41 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
 Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wDHoIVncPpqYdQAAA--.940S3;
-	Mon, 16 Nov 2026 10:54:31 +0800 (CST)
+	by mtasvr (Coremail) with SMTP id _____wBnb9NncPpqY9QAAA--.912S3;
+	Mon, 16 Nov 2026 10:54:32 +0800 (CST)
 Received: from chenqi-Redmi.. (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowABn+WnccPpqPNA3AA--.14039S4;
-	Mon, 16 Nov 2026 10:56:36 +0800 (CST)
+	by front01 (Coremail) with SMTP id C6CowABn+WnccPpqPNA3AA--.14039S5;
+	Mon, 16 Nov 2026 10:56:37 +0800 (CST)
 From: chenqi_hycx@cetc.com.cn
 To: yocto-patches@lists.yoctoproject.org
 Cc: chen_q07@163.com
-Subject: [PATCH 2/6] refpolicy: fix shadow lock issue
-Date: Mon, 16 Nov 2026 10:56:16 +0800
-Message-ID: <20261116025620.2558594-3-chenqi_hycx@cetc.com.cn>
+Subject: [PATCH 3/6] refpolicy_common: ensure we start from a clean state in do_compile
+Date: Mon, 16 Nov 2026 10:56:17 +0800
+Message-ID: <20261116025620.2558594-4-chenqi_hycx@cetc.com.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261116025620.2558594-1-chenqi_hycx@cetc.com.cn>
 References: <20261116025620.2558594-1-chenqi_hycx@cetc.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C6CowABn+WnccPpqPNA3AA--.14039S4
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYNCmr5tRgFSgAEs2
-X-CM-DELIVERINFO: =?B?qfkun6c9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoONahKFcN3sR551ZGDSnKFd8y00cREoaKfNfTdZyeBFUSTBZgGszeRPd1GuvOmS9NP70t
-	JRZr3n1awOO/ccPDTkd5aRBlGnxz2xTFyYapbkYP3iOEj+zlCz2ogC+v30esAw==
-X-Coremail-Antispam: 1Uk129KBj93XoWxWryrGr4rXFW7ZF15Gw1ktFc_yoW5KFy7pr
-	4rAa4YkFWkXFn2qFsrCF4UZr15K3y8Gws8Z3yUWF4UCrW5AF1kua1rJryDWrWS9r17GrZF
-	vrsIkFy5t3WUAwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+X-CM-TRANSID: C6CowABn+WnccPpqPNA3AA--.14039S5
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYNCmr5ttwQhQAAss
+X-CM-DELIVERINFO: =?B?78kLhqc9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
+	PoOBNkiu0Ezb1p2pGXeRzsQOOetiK1i/XRcVR42sQdltV/w6xTdwCCCiTY/98Br6F5tuw9
+	kPmBKQlayPIxSCwzWfd5aRBlGnxz2xTFyYapbkYPu0kie1A4wdQL24IB56wyjQ==
+X-Coremail-Antispam: 1Uk129KBj93XoW7KrWUZF48Gr1rXryfJF1fAFc_yoW8Gr4Dpw
+	4jva4YyF4DXF1xWrs7uF43uF17KasxWw40v3yUCw40v3s8XFyxuw48t3sxWFWfZ3y3Xr9r
+	GwnIv3y3WayUA3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GrUv73VFW2AG
 	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYh7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
 	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUGVWUXwA2ocxC64kIII0Yj41l
@@ -45,83 +45,42 @@ X-Coremail-Antispam: 1Uk129KBj93XoWxWryrGr4rXFW7ZF15Gw1ktFc_yoW5KFy7pr
 	JbIYCTnIWIevJa73UjIFyTuYvjxU2xhLUUUUU
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 02:56:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5399
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5402
 Content-Type: text/plain; charset="utf-8"
 
 From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-Add a local patch to fix shadow lock issue.
+The `bare` make target is to "delete all remaining generated files,
+including modules.conf, and booleans.conf."[1]
 
-Upstream issue and PR:
-https://github.com/SELinuxProject/refpolicy/issues/1274
-https://github.com/SELinuxProject/refpolicy/pull/1280
+If we don't do 'make bare' at the start of do_compile, legacy build
+artifacts such as booleans.conf, generated_definitions.conf, etc.
+will remain there, making the building results unexpected.
+
+For example, if we enable ssh_sysadm_login in legacy build directory,
+things just don't take effect because even if do_compile is re-run
+due to signature change, the generated_definitions.conf will not be
+updated.
+
+[1] https://github.com/SELinuxProject/refpolicy/blob/main/doc/BUILD_INSTALL.md#general-make-targets
 
 Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
 ---
- ...allow-creating-the-shadow-lock-files.patch | 41 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 42 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0058-authlogin-allow-creating-the-shadow-lock-files.patch
+ recipes-security/refpolicy/refpolicy_common.inc | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/recipes-security/refpolicy/refpolicy/0058-authlogin-allow-creating-the-shadow-lock-files.patch b/recipes-security/refpolicy/refpolicy/0058-authlogin-allow-creating-the-shadow-lock-files.patch
-new file mode 100644
-index 0000000..b9f3542
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0058-authlogin-allow-creating-the-shadow-lock-files.patch
-@@ -0,0 +1,41 @@
-+From 69277d9047ebf1aee9af59c97a27a0fcad2a47ee Mon Sep 17 00:00:00 2001
-+From: Chen Qi <chenqi_hycx@cetc.com.cn>
-+Date: Mon, 9 Nov 2026 15:46:47 +0800
-+Subject: [PATCH] authlogin: allow creating the shadow lock files
-+
-+auth_rw_shadow_lock() declares the file transitions for .pwd.lock,
-+passwd.lock and group.lock but only grants rw_file_perms, which has no
-+create.  A domain that finds no lock file therefore cannot create it:
-+
-+  avc: denied { create } for name=".pwd.lock"
-+       scontext=system_u:system_r:systemd_sysusers_t:s0
-+       tcontext=system_u:object_r:shadow_lock_t:s0 tclass=file
-+
-+The problem was revealed by systemd-sysusers with systemd 262. But any
-+command that manages user password is likely to fail, e.g., `passwd root'.
-+
-+Upstream-Status: Inappropriate [OE Specific]
-+[
-+  Note that this patch is marked as 'Inappropriate' because there's a PR
-+  upstream tracking this issue: https://github.com/SELinuxProject/refpolicy/pull/1280
-+  When that PR is merged, we should drop this patch.
-+]
-+
-+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
-+---
-+ policy/modules/system/authlogin.if | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/policy/modules/system/authlogin.if b/policy/modules/system/authlogin.if
-+index 6518f230e..91a46ed08 100644
-+--- a/policy/modules/system/authlogin.if
-++++ b/policy/modules/system/authlogin.if
-+@@ -878,7 +878,7 @@ interface(`auth_rw_shadow_lock',`
-+ 		type shadow_lock_t;
-+ 	')
-+ 
-+-	allow $1 shadow_lock_t:file rw_file_perms;
-++	allow $1 shadow_lock_t:file { create rw_file_perms };
-+ 	files_etc_filetrans($1, shadow_lock_t, file, ".pwd.lock")
-+ 	files_etc_filetrans($1, shadow_lock_t, file, "passwd.lock")
-+ 	files_etc_filetrans($1, shadow_lock_t, file, "group.lock")
 diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 4b5108a..4fa2ae5 100644
+index 4fa2ae5..e6dac8e 100644
 --- a/recipes-security/refpolicy/refpolicy_common.inc
 +++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -73,6 +73,7 @@ SRC_URI += " \
-         file://0055-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
-         file://0056-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
-         file://0057-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-+        file://0058-authlogin-allow-creating-the-shadow-lock-files.patch \
-         "
+@@ -194,6 +194,7 @@ set_policy_booleans() {
+ }
  
- S = "${UNPACKDIR}/refpolicy"
+ do_compile() {
++    oe_runmake bare
+     if [ -f "${WORKDIR}/modules.conf" ] ; then
+         cp -f ${WORKDIR}/modules.conf ${S}/policy/modules.conf
+     fi
 -- 
 2.43.0
 
