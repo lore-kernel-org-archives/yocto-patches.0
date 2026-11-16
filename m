@@ -1,59 +1,59 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6300.1794870774918404538
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6301.1794870776408316459
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 15:12:55 -0800
+ Mon, 16 Nov 2026 15:12:56 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=ot2BS/rA;
- spf=pass (domain: konsulko.com, ip: 209.85.221.180, mailfrom: scott.murray@konsulko.com)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5ead9f60e26so275873e0c.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 15:12:54 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=e+8Vftqd;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.45, mailfrom: scott.murray@konsulko.com)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-99bf7b97f12so221582241.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 15:12:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1794870774; x=1795475574; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1794870775; x=1795475575; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=V8s5eOMxSwHMBP41tn4SHU4rFL2YWGr76buZj9FisVk=;
-        b=ot2BS/rAHrdYTJrC4KPWPrqHRU0J7vNNRpZPuaM4Lzie6Uy6u1mfi1IGYFotAzYv0I
-         21XKfTEP2RgmFH2Q+e+LboeiusDFv2FcBPTB9x0QDZ/sHpB2NeoBffJoeoydjhj7CBW/
-         mNA6j9aVH6eOj+LaJe8Tl1fbaravhalxiOsLc=
+        bh=n1PXFM5122XFA8wU6RuABqm/h6dYdyv9g6WY7+KVlcg=;
+        b=e+8Vftqdj9UA/GkRwPd2at5rqwP93jBIH+xKzQ97+/NGL65m3JKj2Cp7OA2ToCf85w
+         deCeA3rZxj5OK08XnnsZEiE/+aiPMdst2iVa+b2dRuGnbaQLTmWekB76UfWQ2Wo4EOKy
+         rJvFl1+PAIleNTLtUMpkRhAPNnvBzNvK8b/mM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794870774; x=1795475574;
+        d=1e100.net; s=20260707; t=1794870775; x=1795475575;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=V8s5eOMxSwHMBP41tn4SHU4rFL2YWGr76buZj9FisVk=;
-        b=AjhnWqYmfx+1VM69aYx4nRwZioNyElIHl7y7G958z7Qehdr4+E1uSiYuliqHwxhmIr
-         NsmR5UfP5+NVshwi3GLCgQoXzvrfHEOtx9dxpAf0fNmsC7wE8inw17jVzJ3INgir2dHp
-         tJWe5sM2DfjvZLJR4VPgTMYGosLYlLZCnZcsbNB1p23bCzOLtlrhIZ0FETQtfHHMrQbS
-         kZgxjKy1b9VDbhrgq08/fVNyiXIUQCaVvn5A6Av006YCQ8PLtAGCoFl91cHECiI1MISp
-         e0flr4rNRAY8Lz72diFV59eQRf5wY7+emcznc0PN+GBKc2Tj9715DINdfjZ3rQxYPx2H
-         WbmQ==
-X-Gm-Message-State: APuU4Z/b/6IlFRLFHXy+NZOJua1xX37z58p6RpVjI3veqxa1CxTKPl4O
-	Rori3Perp1hrzi6/W+PyfIyvKtdk4jKIyvjZY21wR7jEbzXD/VM2hRICC3vFZD0cVZcY7s0PA8o
-	9VoXVzq4=
-X-Gm-Gg: AYBFou0B8nFbRHi66KiJT2du33tabCRg73HjxC7F60lFJXDY8Hcf0BbRppMC5Yu0ce8
-	tUr7ROUg+1ogCTzwXr6LazGW2Tbjei6/jfb291lMFeGUps70T2KLLznqrE5wIuIghZcYgjS1Smt
-	oGcgX2dubToc6oMFhMDDg11/FJHrcU1sHhggt+xFhABmlscA4JGQ02YicwxebPDzM0V4ju1la9w
-	hHvo3u9XNf0x9FabcqhFen4rrqfBU6km1owxcYKoo3XZlLEnTwc2ZdHJLU0mpf9aJYWay8h46nE
-	iqlaaHVCsOq0c2I465VT48iHSiIGtwiAQwwZ6Jp9/krSJmrlJrUbogB/52Zhp3G25h3U7n1gS39
-	ifaTZqtEsgsCz1Wns0Rl4wgEYcCce+8JOxxTjsfGwZ+H+r/Ztk5e97HbttxrAPi6JqpWp99vzDk
-	TJa8wkkZrfod4d3aVmrTWEp3UAKmfnobU6ZpwEXHIHJoJjME8me1npcEK5CGwen2S0o/o/syw4r
-	P8qvyVtIpdR339kME7Y5I/xSe7RkSlxryX3dY6pjn+vb3XfB2o6BSIhkXVLZwpa5G5Z+2UJkU8g
-	YNz0yx1oYpOuPASrXOgwwttolnbiaXqJ81Bfve2Xom9lolkc3pd41IbgsVkwEqBxNd0Jfz1h0MG
-	fDVZW9jG/XujtUdVUuavNX1/v52KecyUvS0874DkjWcLJ8zsxfPEglerrQvRQpES3+Q==
-X-Received: by 2002:a05:6122:46a6:b0:5ec:d9c6:73b2 with SMTP id 71dfb90a1353d-5ee5b737ecbmr302532e0c.7.1794870773497;
-        Mon, 16 Nov 2026 15:12:53 -0800 (PST)
+        bh=n1PXFM5122XFA8wU6RuABqm/h6dYdyv9g6WY7+KVlcg=;
+        b=cMT42y6c+lxcOf2CDdMXsB0AGsowgmLB2LYHwVTfAHLZFe7RMvNpyqgQxzQzjva6xn
+         oRrANS2JNKTzJjbC1QRqq6I/B21VINJrS5ovhqBdk8v3XrdOl9yX9rErdMnCWBi1og5s
+         lEdpoa72fJE/3cUD4k7Uei6ZrIoeT4koO7A3UHtFOkxJ4thIniQUAB1+Ee9796rOH6yY
+         tnInEICeeHDjqZQoW1TpUT3R51fAzWcbzfGUu7wXrkZCk8unFtv/j6SpABG4ueFaFUMC
+         vNRKz/8BAMhzVhh+x0m7+Xgdnx3oSmGW58DbRXzTi92uOB87pjcRRx8JE5qsy2bu2YMt
+         W5sg==
+X-Gm-Message-State: APuU4Z9lY/zUefztBd9CF/pCSXMiX4eoXgSqYGfDCsVOlbjLaGLGkl64
+	KCCavIHEFW79Zd06+uWaWQLAojy6CElhk9b6EuYIJyE/WhECVy6vkFyL0CuCvoYMAUf5nfF2YSZ
+	bxp5U3Zg=
+X-Gm-Gg: AYBFou3Rm7m4BC0D8m4w9J9blJ8ZwbzJEUscI9dwzOL8d61TOJOsVz4fHWFD38J1lCc
+	CHSeMMt93EwNWeyVeaHRAb/LXdtyybeqOMplXFRN3titweC/5L2P9pg/igIk5X1VJXVI7ME/aMl
+	qZGPTaJdpsLNXBBfM1Y+UCop2tJYJMORPld5qOYkbss7aiKdh15RXVNcuj+OUcNt7TBtR8Mue8v
+	9cLHc+WYLomY1yATF+gNAFXO/niQ57RRj989+OzgugIk8I93/9CNELosjsWtEW9UO5CIaa2D/+e
+	NgTV4usWshtVD4tvFKviLf00biL1Rf1xqkwM2ffAqtaU336/GYPWd0SrEXN4GgtT/D2ubVhW0Wm
+	lbdZURY39LR3IfazQuBHl0wjlqFGd/MN+C3cRQ2pQMvuxyHOkMrezXgfTgJ1rF6P3Ognc9p1hS2
+	v0GDtVSmlVBi3yW82/Cj54QvV2/EA/EJLQFGYSPcU7ryD3ORAE0s0SFj7N97S7QSJFjCYqbTOGb
+	Lono4oYKHnqtNitfw7MbNTtD67gfkNVuJggt6JAZzWfpWZCN39Aip037zOhZB+w/a5gD2pfnsiq
+	tcahB79GxylQSUQRvMn/flGK/ZSbHGIWuoBd73OWsLDYAdTP/wwJ5xgsXhuKYOO0fapf5RnZDKZ
+	yoGKKYoHx9MOLNq1US3u9CV/367UzKT216pzFzeUl9lpG1fWKhOVLSOpIrEIsrhRY9J4=
+X-Received: by 2002:a05:6102:644a:b0:7ce:645a:139e with SMTP id ada2fe7eead31-7d69f7d3540mr248463137.23.1794870774948;
+        Mon, 16 Nov 2026 15:12:54 -0800 (PST)
 Return-Path: <scott.murray@konsulko.com>
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee34e9516dsm7575235e0c.12.2026.11.16.15.12.52
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee34e9516dsm7575235e0c.12.2026.11.16.15.12.54
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 15:12:53 -0800 (PST)
+        Mon, 16 Nov 2026 15:12:54 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][wrynose/rust][PATCH 01/19] rust: add secure-plt to generated powerpc targets
-Date: Mon, 16 Nov 2026 18:12:22 -0500
-Message-ID: <a039f4ce86697e3cc84e38f8724637f42569a69d.1794870526.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][wrynose/rust][PATCH 03/19] cargo_common: map the cargo vendoring directory for the C compiler
+Date: Mon, 16 Nov 2026 18:12:24 -0500
+Message-ID: <509fb1941c0dd7de502ec175de1595cd22adcd51.1794870526.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <cover.1794870526.git.scott.murray@konsulko.com>
 References: <cover.1794870526.git.scott.murray@konsulko.com>
@@ -61,39 +61,51 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 23:13:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5440
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5441
 Content-Type: text/plain; charset="utf-8"
 
-From: Peter Tatrai <peter.tatrai.ext@siemens.com>
+From: Markus Volk <f_l_k@t-online.de>
 
-Rust's built-in powerpc-unknown-linux-gnu target has used the
-+secure-plt feature since rust-lang/rust#136154. OpenEmbedded generates
-its own powerpc-poky-linux-gnu target specification, however, and the
-feature was missing there. Consequently LLVM emitted objects that were
-incompatible with the secure-plt toolchain default, making ld fall back
-to bss-plt and print a diagnostic that rustc 1.97+ exposes through the
-linker_messages lint.
+Crates that ship C or assembly sources, ring being a prominent one,
+compile them through the cc crate rather than rustc. RUST_DEBUG_REMAP
+only passes --remap-path-prefix to rustc, and DEBUG_PREFIX_MAP covers
+S, B and the sysroots, so nothing rewrites the paths below CARGO_HOME.
+The build directory of every vendored crate therefore ends up in the
+debug symbols, which trips the buildpaths QA check and leaves recipes
+working around it by dropping their -dbg package.
 
-Signed-off-by: Peter Tatrai <peter.tatrai.ext@siemens.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 88c0d94bc177bd8e3edc016316c92528c6d38586)
+Add the vendoring directory to DEBUG_PREFIX_MAP so those objects are
+remapped like the rest.
+
+Tested on corei7-64 with yazi and eilmeldung, both of which had dropped
+their -dbg package for this reason: after the change they package the
+debug symbols with no reference to the build tree left.
+
+AI-Generated: Uses Claude Code (Claude Opus 5)
+Signed-off-by: Markus Volk <f_l_k@t-online.de>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+(adapted from oe-core commit fd245ac1c2dfa2de2dad96b7db2a0201bc5c25d4)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes-recipe/rust-target-config.bbclass | 1 +
- 1 file changed, 1 insertion(+)
+ classes-recipe/cargo_common.bbclass | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/classes-recipe/rust-target-config.bbclass b/classes-recipe/rust-target-config.bbclass
-index 58c36bf..1cba275 100644
---- a/classes-recipe/rust-target-config.bbclass
-+++ b/classes-recipe/rust-target-config.bbclass
-@@ -254,6 +254,7 @@ TARGET_ENDIAN[powerpc] = "big"
- TARGET_POINTER_WIDTH[powerpc] = "32"
- TARGET_C_INT_WIDTH[powerpc] = "32"
- MAX_ATOMIC_WIDTH[powerpc] = "32"
-+FEATURES[powerpc] = "+secure-plt"
+diff --git a/classes-recipe/cargo_common.bbclass b/classes-recipe/cargo_common.bbclass
+index f58bd80..1478262 100644
+--- a/classes-recipe/cargo_common.bbclass
++++ b/classes-recipe/cargo_common.bbclass
+@@ -51,6 +51,11 @@ CARGO_TARGET_SUBDIR = "${RUST_HOST_SYS}/${BUILD_DIR}"
+ # Where we download our registry and dependencies to
+ export CARGO_HOME = "${UNPACKDIR}/cargo_home"
  
- ## powerpc64-unknown-linux-{gnu, musl}
- DATA_LAYOUT[powerpc64] = "E-m:e-Fi64-i64:64-i128:128-n32:64-S128-v256:256:256-v512:512:512"
++# Crates that compile C or assembly sources do so through the cc crate, which
++# is not covered by the rustc specific RUST_DEBUG_REMAP, so map the vendoring
++# directory for the C compiler as well.
++DEBUG_PREFIX_MAP += "-ffile-prefix-map=${CARGO_HOME}=${TARGET_DBGSRC_DIR}"
++
+ # Don't instruct cargo to use crates downloaded by bitbake. Some rust packages,
+ # for example the rust compiler itself, come with their own vendored sources.
+ # Specifying two [source.crates-io] will not work.
 -- 
 2.56.0
 
