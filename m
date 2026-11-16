@@ -1,61 +1,61 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6135.1794870254281308031
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6139.1794870259132390383
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 15:04:14 -0800
+ Mon, 16 Nov 2026 15:04:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=x+vFm2Y+;
- spf=pass (domain: gmail.com, ip: 209.85.210.182, mailfrom: ticotimo@gmail.com)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-8a39e5161c1so4182197b3a.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 15:04:14 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=ExAIK0cJ;
+ spf=pass (domain: gmail.com, ip: 209.85.210.170, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8b58d6f67a5so1930521b3a.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 15:04:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794870253; x=1795475053; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1794870258; x=1795475058; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=oLyHzlRnzU04rYjseLJm6GTKPWN3tA0X42DVVvUUQlM=;
-        b=x+vFm2Y+JYnFutj7Sawki0FamPcJS7wog65PBzpQPF9ysh2ZHaFiUmLILQymFaZH8f
-         mOlzvFF8IyStftdXRuhPCUl28z4LoPPad5kx0bXmFBJn7rC51AfR5fTt0bCRPPPHAceh
-         kjLAfiEECKeJwmvk4UUxiwWnz9qVtqbgHb/tkXgijBu2i9u7NZOpEJ4jQFO16Td3J0Qb
-         SDrDH7wW9FXQ+cxLeZoHsapWYTZkTU+MpIaQBo/kV9WmA9FxwiOUj9ThcpuscFfYxWag
-         7DEdwKd1ZoqH8swX+8lzGCl2yS1FwCvKnmbYnVEY99oxuLKcl1uiq9wlb0aWoqsVSfzE
-         5kdA==
+        bh=+8INfbtuqsY7AFsPFW966X/DkA3X6Onl2ULlEF6Jdo0=;
+        b=ExAIK0cJ2qA0kgj1bXxeBRlgC4z1jptXXGX0ECmwp7VXLgxGNnv/eJXKRR0a1ffuiv
+         wdNrxryCkYgpQd3eeawoDzswzXPBKSIMB+yTvpOiCbW9FF+LNGvCanhDSw8JGqnx0kRX
+         NxrIHMfss32QYqSZr+byP1bQLwzmDb+O1t4mJ1mhy8qW3mMfzkX2BQP8Ji75hWXu5VE3
+         4EF2enhCXly7+yft6sQFeYg6clZu2YYO6+Ft8D5pKD5hgHhRerAmiPew6251KChDhBIp
+         6Wpb+y8mCA9N4BBDywYPfS9hqbq9nMRiIpJedijFld24qlTaWmYGNkpS2ufkLCCGvgyn
+         4/mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794870253; x=1795475053;
+        d=1e100.net; s=20260707; t=1794870258; x=1795475058;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=oLyHzlRnzU04rYjseLJm6GTKPWN3tA0X42DVVvUUQlM=;
-        b=avTfqb0hgWtf56rDqDylvlSxbb/RnGG1DIq70wUitZxG0AU19PEBCYbzQFDMs91tJq
-         KZ9IAcOYG1Vt9w445u7rtl8JNar1sJqSJ6uWgwWjSlneK/UKYeoxOamxnk4KE8OdfeN5
-         /5ntBni0N6oOFkvhWBC1FiAxv8ig+2YkdtIzwzDjwWpLN3Y2HMrkXMygFyyNL8kI1W5B
-         emSzJFxEaMNFLJ3BDv2MNp3qCjAhKLe43bb2tEzbG46AF5ei0QgtCdySznRD2R9aCTTr
-         NoLIo7BQpky7gXmGqGzA9mKFC+yuTlPisb4gXLyLXbpUFCW1Eb9dk3iLhMi272evWcx6
-         TWIA==
-X-Gm-Message-State: APuU4Z+EeZEhWyWHuuDoU7oMnRXp0j2WkUwuFnzq7b7+eH7Iet2NYCAw
-	q5Ma0tk5vGX8ZGJNQ4LlySGsiMl4KEKrGXnDozcI5EdCi89gQadBbssEeNfGGA==
-X-Gm-Gg: AYBFou2BcJ3aj/GAzLr0tx77EpQYf8ZS/C9cls/lPckKPnJD7XRI8pxqUT/Y7Kt6mcQ
-	n+/1snHAWEk3txIYFpbAorhnA5mDt6b125UelSliUO42pkmLgCByDStOKS6O9sQe86nl61FBULe
-	VHl4rFmMNIxpUne7VTFOITVqbptHwdVu5PFc1ih2yC70ZBStN6yKRKcfOFWmKsWewe1NNau+j6+
-	Aw2duh4J6CI4k4bgHpNF1pANczOj+sbqZT3f5WrlrsX8kSU7gvQA/Am9x2yrKKyDCnY8r4tuLgY
-	wPHq2qctqmriaHWoJ/oehdPGv2LUywwP9+nhnGpbduuHqGSas5NIQjQ4+VM5Xuwmovw5rnNUHSl
-	OgHEZOU0Gq2qkR4lnKBpGhlsgt3DBmWSnHbC+uGZa3ys9nH/aN8XKkdMaN3l0YFFiE9Ps+r6EvM
-	qxguoSbkpLUKa0gBeCIS9tpvmfiykgdYnH7Joth53HIUk4vNMOr1Z16fDCSHztBuSKK5HS/s8zd
-	fgAzHp4WYM1EEb97HDGm9plW/kWBrLrmDpcq9fJNmY3+boyUER4NPC/0WhvYFcf6LEPu2x4L6+M
-	JYNwjOzN0ZJEisQXTwHRJIINISbjsC6BEzmRJvecaCq4rQYfsnZ1YIZQHOxcDQ==
-X-Received: by 2002:a05:6a21:a46:b0:3e2:7a05:6bda with SMTP id adf61e73a8af0-3f7a83ba040mr12724825637.43.1794870253316;
-        Mon, 16 Nov 2026 15:04:13 -0800 (PST)
+        bh=+8INfbtuqsY7AFsPFW966X/DkA3X6Onl2ULlEF6Jdo0=;
+        b=gEpvj/HleOEen2FQQrwUxZ8jaPNtBWQhFIdHo/Om/3QeFwCC0T+nhnpCF/P6okQFsK
+         McHvBcTvgKeT6Ld6rcZwFxiIlNRfbU5GIEUMGoE30jOq2gcHjFOsxdehqWBMAPTcvEFH
+         9nwoJmg0kLcTeyhTdjMev9c/lQl5XFXOFjx1il+i9C167EZG40Ma/YNBLkaMLBmomikF
+         bwQbh+81FJMonvnQVmqhk0aHpttLDQkB0Wm4BmJ7p+pTcA9oxvBjTbJjEM+XX68o4CRz
+         ohzyEZxiAadYK3YAGQOimK+2NFFPqRjtpg9OYVB6yr5l3sd5ij/3qC5Pi/5Fj1iapZ3b
+         WuyA==
+X-Gm-Message-State: APuU4Z8R/aG15QLdu0PsCKSRPGMt4McESU5IBKHjHh5kEs516gzyXq5K
+	IP/jP/7KoIWL9zE1z8ooCQIflJRkjx5uKEZNn/ATn4U+o72a/pVZpgr490CV4g==
+X-Gm-Gg: AYBFou3JqqA/GU0ssN9K1Vn34JaaYiwxwSJWsYM+IHiRwZGnwD5gqj+dYYue7GTFAMX
+	YobVjUozUfHtOQjRJAZIm5UVQCfogYl9wLhcc5BcYmRZUP1Io6dqTYiTNu/k67pKByYNxk6912f
+	7T6w0UPL9T7DTLzluVtb1k7ZnCmsjFXr7yq0Tf+zfh1byMpGBXVQqmyiK+GM5hF2euvoSPm9724
+	RRCn5rjhkfGek24N5H4GjJ7NzRx7XBlJt7gA8nxfZOye6rIazVtydwM8hRSAG2WajSOKGmGQJBE
+	FWN10GeHOvSiHwq3PbMFD4ZT0sd+jydmCXwYlhcCK6Eb5Q4htwDh7q05v914BW6J8Y/j1H8VyYS
+	Gd+MtIOUphLteHHQFOiomPFT/QLrYKIOVq2deFsioZVxyelSehcFnPg8OIKRH1OJKxsCMLv9WeV
+	PgdsHA556xYOr6E2N5Gte5PNNW42mb7r/DK85esUX9t5SwtbS6lGmxef4pciveY97r5no6T3/O9
+	u3DhQYIEzrMewrbecRHx7M8HVHX9qiXruqfw+CEn8prHUtfdpIRUOYQ+0IqlxWpPRPfbVOKdS6A
+	rqD2JNHvh3MpLQ0i7ZddDL4aAi0+weO9KqLuIvbOw6dvXxWWJ9Q2WALPvUnXjA==
+X-Received: by 2002:a05:6a00:3011:b0:8a0:70d8:a2ee with SMTP id d2e1a72fcca58-8beb84e3ff7mr11759217b3a.60.1794870258438;
+        Mon, 16 Nov 2026 15:04:18 -0800 (PST)
 Return-Path: <ticotimo@gmail.com>
 Received: from localhost.localdomain ([69.9.132.159])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed12a90f1sm4210535b3a.19.2026.11.16.15.04.11
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed12a90f1sm4210535b3a.19.2026.11.16.15.04.16
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 16 Nov 2026 15:04:12 -0800 (PST)
+        Mon, 16 Nov 2026 15:04:16 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/4] layerindex/querysethelper.py: reject an invalid API filter or orderby with a 400
-Date: Mon, 16 Nov 2026 15:03:49 -0800
-Message-ID: <20261116230401.42917-2-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 2/4] layerindex/querysethelper.py: apply the API "orderby" parameter
+Date: Mon, 16 Nov 2026 15:03:50 -0800
+Message-ID: <20261116230401.42917-3-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261116230401.42917-1-tim.orling@konsulko.com>
 References: <20261116230401.42917-1-tim.orling@konsulko.com>
@@ -63,111 +63,117 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Nov 2026 23:04:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5435
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5436
 Content-Type: text/plain; charset="utf-8"
 
-An unknown field in "filter" or "orderby" raised BaseException, which
-neither Django nor the WSGI server catches, so the worker died and the
-client got a 502 (uWSGI) or 500. A filter value of the wrong type for
-its field, e.g. filter=id:abc, raised ValueError and gave a 500. Raise
-the REST framework's ParseError instead, which returns a 400 with the
-reason.
+params_to_queryset() worked out the column and direction from
+"orderby" but never ordered the queryset by them, so the parameter had
+no effect. Order by it, with a 400 for a field path that doesn't exist.
+It no longer evaluates the whole queryset just to check whether it is
+empty first.
 
-[YOCTO #16517]
+[YOCTO #16518]
 
 AI-Generated: Claude Opus 5.5
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/querysethelper.py | 16 ++++++++++++----
- tests/test_restapi.py        | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+), 4 deletions(-)
+ layerindex/querysethelper.py | 27 +++++++++++++++++++++++----
+ tests/test_restapi.py        | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 4 deletions(-)
 
 diff --git a/layerindex/querysethelper.py b/layerindex/querysethelper.py
-index 0d1f317..2ca466a 100644
+index 2ca466a..26f687a 100644
 --- a/layerindex/querysethelper.py
 +++ b/layerindex/querysethelper.py
-@@ -8,7 +8,9 @@
+@@ -8,7 +8,7 @@
  
  import operator
  import functools
-+from django.core.exceptions import FieldError, ValidationError
+-from django.core.exceptions import FieldError, ValidationError
++from django.core.exceptions import FieldDoesNotExist, FieldError, ValidationError
  from django.db.models import Q, CharField
-+from rest_framework.exceptions import ParseError
+ from rest_framework.exceptions import ParseError
  
- def _verify_parameters(g, mandatory_parameters):
-     miss = []
-@@ -109,12 +111,14 @@ def _get_search_results(search_term, queryset, model):
- # it uses the request and the model to validate input for the filter and orderby values
- def get_search_tuple(request, model):
-     ordering_string, invalid = _validate_input(request.GET.get('orderby', ''), model)
-+    # A 400 for the client: BaseException isn't caught by Django or the WSGI
-+    # server, so it killed the worker (AI-generated, Claude Opus 5.5)
-     if invalid:
--        raise BaseException("Invalid ordering model:" + str(model) + str(invalid))
-+        raise ParseError("Invalid orderby: " + str(invalid))
- 
-     filter_string, invalid = _validate_input(request.GET.get('filter', ''), model)
-     if invalid:
--        raise BaseException("Invalid filter " + str(invalid))
-+        raise ParseError("Invalid filter: " + str(invalid))
- 
-     search_term = request.GET.get('search', '')
+@@ -124,6 +124,18 @@ def get_search_tuple(request, model):
      return (filter_string, search_term, ordering_string)
-@@ -123,8 +127,12 @@ def get_search_tuple(request, model):
+ 
+ 
++def _check_field_path(model, path):
++    """Raise ParseError unless path (e.g. "layerbranch__layer__name") names a field"""
++    for name in path.split('__'):
++        if model is None:
++            raise ParseError("Invalid orderby: " + path)
++        try:
++            field = model._meta.get_field(name)
++        except FieldDoesNotExist:
++            raise ParseError("Invalid orderby: " + path)
++        model = field.related_model
++
++
  # returns a lazy-evaluated queryset for a filter/search/order combination
  def params_to_queryset(model, queryset, filter_string, search_term, ordering_string):
      if filter_string:
--        filter_query = _get_filtering_query(filter_string)
--        queryset = queryset.filter(filter_query)
-+        try:
-+            filter_query = _get_filtering_query(filter_string)
-+            queryset = queryset.filter(filter_query)
-+        except (ValueError, ValidationError, FieldError) as e:
-+            # e.g. filter=id:abc (AI-generated, Claude Opus 5.5)
-+            raise ParseError("Invalid filter: " + str(e))
-     else:
-         queryset = queryset.all()
+@@ -139,12 +151,19 @@ def params_to_queryset(model, queryset, filter_string, search_term, ordering_str
+     if search_term:
+         queryset = _get_search_results(search_term, queryset, model)
+ 
+-    if ordering_string and queryset:
++    # insure only distinct records (e.g. from multiple search hits) are returned
++    queryset = queryset.distinct()
++
++    if ordering_string:
+         column, order = ordering_string.split(':')
+         if order.lower() == DESCENDING:
+             column = '-' + column
++        # The ordering was worked out but never applied. A bad field path
++        # only fails when the query runs, so check it here (AI-generated,
++        # Claude Opus 5.5)
++        _check_field_path(model, column.lstrip('-'))
++        queryset = queryset.order_by(column)
+ 
+-    # insure only distinct records (e.g. from multiple search hits) are returned
+-    return queryset.distinct()
++    return queryset
+ 
  
 diff --git a/tests/test_restapi.py b/tests/test_restapi.py
-index af1f708..a1f733e 100644
+index a1f733e..fde1aec 100644
 --- a/tests/test_restapi.py
 +++ b/tests/test_restapi.py
-@@ -28,3 +28,35 @@ class TestRestApiDatetimes(TestCase):
-         items = data['results'] if isinstance(data, dict) else data
-         item = next(i for i in items if i['name'] == 'meta-test')
-         self.assertEqual(item['updated'], '2026-10-18T14:37:05+0000')
+@@ -60,3 +60,33 @@ class TestRestApiInvalidParameters(TestCase):
+                                    {'filter': 'name:meta-test', 'format': 'json'})
+         self.assertEqual(response.status_code, 200)
+         self.assertEqual([i['name'] for i in response.json()], ['meta-test'])
 +
 +
 +@pytest.mark.django_db
-+class TestRestApiInvalidParameters(TestCase):
-+    """Invalid filter and orderby values give a 400 ([YOCTO #16517])"""
++class TestRestApiOrderby(TestCase):
++    """orderby sorts the results ([YOCTO #16518])"""
 +
-+    def assert_bad_request(self, params):
-+        response = self.client.get('/layerindex/api/layerItems/', dict(params, format='json'))
-+        self.assertEqual(response.status_code, 400, params)
++    def setUp(self):
++        for name in ('meta-b', 'meta-a', 'meta-c'):
++            LayerItem.objects.create(name=name, status='P', layer_type='A',
++                                     summary='test', description='test',
++                                     vcs_url='git://example.com/%s.git' % name)
 +
-+    def test_unknown_filter_field(self):
-+        # Raised BaseException, which killed the worker
-+        self.assert_bad_request({'filter': 'pn:x'})
-+
-+    def test_filter_without_value(self):
-+        self.assert_bad_request({'filter': 'name'})
-+
-+    def test_filter_value_of_wrong_type(self):
-+        # Raised ValueError: a 500
-+        self.assert_bad_request({'filter': 'id:abc'})
-+
-+    def test_unknown_orderby_field(self):
-+        self.assert_bad_request({'orderby': 'pn:-'})
-+
-+    def test_valid_filter(self):
-+        LayerItem.objects.create(name='meta-test', status='P', layer_type='A',
-+                                 summary='test', description='test',
-+                                 vcs_url='git://example.com/meta-test.git')
++    def names(self, orderby):
 +        response = self.client.get('/layerindex/api/layerItems/',
-+                                   {'filter': 'name:meta-test', 'format': 'json'})
++                                   {'orderby': orderby, 'format': 'json'})
 +        self.assertEqual(response.status_code, 200)
-+        self.assertEqual([i['name'] for i in response.json()], ['meta-test'])
++        return [i['name'] for i in response.json()]
++
++    def test_ascending(self):
++        self.assertEqual(self.names('name:+'), ['meta-a', 'meta-b', 'meta-c'])
++
++    def test_descending(self):
++        # DESCENDING in querysethelper.py
++        self.assertEqual(self.names('name:-'), ['meta-c', 'meta-b', 'meta-a'])
++
++    def test_unknown_related_field(self):
++        # "layerbranch" passes the field-name check; the rest of the path is wrong
++        response = self.client.get('/layerindex/api/layerItems/',
++                                   {'orderby': 'layerbranch__nosuchfield:+', 'format': 'json'})
++        self.assertEqual(response.status_code, 400)
 -- 
 2.56.1
 
