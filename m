@@ -1,36 +1,36 @@
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.16.1794940662324631842
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18.1794940685514334532
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 17 Nov 2026 10:37:43 -0800
+ Tue, 17 Nov 2026 10:38:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=H4sT2IIi;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-256628-202611171837394eb808009d00020713-5baawm@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202611171837394eb808009d00020713
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=WNtMVSqg;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-256628-20261117183802496279dddc000207ad-gp9bo_@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20261117183802496279dddc000207ad
         for <yocto-patches@lists.yoctoproject.org>;
-        Tue, 17 Nov 2026 19:37:39 +0100
+        Tue, 17 Nov 2026 19:38:03 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=peter.marko@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=MQQJZcIZlXx80LzdoAN80NJqo+7PxRt4SksMQDqTcio=;
- b=H4sT2IIieoi1sR5I4Lj9XvQJpu/kbimwun2LUyEuN7CO0IqFCWxCUhfP0jsYCOR3NSBTVi
- 4Q66Kr1NJO4FsmUetTKqknv05wl0XQiU2+tfcOGmHP/JGa0nc9pra/vViRcuE48I3qGmwK5J
- Ss9gWI/7MRK/ah46ZEoi5mO7V2SW6P90aCe2FPQzwBObiEdE0/KItN6LcWBo/1cDJE2uP16o
- cvU6zrNjbmWG4+RL1I4Vmk1oUjR5q1CAafbGC/YWTFDjIY6oil5eXrGiS7HCiZCOLN6SOAZF
- 9Dg04glqiBuMgv9LIdTgRzfK0rW2xhOsu/6Qqlwq3Kqui9mw86yYSWAg==;
+ bh=9lwmVhQaF44Tp06w8rE69pjWhPNdTvsjONCJ46nUN7Q=;
+ b=WNtMVSqgEA4m8OJLMggw7tS4hHK+hj6lHmje/qUr6XIoVbLB1HwhoBujGzS+yOFWlKpJ93
+ ymXLNgrdqh/a1nYep0BuQ3YGDij09hDSIfTgxyj2TuUOOC/7uQTk6cWG6MlXUQSaVsJcFRI2
+ T7C40hRJPNj8JUqPM77Lt/oOjycDqjLA4BDPHoLj9EnyVIbzh8W2rU9jT0+dwK2OmNFr0E9P
+ wv8m9UhNHLTu2kae9IEU0J25R/GO1oyZEp39+hTFBKfCgTr/ePyMxBxa7D1MqqPBR5TCCpt8
+ 4ERTrhLPLuY5qzIEQKFfASF23gig8wFwVzhQ7J/1+OmC80V8j2/8So0g==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: jose.quaresma@foundries.io,
 	Peter Marko <peter.marko@siemens.com>
-Subject: [meta-lts-mixins][wrynose/go][PATCH] go: upgrade 1.27.3 -> 1.27.4
-Date: Tue, 17 Nov 2026 19:37:34 +0100
-Message-ID: <20261117183734.3671902-1-peter.marko@siemens.com>
+Subject: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.27.3 -> 1.27.4
+Date: Tue, 17 Nov 2026 19:37:58 +0100
+Message-ID: <20261117183758.3683114-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 18:37:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5464
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 18:38:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5465
 Content-Type: text/plain; charset="utf-8"
 
 From: Peter Marko <peter.marko@siemens.com>
@@ -117,7 +117,7 @@ diff --git a/recipes-devtools/go/go-binary-native_1.27.3.bb b/recipes-devtools/g
 similarity index 80%
 rename from recipes-devtools/go/go-binary-native_1.27.3.bb
 rename to recipes-devtools/go/go-binary-native_1.27.4.bb
-index c245af8..699f984 100644
+index cc4664e..55cf81a 100644
 --- a/recipes-devtools/go/go-binary-native_1.27.3.bb
 +++ b/recipes-devtools/go/go-binary-native_1.27.4.bb
 @@ -9,9 +9,9 @@ PROVIDES = "go-native"
