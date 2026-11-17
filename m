@@ -1,127 +1,168 @@
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8394.1794877873077305511
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1685.1794932850931257782
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Nov 2026 17:11:13 -0800
+ Tue, 17 Nov 2026 08:27:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [123.125.172.206])
-	by mtasvr (Coremail) with SMTP id _____wAnEJYoqftqrj0BAA--.1850S3;
-	Tue, 17 Nov 2026 09:08:57 +0800 (CST)
-Received: from [192.168.31.243] (unknown [123.125.172.206])
-	by front01 (Coremail) with SMTP id C6CowADneWqfqftqBdE4AA--.15994S2;
-	Tue, 17 Nov 2026 09:10:55 +0800 (CST)
-Message-ID: <954eae3a-f2ab-46e9-9952-5cd29bdc4c2a@cetc.com.cn>
-Date: Tue, 17 Nov 2026 09:10:47 +0800
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=bzc2WzlA;
+ spf=pass (domain: gmail.com, ip: 209.85.160.180, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-55bd96affd2so12566121cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 08:27:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794932850; x=1795537650; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=DLt0FOAlDWXN9q1/1LdhqIrVhvki3505nyub6G+HJjU=;
+        b=bzc2WzlAgaU4NLS5NIbJzuWLaalBHCG4Dkxcbqp8BJhfobRZuuG4SwikfRoUAPnonw
+         jzFELHi0T4rMXN44Pe8P9mvfN78f8Y4UtBByTFzjXmS81RAjAdmuDYHr+HOQ6FWH1vQo
+         Y7qXXC6eroDsO+258oP4roMKeQGh6VzAkzlfFbHnffkV2b4p4EmNxsnaP0JAZcZgC+3o
+         Jmf4hLDux6APSnFlTiLq4ZqX3M3tHfbjPp5OEG4mcmVhxI/2eDrCkx/PRwtbpnRmpVly
+         RFghWWre7SesACPhhwmBi/GviEm9IMRwLLbJKAyBmLELawa4Ys5OVED6vyXnzk/PLKtm
+         zuyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794932850; x=1795537650;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=DLt0FOAlDWXN9q1/1LdhqIrVhvki3505nyub6G+HJjU=;
+        b=Go/7gDtiazIJ1w/uP2BZff/zIFlTDAW7byiclLZUvSTWbnEdAHrYH0HT6pOPtY3zv9
+         HMQKsNCSckB5cmLIlvOvMG06vfN+OhQn7maIv+d8XpmmOZc7jVluHvObN9tb6/fgSBma
+         nNg5sEY2oeh3GgYRqMpAn2WYKAhcGFbwDRa5dv8RcNXpczjrfxwZ5KwN0AAlki/r2vfl
+         O8QxEc+DgFT7AX1hyFdc/EUO/1oOd0jUNCdIS7cS8wv1zmtnWMn044CCN5/f8O2FIT62
+         QueYPu7EkJaet1nVhjzaVNNbBr96R38oV4F24kMmXogFnaG8LKD2C7m+BSf50Yrfw99Q
+         T2pA==
+X-Gm-Message-State: APuU4Z++9ocKQM9etr/K6IPqpu8A/IqTmf2TqUQX8NUauAWTd7KnFFju
+	j8gF7OPy/t2WhotxHA58ujRPX6ebriYPFbBFRXJxwY9GEPf5PjUVh/v+Gm7Rkw==
+X-Gm-Gg: AYBFou17fhKXbnc13P0HcX4gNJKvG1aszMqbFZOYS4hFdFLcMlZM6J+QSBW2ofBi1xy
+	M2AQgSd0jGFx7AuROBu3qtC/ZjfK4QZ8uUECEXDyum7O5GrrNlI+cyidadiRlCGsywNplzrlBxM
+	UEsK4PeVLeR8lzyaxH756FAKHVNrAiFkf/+GWEFGu9XnWSbl7h3Xs058CJNH+yFm0AAeABGZOl2
+	kL6puubIfqaN+SNt8s7PoVjyBUsbsWuTz1KiijA6flf0ipHyCuBvXXg8zvb4465Z4XgvKMFNx6N
+	0s9Cvtm0m9mfBgIfipgXp/CD2R3DifZQ5bgRIivORzxvqJAX8eU399D8Vl+LCm9417hIzr1PC0m
+	+RysCa4h2qYBdEx/Lg+OEe1Aaym/qpnq593o8ujPDqoT2V8xHj550wE6Pu7foLz/um0HLrTdlfc
+	R0zeIxXbq+fj6XWDu1UZlvxZ/HJm7QN2mEVSQNUJ8df+lOgZIFt4+CYBykIi85Uo5L6uRwR+w0b
+	xS0JgEPj6ZL2ZDNrsIPuyEaDsmcvTORT7jTRvr+IeDyn9/V5EZ4wd/GuG5XD0cBBfTWeZnFATUt
+	LnMKjpEKt/9+sblAdsiiRI411wF4cWjNH0WU5fFVLzg1tZKjYfmWOTX6TVDXgaC5rwVAZOZ1mYM
+	EuxJwNrC7t+qIlvteqlRDrjGIRgIRX99X
+X-Received: by 2002:a05:622a:5595:b0:55d:2f53:4e8f with SMTP id d75a77b69052e-55d494ad914mr44981981cf.16.1794932849625;
+        Tue, 17 Nov 2026 08:27:29 -0800 (PST)
+Return-Path: <twoerner@gmail.com>
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9210fc8f89bsm6162706d6.19.2026.11.17.08.27.27
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2026 08:27:28 -0800 (PST)
+Date: Tue, 17 Nov 2026 11:27:26 -0500
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v4] kernel: add config
+ fragment for lttng-modules prerequisites
+Message-ID: <avyAbqPASigfXaFy@localhost.localdomain>
+References: <18E48235E3D3F81B.190157@lists.yoctoproject.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [PATCH 6/6] refpolicy-targeted: allow
- ssh_sysadm_login by default
-To: yocto-patches@lists.yoctoproject.org,
- Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Cc: chen_q07@163.com
-References: <20261116025714.2558951-1-chenqi_hycx@cetc.com.cn>
- <75e87558-98fa-42a4-83b6-efd9eff0ad1d@gmail.com>
-Content-Language: en-US
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
-In-Reply-To: <75e87558-98fa-42a4-83b6-efd9eff0ad1d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: C6CowADneWqfqftqBdE4AA--.15994S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYOCmr7CF0F1gABsV
-X-CM-DELIVERINFO: =?B?ai2mMac9tbm9bwt5VqgwP2Pu2dSP9LtrOQxHOAXUJl/eWtrOBydmTZkAAV6p44o2Ir
-	PoOLy7F2L/bYVz82xzNKeppBi1DhA57aachUQmapsukth0vaAJ65ETpTgGmYBYBR3gGS+Q
-	Xrnj1rNajR5ZInFY7z0IyXf5aGfetzUvNCkc9xNWtSY6zgOiH25fwGpNl9QclA==
-X-Coremail-Antispam: 1Uk129KBj93XoWxJFWkur1UGFykGF48Kw1xZwc_yoW5GFW8pF
-	W8CrZayw4qqFWxArnrC3WYv3WjqFWYv3yaqa4UGw1kZa1ruF18Cw1Iq3y3WF1DuF43CF1x
-	AFW3Arn3Wa1UJagCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3qc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_KbIjqfuFe4nv
-	WSU5nxnvy29KBjDU0xBIdaVrnRJUUUkCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20V
-	C2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2
-	F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjx
-	v20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
-	x4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	JVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxkIecxEwVAFwVWkMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
-	vjxUzv38DUUUU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <18E48235E3D3F81B.190157@lists.yoctoproject.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 01:11:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5460
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 16:27:39 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5461
 
-Hi Clayton,
+On Tue 2026-11-03 @ 05:28:34 AM, Trevor Woerner via yocto-patches wrote:
+> The machines in this layer have no BSP description in yocto-kernel-cache
+> and build from an in-tree defconfig via KBUILD_DEFCONFIG, so the
+> standard kernel type's configuration never reaches them. Neither the arm
+> nor the arm64 defconfig enables what lttng-modules needs: kprobes is a
+> hard compile failure, and without the tracing infrastructure the build
+> silently produces no modules at all.
+> 
+> Ship the missing subset as a fragment in the layer's own kmeta, so it
+> resolves for any recipe here rather than only for ones that fetch the
+> kernel cache.
+> 
+> AI-Generated: codex/claude-opus 5 (xhigh)
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> ---
+> changes in v4:
+> - reword the fragment comment so no line opens with a CONFIG_ symbol
+>   name; kconf_check reads such a line as a malformed "is not set" entry
+>   and reports the fragment as badly formatted on every build
+> 
+> changes in v3:
+> - move the fragment into the layer's own kmeta and reference it from
+>   KERNEL_FEATURES, rather than adding a bare .cfg to SRC_URI, so it sits
+>   with the layer's other kernel metadata and can be named
+> - enable CONFIG_FTRACE_SYSCALLS, and justify the symbol set by what
+>   ktypes/standard already gives a cache-described BSP (features/kprobes,
+>   features/ftrace) rather than deriving it from first principles
+> - leave CONFIG_KALLSYMS_ALL unset: ktypes/base sets it to n, so the
+>   lttng writeback probe is dropped everywhere and this layer should not
+>   diverge
+> - considered yocto-cfg-fragments (as meta-virtualization does) and
+>   CONFIG_ENABLE_DEFAULT_TRACERS as a lighter route to tracepoints; both
+>   were dropped in favour of matching the standard kernel type, which
+>   every other linux-yocto BSP already gets
+> ---
+>  recipes-kernel/linux/linux-rockchip.inc          |  1 +
+>  .../rockchip-kmeta/bsp/rockchip/lttng.cfg        | 16 ++++++++++++++++
+>  .../rockchip-kmeta/bsp/rockchip/lttng.scc        |  1 +
+>  3 files changed, 18 insertions(+)
+>  create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
+>  create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
 
-See comments inline.
+Applied to meta-rockchip, master branch.
 
-On 11/16/26 22:49, Clayton Casciato via yocto-patches wrote:
-> Hi, Qi
->
->> The targeted repolicy is a looser policy than standard/mcs/mls
-> Nit: repolicy -> refpolicy
->
->> variants. What surprises users is that a looser repolicy does not
-> Nit: repolicy -> refpolicy
->
-> Yes, this surprised me: https://github.com/SELinuxProject/refpolicy/pull/914
->
->> allow ssh login while the sticter ones do.
-> Nit: sticter -> stricter
-Thanks for your review. I'll fix these typos in V2.
->
->> @
->> This is because Yocto's targeted policy is making users land in
->> unconfined_u selinux user by default, and unconfined_u is treated
->> as privileged user, thus being forbidden by default as the default
->> value of ssh_sysadm_login is false.
-> A Yocto mechanism could be added to map users; I do this in a private
-> layer.
-
-I currently don't like refpolicy-targeted using a patch to change the 
-user mapping: 
-https://git.yoctoproject.org/meta-selinux/tree/recipes-security/refpolicy/refpolicy/0002-refpolicy-targeted-make-unconfined_u-the-default-sel.patch
-
-I guess there might be some better way but I haven't got time to look 
-into that further.
-
-Do you want to fix this refpolicy-targeted with your user mapping 
-mechanism? I think that would be a very good change for meta-selinux.
-
->> @
->> Change to enable ssh_sysadm_login for targeted thus minimal by
->> default.
->> @
-> I don't think ssh_sysadm_login should be enabled by default, given:
-> * RefPolicy upstream doesn't do so (secure by default)
-> * Yocto generally doesn't do so [1]
->
-> What are your thoughts on adding a configuration fragment instead,
-> similar to [1]?
-
-Good idea. My main focus is to make testimage work for the 
-refpolicy-targeted so that it can also be tested automatically. Looks 
-like this is a similar use case with 'root-login-with-empty-password'.
-
-I'll use this approach in V2.
-
-Regards,
-Qi
-
->
-> [1] https://docs.yoctoproject.org/security-manual/securing-images.html#considerations-specific-to-the-openembedded-build-system
->
-> Thanks!
->
-> Clayton Casciato
->
->
+> 
+> diff --git a/recipes-kernel/linux/linux-rockchip.inc b/recipes-kernel/linux/linux-rockchip.inc
+> index 6c62e849834c..b87cb7a14bf8 100644
+> --- a/recipes-kernel/linux/linux-rockchip.inc
+> +++ b/recipes-kernel/linux/linux-rockchip.inc
+> @@ -34,5 +34,6 @@ COMPATIBLE_MACHINE:soquartz = "soquartz"
+>  SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+>  SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
+>  
+> +KERNEL_FEATURES:append:rockchip = " bsp/rockchip/lttng.scc"
+>  KERNEL_FEATURES:append:rockchip:arm = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+>  KERNEL_FEATURES:append:rockchip:aarch64 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+> diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
+> new file mode 100644
+> index 000000000000..cde4bfcece67
+> --- /dev/null
+> +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.cfg
+> @@ -0,0 +1,16 @@
+> +# Prerequisites for building lttng-modules.
+> +#
+> +# These symbols are what ktypes/standard gives every BSP that has a
+> +# yocto-kernel-cache description, via features/kprobes and
+> +# features/ftrace, trimmed to what lttng-modules uses: kprobes is a hard
+> +# compile requirement (src/wrapper/kallsyms.c), and the tracing
+> +# infrastructure is what it traces with - without it the build produces
+> +# no modules at all rather than failing.
+> +#
+> +# KALLSYMS_ALL is deliberately absent: ktypes/base sets it to n, so the
+> +# lttng "writeback" probe is dropped on every linux-yocto BSP and this
+> +# layer has no reason to diverge.
+> +CONFIG_KPROBES=y
+> +CONFIG_FTRACE=y
+> +CONFIG_FUNCTION_TRACER=y
+> +CONFIG_FTRACE_SYSCALLS=y
+> diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
+> new file mode 100644
+> index 000000000000..2d0412541c81
+> --- /dev/null
+> +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/lttng.scc
+> @@ -0,0 +1 @@
+> +kconf non-hardware lttng.cfg
+> -- 
+> 2.50.0.173.g8b6f19ccfc3a
+> 
+> 
+> 
 > -=-=-=-=-=-=-=-=-=-=-=-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#5407): https://lists.yoctoproject.org/g/yocto-patches/message/5407
-> Mute This Topic: https://lists.yoctoproject.org/mt/122288866/10573603
+> View/Reply Online (#5218): https://lists.yoctoproject.org/g/yocto-patches/message/5218
+> Mute This Topic: https://lists.yoctoproject.org/mt/122073729/900817
 > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/15343253/10573603/1695603168/xyzzy [chenqi_hycx@cetc.com.cn]
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
 > -=-=-=-=-=-=-=-=-=-=-=-
-
+> 
+> 
