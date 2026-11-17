@@ -1,190 +1,106 @@
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1839.1794933241026191301
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1883.1794933337749927275
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 17 Nov 2026 08:34:01 -0800
+ Tue, 17 Nov 2026 08:35:37 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=XysvfMeh;
- spf=pass (domain: gmail.com, ip: 209.85.222.182, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-93f2049ea7aso2196885a.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 08:34:00 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=IlAHQ7SO;
+ spf=pass (domain: gmail.com, ip: 209.85.222.171, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-94999a08973so2078785a.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 08:35:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794933240; x=1795538040; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=oac06sbkuhs1zy4x9UWgZALOWB6H+515G6NCRBz4bTo=;
-        b=XysvfMehNJF75IYP50a6G+C1s4VXMBbCaDvTE0p/6lQbmNm4U6DPGjn0QRkBo44wQr
-         6WnaMx5D0TVKtxb0HB225Z2XdNjB77NuvF43j1UB63UQ2bvDi34nfDqI5z1+hCOZsZAF
-         EuqdbpsZHQU1IU2jMCsea3Zvye1I+5qEe22g5WtECFbZ5tFmUcr1pNVLPOl0q2tB+dwO
-         R4VSU773qr0TD3q8K1SH4QKGPVEPJ1NiRtzq1GRWcBL4BfuzdGh5H1vn46TbqwHSEZdO
-         tZNC2g1JP+pRAgTTkhpUagRdPmpwSWSLxmwJUA6SkHwXdOKS/ksC9CUGe2MLbBOUrNE0
-         BP5g==
+        d=gmail.com; s=20260707; t=1794933337; x=1795538137; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=IguoPgpmguD7sHLRjwuW5ZYFKq7bw8GfU23C9L9ia2I=;
+        b=IlAHQ7SOtZ+yDGmHMiUudnZ4EwaOrXaMTTJL0sNMZdcAFnHE6wPZbFpiUD/N8a4wg+
+         IJTg6DmEHPiJ8EgvpDeOiWrwEbtnCHKf1XxENNuWFcTJWbBPOzzVBgnP9mw92IKJ8Boh
+         037Xg/ogW9PLI6pmQO8FVyhSDjPOiCHG3X1R3RPBBz7uAsTwOAK3IvRWwlRCUxlDw/Sq
+         CVxZ8kk32PhPVtnzWpnJu9LQcmWccucxRVT1R/AIi28R2BdvgR4v6LXq9bHjQYhASg7X
+         ZfuJh5rpfJFSQjAINck7U+mMto31TKEbRjAg/aPbqVPxwZkmxJTV/Lfju47aLfc6XApL
+         Xtwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794933240; x=1795538040;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oac06sbkuhs1zy4x9UWgZALOWB6H+515G6NCRBz4bTo=;
-        b=M4x0NxQP39kkfWZYf+yjyEW8g7YsnzHAnWCefBKJCId9HZLWNo0LxQs2XhgQZmokEE
-         525VmQbOp8j5DmTMNaJ3E+nMTJTl21OUrStz5qx5JHDP+qMQ+MYuYlx/uEOUfw6USbKx
-         KVnRBoS6yOeGJiouizZHa2t+gSpzbE11kvHFB3BHcvDvd2cJ6IDkj5Np3u3RoQpb0YsY
-         a0nidJ7gFfXi/Ji/5TRtFdgw1TmkMa3xonRSzxbjdzH0wdNgTV0nNHRYaO0+mzmde+f1
-         0s2czKvEJde+GvhrCM4Y+8nkwWl9nPSySLnS+C8ttoEW/XahYrPZ7qqRq0YN7tY11Kfn
-         iIaQ==
-X-Gm-Message-State: APuU4Z85BqU54KJljs6VGvG5EKPQqW+I1BX7h3vvvieR0wtHJNv/ynEc
-	j3x8LE/jEThzYXnKRYM+BfFMMwJ0f5NjdfILkVoSXJYynUK0MPHntK1AjMrHjg==
-X-Gm-Gg: AYBFou2T+UVLKXoIjesDESoGoaD52IijNDAL80TAd6P2qUvDsH3v5amLNiUVqDIeMD8
-	W5NWWPUY0RgJLdQ4z8HhKvflB4g2/Z+em6hg33AmNCO+AsWIE8HVTVn59bvJZ8clrBYScaS7Y8+
-	1hRtZgMXnxcrvQPLCkjMud0Uk239EbWVa5eHSsRz5V9q1nozgW3A5gkl6PqayBQfGIHoXpHxA5O
-	ZcdvaSwUTjoomvCsS6A328o9JpBe3nl6JfnwFhb0ad1+lM7G6dXsn40r1Z1DmolTUarbWZ5W8va
-	XxUtqLMlDSqRKmdEAE6F5+L13MW3/i2Q4UvPiM9FMeYfOvCIkHqSstghatSDUBYvEPyTGqPZnxV
-	WEcHqXTWCD0jKUWDcLrbNbAxI+6OAJFZfw2Y4MMFS+A6g0jacMaFPhSzp99U4q+bHWFGyWCflv0
-	tNE/c8TwRIOVY96oYBhs8NvBF7Vaw4OxDR7C1czeOJr/c3jxqVAmFvS3YGQO2QDD4GFx1rGGlK8
-	++VLV6sWpOt4VUpye19IDh0e9EzAjO5788iZ3bsQDUwicvIWsR+Xj2GiEIO1AqCwOlHHTFUKdZG
-	O0xDcwxb6/koKRa4hvQdVzrU9II6cXU62LGFRjc4l2XUffUd/ZhGjMi6VKEmiY20cGPIkoeOXpL
-	g3EkGvu5iK8cFip1jdOxpb9CINdUzdJs=
-X-Received: by 2002:a05:620a:1d09:b0:949:7311:a698 with SMTP id af79cd13be357-94999558378mr34305685a.8.1794933239744;
-        Tue, 17 Nov 2026 08:33:59 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794933337; x=1795538137;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=IguoPgpmguD7sHLRjwuW5ZYFKq7bw8GfU23C9L9ia2I=;
+        b=2F3s5/uqLSbstvuO5A7DCJl3t2dkHAV+XaQpPJeAwJ4E34hiors2Vw/e3B9oICzCRe
+         CtnQVS6c9VUX+EvHouxy0xCPsCwXGh6Q8VRoh8XtacQj/E9f7i46VJVxfayuNh98zsJ4
+         n+vwKD1on2RJ/eVOY+u70uXnregPzFDeVz2Ap5EwOzuoqFMamt/LhHXfgGpyiF47Lv3i
+         1L7eHTOMw28/ew8HRsq430drtIve+0MM5FpiBGm2D1pJ6SHlHSs74OreFP0W3y4AMW4u
+         nbyaDpR/54gZBAcQD6UgD1xu3jecWt3LZ9hiPBYr/prSXZlKc8yB+PH4lEX5NPuDMCwv
+         G7Pw==
+X-Gm-Message-State: APuU4Z9efwuSV94HqajM9WaNMKnAiYj3X7fk5/d1X/3QUiJxgEbEOltN
+	JpFWf+Lh6qn+n7WCq3rWFPqZDoJqGJ2JNKtmXgEgezqB5YdFFkTv/W1uL+mCBQ==
+X-Gm-Gg: AYBFou26maQioNPmefNfaeAStdCzsrTggnz/dptlbK/0+GXttqYNXJzhHFl4PdeZ3WK
+	/8YuWxpllFcRI5G6sW+ildkVDSSaSmnq1Q2Uzz8STSozHbSUgArxIbG4kqi0D83bPkQtQIZDe7q
+	lqh2VlWkE7GbrLiWuRsgzyyUmSHYoXlPznBioyNhoD5iIl0hXPTYJT7ES1cKanvnpGxpxld3Tdr
+	p5rVyioiDuZaG7kka79fNz824MC6FsaXx209c1vG8HdewBV3GaQtU+IDO2UYVplQkYej43IkAiF
+	xiwUlWRlCpZORnpUwer4vMntnL4O80Ib4cNTIrYOLGRz+LGijGsOHYtpRFS4B+LiuqATOpGEvP5
+	M0z7Mjjnhb/HwECV6WpNq0xNUYw9x4a/7O28uemHalIoo2lbhoWXvCehcPJhBpt5EaM9DpwGtnI
+	IRxl78T/l+FhUngssNhsgWi9riMzHlccGGXN3iLB+fyj3Fzb0b5RHABGe4sh7kMLw+cAOCs0HdG
+	3bSA58BG50FZO1wNLHWV0ttxTRNziOnyyYg8rBloOqfQFhYv9ZIA6QGFX+Hi9j+9ZshHA88dDty
+	yHw6T+qrbvkLjmn5ZOnjYx0BfaOU0bXSL06SwXj5ta8rP+NaeYXtOPg7iRQi97+4BaZM2vnI86v
+	gJOSZKhd/ipfunLxkpTugyUG+e8NfG+aXBpwBbDQ3pE/X7GWShCWV
+X-Received: by 2002:a05:620a:1a2a:b0:93f:322b:2209 with SMTP id af79cd13be357-949996e2f68mr26110685a.28.1794933335476;
+        Tue, 17 Nov 2026 08:35:35 -0800 (PST)
 Return-Path: <twoerner@gmail.com>
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9494c8b889csm1135903285a.32.2026.11.17.08.33.58
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9494c803fb4sm1118006585a.9.2026.11.17.08.35.34
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 08:33:58 -0800 (PST)
-Date: Tue, 17 Nov 2026 11:33:57 -0500
+        Tue, 17 Nov 2026 08:35:34 -0800 (PST)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH v1] kernel: refresh the
- non-rockchip architecture removal fragments
-Message-ID: <avyB9bhjKwKihsT7@localhost.localdomain>
-References: <18E4822F9934F85F.190157@lists.yoctoproject.org>
+Subject: [meta-rockchip][PATCH] kernel: restore the CPU errata the 32-bit arch removal drops
+Date: Tue, 17 Nov 2026 11:35:28 -0500
+Message-ID: <20261117163528.688188-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <18E4822F9934F85F.190157@lists.yoctoproject.org>
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 16:34:09 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5462
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 16:35:39 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5463
+Content-Type: text/plain; charset="utf-8"
 
-On Tue 2026-11-03 @ 05:27:59 AM, Trevor Woerner via yocto-patches wrote:
-> Several Arm platforms have been added upstream since these lists were
-> written, so a kernel built from an in-tree defconfig was again carrying
-> support for machines this layer does not target. On arm64 the
-> defconfig re-enabled Aspeed, Black Sesame and Microchip; on arm the
-> TI SoC driver menu came back.
-> 
-> Add the platform symbols arm64 has gained, along with the Renesas and
-> Tegra per-SoC options that arrived with them, and the TI menu on arm.
-> Nothing has been removed: every symbol these fragments already carry
-> still exists in the kernel.
-> 
-> AI-Generated: codex/claude-opus 5 (xhigh)
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
->  .../rockchip/remove-non-rockchip-arch-arm.cfg |  1 +
->  .../remove-non-rockchip-arch-arm64.cfg        | 20 +++++++++++++++++++
->  2 files changed, 21 insertions(+)
+The fragment that puts back the options multi_v7_defconfig only gets
+through "select" from other vendors' platforms does not cover the CPU
+errata workarounds those platforms also select. Of the eight the removal
+drops, six apply to cores this layer ships: five Cortex-A9 errata for
+rk3066 and rk3188, and one Cortex-A7 erratum for rk3036, rk3128 and
+rk322x. The remaining two are Cortex-A8 and Cortex-A15 and are not
+relevant here.
 
-Applied to meta-rockchip, master branch.
+Found by emptying remove-non-rockchip-arch-arm.scc and diffing the
+resulting configuration against the one the layer builds today.
 
-> 
-> diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-> index fdd3e6964053..7651c5b05a76 100644
-> --- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-> +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-> @@ -48,6 +48,7 @@ CONFIG_SOC_OMAP5=n
->  CONFIG_SOC_AM33XX=n
->  CONFIG_SOC_AM43XX=n
->  CONFIG_SOC_DRA7XX=n
-> +CONFIG_SOC_TI=n
->  CONFIG_ARCH_QCOM=n
->  CONFIG_ARCH_R7S72100=n
->  CONFIG_ARCH_R7S9210=n
-> diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-> index 12fde404d64a..09fb5810c1cf 100644
-> --- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-> +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-> @@ -2,14 +2,18 @@ CONFIG_ARCH_ACTIONS=n
->  CONFIG_ARCH_AIROHA=n
->  CONFIG_ARCH_ALPINE=n
->  CONFIG_ARCH_APPLE=n
-> +CONFIG_ARCH_ARTPEC=n
-> +CONFIG_ARCH_ASPEED=n
->  CONFIG_ARCH_AXIADO=n
->  CONFIG_ARCH_BCM2835=n
->  CONFIG_ARCH_BCM=n
->  CONFIG_ARCH_BCMBCA=n
->  CONFIG_ARCH_BCM_IPROC=n
->  CONFIG_ARCH_BERLIN=n
-> +CONFIG_ARCH_BITMAIN=n
->  CONFIG_ARCH_BLAIZE=n
->  CONFIG_ARCH_BRCMSTB=n
-> +CONFIG_ARCH_BST=n
->  CONFIG_ARCH_CIX=n
->  CONFIG_ARCH_EXYNOS=n
->  CONFIG_ARCH_SPARX5=n
-> @@ -17,15 +21,19 @@ CONFIG_ARCH_HISI=n
->  CONFIG_ARCH_INTEL_SOCFPGA=n
->  CONFIG_ARCH_K3=n
->  CONFIG_ARCH_KEEMBAY=n
-> +CONFIG_ARCH_LAN969X=n
->  CONFIG_ARCH_LAYERSCAPE=n
->  CONFIG_ARCH_LG1K=n
->  CONFIG_ARCH_MEDIATEK=n
->  CONFIG_ARCH_MESON=n
-> +CONFIG_ARCH_MICROCHIP=n
-> +CONFIG_ARCH_MMP=n
->  CONFIG_ARCH_MVEBU=n
->  CONFIG_ARCH_MXC=n
->  CONFIG_ARCH_NPCM=n
->  CONFIG_ARCH_NXP=n
->  CONFIG_ARCH_MA35=n
-> +CONFIG_ARCH_PENSANDO=n
->  CONFIG_ARCH_QCOM=n
->  CONFIG_ARCH_REALTEK=n
->  CONFIG_ARCH_R8A774A1=n
-> @@ -43,10 +51,19 @@ CONFIG_ARCH_R8A77995=n
->  CONFIG_ARCH_R8A779A0=n
->  CONFIG_ARCH_R8A779F0=n
->  CONFIG_ARCH_R8A779G0=n
-> +CONFIG_ARCH_R8A779H0=n
-> +CONFIG_ARCH_R8A78000=n
->  CONFIG_ARCH_R9A07G043=n
->  CONFIG_ARCH_R9A07G044=n
->  CONFIG_ARCH_R9A07G054=n
-> +CONFIG_ARCH_R9A08G045=n
-> +CONFIG_ARCH_R9A08G046=n
->  CONFIG_ARCH_R9A09G011=n
-> +CONFIG_ARCH_R9A09G047=n
-> +CONFIG_ARCH_R9A09G056=n
-> +CONFIG_ARCH_R9A09G057=n
-> +CONFIG_ARCH_R9A09G077=n
-> +CONFIG_ARCH_R9A09G087=n
->  CONFIG_ARCH_RENESAS=n
->  CONFIG_ARCH_S32=n
->  CONFIG_ARCH_SEATTLE=n
-> @@ -61,6 +78,9 @@ CONFIG_ARCH_TEGRA_186_SOC=n
->  CONFIG_ARCH_TEGRA_194_SOC=n
->  CONFIG_ARCH_TEGRA_210_SOC=n
->  CONFIG_ARCH_TEGRA_234_SOC=n
-> +CONFIG_ARCH_TEGRA_238_SOC=n
-> +CONFIG_ARCH_TEGRA_241_SOC=n
-> +CONFIG_ARCH_TEGRA_264_SOC=n
->  CONFIG_ARCH_TESLA_FSD=n
->  CONFIG_ARCH_THUNDER2=n
->  CONFIG_ARCH_THUNDER=n
-> -- 
-> 2.50.0.173.g8b6f19ccfc3a
-> 
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#5217): https://lists.yoctoproject.org/g/yocto-patches/message/5217
-> Mute This Topic: https://lists.yoctoproject.org/mt/122073724/900817
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
-> 
+AI-Generated: codex/claude-opus 5 (xhigh)
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+Applies on top of Andrea Ricchi's "kernel: restore options the 32-bit
+arch removal drops", message-id
+20261104130230.236614-1-andrea.ricchi@amarulasolutions.com
+---
+ .../bsp/rockchip/restore-arm-selected-options.cfg        | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
+index ababaf6c911e..df3c6ddd4790 100644
+--- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
++++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
+@@ -24,3 +24,12 @@ CONFIG_HIGHMEM=y
+ CONFIG_REALTEK_PHY=y
+ CONFIG_USB_EHCI_HCD_PLATFORM=y
+ CONFIG_USB_OHCI_HCD_PLATFORM=y
++
++# errata workarounds the removed platforms used to select; Cortex-A9
++# covers rk3066 and rk3188, Cortex-A7 covers rk3036, rk3128 and rk322x
++CONFIG_ARM_ERRATA_720789=y
++CONFIG_ARM_ERRATA_754322=y
++CONFIG_ARM_ERRATA_754327=y
++CONFIG_ARM_ERRATA_764369=y
++CONFIG_ARM_ERRATA_775420=y
++CONFIG_ARM_ERRATA_814220=y
+-- 
+2.50.0.173.g8b6f19ccfc3a
+
