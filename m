@@ -1,247 +1,289 @@
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18.1794940685514334532
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1117.1794943827602724542
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 17 Nov 2026 10:38:06 -0800
+ Tue, 17 Nov 2026 11:30:27 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=WNtMVSqg;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-256628-20261117183802496279dddc000207ad-gp9bo_@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20261117183802496279dddc000207ad
-        for <yocto-patches@lists.yoctoproject.org>;
-        Tue, 17 Nov 2026 19:38:03 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=9lwmVhQaF44Tp06w8rE69pjWhPNdTvsjONCJ46nUN7Q=;
- b=WNtMVSqgEA4m8OJLMggw7tS4hHK+hj6lHmje/qUr6XIoVbLB1HwhoBujGzS+yOFWlKpJ93
- ymXLNgrdqh/a1nYep0BuQ3YGDij09hDSIfTgxyj2TuUOOC/7uQTk6cWG6MlXUQSaVsJcFRI2
- T7C40hRJPNj8JUqPM77Lt/oOjycDqjLA4BDPHoLj9EnyVIbzh8W2rU9jT0+dwK2OmNFr0E9P
- wv8m9UhNHLTu2kae9IEU0J25R/GO1oyZEp39+hTFBKfCgTr/ePyMxBxa7D1MqqPBR5TCCpt8
- 4ERTrhLPLuY5qzIEQKFfASF23gig8wFwVzhQ7J/1+OmC80V8j2/8So0g==;
-From: Peter Marko <peter.marko@siemens.com>
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=I3HUKJj6;
+ spf=pass (domain: gmail.com, ip: 209.85.215.177, mailfrom: ticotimo@gmail.com)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-cdb45e96d2bso169926a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 11:30:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794943826; x=1795548626; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=r4INEBgMnUSCRh2EXkbXORBikj5isswC3EtAbnl0Nr4=;
+        b=I3HUKJj6sFH93CZ9GpIULptrXHocum+dMSIDOmdfbw5ANs4nlC5hEgGyH0qtEzmIB1
+         dCrPVJzj69LGy8fsKH/HhVT95Rt/fFR/7c7Dc5N1PC7s6D4Gxw2maOhBP5S4Y57n9FxP
+         SqlUGMRrjcSDpWVRHG2BS7RQZOooZLb3U9y9IwyIBZ2vOVdfZDqFdz7nC0kf0FCiMogZ
+         CGRJnInRxpVJNRihxbkxP6PG4/Twxi1aNLDedrKk90tTvKwfZQhZXqLzDJk4RPW6g2MP
+         SdyH8LAKPreqhXhzoC84YBQHiDt2EX4qzWeo+uJ3JkraA5BG6HbNKiIQwmUguy5fKO3y
+         36JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794943826; x=1795548626;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=r4INEBgMnUSCRh2EXkbXORBikj5isswC3EtAbnl0Nr4=;
+        b=lLg02PJWITmKx7jtdpZyjK68SPggrAUsvm6tTtTpeUEDX/xQMW53vyENhxgTCXZf1M
+         iBf7qPSkAbcawluXbRaJT7wx3+Mt/XZCdb0ynkIE7oSbwKy1FhxPZMmDXxzO71XSn8iT
+         YYshgOe8RGd6cfbnnwkXuAi6LxTbTkfyYD4llEhiDq7n1ubhSwhk9B7BxQeyPyBzSFqh
+         BJkU8NAfp7zuAz/rXgginqQIUMFaXy6Az8st0F6PoFMendyZAYxJ7p5UtxPKzJ/z0QR4
+         LLPSs0G7qGOMbwtsQh8iGcHmYDk34k7bveDpWEAEcXWIQ0gzVICgTqkbXrEk55XAeRxN
+         Taag==
+X-Gm-Message-State: APuU4Z9N8AVOsc2BJjfgsOJCTYW5sc0MP8/hEH/g4H+TXZfyGMOuoZj6
+	+JZ2AjmUlRh1LEY/UyITzyf/IuN4XRIsDUwyYxe+InwNz4vcoQOp6zWbzEbvbw==
+X-Gm-Gg: AZFdTZcy7aBW61zsIrXg7XLfkC/Jcc2jj+zMXFOrAMUookqTzwtYo9vXNDMik8fF0Rd
+	n2mze61Vaaq+6/+NPqFgPKUgvbL0vDCqjbP5ybhg1PgbjL7RDyE9gHWhSsSayQNG/3joLNgFfoB
+	xZYZdfIEQyT1iGVBIgj4ATzCCr4FjWIiMt6Evd/l0h4LCjwBQirAKS4IHnN+BGgeFE1Es/OWNSd
+	rGedJx1V74djL6BjehSjanU7xDpxQlTmG1KbcL61zE4AKUExOtgGQfbYaaLWIspYJbzJCyc5Zkh
+	7fqawWb7kHvGgDTuLnx/syltka9mje85haaGgSAAesoq5ilPMTSeLk8KGycP1GGCRPU1xspT1Yn
+	6WWXGQA8Gb8g+Jb/W+QYNgWZ03IJIt/szH45GpDua7C4ZYf9gc+eHjcVfACFVtRfEsEjLaFSvGN
+	npq+9AuIqpFaTKQylTiQizgC00XHKmttgF3GVf8alUnuPbj9AaVtK/QyN1ZgmBStaJfVHW6vlq/
+	GP75l8cCS7P/mX3kLd2SII1DT6dCwwQcX3bQHQRjTljADUJWbytIDmRwXU6nbHMrp8Htr8DHu0u
+	VP+JosbFHL4FGCPpu0074DzKNmYI84pCrp0mzKTjOoOp06PI+cPd8Hf0
+X-Received: by 2002:a17:90b:4b88:b0:3b1:ba59:56a1 with SMTP id 98e67ed59e1d1-3b3d07ca529mr380594a91.39.1794943826363;
+        Tue, 17 Nov 2026 11:30:26 -0800 (PST)
+Return-Path: <ticotimo@gmail.com>
+Received: from localhost.localdomain ([69.9.132.159])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b3ac70ea45sm5252462a91.17.2026.11.17.11.30.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 17 Nov 2026 11:30:22 -0800 (PST)
+From: Tim Orling <ticotimo@gmail.com>
+X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: jose.quaresma@foundries.io,
-	Peter Marko <peter.marko@siemens.com>
-Subject: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.27.3 -> 1.27.4
-Date: Tue, 17 Nov 2026 19:37:58 +0100
-Message-ID: <20261117183758.3683114-1-peter.marko@siemens.com>
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH] layerindex/restviews.py: stream unpaginated JSON lists
+Date: Tue, 17 Nov 2026 11:29:38 -0800
+Message-ID: <20261117192938.22269-1-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.56.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 18:38:09 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5465
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Nov 2026 19:30:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5466
 Content-Type: text/plain; charset="utf-8"
 
-From: Peter Marko <peter.marko@siemens.com>
+Most API lists aren't paginated, and clients such as bitbake's
+layerindexlib fetch whole tables: /layerindex/api/recipes/ is about
+300 MB of JSON. Building that in one piece took a worker to 1.6 GB. Send
+JSON lists a chunk of 2000 objects at a time instead, with the same
+output; paginated lists and the browsable API are unchanged.
 
-Upgrade to latest 1.27.x release [1]:
+Tests that read an unpaginated list now read the streamed content, and
+the API contract tests check the shape of the streamed responses.
 
-$ git --no-pager log --oneline go1.27.3..go1.27.4
-7b2881024c (tag: go1.27.4) [release-branch.go1.27] go1.27.4
-4c1752a033 [release-branch.go1.27] net/http: prevent HTTP/1 server crash due to MaxBytesReader header race
-3eb71096dd [release-branch.go1.27] cmd/go, cmd/compile: unquote //go:cgo_ldflag and bound slice removal
-e6ea940f9b [release-branch.go1.27] cmd/cgo, cmd/compile, cmd/link: validate cgo_import_dynamic library names
-55515b6fe4 [release-branch.go1.27] cmd/compile, cmd/link: validate cgo symbol names and prevent export overwrite
-b207530349 [release-branch.go1.27] cmd/go, cmd/link: reject .syso files with Go object or unrecognized formats
-e7b9584fec [release-branch.go1.27] cmd/go: disallow pkg-config local .pc paths and inspect cgoCPPFLAGS
-51dadca52c [release-branch.go1.27] cmd/go: validate .syso and linker input files against scripts and embedded options
-5f05d301a7 [release-branch.go1.27] cmd/go: validate split -Wl, next-arg flags and linker script targets
-0edfcc8731 [release-branch.go1.27] cmd/go: disallow separated -l flag followed by to_library
-cbd457366f [release-branch.go1.27] cmd/go: disallow -gen-* and -gnat* in flag allowlists
-c5426cee10 [release-branch.go1.27] cmd/go: reject GCC spec files in linker search directories
-8e7ba03754 [release-branch.go1.27] cmd/go: disallow --sysroot and -target, validate -isysroot/-syslibroot, and restrict -x
-251c4ee2e8 [release-branch.go1.27] runtime: match deferring function when looking for linked defers in nextFrame
-1bf5d09e4f [release-branch.go1.27] crypto/tls: omit ML-DSA from signature_algorithms_cert
-5f0af78b52 [release-branch.go1.27] cmd/compile: record method indices before encoding a named type
-c56bcdef12 [release-branch.go1.27] crypto/internal/fips140/sha3: record legacy Keccak as non-approved
-bb19eae15c [release-branch.go1.27] crypto/internal/fips140/tls12: record SHA-384 as approved in MasterSecret
-96f62c8958 [release-branch.go1.27] crypto/hkdf: remove unnecessary HMAC key length allowance for HKDF-Expand
-4d34001816 [release-branch.go1.27] crypto/rsa: apply FIPS 140-3 approved checks to MGF hash in OAEP
-caa055b6a4 [release-branch.go1.27] crypto/internal/fips140: run CASTs when generating keys
-41d6346743 [release-branch.go1.27] net: fix zero value address handling in Dialer.Dial{TCP,UDP,IP}
-8b28706da8 [release-branch.go1.27] cmd/compile: teach deadstore about CondSelect
-c1ff416cd8 [release-branch.go1.27] Revert "runtime: fix timespec definition on 32bits systems"
-a0c618c225 [release-branch.go1.27] cmd/internal/obj/x86: clear forward-jump list on PCALIGN
-62cbde4f2f [release-branch.go1.27] cmd/dist: fix GOFIPS140 toolchain compilation
+[YOCTO #16525]
 
-Fixes CVE-2026-97054, CVE-2026-97033, CVE-2026-97034, CVE-2026-97035,
-      CVE-2026-97036, CVE-2026-97037, CVE-2026-97038, CVE-2026-97039,
-      CVE-2026-97040, CVE-2026-97041, CVE-2026-97042, CVE-2026-97043.
-
-Release information: [2]
-
-[1] https://github.com/golang/go/compare/go1.27.3...go1.27.4
-[2] https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM
-
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(From OE-Core rev: 1c55f09c670898f39df7862192b536b09786b05b)
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+AI-Generated: Claude Opus 5.5
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- recipes-devtools/go/{go-1.27.3.inc => go-1.27.4.inc} |  2 +-
- ...y-native_1.27.3.bb => go-binary-native_1.27.4.bb} |  6 +++---
- ...anadian_1.27.3.bb => go-cross-canadian_1.27.4.bb} |  0
- .../go/{go-cross_1.27.3.bb => go-cross_1.27.4.bb}    |  0
- .../{go-crosssdk_1.27.3.bb => go-crosssdk_1.27.4.bb} |  0
- .../{go-runtime_1.27.3.bb => go-runtime_1.27.4.bb}   |  0
- ...ke-content-based-hash-generation-less-pedan.patch | 12 ++++++------
- ...0006-cmd-go-make-GOROOT-precious-by-default.patch |  2 +-
- ...ilter-out-build-specific-paths-from-linker-.patch |  4 ++--
- ...ear-GOROOT-for-func-ldShared-when-trimpath-.patch |  2 +-
- recipes-devtools/go/{go_1.27.3.bb => go_1.27.4.bb}   |  0
- 11 files changed, 14 insertions(+), 14 deletions(-)
- rename recipes-devtools/go/{go-1.27.3.inc => go-1.27.4.inc} (91%)
- rename recipes-devtools/go/{go-binary-native_1.27.3.bb => go-binary-native_1.27.4.bb} (80%)
- rename recipes-devtools/go/{go-cross-canadian_1.27.3.bb => go-cross-canadian_1.27.4.bb} (100%)
- rename recipes-devtools/go/{go-cross_1.27.3.bb => go-cross_1.27.4.bb} (100%)
- rename recipes-devtools/go/{go-crosssdk_1.27.3.bb => go-crosssdk_1.27.4.bb} (100%)
- rename recipes-devtools/go/{go-runtime_1.27.3.bb => go-runtime_1.27.4.bb} (100%)
- rename recipes-devtools/go/{go_1.27.3.bb => go_1.27.4.bb} (100%)
+ layerindex/restviews.py             | 34 +++++++++++++++
+ tests/test_api_contract.py          |  3 ++
+ tests/test_published_layers_feed.py |  4 +-
+ tests/test_restapi.py               |  9 ++--
+ tests/test_restapi_stream.py        | 65 +++++++++++++++++++++++++++++
+ 5 files changed, 111 insertions(+), 4 deletions(-)
+ create mode 100644 tests/test_restapi_stream.py
 
-diff --git a/recipes-devtools/go/go-1.27.3.inc b/recipes-devtools/go/go-1.27.4.inc
-similarity index 91%
-rename from recipes-devtools/go/go-1.27.3.inc
-rename to recipes-devtools/go/go-1.27.4.inc
-index 7c906e8..3e987ea 100644
---- a/recipes-devtools/go/go-1.27.3.inc
-+++ b/recipes-devtools/go/go-1.27.4.inc
-@@ -17,4 +17,4 @@ SRC_URI += "\
-     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
-     file://0011-internal-cgrouptest-skip-when-cpu.max-is-not-availab.patch \
- "
--SRC_URI[main.sha256sum] = "6e7749035cf360f06b2575d162ea79df9fda8ef671889e5c375f8e50777f26bb"
-+SRC_URI[main.sha256sum] = "73cfb8571aec0c01177687db87163d46aa20e9779672772891aa17654d9a6099"
-diff --git a/recipes-devtools/go/go-binary-native_1.27.3.bb b/recipes-devtools/go/go-binary-native_1.27.4.bb
-similarity index 80%
-rename from recipes-devtools/go/go-binary-native_1.27.3.bb
-rename to recipes-devtools/go/go-binary-native_1.27.4.bb
-index cc4664e..55cf81a 100644
---- a/recipes-devtools/go/go-binary-native_1.27.3.bb
-+++ b/recipes-devtools/go/go-binary-native_1.27.4.bb
-@@ -9,9 +9,9 @@ PROVIDES = "go-native"
+diff --git a/layerindex/restviews.py b/layerindex/restviews.py
+index 1b6b926..c55c444 100644
+--- a/layerindex/restviews.py
++++ b/layerindex/restviews.py
+@@ -7,7 +7,9 @@
+ # SPDX-License-Identifier: MIT
  
- # Checksums available at https://go.dev/dl/
- SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
--SRC_URI[go_linux_amd64.sha256sum] = "65efbc80fdc1fa2cd2631cad5b481777a68e8725f34e89f50fc6ac714e379b40"
--SRC_URI[go_linux_arm64.sha256sum] = "a06e99309dbcbdca1a8ccd2282c3ee146e55930886e26b4f1193269587165f49"
--SRC_URI[go_linux_ppc64le.sha256sum] = "f180f01943865b7942ab3b4acbab6da6f0f669b61da999d004d16c537a49f7b5"
-+SRC_URI[go_linux_amd64.sha256sum] = "7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840"
-+SRC_URI[go_linux_arm64.sha256sum] = "3392582988a273a87ab5043ee1b2c9c17a2c3c00580bf9326c47a2e0aaaeac92"
-+SRC_URI[go_linux_ppc64le.sha256sum] = "f508314644fa6f466d1935f8a34f01e7980092a4730bfb9d7fa3ffde81910d20"
+ from layerindex.models import Branch, LayerItem, LayerMaintainer, YPCompatibleVersion, LayerNote, LayerBranch, LayerDependency, Recipe, Machine, Distro, BBClass, Source, Patch, PackageConfig, StaticBuildDep, DynamicBuildDep, RecipeFileDependency, BBAppend, IncFile
++from django.http import StreamingHttpResponse
+ from rest_framework import viewsets, serializers, pagination
++from rest_framework.renderers import JSONRenderer
+ from layerindex.querysethelper import params_to_queryset, get_search_tuple
  
- UPSTREAM_CHECK_URI = "https://golang.org/dl/"
- UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
-diff --git a/recipes-devtools/go/go-cross-canadian_1.27.3.bb b/recipes-devtools/go/go-cross-canadian_1.27.4.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross-canadian_1.27.3.bb
-rename to recipes-devtools/go/go-cross-canadian_1.27.4.bb
-diff --git a/recipes-devtools/go/go-cross_1.27.3.bb b/recipes-devtools/go/go-cross_1.27.4.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross_1.27.3.bb
-rename to recipes-devtools/go/go-cross_1.27.4.bb
-diff --git a/recipes-devtools/go/go-crosssdk_1.27.3.bb b/recipes-devtools/go/go-crosssdk_1.27.4.bb
-similarity index 100%
-rename from recipes-devtools/go/go-crosssdk_1.27.3.bb
-rename to recipes-devtools/go/go-crosssdk_1.27.4.bb
-diff --git a/recipes-devtools/go/go-runtime_1.27.3.bb b/recipes-devtools/go/go-runtime_1.27.4.bb
-similarity index 100%
-rename from recipes-devtools/go/go-runtime_1.27.3.bb
-rename to recipes-devtools/go/go-runtime_1.27.4.bb
-diff --git a/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch b/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
-index 92e2a1b..07ae689 100644
---- a/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
-+++ b/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
-@@ -108,7 +108,7 @@ index 8dcf324529f5..617b7ece73f0 100644
-  	}
-  
-  	// Configuration specific to compiler toolchain.
--@@ -2839,8 +2841,25 @@ func envList(key, def string) []string {
-+@@ -2845,8 +2847,25 @@ func envList(key, def string) []string {
-  	return args
-  }
-  
-@@ -135,9 +135,9 @@ index 8dcf324529f5..617b7ece73f0 100644
-  	if cppflags, err = buildFlags("CPPFLAGS", "", p.CgoCPPFLAGS, checkCompilerFlags); err != nil {
-  		return
-  	}
--@@ -2856,6 +2875,13 @@ func (b *Builder) CFlags(p *load.Package) (cppflags, cflags, cxxflags, fflags, l
-- 	if ldflags, err = buildFlags("LDFLAGS", DefaultCFlags, p.CgoLDFLAGS, checkLinkerFlags); err != nil {
-- 		return
-+@@ -2867,6 +2886,13 @@ func (b *Builder) CFlags(p *load.Package) (cppflags, cflags, cxxflags, fflags, l
-+ 			return
-+ 		}
-  	}
- +	if filtered {
- +		cppflags = filterCompilerFlags(cppflags, false)
-@@ -149,7 +149,7 @@ index 8dcf324529f5..617b7ece73f0 100644
-  
-  	return
-  }
--@@ -2944,7 +2970,7 @@ func (b *Builder) runCgo(ctx context.Context, a *Action) error {
-+@@ -2955,7 +2981,7 @@ func (b *Builder) runCgo(ctx context.Context, a *Action) error {
-  	cgoExe := base.Tool("cgo")
-  	cgofiles = mkAbsFiles(p.Dir, cgofiles)
-  
-@@ -158,7 +158,7 @@ index 8dcf324529f5..617b7ece73f0 100644
-  	if err != nil {
-  		return err
-  	}
--@@ -3502,7 +3528,7 @@ func (b *Builder) swigOne(a *Action, file, objdir string, pcCFLAGS []string, cxx
-+@@ -3523,7 +3549,7 @@ func (b *Builder) swigOne(a *Action, file, objdir string, pcCFLAGS []string, cxx
-  	p := a.Package
-  	sh := b.Shell(a)
-  
-diff --git a/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch b/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
-index 77b4bed..5df9e17 100644
---- a/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
-+++ b/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
-@@ -94,7 +94,7 @@ index 617b7ece73f0..46c0712c5bd0 100644
-  	if err := sh.Mkdir(buildAction.Objdir); err != nil {
-  		return nil, err
-  	}
--@@ -1923,6 +1940,14 @@ func (b *Builder) linkShared(ctx context.Context, a *Action) (err error) {
-+@@ -1929,6 +1946,14 @@ func (b *Builder) linkShared(ctx context.Context, a *Action) (err error) {
-  		return err
-  	}
-  
-diff --git a/recipes-devtools/go/go/0007-exec.go-filter-out-build-specific-paths-from-linker-.patch b/recipes-devtools/go/go/0007-exec.go-filter-out-build-specific-paths-from-linker-.patch
-index e6a5ce5..c5c4f35 100644
---- a/recipes-devtools/go/go/0007-exec.go-filter-out-build-specific-paths-from-linker-.patch
-+++ b/recipes-devtools/go/go/0007-exec.go-filter-out-build-specific-paths-from-linker-.patch
-@@ -18,7 +18,7 @@ diff --git a/src/cmd/go/internal/work/exec.go b/src/cmd/go/internal/work/exec.go
- index 46c0712c5bd0..e7c0459ee4c0 100644
- --- a/src/cmd/go/internal/work/exec.go
- +++ b/src/cmd/go/internal/work/exec.go
--@@ -1598,6 +1598,29 @@ func (b *Builder) linkActionID(a *Action) cache.ActionID {
-+@@ -1604,6 +1604,29 @@ func (b *Builder) linkActionID(a *Action) cache.ActionID {
-  	return h.Sum()
-  }
-  
-@@ -48,7 +48,7 @@ index 46c0712c5bd0..e7c0459ee4c0 100644
-  // printLinkerConfig prints the linker config into the hash h,
-  // as part of the computation of a linker-related action ID.
-  func (b *Builder) printLinkerConfig(h io.Writer, p *load.Package) {
--@@ -1608,7 +1631,7 @@ func (b *Builder) printLinkerConfig(h io.Writer, p *load.Package) {
-+@@ -1614,7 +1637,7 @@ func (b *Builder) printLinkerConfig(h io.Writer, p *load.Package) {
-  	case "gc":
-  		fmt.Fprintf(h, "link %s %q %s\n", b.toolID("link"), forcedLdflags, ldBuildmode)
-  		if p != nil {
-diff --git a/recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch b/recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch
-index 6e71187..56b040a 100644
---- a/recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch
-+++ b/recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch
-@@ -29,7 +29,7 @@ diff --git a/src/cmd/go/internal/work/gc.go b/src/cmd/go/internal/work/gc.go
- index 49b26e15609b..7c0d2ac9e0f0 100644
- --- a/src/cmd/go/internal/work/gc.go
- +++ b/src/cmd/go/internal/work/gc.go
--@@ -721,6 +721,12 @@ func (gcToolchain) ldShared(b *Builder, root *Action, toplevelactions []*Action,
-+@@ -725,6 +725,12 @@ func (gcToolchain) ldShared(b *Builder, root *Action, toplevelactions []*Action,
-  	// the output file path is recorded in the .gnu.version_d section.
-  	dir, targetPath := filepath.Split(targetPath)
-  
-diff --git a/recipes-devtools/go/go_1.27.3.bb b/recipes-devtools/go/go_1.27.4.bb
-similarity index 100%
-rename from recipes-devtools/go/go_1.27.3.bb
-rename to recipes-devtools/go/go_1.27.4.bb
+ class LayerIndexPagination(pagination.PageNumberPagination):
+@@ -41,6 +43,38 @@ class ParametricSearchableModelViewSet(viewsets.ReadOnlyModelViewSet):
+         (filter_string, search_term, ordering_string) = get_search_tuple(self.request, model)
+         return params_to_queryset(model, qs, filter_string, search_term, ordering_string)
+ 
++    # Objects serialised at a time when streaming a list
++    stream_chunk_size = 2000
++
++    def list(self, request, *args, **kwargs):
++        # An unpaginated list can be a whole table: all the recipes are 300 MB
++        # of JSON, which took a worker to 1.6 GB when built in one piece. Send
++        # JSON a chunk at a time instead, in the same format. Other renderers
++        # (e.g. the browsable API) build the whole response as before.
++        # (AI-generated, Claude Opus 5.5)
++        renderer = request.accepted_renderer
++        if self.paginator is not None or not isinstance(renderer, JSONRenderer):
++            return super().list(request, *args, **kwargs)
++        # Evaluated here, so that an invalid filter is still an error response
++        queryset = self.filter_queryset(self.get_queryset())
++        return StreamingHttpResponse(self.stream_json(queryset, renderer),
++                                     content_type=renderer.media_type)
++
++    def stream_json(self, queryset, renderer):
++        # The objects of each chunk, rendered as a list without its brackets
++        yield b'['
++        separator = b''
++        chunk = []
++        for obj in queryset.iterator(chunk_size=self.stream_chunk_size):
++            chunk.append(obj)
++            if len(chunk) == self.stream_chunk_size:
++                yield separator + renderer.render(self.get_serializer(chunk, many=True).data)[1:-1]
++                separator = b','
++                chunk = []
++        if chunk:
++            yield separator + renderer.render(self.get_serializer(chunk, many=True).data)[1:-1]
++        yield b']'
++
+ class BranchSerializer(DynamicFieldsModelSerializer):
+     class Meta:
+         model = Branch
+diff --git a/tests/test_api_contract.py b/tests/test_api_contract.py
+index 5de9427..feec1a6 100644
+--- a/tests/test_api_contract.py
++++ b/tests/test_api_contract.py
+@@ -90,6 +90,9 @@ def api(client, seeded_index):
+         response = client.get('/layerindex/api/' + path, params)
+         assert response.status_code == 200, path
+         assert response['Content-Type'] == 'application/json', path
++        # An unpaginated list is streamed (AI-generated, Claude Opus 5.5)
++        if response.streaming:
++            return json.loads(b''.join(response.streaming_content))
+         return response.json()
+     return get
+ 
+diff --git a/tests/test_published_layers_feed.py b/tests/test_published_layers_feed.py
+index 7554677..26e6664 100644
+--- a/tests/test_published_layers_feed.py
++++ b/tests/test_published_layers_feed.py
+@@ -1,4 +1,5 @@
+ import datetime
++import json
+ import xml.etree.ElementTree as ET
+ from email.utils import parsedate_to_datetime
+ from urllib.parse import urlsplit
+@@ -290,7 +291,8 @@ def test_published_date_is_not_in_the_rest_api(new_layer, publish, client):
+ 
+     response = client.get('/layerindex/api/layerItems/', {'format': 'json'})
+ 
+-    data = response.json()
++    # The list is streamed (AI-generated, Claude Opus 5.5)
++    data = json.loads(b''.join(response.streaming_content))
+     items = data['results'] if isinstance(data, dict) else data
+     (item,) = [i for i in items if i['name'] == 'meta-foo']
+     assert 'published' not in item
+diff --git a/tests/test_restapi.py b/tests/test_restapi.py
+index fde1aec..20254c2 100644
+--- a/tests/test_restapi.py
++++ b/tests/test_restapi.py
+@@ -5,6 +5,7 @@
+ # SPDX-License-Identifier: MIT
+ 
+ import datetime
++import json
+ 
+ import pytest
+ from django.test import TestCase
+@@ -24,7 +25,8 @@ class TestRestApiDatetimes(TestCase):
+ 
+         response = self.client.get('/layerindex/api/layerItems/', {'format': 'json'})
+         self.assertEqual(response.status_code, 200)
+-        data = response.json()
++        # Unpaginated lists are streamed
++        data = json.loads(b''.join(response.streaming_content))
+         items = data['results'] if isinstance(data, dict) else data
+         item = next(i for i in items if i['name'] == 'meta-test')
+         self.assertEqual(item['updated'], '2026-10-18T14:37:05+0000')
+@@ -59,7 +61,8 @@ class TestRestApiInvalidParameters(TestCase):
+         response = self.client.get('/layerindex/api/layerItems/',
+                                    {'filter': 'name:meta-test', 'format': 'json'})
+         self.assertEqual(response.status_code, 200)
+-        self.assertEqual([i['name'] for i in response.json()], ['meta-test'])
++        self.assertEqual([i['name'] for i in json.loads(b''.join(response.streaming_content))],
++                         ['meta-test'])
+ 
+ 
+ @pytest.mark.django_db
+@@ -76,7 +79,7 @@ class TestRestApiOrderby(TestCase):
+         response = self.client.get('/layerindex/api/layerItems/',
+                                    {'orderby': orderby, 'format': 'json'})
+         self.assertEqual(response.status_code, 200)
+-        return [i['name'] for i in response.json()]
++        return [i['name'] for i in json.loads(b''.join(response.streaming_content))]
+ 
+     def test_ascending(self):
+         self.assertEqual(self.names('name:+'), ['meta-a', 'meta-b', 'meta-c'])
+diff --git a/tests/test_restapi_stream.py b/tests/test_restapi_stream.py
+new file mode 100644
+index 0000000..48cc36f
+--- /dev/null
++++ b/tests/test_restapi_stream.py
+@@ -0,0 +1,65 @@
++# layerindex-web - tests for streamed REST API lists
++#
++# Licensed under the MIT license, see COPYING.MIT for details
++#
++# SPDX-License-Identifier: MIT
++#
++# AI-generated, Claude Opus 5.5
++
++# An unpaginated list is sent a chunk at a time, so a whole table never has to
++# be built in memory, and the JSON is the same as before. tests/test_api_contract.py
++# checks the shape of the streamed responses.
++
++import json
++from unittest import mock
++
++from layerindex.models import Recipe
++from layerindex.restviews import ParametricSearchableModelViewSet, RecipeSerializer
++
++
++def get_recipes(client, **params):
++    return client.get('/layerindex/api/recipes/', params)
++
++
++def content(response):
++    return b''.join(response.streaming_content)
++
++
++def test_streamed_in_chunks(client, seeded_index):
++    # Chunks of 3 for 4 recipes: the last chunk is short
++    with mock.patch.object(ParametricSearchableModelViewSet, 'stream_chunk_size', 3):
++        response = get_recipes(client, format='json')
++        assert response.status_code == 200
++        assert response.streaming
++        assert response['Content-Type'] == 'application/json'
++        data = json.loads(content(response))
++    expected = RecipeSerializer(Recipe.objects.order_by('id'), many=True).data
++    assert data == json.loads(json.dumps(expected))
++
++
++def test_whole_chunks(client, seeded_index):
++    with mock.patch.object(ParametricSearchableModelViewSet, 'stream_chunk_size', 2):
++        data = json.loads(content(get_recipes(client, format='json')))
++    assert len(data) == Recipe.objects.count() == 4
++
++
++def test_empty_list(client, seeded_index):
++    assert content(get_recipes(client, format='json', filter='pn:nosuchrecipe')) == b'[]'
++
++
++def test_filter_still_applies(client, seeded_index):
++    data = json.loads(content(get_recipes(client, format='json', filter='pn:base-example')))
++    assert [r['pn'] for r in data] == ['base-example']
++
++
++def test_paginated_list_not_streamed(client, seeded_index):
++    response = client.get('/layerindex/api/recipesExtended/', {'format': 'json'})
++    assert response.status_code == 200
++    assert not response.streaming
++    assert response.json()['count'] == 4
++
++
++def test_browsable_api_not_streamed(client, seeded_index):
++    response = client.get('/layerindex/api/recipes/', HTTP_ACCEPT='text/html')
++    assert response.status_code == 200
++    assert not response.streaming
+-- 
+2.56.1
+
