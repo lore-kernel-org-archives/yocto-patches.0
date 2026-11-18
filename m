@@ -1,162 +1,124 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11152.1795003877771394649
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11156.1795003913946037318
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 18 Nov 2026 04:11:17 -0800
+ Wed, 18 Nov 2026 04:11:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=iKHRWrp3;
- spf=pass (domain: gmail.com, ip: 209.85.160.171, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-55d30c054dfso9698711cf.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 04:11:17 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20260707 header.b=nBVjv3At;
+ spf=pass (domain: gmail.com, ip: 209.85.160.176, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-5364d86f7f0so10348671cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 04:11:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795003877; x=1795608677; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20260707; t=1795003913; x=1795608713; darn=lists.yoctoproject.org;
         h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=T4H8WmHHjCTAalaVUkla0KC6M9daKk/aySWai9+8I/0=;
-        b=iKHRWrp3JltXSzTSnXmkPMaZAwN4iNtAYchg+k2bnwCiAoC8Funh6rzRKaTD7d3K7Y
-         9ZvvYpNZ0ksBj+ldo4VZYzrg/6Xh0JSscqpy8Ienp9tg31UhpWEO+7YVVjPjPBXhZqQH
-         RcPq2X7y/M8sUoP3WrgJmI5Zx7yoaJq9kLyqItPWKt2LvGCsSJwe8VJUEHprC0VP07fq
-         tNE8JmvH/YmN4/WqkBD3kktsJhonGBK7cE92LPwkefKIZRSCbfL9PHMA5HgFkS1xyBQw
-         Y48LKd9Oq33uE0A85EgmjMeslFBp8zVxqERNIa2autJEGeYYwaW+SSA3xoGVU3gzSlkG
-         mzYA==
+         :references:message-id:subject:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=CjupTNLfHAFbFlB2uDjmn2ih+XXmDaw75BZykYuzCl8=;
+        b=nBVjv3AtIOM5o8CHulZVV423b3IdETqTqqdq1gC8SpivWPIjL9eTXMNW1LSboVLvGU
+         WiE2aTJziuqazP6/QLdkEUgLO4VBKMw5SJroE/tmBAGAUNL+HWrJW/nTs/ScVLrAIAwz
+         MN2zvt5XXVGUuYHTga0gympkWHMSQfka0whNbsrYaGpP5e8DGgC68VxFaYKzgwn5cbSq
+         tj93dvp6rxWyzGXhKDdOvwrF81+WjSeCZNINwDvYTM97DMoVQLoaWreMwBUmiKqEl5NF
+         s0I9MpTRoSaahcXwzlvWdHVb0YG4MIo5Ty/CwtLdibFm/7Jb5KgbUJSTllHcnEe1mFRF
+         zVnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795003877; x=1795608677;
+        d=1e100.net; s=20260707; t=1795003913; x=1795608713;
         h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :references:message-id:subject:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=T4H8WmHHjCTAalaVUkla0KC6M9daKk/aySWai9+8I/0=;
-        b=wnD3LkTVBKSqIPU5CZGoA6K9H8yaK5S+wjVuABfMsd2/2ijYC3pL7xWsnatj6z7wKG
-         gGh6Qefg0aqJ0DRNFW7XJfEAMEmo/rvaz/NbcNc7JeI9/Hwu+AJzzG7AMU3P9rOZ6Ya5
-         icJcmomXCRmOZGd1QkeN2BqH9TvHY7y0fPyb9iMm2IH7kTKW38fEK+Eve09IV3Vjnssw
-         yh8+pCX+3z9n8lizdYy04bjVmLhqxS0qPqdBVoKGDxDHb/AtbCtqTZfmK2sHVoiC/dnw
-         VZZc2UvAbvREbSldIWaut4lmKcUyb7fmW9PwghqOOmug8MKcEaSW1UwHPOz+RIvUySMI
-         9+jQ==
-X-Gm-Message-State: APuU4Z9TAE7xgZfIWwxDRFDB76HME02lpOe60tt3KFlAjmDomErqLFYd
-	TAsampq26fwJes13UbRYmSKPs124g0zxb0gpnnjPRbHdex5CV09ZBtNi
-X-Gm-Gg: AYBFou0voXzuXK9tUXiVVguU+XCw4cYtSo6bBI9P4gUh4yJ/ap++B+mg3YNoYgj1Wbq
-	LOCXKcaBMtPvO0KJsb//fhCHATh9UnVTs6yQRpM9wU8WXPBcqpnxaqT5z5AP6kEAPYXo2XnK7eD
-	OvwlMKOzvMJZOdahJKaJUij6QmK93k2ZM6pveH8Ho/xjKhkFcPZVqwQ3RQc0/bmEKfW7bONPbIt
-	XoXd1VJGeFl3uP/35v097s6lXS08QgjQ1cD+GO1LddSXOADDo19F1Sz4YKLuH7mzKDyuSMFRYt/
-	Pc232e3fHCqaiSY98HD08xooNA8Pp3CTU3vqXP/cNP/OYE/TjFj2xxqcy/E2cNR7jSlntB35yF0
-	zvIEWv9KckITi77EQgVkhBJ2zyODneq19yYTl9FCnuIheANakHN2QSssAkX0V5/yx3M4qDMS+l9
-	gyLtXZ5f56RHrFDhoBX+cBM58em5pTutHJ45d/E1MVOM2QVHLMzq/reprN04ErQt7+g0dQSHheJ
-	rSTOP6EJQIq8BQ7lbmR3+F+mitV+oZ/OhOTbuyCH+3yO/lyhq0UOKCYM++8rvZhNYY2kc77CjwU
-	gIwWd0dv7GZF8FssQmBJudaJ5Ep+2SWPUs9Y/QfNSk+OOLUrj+87les4PaM92S2rpTW3KjxtXx0
-	pVxV7mwlMq8/KUHqdkKZS50ltKxXP9VI=
-X-Received: by 2002:ac8:6f0c:0:b0:536:719d:7974 with SMTP id d75a77b69052e-55d5a6dfce8mr33632091cf.55.1795003876424;
-        Wed, 18 Nov 2026 04:11:16 -0800 (PST)
+        bh=CjupTNLfHAFbFlB2uDjmn2ih+XXmDaw75BZykYuzCl8=;
+        b=W42sPPVAHnfHm4sF3Nyukic8gULktfcqHT90HTwPzDhRHzXuIzcciDE9nPQP9Iau4w
+         5tf0H+jMDxo4mGU9K1MS5mDWOKn0BoWwedjsyQQgu9XbwBP8egS5Ww7k5OmfpFtZbSOL
+         mDmGAxDSOwEBbQjJjHW98mZLWmoMDEUZHCZddZPS/FRsZp+9xz2bSomhYYWmvm3e2j10
+         JsSYro/KgUzpYErCk6++rqF0wcXsLRpO4VD3nD2eOPYQ/PDRk1npAA+x95TJzG42+kYQ
+         bDJnrzgxL714t4h9taeYpOGfq9G9RI4MpDfVyrgh6OADIC7mZVgPZFhYHnTDvF8cWAWT
+         8wHw==
+X-Gm-Message-State: APuU4Z9/edw+ME9huHbF9mcPrEKKTCTMFnJEgER5V53Z58FwzVykWoxe
+	ozX12DQq8I33qOoZeUAWIzlBZCKEIcdPSLayCp7jCB+QLPeoS2hlfreO3Ux/6w==
+X-Gm-Gg: AYBFou22zIj+3UF+HJ+t5V0Ff18I2Mihh7yVe7qHp5f3EyzitKSPpbtqkcssSSDchDK
+	wSMHdlgXPAYXqhVR/+hhXoDY+J4xoZlL2XHZtNDMomw5EBbeJlwXRySwrRN0jmV7v5B22FRxsfA
+	F8OL+zd3ya9PRjd/qaXUM4D2AdtewTYOQVDEJzn7R2jdBVNrAk04Afsobco2xT2uG8XlQOlVRKn
+	3sm0Gm5ue3hSRDYPParXHD0L+JgmU4sNDa2RuT0jaTwjHsINdjUlFuq8JMmrJCcdb0afvQ9xC/t
+	J4HHr8e/mcYDw2cUslezyPQMvQuFK+kyZjLTgO3dTFHkg5WaZHrH6ki4wAgWoJT5vmXviQY+pVa
+	d6Q8lpgp7w6SxfGfc9aWG7WagOZfucg591Xg8DK9fQGUS3tzo6FWtsyEwHRTBjLxy1ZBhWOhm0B
+	gnrZAEO/BHRp5FcxH+SrQ/VsctSmzNxpJYX4vykcsDJv0qBxwMwWAtS7lT6fIUSkHg7+PQB3y9C
+	KgU1618qhDHiH8Nw3nULXZcNACi3Md2xFgCpveAkFkjULjt8qhySBB5xu/EH1ZdO5ogDAUxhS8q
+	vhbpO6nvV4ZIeJcPZw19K+FBIi/r1TENdoWOxeebkjXMd5PQwoblRzAiNdJGd9Af4FHZsSpnSj/
+	4ZsdZ8o3LnEabxVX6pku/xSlfqkqRH3U=
+X-Received: by 2002:a05:622a:4889:b0:533:9753:4e03 with SMTP id d75a77b69052e-55d5a03402dmr37898531cf.0.1795003912705;
+        Wed, 18 Nov 2026 04:11:52 -0800 (PST)
 Return-Path: <twoerner@gmail.com>
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-55d58ff0065sm21201081cf.5.2026.11.18.04.11.15
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-92114d113f6sm20218456d6.9.2026.11.18.04.11.51
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 04:11:15 -0800 (PST)
-Date: Wed, 18 Nov 2026 07:11:13 -0500
+        Wed, 18 Nov 2026 04:11:51 -0800 (PST)
+Date: Wed, 18 Nov 2026 07:11:50 -0500
 From: Trevor Woerner <twoerner@gmail.com>
-To: Andrea Ricchi <andrea.ricchi@amarulasolutions.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH v2] kernel: restore options the 32-bit
- arch removal drops
-Message-ID: <av2V4TqDeMg67bZV@localhost.localdomain>
-References: <20261104130230.236614-1-andrea.ricchi@amarulasolutions.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH] kernel: restore the CPU
+ errata the 32-bit arch removal drops
+Message-ID: <av2WBjfT3bPP9AEQ@localhost.localdomain>
+References: <18E8E25C640D8F2D.1313660@lists.yoctoproject.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261104130230.236614-1-andrea.ricchi@amarulasolutions.com>
+In-Reply-To: <18E8E25C640D8F2D.1313660@lists.yoctoproject.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 12:11:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5469
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 12:12:11 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5470
 
-On Wed 2026-11-04 @ 02:02:29 PM, Andrea Ricchi wrote:
-> multi_v7_defconfig does not list several options the Rockchip boards
-> rely on; it gets them through "select" from platforms that
-> remove-non-rockchip-arch-arm.cfg switches off (ARCH_OMAP2PLUS,
-> ARCH_VEXPRESS, ARCH_VIRT, ARCH_U8500, ...). Removing those platforms
-> therefore also removes:
+On Tue 2026-11-17 @ 11:35:28 AM, Trevor Woerner via yocto-patches wrote:
+> The fragment that puts back the options multi_v7_defconfig only gets
+> through "select" from other vendors' platforms does not cover the CPU
+> errata workarounds those platforms also select. Of the eight the removal
+> drops, six apply to cores this layer ships: five Cortex-A9 errata for
+> rk3066 and rk3188, and one Cortex-A7 erratum for rk3036, rk3128 and
+> rk322x. The remaining two are Cortex-A8 and Cortex-A15 and are not
+> relevant here.
 > 
->   REGULATOR_FIXED_VOLTAGE   parent supply of the PMIC regulators
->   VFP, VFPv3, NEON, KERNEL_MODE_NEON
->   ARM_PSCI                  HAVE_ARM_SMCCC_DISCOVERY, which
->                             ROCKCHIP_PM_DOMAINS depends on
->   ROCKCHIP_PM_DOMAINS
->   HIGHMEM
->   REALTEK_PHY
->   USB_EHCI_HCD_PLATFORM, USB_OHCI_HCD_PLATFORM
+> Found by emptying remove-non-rockchip-arch-arm.scc and diffing the
+> resulting configuration against the one the layer builds today.
 > 
-> On tinker-board-s with linux-yocto 6.18 the kernel stops at "Waiting
-> for root device": the RK808 regulators have no parent supply, so the
-> SD host never gets vmmc. With the root mounted, every hard-float
-> binary would fail and the VOPs would never probe for lack of power
-> domains.
-> 
-> Add the options back in a fragment pulled in by the same scc, so the
-> removal no longer takes them along. Found by diffing the expanded
-> multi_v7_defconfig against the built .config.
-> 
-> Signed-off-by: Andrea Ricchi <andrea.ricchi@amarulasolutions.com>
+> AI-Generated: codex/claude-opus 5 (xhigh)
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 > ---
-> v2: add the layer tag to the subject, the patch itself is unchanged.
-> 
->  .../rockchip/remove-non-rockchip-arch-arm.scc |  1 +
->  .../rockchip/restore-arm-selected-options.cfg | 26 +++++++++++++++++++
->  2 files changed, 27 insertions(+)
->  create mode 100644 recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
+> Applies on top of Andrea Ricchi's "kernel: restore options the 32-bit
+> arch removal drops", message-id
+> 20261104130230.236614-1-andrea.ricchi@amarulasolutions.com
+> ---
+>  .../bsp/rockchip/restore-arm-selected-options.cfg        | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-Added to meta-rockchip, master branch. Thanks!
+Applied to meta-rockchip, master branch.
 
-The kernel config mechanism has a funny way of working.
-
-ARCH_ROCKCHIP, and several others, do not select VFP, NEON, and
-REGULATOR_FIXED_VOLTAGE, even though they rely on these settings.
-ARCH_OMAP2PLUS_TYPICAL does, and turning off ARCH_OMAP2PLUS takes it,
-and those settings, with it.
-
-But there are more. The same removal also drops eight CPU errata
-workarounds, six of which apply to cores this layer ships: five
-Cortex-A9 ones for rk3066 and rk3188, and ARM_ERRATA_814220 for the
-Cortex-A7 parts. I recently sent this second patch to the list for
-review. Both are needed; the errata patch applies on top of this one,
-and will be applied at the same time.
-
-> diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-> index ce77704..da5c12e 100644
-> --- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-> +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-> @@ -1 +1,2 @@
->  kconf hardware remove-non-rockchip-arch-arm.cfg
-> +kconf hardware restore-arm-selected-options.cfg
 > diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
-> new file mode 100644
-> index 0000000..ababaf6
-> --- /dev/null
+> index ababaf6c911e..df3c6ddd4790 100644
+> --- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
 > +++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/restore-arm-selected-options.cfg
-> @@ -0,0 +1,26 @@
-> +# multi_v7_defconfig does not list these options; it gets them through
-> +# "select" from platforms that remove-non-rockchip-arch-arm.cfg switches
-> +# off (ARCH_OMAP2PLUS, ARCH_VEXPRESS, ARCH_VIRT, ARCH_U8500, ...). Set them
-> +# explicitly so removing those platforms does not remove them too.
+> @@ -24,3 +24,12 @@ CONFIG_HIGHMEM=y
+>  CONFIG_REALTEK_PHY=y
+>  CONFIG_USB_EHCI_HCD_PLATFORM=y
+>  CONFIG_USB_OHCI_HCD_PLATFORM=y
 > +
-> +# regulator-fixed: parent supply of the PMIC regulators on most boards
-> +CONFIG_REGULATOR_FIXED_VOLTAGE=y
-> +
-> +# hard-float userspace
-> +CONFIG_VFP=y
-> +CONFIG_VFPv3=y
-> +CONFIG_NEON=y
-> +CONFIG_KERNEL_MODE_NEON=y
-> +
-> +# ROCKCHIP_PM_DOMAINS depends on HAVE_ARM_SMCCC_DISCOVERY, provided by
-> +# ARM_PSCI; without the power domains the VOPs, HDMI and IOMMUs never probe
-> +CONFIG_ARM_PSCI=y
-> +CONFIG_ROCKCHIP_PM_DOMAINS=y
-> +
-> +# boards with more than 768 MB
-> +CONFIG_HIGHMEM=y
-> +
-> +# Realtek PHYs on most boards, generic-ehci/generic-ohci in rk3288.dtsi
-> +CONFIG_REALTEK_PHY=y
-> +CONFIG_USB_EHCI_HCD_PLATFORM=y
-> +CONFIG_USB_OHCI_HCD_PLATFORM=y
+> +# errata workarounds the removed platforms used to select; Cortex-A9
+> +# covers rk3066 and rk3188, Cortex-A7 covers rk3036, rk3128 and rk322x
+> +CONFIG_ARM_ERRATA_720789=y
+> +CONFIG_ARM_ERRATA_754322=y
+> +CONFIG_ARM_ERRATA_754327=y
+> +CONFIG_ARM_ERRATA_764369=y
+> +CONFIG_ARM_ERRATA_775420=y
+> +CONFIG_ARM_ERRATA_814220=y
 > -- 
-> 2.53.0
+> 2.50.0.173.g8b6f19ccfc3a
+> 
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#5463): https://lists.yoctoproject.org/g/yocto-patches/message/5463
+> Mute This Topic: https://lists.yoctoproject.org/mt/122316650/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
 > 
