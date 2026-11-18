@@ -1,122 +1,171 @@
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14059.1795012957653944153
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5115.1795030925893534460
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 18 Nov 2026 06:42:37 -0800
+ Wed, 18 Nov 2026 11:42:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20260707 header.b=yl3SDEdI;
- spf=pass (domain: gmail.com, ip: 209.85.161.54, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6aa9606ddadso731368eaf.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 06:42:37 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=T4/T/R0J;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.169, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-53644ab1f7bso11161731cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 11:42:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795012957; x=1795617757; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+        d=konsulko.com; s=google; t=1795030925; x=1795635725; darn=lists.yoctoproject.org;
+        h=content-type:mime-version:references:message-id:in-reply-to:subject
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=szd9WzX4uAh/p/neM2kFcJr0IneS5xEJYWZO3uYdG0E=;
-        b=yl3SDEdIwY4Mgq4BFHxQOflyd20PXBuS/fPppL1C4OeD7/0GewisAHvWGjGWUAHQpi
-         mplosq++WVBp/+rWUARlh4u0hDGDh/j7DLAXMLJa2PjJWQOBEXaUp+Jnl8OCjFjGUy10
-         1v8ah4t9sBhjRFV7yg1Wfvhuz4wmBmL27SkFmho+PCyb5XIVay8z0xYbAo64N8B9bnnj
-         ESGLtkWpAotnfDJpp4lNxKAAdPv0058rqtlzBoqH6nMzX41/0Xq9fYBVHZ6+/aBB7BDe
-         pbe0FJmKSShTMa3nhYEIS3b+6wcqPr0aIqTuItukf4qot+hwuW7T/OVS7Xao5X+xMioX
-         X5GQ==
+        bh=Tf4bIT2exp000CywnBoIOejjvpRWRt2MH/CT7Ww+ZPw=;
+        b=T4/T/R0JCxeg6ksJsvrtgfm/8z4DsXtNFAhc1/0dZZgQ1AIax/Fm/mObHiNM/dTidu
+         r1FHk4EaN50k26m1ToF97a3470v0lVV2l9dQ0cSuSvnHJuKnvld+JGuobQqzKnJFKILI
+         5UvzsOUAkGW0H62unVVTt0RaM3aTPp+86DsOs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795012957; x=1795617757;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20260707; t=1795030925; x=1795635725;
+        h=content-type:mime-version:references:message-id:in-reply-to:subject
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=szd9WzX4uAh/p/neM2kFcJr0IneS5xEJYWZO3uYdG0E=;
-        b=oNz26lvMBhYTl4KNio94u2fjCxUUKCmOkjN2ECqsOWP0F+PkVXVPu1BDtCE1+tM/g9
-         8oxFH9yZZ3nfpU10SyHjaGUGWC6ZBZ/9cN+mnCnYJrSb7TBb6Y0zoeWfIITYuQncwShE
-         yejgbHCDvVXpcfpz/CTrTH+ADaYFiMiMsSsYDASyjkkdMZ3I2F9sSkIS2aIvANN6Pn50
-         XF20ffmKaMjgL9PbslwdK8c7GFDBsWc1IIhbqPKyP+xe2y5MboLLWcNNeSjOZ1AC22fh
-         J5tVhXRQzDT33OPAx3W6iLee67pDQb8BDTuTz9t499JESAELVaUeeH5QS6GKmhpW4RL5
-         6GQg==
-X-Gm-Message-State: APuU4Z96fyI47d6P+Bu4k6kpEvmh/POCRtXowRd13Au14e9w+dCqNudN
-	LzqYz03NsffSYgaZZrSo9l4zSYqkOatQ92wjKYdG6mIBuGhNTmSFYdC35ESAow==
-X-Gm-Gg: AYBFou1XK7kQDT7kjG0IRWbHswDhjwX8fZ+DrpusuQ/gw2sHdXuBRsJp35zHy9Imy+I
-	N6W+vO62mR5blrJx/xADP0TNv3+35oQtoAXrADYjSp7/Yc0tUl4dZQUrjodwRSgtiadVxcLg0/N
-	opkA8f8cWpJYx+ZrjochahS/vew5RoKbfllQOrJxnNQDbVSLlvgWHT0VXmARHoDxWAve+PQUxSL
-	rudnFS8pbipuPMmeA1afK0l51bYjiTafDFnJjZMo7uxwK3NQgneIvuDQoIzua1+rmFcjAPWqPEC
-	9SgyCo2zpbscF/j+N2boTuwUAITcVKJiaPJRqqeGDOZzoSPaLBdv5MW0P4F/Skpfosk3W90OaAi
-	gMDRiPSjHSs8MP+GBNRzkey5U/Hv0FgOqjDIMoe0awtAtw9dmYirwrWu+DGmscGFHBxtVa+VNyk
-	zCMbHwPC09hRBBTiCMDHbrf4e9D2VewtgdyoQeMQzKQpPQNehoeqZ0Kudb27iWrPM78ekSbDHoZ
-	RAzTL0pWYyfqC5a1FXD63BOmiuMou/mMKTdv/+KRWewW1ZEOcwi5ehd43VwBqo2sUjF+dzr3TBO
-	1ROMaZc0Kq64XnZOhuSiFIlFj+dZrBztLxPBM5vaqpbUJNgvGCBqCg==
-X-Received: by 2002:a05:6820:5703:10b0:716:c032:d480 with SMTP id 006d021491bc7-71b1853a5f7mr1449988eaf.19.1795012956772;
-        Wed, 18 Nov 2026 06:42:36 -0800 (PST)
-Return-Path: <majortomtosourcecontrol@gmail.com>
-Received: from [172.26.252.72] ([73.229.151.109])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71b194a7555sm1789623eaf.7.2026.11.18.06.42.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2026 06:42:36 -0800 (PST)
-Message-ID: <9b4a7daa-7e40-4c91-b5b5-f747d5871523@gmail.com>
-Date: Wed, 18 Nov 2026 07:42:35 -0700
+        bh=Tf4bIT2exp000CywnBoIOejjvpRWRt2MH/CT7Ww+ZPw=;
+        b=L7rKxGDHbW0N/AtZ4/gpVtqVzdIWG54pOGAXkRHnoskwFXVxMKlHHmMdAIGJ3kye+c
+         pMmjR8YkIsQ6FZKBcJNOciqWfbEV3Z7wa+7JrQoD/aZH26tVagKItl9sDUKAqNEsSz6Q
+         kQmqvDQB3IRcpLRgozfKJtC6Be+u6eMHi6ClSYnQKD2dQm85AytWzQHAJ1Yr1HFDTbFp
+         YPlpPcPC0tTKidJgddtLv8lR4i0aiqeZ9//byL3TxmZw8Ln2EDyU9uertO4d/NE7gc1n
+         LFIh47bfpJOlPbCaVcg/5785L/p6MpuCq0KKA/W8IVWOXtGmH7dRYsjsYRp2vyLsEqcd
+         lPHA==
+X-Gm-Message-State: APuU4Z8rScPfkc7mTIjGet4qriRXvRVIXRF4pVayqwVHxftrM0dmNUlA
+	Ro2g9rb3QlZU2Areq1+qP4M1BKPiYe8AJMwqQsbTFc0cKs0c6c8nnHozvNlexxoWrMG1GPk7R7A
+	BluiHsek=
+X-Gm-Gg: AYBFou1FStH8f1EM4lwpzPsLhFfV9sg23QU9/gO+0B7hdSCGDLY8mzCR4EOsiahRh2k
+	ItJasYMm1Rg5me62QK+cNMkf1k6d6cvHILrL1NVlnCwoaxy32Z6piMz4wDeJM0rdaMnaoDE0vVK
+	8DUy9/Q8z5+6qfdQ/lI9GUnyWk50iXPeYCn8y2/keodxTbzR6fwimoiPYJo00Z/1EjozToBu5qh
+	+zxK+R6vs6KYKlEargOaiC6AawRsdhiTNlD3wI4KxecBGzDSmN/hGlg276JFhPGKMZS09XQUtfm
+	Sn2ooxEtHDRh0b4b5cXjy0EgHDgA+HmUQIePfPXqBxtax97PBSeWTaHoSBwObNlaXoEeyc5JnnK
+	Y/2LjbzvNMbBNwERX2JixEL8UBp6UEbjmO1CXVJIy7HpStc9NWe0zr3ftQJIaAViXjikFjKlsHB
+	qo1lFvRWlFJFrjwAu1Be40U5alw7D76SeRKSDjo0ryUoENCJOvUABZAKew2oOMQ5hC0ntu9I0x0
+	zwY68qMLS4x5wnG6ZsR06k2ajhIQaIYzCswNf0Kw2OIOL59CKT1jBSgbgfXJ1kgMo+9cxXtke2P
+	x/7F6BdjOYb8QCAlkB7T4ARqkT4SVtsjmGCo6WRtajza+3f73yE+Xl7L+RJgxOLcC3j4htU43LC
+	EiBy6xFSigRCjLVan8ErrRbYn4F/ZOz8uqId2CU23+w==
+X-Received: by 2002:ac8:5a96:0:b0:533:8900:4eae with SMTP id d75a77b69052e-55d5a543209mr52869011cf.13.1795030924496;
+        Wed, 18 Nov 2026 11:42:04 -0800 (PST)
+Return-Path: <scott.murray@konsulko.com>
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-55d66c4fcd1sm6971371cf.28.2026.11.18.11.42.03
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 11:42:04 -0800 (PST)
+Date: Wed, 18 Nov 2026 14:41:52 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-lts-mixins][wrynose/rust][PATCH 00/19]
+ Update to 1.99.1
+In-Reply-To: <18E8A975C57A5D05.1248965@lists.yoctoproject.org>
+Message-ID: <b188aedf-d134-6edf-bf6f-43b4b92780ce@konsulko.com>
+References: <18E8A975C57A5D05.1248965@lists.yoctoproject.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [PATCH 6/6] refpolicy-targeted: allow
- ssh_sysadm_login by default
-To: yocto-patches@lists.yoctoproject.org, Chen Qi <chenqi_hycx@cetc.com.cn>
-Cc: chen_q07@163.com
-References: <20261116025714.2558951-1-chenqi_hycx@cetc.com.cn>
- <75e87558-98fa-42a4-83b6-efd9eff0ad1d@gmail.com>
- <954eae3a-f2ab-46e9-9952-5cd29bdc4c2a@cetc.com.cn>
-Content-Language: en-US
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-In-Reply-To: <954eae3a-f2ab-46e9-9952-5cd29bdc4c2a@cetc.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 14:42:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5474
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 19:42:14 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5475
 
-> Thanks for your review. I'll fix these typos in V2. 
+On Mon, 16 Nov 2026, Scott Murray via yocto-patches wrote:
 
-Of course!
+> This patch series for the wrynose/rust mixin layer backports the
+> recent Rust toolchain changes in oe-core master branch to pull in
+> the 1.98.1 -> 1.99.0 -> 1.99.1 updates and other fixes.
+>
+> I intend to merge this series to wrynose/rust by end of day tomorrow
+> (November 17, EST) unless an issue is pointed out.
 
->>
->>> @
->>> This is because Yocto's targeted policy is making users land in
->>> unconfined_u selinux user by default, and unconfined_u is treated
->>> as privileged user, thus being forbidden by default as the default
->>> value of ssh_sysadm_login is false.
->> A Yocto mechanism could be added to map users; I do this in a private
->> layer.
->@
-> I currently don't like refpolicy-targeted using a patch to change the user mapping: https://git.yoctoproject.org/meta-selinux/tree/recipes-security/refpolicy/refpolicy/0002-refpolicy-targeted-make-unconfined_u-the-default-sel.patch
+These have now been merged to wrynose/rust.
 
-I agree - 0002 should be revised/removed; I have a local patch for this.
+Scott
 
-For other readers: https://danwalsh.livejournal.com/66587.html
 
->@
-> I guess there might be some better way but I haven't got time to look into that further.
->@
-> Do you want to fix this refpolicy-targeted with your user mapping mechanism? I think that would be a very good change for meta-selinux.
-
-My current mapping mechanism is not ideal: changing seusers statically.
-
-I am actively working on doing this properly using Yocto variables, but 
-it is a full user definition (beyond a narrow SELinux scope).
-
-I will try to find the time (and approval) to adapt it. 
-
->@
->>> @
->>> Change to enable ssh_sysadm_login for targeted thus minimal by
->>> default.
->>> @
->> I don't think ssh_sysadm_login should be enabled by default, given:
->> * RefPolicy upstream doesn't do so (secure by default)
->> * Yocto generally doesn't do so [1] 
->>
->> What are your thoughts on adding a configuration fragment instead,
->> similar to [1]?
->@
-> Good idea. My main focus is to make testimage work for the refpolicy-targeted so that it can also be tested automatically. Looks like this is a similar use case with 'root-login-with-empty-password'.
->@
-> I'll use this approach in V2. 
-
-Super!
-Thank you for improving testing!
+> Changes:
+>
+> Ankur Tyagi (1):
+>   librsvg: upgrade 2.63.2 -> 2.63.3
+>
+> Deepesh Varatharajan (1):
+>   cargo-c: upgrade 0.10.25 -> 0.10.26
+>
+> Harish Sadineni (1):
+>   rust-cross-canadian: install target-specific env scripts and fix
+>     rustlib lookup
+>
+> Hemanth Kumar M D (2):
+>   rust: Upgrade 1.98.1 -> 1.99.0
+>   rust-target-config: fix invalid +v5 LLVM feature for armv5
+>
+> Jaipaul Cheernam (1):
+>   librsvg: upgrade 2.63.3 -> 2.63.4
+>
+> Khem Raj (1):
+>   rust-common: Use 64-bit time_t libc layouts for riscv32 musl
+>
+> Markus Volk (1):
+>   cargo_common: map the cargo vendoring directory for the C compiler
+>
+> Peter Tatrai (1):
+>   rust: add secure-plt to generated powerpc targets
+>
+> Richard Purdie (1):
+>   librsvg: upgrade 2.63.0 -> 2.63.2
+>
+> Ross Burton (2):
+>   librsvg: upgrade 2.62.3 -> 2.63.0
+>   classes/cargo_c: use CARGO_C_BUILD_FLAGS for cargo-c flags
+>
+> Sowmya Sathram (1):
+>   rust: Upgrade 1.99.0 -> 1.99.1
+>
+> Sunil Dora (5):
+>   rust: drop the cc object-name reproducibility patch
+>   rust: hash cc object names relative to their source roots
+>   rust: keep the build host triple out of cargo unit metadata
+>   rust: backport deterministic DocLinkResMap serialisation
+>   rust: sort hygiene data before it is encoded
+>
+> Vasileios Anagnostopoulos (1):
+>   ptest-cargo: align test and application build environments
+>
+>  classes-recipe/cargo_c.bbclass                |   6 +-
+>  classes-recipe/cargo_common.bbclass           |   5 +
+>  classes-recipe/ptest-cargo.bbclass            |  35 +-
+>  classes-recipe/rust-common.bbclass            |   3 +
+>  classes-recipe/rust-target-config.bbclass     |   6 +-
+>  conf/layer.conf                               |   4 +-
+>  recipes-devtools/cargo-c/cargo-c-crates.inc   | 332 +++----
+>  ....0.bb => cargo-c_0.10.26+cargo-0.100.0.bb} |   2 +-
+>  .../rust/{cargo_1.98.1.bb => cargo_1.99.1.bb} |   0
+>  ...l-codes-on-riscv32gc-unknown-linux-g.patch | 219 -----
+>  ...teps-tool.rs-switch-off-lto-for-rust.patch |  51 +-
+>  ...ommits-from-rust-Fix-selftest-llvm23.patch | 661 -------------
+>  ...-host-triple-from-unit-metadata-hash.patch |  62 ++
+>  ...hygiene-encoding-order-deterministic.patch |  59 ++
+>  ...llvm-Do-not-pass-amx-tf32-to-LLVM-23.patch |  38 -
+>  ...ject-names-relative-to-source-roots.patch} | 118 +--
+>  .../rust/files/rust-oe-selftest.patch         |  14 +-
+>  ...ibstd-rs_1.98.1.bb => libstd-rs_1.99.1.bb} |   0
+>  recipes-devtools/rust/rust-cross-canadian.inc |   9 +-
+>  ....98.1.bb => rust-cross-canadian_1.99.1.bb} |   0
+>  recipes-devtools/rust/rust-snapshot.inc       | 104 +-
+>  recipes-devtools/rust/rust-source.inc         |   9 +-
+>  ...source_1.98.1.bb => rust-source_1.99.1.bb} |   0
+>  .../rust/{rust_1.98.1.bb => rust_1.99.1.bb}   |   2 -
+>  recipes-gnome/librsvg/librsvg-crates.inc      | 924 +++++++++---------
+>  ...append-RUSTFLAGS-to-rustc-executable.patch |   2 +-
+>  ...e-care-of-deprecated-assert_cmd-Comm.patch |   2 +-
+>  .../{librsvg_2.62.3.bb => librsvg_2.63.4.bb}  |   2 +-
+>  28 files changed, 934 insertions(+), 1735 deletions(-)
+>  rename recipes-devtools/cargo-c/{cargo-c_0.10.25+cargo-0.99.0.bb => cargo-c_0.10.26+cargo-0.100.0.bb} (87%)
+>  rename recipes-devtools/rust/{cargo_1.98.1.bb => cargo_1.99.1.bb} (100%)
+>  delete mode 100644 recipes-devtools/rust/files/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch
+>  delete mode 100644 recipes-devtools/rust/files/0004-Backport-commits-from-rust-Fix-selftest-llvm23.patch
+>  create mode 100644 recipes-devtools/rust/files/0004-cargo-omit-host-triple-from-unit-metadata-hash.patch
+>  create mode 100644 recipes-devtools/rust/files/0005-rustc-span-make-hygiene-encoding-order-deterministic.patch
+>  delete mode 100644 recipes-devtools/rust/files/0005-rustc_codegen_llvm-Do-not-pass-amx-tf32-to-LLVM-23.patch
+>  rename recipes-devtools/rust/files/{repro-issue-fix-with-cc-crate-hashmap.patch => cc-hash-object-names-relative-to-source-roots.patch} (68%)
+>  rename recipes-devtools/rust/{libstd-rs_1.98.1.bb => libstd-rs_1.99.1.bb} (100%)
+>  rename recipes-devtools/rust/{rust-cross-canadian_1.98.1.bb => rust-cross-canadian_1.99.1.bb} (100%)
+>  rename recipes-devtools/rust/{rust-source_1.98.1.bb => rust-source_1.99.1.bb} (100%)
+>  rename recipes-devtools/rust/{rust_1.98.1.bb => rust_1.99.1.bb} (99%)
+>  rename recipes-gnome/librsvg/{librsvg_2.62.3.bb => librsvg_2.63.4.bb} (98%)
+>
+>
