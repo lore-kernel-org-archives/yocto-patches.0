@@ -1,90 +1,121 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5143.1795030969219826791
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14147.1795094388940231368
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 18 Nov 2026 11:42:49 -0800
+ Thu, 19 Nov 2026 05:19:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=FIjUyQBv;
- spf=pass (domain: konsulko.com, ip: 209.85.222.172, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-9495e8ae239so168256185a.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 11:42:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1795030968; x=1795635768; darn=lists.yoctoproject.org;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lvE/XQXB2h1wqGTeZI7sUtBsJKSD/q3F6dTM0YkPYc8=;
-        b=FIjUyQBvTNj8i2OLtF4dT4pFjrbyrBIhCYd9D0mkve1n2lio+lRulpvWbJZCFaqgSH
-         Jb8Jhex+G3ibocmKCwz0EMrPM7q3aRAG9gvxqr+wbsMYCvKoiqrD8XftSqYGYjy1wuvD
-         uZl/m4SVmbFS4Tmmg9yDLurzEPQr8Z0VvTL/Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795030968; x=1795635768;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=lvE/XQXB2h1wqGTeZI7sUtBsJKSD/q3F6dTM0YkPYc8=;
-        b=BFwV0BvEtkmtwH8Sgtid627fNrzwfHKNt3+JJt5MVzsGu7TjQyDXeCfecDnTKwDCck
-         rCf6TnT8Z+4axp3wisTe+LvaCvIg/vZCk8Cw6W0ymrHy7jFTwrBcWthCmQtsdb1TexX6
-         WvC1aBJheel2TQRbbqQxoqU7kioeuDam8CZ00TE3MipgCh3J9w3IhHFnhE3x8afYk0Aa
-         BeDdyBq/X+KCfG4xtoCAbrmLbArcN2Q5pR0t/wYvvDZDlFJDMMktUcEBzpB8TOMPrrA9
-         P98Jljtpx/uIEZ2Pnuexf9IZDOKhO1BSc8gtsFMjv18d+U1ImNwjJmSsVT71bW5TzZFU
-         QiDA==
-X-Gm-Message-State: APuU4Z+L4VAQtynzW4k5D3xzBcpBcztqAGbqUc91dKSHMLOtYYiLGtUV
-	kqFBAmMeOPuJOGQ1xbDuMBIoFpLV2r7Eyliha2xAaIl0FvesHDM20V0jokwmu4ncGbjmh4cV235
-	qyQh54yk=
-X-Gm-Gg: AYBFou1G69kgcD3TWxn7U7exGCDneXc84h2I/gD7BpSDeUGq9/vyhmqF9uAtSRp/6+c
-	UeOE0xPkLrv6fa1o2srNdpn+3W+CUBedqrClsttIM5vyp2RWlhIAERV1lNQBNoPn/prEeEcO7IL
-	KlZ+xuAsZrqaZg7tye3Rv2vprfISYEAYFRvHKbR98pdB2HfIMOplHCmw5tCGelVdF0tcyUbMONA
-	hchVnQnxexUXFtCD6lkIvBUDTwPjK5imAJE0KGyS/eKmODCVIhxUKFcGgeWWBZxqVjRniqhJGtV
-	EuzyF8edk9AkF7YSOvdR79x5/rtLFZJBUhJcbcwS0VMBR/Xi4xOtUL3osdetsIByY7PkjoXW5kl
-	4o3+PoW1q60FUDLZHeAW6WQmx0H2pvILX4Jp5l7UGBLg+bo24BagvvubrGRa67nsfJsfinNab74
-	DSZHXiTyMb72+SFGkNU6jbYH5Ma606GtsTVVnK/iEs1gfOwJLzXwEOzoparrb4T4zlPWD2IvnmR
-	cUv12MHeonP2n0/fQymAk9lwobmM3SS61ZNoba63hfW6Ns+dXpj7Wa3KBDmiPk6n6A5Vvoll0ON
-	uYju7qxco5BYlfV2K7OZMZZ5qeYmWgo8YQhb8GXtwVG/rA2PcGJEx/hDp99Mys9rJdpN7llOoQu
-	3oxa40E3In7UIDAXpAlt/tTm3CgEcZv6vrInGNMaKR3LcoIOw+yNBz+Xu
-X-Received: by 2002:a05:620a:4088:b0:949:402b:f1b3 with SMTP id af79cd13be357-9499962dd00mr623602185a.70.1795030967924;
-        Wed, 18 Nov 2026 11:42:47 -0800 (PST)
-Return-Path: <scott.murray@konsulko.com>
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9499b721ccbsm258717585a.10.2026.11.18.11.42.47
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 11:42:47 -0800 (PST)
-Date: Wed, 18 Nov 2026 14:42:47 -0500 (EST)
-From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-security][PATCH 0/2] A couple of small
- updates (11/16)
-In-Reply-To: <18E8A6444CE1F506.1248965@lists.yoctoproject.org>
-Message-ID: <fd9eb3cf-d221-ae91-90f2-454919c51831@konsulko.com>
-References: <18E8A6444CE1F506.1248965@lists.yoctoproject.org>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=SgdFg/dv;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 7D7FDC4CBF3
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 19 Nov 2026 13:19:52 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3EE0C60237;
+	Thu, 19 Nov 2026 13:19:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4D45211BC0B70;
+	Thu, 19 Nov 2026 14:19:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1795094386; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=BSUMJQnmjKdxe7kdD+auAsYFcYmOLFkGcsY3cklX6wo=;
+	b=SgdFg/dv+ORprv5fCbnaIqpNkYsNcREjCx5aVkiOmdhpLxsUZi+vTKPLBdcO/zWTCoyi4V
+	kP2nKR2WfXN5fAcyLmzfuzLFYQXilUHmL2VWaKFZom7ahaADsEmN1yMcaB086V8Wa99gaV
+	XqJRS/EauTKfzlDZnW4bTHC4ATb38ey9btEM9bBSAfJzp5p4CE587F21LD7WRyHE0kn1KK
+	zjqPTd7gpy/c19O2bLv5vCsGToUYJvZcLjSfa9Xz1j2wl3jpLsI96gi67fmJ/pb7kHuwlo
+	eqp91m2pPCPlK4JTJZh85Hu95cSx0v/tb4c4uK9uclQ0diWuO0ljFIDoZeFDHQ==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Thu, 19 Nov 2026 14:19:34 +0100
+Subject: [PATCH yocto-autobuilder2 2/3] docker: Fix for buildbot 4.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261119-mathieu-buildbot-4-4-b4-v1-2-76774afaee1d@bootlin.com>
+References: <20261119-mathieu-buildbot-4-4-b4-v1-0-76774afaee1d@bootlin.com>
+In-Reply-To: <20261119-mathieu-buildbot-4-4-b4-v1-0-76774afaee1d@bootlin.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Michael Halstead <mhalstead@linuxfoundation.org>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795094383; l=2712;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=6TXvKJfm0sLqc5X/ZpKfab2Q3XUp1af17hM2N/ljW7E=;
+ b=Yhzp6F0ji4b2NF73SNFZRX2GnFb3HWfueanoNNm43fSPW56WsLV5y9u5dxdz/Zt67PmfYhof5
+ z8/nIDsE0EkDpeBfgNE48rSF7pt7hn2t8FxEVk2kmoLMBWIrnyZiHAr
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Nov 2026 19:42:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5476
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 19 Nov 2026 13:19:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5477
 
-On Tue, 17 Nov 2026, Scott Murray via yocto-patches wrote:
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+ docker/Dockerfile | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-> These are a couple of small build fixes to get clean builds on master
-> after some recent oe-core changes.  I have pushed them to master-next
-> if you want to try them locally, and plan to merge to master by end of
-> day tomorrow (11/17, EST) if there are no objections.
+diff --git a/docker/Dockerfile b/docker/Dockerfile
+index 0ddd20d52ac6..f657e7f23bd6 100644
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -1,4 +1,4 @@
+-FROM ubuntu:24.04
++FROM ubuntu:26.04
+ 
+ ARG AUTOBUILDER2_BRANCH=master
+ 
+@@ -20,11 +20,11 @@ RUN apt update && \
+         gcc \
+         git \
+         iproute2 \
+-        iputils-ping \
+         iptables \
++        iputils-ping \
+         libacl1 \
+         libcairo2 \
+-        liblz4-tool \
++        lz4 \
+         locales \
+         npm \
+         python3 \
+@@ -62,18 +62,15 @@ RUN pip3 install --break-system-packages \
+         buildbot_pkg==4.3.0 \
+         websockets
+ 
+-
+ # Uncomment and update following code to use a custom buildbot branch
+-# RUN pip3 install --break-system-packages \
+-#         git+https://github.com/mbriand/buildbot.git@mathieu/workers_limit#subdirectory=master \
+-#         git+https://github.com/mbriand/buildbot.git@mathieu/workers_limit#subdirectory=worker \
+-#         git+https://github.com/mbriand/buildbot.git@mathieu/workers_limit#subdirectory=pkg \
+-#         websockets \
+-#     && \
+-#     git clone https://github.com/mbriand/buildbot.git -b mathieu/workers_limit && \
+-#     cd buildbot/ && \
+-#     make frontend_deps && \
+-#     pip3 install --break-system-packages pkg www/base www/console_view www/grid_view www/waterfall_view www/wsgi_dashboards www/badges
++#RUN pip3 install --break-system-packages \
++#        git+https://github.com/buildbot/buildbot.git@v4.4.0rc1#subdirectory=master \
++#        git+https://github.com/buildbot/buildbot.git@v4.4.0rc1#subdirectory=worker \
++#        websockets
++#RUN git clone https://github.com/buildbot/buildbot.git -b v4.4.0rc1 && \
++#    cd buildbot/ && \
++#    make frontend_build && \
++#    pip3 install --break-system-packages pkg www/base www/console_view www/grid_view www/waterfall_view www/wsgi_dashboards www/badges
+ 
+ RUN ssh-keyscan push.yoctoproject.org push.openembedded.org >> /etc/ssh/ssh_known_hosts
+ 
+@@ -92,6 +89,10 @@ RUN useradd -m --system pokybuild && \
+     \
+     cd /home/pokybuild && \
+     git clone https://git.yoctoproject.org/git/yocto-autobuilder-helper && \
++    cd /home/pokybuild/yocto-controller/yoctoabb/yocto_console_view && \
++    yarn install --pure-lockfile && \
++    yarn build && \
++    cd /home/pokybuild && \
+     pip install --break-system-packages \
+         yocto-controller/yoctoabb/yocto_console_view/ && \
+     mkdir -p /home/pokybuild/git/trash && \
 
-These have now been merged to meta-security master branch.
+-- 
+2.47.3
 
-Scott
-
-
-> Changes:
->
-> Scott Murray (2):
->   tpm2-openssl: Fix building with OpenSSL 4.1.0
->   dm-verity-image-initramfs: Fix IMAGE_PREPROCESS_COMMAND
->
->  ...key-fix-compilation-with-OpenSSL-4.1.patch | 87 +++++++++++++++++++
->  .../tpm2-openssl/tpm2-openssl_1.3.0.bb        |  1 +
->  .../images/dm-verity-image-initramfs.bb       |  2 +-
->  3 files changed, 89 insertions(+), 1 deletion(-)
->  create mode 100644 meta-tpm/recipes-tpm2/tpm2-openssl/tpm2-openssl/0002-pkey-fix-compilation-with-OpenSSL-4.1.patch
->
->
