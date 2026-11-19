@@ -1,74 +1,118 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.14146.1795094388417627368
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14149.1795094389709785041
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 19 Nov 2026 05:19:49 -0800
+ Thu, 19 Nov 2026 05:19:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=YNxPPVNS;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=SPHcKF1+;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 08AF04E41665;
-	Thu, 19 Nov 2026 13:19:46 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 210EEC4CBF5;
+	Thu, 19 Nov 2026 13:19:53 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BE25460237;
-	Thu, 19 Nov 2026 13:19:45 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4583311BC0B0C;
-	Thu, 19 Nov 2026 14:19:44 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D831360237;
+	Thu, 19 Nov 2026 13:19:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 10D7E11BC0B86;
+	Thu, 19 Nov 2026 14:19:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795094385; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=cE0Nvl/jaJQrnLT+S15J04pKtRLBrNtLgkHMgR6c4jc=;
-	b=YNxPPVNSS9NedGY3MCPyD20aSURqOziItF5GhZMA/PXmeoLxlz75xhsAIJAJN8ZlfCRfBl
-	aLNiuYk5Kxd5C54DVJ9L/Sy92Rcq7KwtwV72s2neF9wqjmIBD60l/Gr64xxS6+0iVD56t8
-	HyDFdTjmd1P235UBhyMpeM1AfNphcOlaEs0tSGGj/88wLZ+lvTt2RO7MKVyvuAkxyDKmuV
-	GEMKTJzUc43MuZs894bGrdxpK/Ct8u5vVI2bRERRrxUyx4BPWNRdnLnrYB8TpOdS3WhmKd
-	At2p/HU9d+8BC6eCotRsn3glDR3PGuy8P050QTZ4liAUdecCetOyZvicvB9k4w==
+	t=1795094387; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=3odTAjxlYFF0v8uV/PZ166xL4yYWm3vgotW1wwXcJz8=;
+	b=SPHcKF1+nTcn5OwGnTYoWu70huk1ZyQqWck752IuAZuIma+Ex1kLHMjoRbrpKVH5oFl9sD
+	a8W/g6FLEzsyW6mioHm7UrX966OZ1vPCA8l6ZBqXyG9rPhbcpDBFkFkA+j9G+NbENq2H3K
+	M2JfTaC4Z6fDdomzPTPeHRAlF5rnkvATw7XdxxjIW0WAZwzrguRc/MvzfDkrZMSP2ejUhT
+	dp1j11BVmmHqli+3PSXmsfoKbvuFbqCoqReCD5vxF6N7Dcu7AxufD9HtSQe4juhqMYlv2/
+	yCa96bq09W6CwbJH5aZSnOvtRUwwayBUOLcRy27DRW8hyJhvhrcNBmeWwEdVJA==
 From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: [PATCH yocto-autobuilder2 0/3] Fix buildbot configuration for v4.4
-Date: Thu, 19 Nov 2026 14:19:32 +0100
-Message-Id: <20261119-mathieu-buildbot-4-4-b4-v1-0-76774afaee1d@bootlin.com>
+Date: Thu, 19 Nov 2026 14:19:35 +0100
+Subject: [PATCH yocto-autobuilder2 3/3] yocto_console_view: Fix CSS for
+ buildbot 4.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGT3/moC/x2MzQqDMBAGX0X23IVmDUL7KqWHJH7WhdaU/EiL+
- O4GmdMcZjbKSIpM926jhFWzxqWJuXQUZre8wDo2J7nKYIy58ceVWVHZV32PPha2DW9ZEGRw/YQ
- AS63+Jkz6O88P+sdQIrta4pkhCT33/QAVcBegfQAAAA==
-X-Change-ID: 20261119-mathieu-buildbot-4-4-b4-2ec26a3fece4
+Message-Id: <20261119-mathieu-buildbot-4-4-b4-v1-3-76774afaee1d@bootlin.com>
+References: <20261119-mathieu-buildbot-4-4-b4-v1-0-76774afaee1d@bootlin.com>
+In-Reply-To: <20261119-mathieu-buildbot-4-4-b4-v1-0-76774afaee1d@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Michael Halstead <mhalstead@linuxfoundation.org>, 
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795094383; l=903;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795094383; l=1539;
  i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=bTSUdygiJ8VJC5UOzM+D7GPQ7wChQ4RUgvkwhz5ZIIw=;
- b=ozRGIWJITqLFL5Kvx1eUTDqz6uld8f/z6Evgt3TkHeF3/nDSWazIyNO985LmcEMRDeQ/IRDXd
- +wewRLFp3jNA7VTX9LtZXOEuh/lzxXrHH1JGxXRWYAAlbMCen8SgD7k
+ bh=4aVcekz4kS+aB7NFzEQbdvikSo08LHCVWOYpQYqkuaQ=;
+ b=I2AN3VCdTqfIZfoaq21lieatq9gmrmxrz/VSwfEJXo9jmNhOLXlbA3TaVf9rxB9Ip3IaCQ5+m
+ +4tq+q0R9VPB9MAzpUB0ufo+SWP45pZfxvHcg4ikNO6inQetGCBSMbz
 X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
  pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 19 Nov 2026 13:19:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5479
-
-Buildbot v4.4.0rc1 is out. A few small fixes are needed in our
-configuration before we can use it.
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5480
 
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
-Mathieu Dubois-Briand (3):
-      yocto_console_view: switch to pyproject.toml
-      docker: Fix for buildbot 4.4
-      yocto_console_view: Fix CSS for buildbot 4.4
+ .../src/views/ConsoleView/ConsoleView.scss         | 29 ++++++++++++++++------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
- docker/Dockerfile                                  | 29 ++++++-------
- yocto_console_view/pyproject.toml                  | 34 +++++++++++++++
- yocto_console_view/setup.py                        | 49 ----------------------
- .../src/views/ConsoleView/ConsoleView.scss         | 29 +++++++++----
- 4 files changed, 70 insertions(+), 71 deletions(-)
----
-base-commit: 0f6b97aa62f679948b79babfa26ed5245bd95040
-change-id: 20261119-mathieu-buildbot-4-4-b4-2ec26a3fece4
+diff --git a/yocto_console_view/src/views/ConsoleView/ConsoleView.scss b/yocto_console_view/src/views/ConsoleView/ConsoleView.scss
+index 15dd3a61bcbd..3f693917f13c 100644
+--- a/yocto_console_view/src/views/ConsoleView/ConsoleView.scss
++++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.scss
+@@ -55,32 +55,45 @@ div.form-group {
+   div.col-sm-10 {
+     display: inline-block;
+     width: 80%;
++    vertical-align: middle;
+   };
+ 
+   label {
+-    display: inline-block;
+     width: 20%;
+     font-weight: bold;
+-    margin-bottom: 0;
+-    top: .5em;
++    padding-right: .5em;
++    vertical-align: middle;
+   }
+ 
+   .control-label {
+     text-align: right;
+-    float: left;
+   }
+ 
+   div.col-sm-10.col-sm-offset-2 {
+     width: 100%;
+     max-width: 100%;
++    margin-left: 0;
++
+     label {
+-      width: 80%;
+-      float: right;
+-      padding-left: 8px;
++      display: grid;
++      grid-template-columns: 20% 1fr auto;
++      align-items: center;
++      width: 100%;
++      float: none;
++      padding-left: 0;
++
++      input[type="checkbox"] {
++        justify-self: end;
++        margin-right: .5em;
++      }
+     }
+-  };
++  }
+ 
+   .row > div.col-sm-6 {
+     margin-bottom: 5px;
+   }
++
++  label.col-sm-10 {
++    text-align: right;
++  }
+ };
 
-Best regards,
 -- 
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+2.47.3
 
