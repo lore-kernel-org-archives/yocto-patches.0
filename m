@@ -1,136 +1,96 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6962.1795184820251092006
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7379.1795186079098129915
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 20 Nov 2026 06:27:01 -0800
+ Fri, 20 Nov 2026 06:47:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=DspgYZkJ;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=P1SzII/u;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 0D14F1A174B
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Nov 2026 14:26:58 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 4555DC62220
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Nov 2026 14:48:02 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C70F0601B9
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Nov 2026 14:26:57 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3FFF211BC0232;
-	Fri, 20 Nov 2026 15:26:52 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 89FF9601B9
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Nov 2026 14:47:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E7F6611BC0273;
+	Fri, 20 Nov 2026 15:47:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795184813; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=Z+7ZGrp02xtQa8RW5HHdK8V0Xu6YjJPKHafXNT+8utM=;
-	b=DspgYZkJjwPUhGtn9V0GEnXJTovu8W7BHXqLghqv+EWpKieXJPcMqw9W6J2IL20rRRVHaO
-	vkH0t7/DhLondYcg+JZ0cdCECNSoVPaveY7IvKSJtGWBp1io9XLqK7aqPjYXa7aV1so8M/
-	7I9edpSG3U1nhSPnwvPgU5Azwj6G+zHRH4csthXBh5KGx4gVDa6pvWpsvoMheQfXZ9w6ZD
-	D5mS69/CkUmrp6tP0gxJNGjIlgj6dt+RX217VcqRBc8hsRblx6d6TLR5dlIT745wOusvK2
-	KXqCWdoifcLIMDDQ4kM4RmoMCS0BhHjT880oE6Jm14P0k6iayFFphRyXMNdkeg==
+	t=1795186076; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=0r9+iWSRU/Azbi/AFwv/TGI4aL43EokHoqJOhm1tTvo=;
+	b=P1SzII/uRJdDgHhkjEAoXJ0wQjBbsA4B2U85VtsAzCQm47U5TebpYsmbtMBkiMtz1Roof/
+	Zxpc/3z/6BlwrJ7YUJSlkMRuKHIVbiRZvm17KljVMRxsL8qU/jq4jGF+VjXkemIRPns/ky
+	W/Egvs5UPvm6ti+Tjl+HRLeQggdKprtxcpwqAURP6TdCDCHLFwx/42zIjjebCzxA5ZKlRk
+	Z6uiT5VE3QGYp9Ec2SUUMH6cszAuD4jaYRvpKbn2InqDCyQw3SfkU5tWW6oXYitvnGa0jn
+	r5vCFIyk8D8nCkhX9bHU6SYaci00llFGBOxX/DU8eiT6MLCd+N91/3t5q+uqEw==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Fri, 20 Nov 2026 15:26:46 +0100
-Subject: [yocto-autobuilder2][PATCH] docs: clone openembedded-core when
- building the documentation
+Date: Fri, 20 Nov 2026 15:47:48 +0100
+Subject: [yocto-autobuilder2][PATCH] docker/Dockerfile: add jq and
+ python3-semver
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261120-run-docs-build-with-oecore-v1-1-75124e549421@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMOw7DIAwA0KtEnmsJGJqoV4kyJGAaVxWuDPSjK
- HcvTce3vA0yKVOGS7eB0pMzS2qwpw78OqcrIYdmcMadrTUOtSYM4jMule8BX1xWFPKihNaEOPe
- Rhn6I0IKHUuT3kY/T37kuN/LlN44f8UVwrkWOitRNsO9f/1diJZIAAAA=
-X-Change-ID: 20261102-run-docs-build-with-oecore-10dfa7fe878f
+Message-Id: <20261120-add-jq-semver-v1-1-3ec5b13229f3@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMyw6CMBBA0V8hs3aStmgT/RXCoo9BhyjVPgiG8
+ O8UXZ7FvSskikwJbs0KkWZOHKYKeWrAPcx0J2RfDUooLaUSaLzH8YOJXjNFbIVo9fmqhR0uUJt
+ 3pIGX36/r/07FjuTyMem+weWApuRgCz89RdXDtu2V8/DjhQAAAA==
+X-Change-ID: 20261120-add-jq-semver-300364960bf5
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3756;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=931;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=8RfDjNXIseWssiUk73gMfnYrnx/6EWuvtu/CWXkLfVM=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBrAFipBlP/7DrEhDmXfA9KmIbmUBJBbcRuwbfiy
- QnSQ2C1v3KJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCawBYqQAKCRDRgEFAKaOo
- Nrg4D/9myKy0g2+WhH4nO3GsP16mjYFPlPCPZBG4wAe9TDlScAsads33JZOOj/yu8Hfs2vHDABO
- 6heaCdkjt5VcRj+aBOb9fpHbZyjhppFEcJrpaa3WnCmJxqv58FXHTZLpSNgeUFpaYG7rP0CXVa3
- 79s5V13lwro9czlg/jxHlZK0GtKss1qHQfjLuLuJA/ZYZNMRsKDEIMmT7mEawt5XIKkBjCq+Xws
- w2GjlOcyDUPaf8lYFJ9/cWwBgs7txue0y8TaXF53HmIxXuYXe4x7qbjsgyFhMzbvPSMXbkqL1kh
- +h+PwUS/XlwkHOIHy9BeRuUw90aOXlJSi2p24rsgxalsaWmzp/LFCikACvXSW9bOpuXMg3E6VOh
- XJMO0EaZkGs5ejOy6/XkTxme1ohk4KUIvul9/VJ4vQPoGqPFHfD4/KCx6EPCfVw6KHkO8R/OdMI
- nl5yWuA75pscGYxXjyfcDME0OOhqcQPljPIoDnuQZRQqSrSv33Ohlr/XM4ZzXpUwAjR9c6Xi1zx
- I4/8nyu4e8O4uhUJ2r1YAx71gSJmqqR2BN+EU7biODQ5HWt/21EBZ/wwdJnK5UH9rz7+bln7W2f
- TOcQP1Agxg8P3Dn46u5tVlh1Pz0QyUiNpaejVBuwa2kQ2e/ROLcwKkc2RUvBvwNEjBKvqab5Dra
- GDOCOUcv3XCDTXw==
+ bh=CzkPwu2Np3DrGbjssQEtdZ86ZkVkv9Ai5wumdPuYhn4=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBrAF2V4o+pVAiZpCPuKcdQzx0D/8eBhGJv0OhRR
+ NKDZN5kegOJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCawBdlQAKCRDRgEFAKaOo
+ Nnk2D/kBOFM0iVpBGzcn+eqOjcgkIIhLPUwHZtqm3RPR7NVJjEwsTHUKrBunSLmLcQZ+m0pC70R
+ k1eFL6S6j4gWoEDIodWgheQjCa9JhDlobreZEU+s1leO48gCFqn+4rjHq3DiHX3XUq97P5O+LBX
+ l+FBw8vjpZpMGLhoJ4VySdinPYhjpASjcA0zZ2N51iEDFPLgtUC7oZVITVzTLwRZ9zAn3RDO7l9
+ pChn0BubES0JJBuAo1SQ+41oLL6NNVMbrwB2Jyp5ogCM7V2mBxxpfB0tnVOnMeC65HKUtwwxii3
+ 1nJ3KjQNdvO/haAYP9+AlBST5o4i0Sum4tELCBOycUD/BWijrmPFYHB3pTwsMxhXAGj8ZFh68og
+ ohRNid3MS//+OHZkFRKcnAnpj+C+Q0bE1VGygCUfwGMTamo6OZ0iupamT2oySq0dKo9I7CF0hnH
+ NxW28x4zfIl3oajZocIighRyE0Mwu/V1xFDl599y6ueojR9PXaFjSVFKQx+RsPjVC2WUiqtd185
+ XjRHSktGONaDU+bVrPbFLZz050y4Bt7+mFUA3hBlb/6Qc5yBuhmp2APm1wWWpR25q6eU8N/OL/Y
+ 3TyqbNNgvHpKJ48r3JpUY78KWQenINh/kAQ9jKe6K+yXrhEFzvM94ecvA7yKOpOUD3S/iGwORpF
+ JCIIE/vATwyPEfg==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Nov 2026 14:27:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5482
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Nov 2026 14:48:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5483
 
-In preparation for automatically documenting openembedded-core utilities
-from docstrings, we need to clone openembedded-core as part of the docs
-build. Add the repository to the build steps, and to the form when
-manually starting a build.
+jq is needed by the run-docs-build script. python3-semver is needed by
+the release-parser.py script. Add both to the pre-installed
+worker/controller packages.
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
-Note: tested with a local Autobuilder instance.
----
- builders.py   | 11 ++++++++++-
- config.py     |  2 +-
- schedulers.py |  6 ++++++
- 3 files changed, 17 insertions(+), 2 deletions(-)
+ docker/Dockerfile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/builders.py b/builders.py
-index 2d42d07..8ecf688 100644
---- a/builders.py
-+++ b/builders.py
-@@ -486,11 +486,20 @@ def create_doc_builder_factory():
-         mode='incremental',
-         haltOnFailure=True,
-         name='Fetch bitbake'))
-+    f.addStep(steps.Git(
-+        repourl=util.Interpolate("%(prop:repo_oecore)s"),
-+        branch=util.Property('branch_oecore'),
-+        codebase='oecore',
-+        workdir=util.Interpolate("%(prop:builddir)s/openembedded-core"),
-+        mode='incremental',
-+        haltOnFailure=True,
-+        name='Fetch openembedded-core'))
-     f.addStep(steps.ShellCommand(
-         command=[util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper/scripts/run-docs-build"),
-                  util.Interpolate("%(prop:builddir)s"),
-                  util.Interpolate("%(prop:builddir)s/yocto-docs"),
--                 util.Interpolate("%(prop:builddir)s/bitbake")],
-+                 util.Interpolate("%(prop:builddir)s/bitbake"),
-+                 util.Interpolate("%(prop:builddir)s/openembedded-core")],
-         haltOnFailure=True,
-         name="Run documentation Build"))
-     return f
-diff --git a/config.py b/config.py
-index 7c675ab..c84af33 100644
---- a/config.py
-+++ b/config.py
-@@ -26,7 +26,7 @@ buildertorepos = {
-     "checkuri": baserepos,
-     "check-layer": baserepos + ["meta-mingw"],
-     "check-layer-nightly": baserepos + ["meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein", "meta-qcom", "meta-riscv", "mixin-wrynose-linux-firmware", "meta-mingw"],
--    "docs": ["yocto-autobuilder-helper", "yocto-docs", "bitbake"],
-+    "docs": ["yocto-autobuilder-helper", "yocto-docs", "bitbake", "oecore"],
-     "reproducible-meta-oe": baserepos + ["meta-openembedded"],
-     "patchtest": baserepos + ["meta-patchtest", "meta-openembedded"],
-     "meta-oe-mirror":  baserepos + ["meta-openembedded"],
-diff --git a/schedulers.py b/schedulers.py
-index 5b5cf64..0022393 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -675,6 +675,12 @@ schedulers.append(sched.ForceScheduler(
-                                           revision=util.FixedParameter(name="revision", default=""),
-                                           repository=util.FixedParameter(name="repository", default=""),
-                                           project=util.FixedParameter(name="project", default="")),
-+                   util.CodebaseParameter(codebase='oecore',
-+                                          label="openembedded-core:",
-+                                          branch=util.FixedParameter(name="branch", default=""),
-+                                          revision=util.FixedParameter(name="revision", default=""),
-+                                          repository=util.FixedParameter(name="repository", default=""),
-+                                          project=util.FixedParameter(name="project", default="")),
-                    ],
-         reason=util.StringParameter(
-                 name="reason",
+diff --git a/docker/Dockerfile b/docker/Dockerfile
+index 0ddd20d..aabb5a8 100644
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -22,6 +22,7 @@ RUN apt update && \
+         iproute2 \
+         iputils-ping \
+         iptables \
++        jq \
+         libacl1 \
+         libcairo2 \
+         liblz4-tool \
+@@ -32,6 +33,7 @@ RUN apt update && \
+         python3-jinja2 \
+         python3-pexpect \
+         python3-pip \
++        python3-semver \
+         python3-subunit \
+         rsync \
+         socat \
 
 ---
-base-commit: b04a4c18e6c77731050c303e0ead4c9be0284407
-change-id: 20261102-run-docs-build-with-oecore-10dfa7fe878f
+base-commit: 0f6b97aa62f679948b79babfa26ed5245bd95040
+change-id: 20261120-add-jq-semver-300364960bf5
 
