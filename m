@@ -1,111 +1,283 @@
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3149.1795645886466536677
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3055.1795645887128751398
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 25 Nov 2026 14:31:26 -0800
+ Wed, 25 Nov 2026 14:31:27 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=rnkDZoeN;
- spf=pass (domain: konsulko.com, ip: 209.85.160.177, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-55d846e884eso39198461cf.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Nov 2026 14:31:26 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=RvJxDLVu;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-53639b8903bso75976121cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Nov 2026 14:31:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1795645885; x=1796250685; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1795645886; x=1796250686; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=cM2MxOyCv3++XVfBXeNljV0XrhZwzeASgbidYq7BxKk=;
-        b=rnkDZoeNLQIuh2fV8EOAmiFionOt0dqct309+Y7oTSzSsZV3IW2NCFhG5D6KkQ6dgu
-         cDG2pqsRmoa56ofgM4Z0lUvkHzw+9s0MQO0Go6XBp441bowSxYTd3erhTGmVntDHakdR
-         EVYFgji0vDgExkVxWSTeHgsiyhcRf6/+2PnQs=
+        bh=k6wnnM5xDXi3a7nZBmoURrC1/7dG+VvieUcZkYx25L0=;
+        b=RvJxDLVuL90+LFGHGJIMQrP02Rm2uHk729LUqDHQa5/cY9QgQoSIROOdnsfv1WIo5/
+         Il0GSNDqql9FpHdDA+70b7obK0PxqGvGTnhXCowOdc4hZLUmzksCIdNgKYD+I3PcrSRh
+         8j/UoeqGYr903ob4lv82Lk7AfHtmbNQKWE3Gg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795645885; x=1796250685;
+        d=1e100.net; s=20260707; t=1795645886; x=1796250686;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=cM2MxOyCv3++XVfBXeNljV0XrhZwzeASgbidYq7BxKk=;
-        b=gfC4Nlm31oUV731JyYoUptwhcmbCOS7m3RYHFthKxBN0pRPMadTLV72KtsnJykxwwx
-         3mkspU89FxXviw6A9ZV2tY//FHIiIjh9MY9LkMPuZklVqnK+EYE8qhqjVUDqxR2m+eN5
-         9V7AljIJ0z4hNdKyqZDHPjc3+/n/gs+TuW+wfNaattfgWXYJ16NzItM9kgP+AuWn3015
-         qWOi1OLXzixk0Tt/L0fpml0Nmw+kkHGwAcaSw/MTyDicG5s0WRF7oWvRbzm70unB1jM5
-         KmAv+DafXH38KutSTEVuTu7+GEyNg0hNpWeOPeWqTCJbbDZaVwxxq64S+wKZlDcpNRtC
-         6IQg==
-X-Gm-Message-State: APuU4Z+rlTz9Ckg/Hz0evIr5ljtEK9Z/ROnxtR36wQYxQxbke1cminy6
-	Wvm+H/dw8l8dgZs2QHZUN2OnlH8h8dSHlPy/bwHQfFR3OmdXwzzH/Cz261P3BnbpPoFytouXqKB
-	4005k
-X-Gm-Gg: AZFdTZf8YVfioS1XPizlxl+lQPCNG2cpuYiYXM/1kP15tSC6xSX0TCPqwE4HZBSaoFG
-	sS5J4ZfhvN6LS3fiQU8nWgvYq88sAwdw+t1ThF1eicBR4eNTiRCYJgXXeicFBndjrlx7SLEdIl1
-	QRceKld2jb73DetG3IAAafdWulGrza1gcLSTgAiOvWBTr5b1Ki5FrWyc1+JX1PElLfkcSAWzVPa
-	8uCH4kah4Fbi28UTlN3bz53JgqiKzPmU8DdVwJhfWoUOKAlsDqbUqyq81p4t7z0T86WDxH3dH+w
-	nXjpDRNuQVUQ//n8Lm/I3/0Wk+71izDCJ6nZ2lcAMugb9yMId1D0ZGw5BOVMw5kugP1iV1EFuqS
-	EJ2AjDUJrBwOsA1hzA+0GPns2IJFX2uIl+TMUZAzre/zUv7PpEWBqUXyceMUh8fTv9M1sgEcqnL
-	KEXVh/oHr1jqIIIXR2yY9x3nHjs1cOZUPrPzl/1IJZ/nION9e1vqi047/MuWhioQy2jpI6ZxwKG
-	p5S9Mk6p3lzBEII98sAPA4/irQHRKe+qGcvVcbVXPYEEi4Pi9z3skxJzT6Aa4f8xkbbhYE75zQD
-	2FMi0Jb7VwxE/c03PerW85AKfxeXB7t3APHDesgQEtcRBL2KMFWmKeDEyCUZQ08YB4NnJWvM6Ft
-	8elUx1aaTavzpFbLKz/51sd6l0VhNdDROVIXBRQYysqSkDvfTH8QQLIrTkwmMfPPEKQ==
-X-Received: by 2002:ac8:5f83:0:b0:536:34db:e7c8 with SMTP id d75a77b69052e-55d76a5d53amr369992731cf.33.1795645885183;
+        bh=k6wnnM5xDXi3a7nZBmoURrC1/7dG+VvieUcZkYx25L0=;
+        b=l/D9sMPUT5MqTOPDjisFHKGMamfcFZCA5P9XYMzpu5tD8c0X+cTcRxAwEH3nOE7Pe0
+         FWjNDy5XOGqB4J4a8NZbtu/1Q8HTrbuBY0kuEYvz0uoeUzcAAPC1mzxa7y8xbVeOSgt1
+         gmG0XdxucoF0j1pU7lOdF3waSO9yJEEl13qKcjB6hti6VGG9woYr8P667s//b00DGpxF
+         KwvxzRQ9b4wpzUeeHkS/jJ/e2P3IzOCV1aWmABK7rMj03dEoap9fkWJ9mOQfKqCzMs/q
+         hsRFrtrNUn8CqY0NERTCtipVwgiMETn8BG4MMKlU7BAyxqEct9FMRvVxTtr81Rf/LTDb
+         6lrA==
+X-Gm-Message-State: APuU4Z+DMtt+UYmCmxEEwd7HpqzOasmlyrNaeptU0pA/bsvpct2nfgDR
+	XxZYLtFBrOIvScUk7GY9yfvFywDbhO6TqfIJpQhTtdSMP3JhIGS/+kY7am55tVsfyqdwwOqfYNK
+	P3Klj
+X-Gm-Gg: AZFdTZd6vaZWDy8hlDc2GEWksvCLSVThkPFrede5WyKS0KpMHoKZ8AItB19nPv1ZHHF
+	5xc9hgkC5Q9P8nib8E+CdQhOcU1REONNbVAN5MFHsgZvvXEfeNqydlOmMq4uZk+RYN5J7zroRM4
+	W7tM8NbzoDx1iNcGIAJO2159pi09ClqjnlsGTlo2a0BpNX3rFhj4v7aeLVJRjmOwLsYvenrDNkX
+	aPovzQUfZ2bwJq4RGDDzlgfkgU7ctI7/BXJUnoQNQi2xTusnF123aVmJ/d0vmUM3yTp36/CEVyY
+	5SH6A0sourElct4CJl24em9q6RZtIafKeNZbxcBfjT2lXJV5xLKZtIzy5AtoYbTP8DNpCfe+/G1
+	jYGuF31Srh50Uvg9vBts/8ig1eEM1CM3o0YI4O9r/abqFuBEsdvDMdkw9IRJkjRWvXeDI/kctAA
+	uVRgvshDSSXgIEkWS3Py0jUIp2hhD8EprwJQiI7fFk5FM1pj4ktxKN8Hz2rbsj7xv2YBnRzjavs
+	BjmDiB7mh4Lv1EWz0m4vdaegX7ppA3Pr7lG6+F4TmViiZyMKAkVTDTFtPGaI3yclZ0tlgRw/QsS
+	erypaLRpNFHy5zdswFocQxU8KrlHKrk4Zv01sBO03LzB9UI/PNnnV9H96NP76GNlq0gf6IJqqaO
+	kIrBSBKiR0nC0neSrRcdWcj6vkhG1uGkmC7Za2euM1SEBFs3xSPADv1P+LK3y72P96w==
+X-Received: by 2002:a05:622a:5c0f:b0:536:5880:18d4 with SMTP id d75a77b69052e-55d769c8a96mr349479131cf.11.1795645885772;
         Wed, 25 Nov 2026 14:31:25 -0800 (PST)
 Return-Path: <scott.murray@konsulko.com>
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-55d78451407sm167717091cf.2.2026.11.25.14.31.24
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-55d78451407sm167717091cf.2.2026.11.25.14.31.25
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 14:31:24 -0800 (PST)
+        Wed, 25 Nov 2026 14:31:25 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 03/19] cargo_common: map the cargo vendoring directory for the C compiler
-Date: Wed, 25 Nov 2026 17:30:54 -0500
-Message-ID: <e30d471850e99155f7702b0266917287f4148c4a.1795645656.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 04/19] rust: drop the cc object-name reproducibility patch
+Date: Wed, 25 Nov 2026 17:30:55 -0500
+Message-ID: <9dbd9e0b20dda3a04e97c0319952cf8f1c449d1a.1795645656.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <cover.1795645656.git.scott.murray@konsulko.com>
 References: <cover.1795645656.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Nov 2026 22:31:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5521
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5523
 Content-Type: text/plain; charset="utf-8"
 
-From: Markus Volk <f_l_k@t-online.de>
+From: Sunil Dora <sunilkumar.dora@windriver.com>
 
-Crates that ship C or assembly sources, ring being a prominent one,
-compile them through the cc crate rather than rustc. RUST_DEBUG_REMAP
-only passes --remap-path-prefix to rustc, and DEBUG_PREFIX_MAP covers
-S, B and the sysroots, so nothing rewrites the paths below CARGO_HOME.
-The build directory of every vendored crate therefore ends up in the
-debug symbols, which trips the buildpaths QA check and leaves recipes
-working around it by dropping their -dbg package.
+This patch trims the source directory at the string "rustc" before cc
+hashes it into the object file names. After the shared source rework the
+build no longer runs under rustc-*-src, so the sources that
+compiler-builtins generates into OUT_DIR are not trimmed and the build
+path ends up in their names.
 
-Add the vendoring directory to DEBUG_PREFIX_MAP so those objects are
-remapped like the rest.
+Replaced by cc-hash-object-names-relative-to-source-roots.patch.
 
-Tested on corei7-64 with yazi and eilmeldung, both of which had dropped
-their -dbg package for this reason: after the change they package the
-debug symbols with no reference to the build tree left.
+[YOCTO #16376]
 
-AI-Generated: Uses Claude Code (Claude Opus 5)
-Signed-off-by: Markus Volk <f_l_k@t-online.de>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-(adapted from oe-core commit fd245ac1c2dfa2de2dad96b7db2a0201bc5c25d4)
+Signed-off-by: Sunil Dora <sunilkumar.dora@windriver.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+(adapted from oe-core commit cc8168e229561bf0bbd4226bed13e76f9ebbb5d3)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes-recipe/cargo_common.bbclass | 5 +++++
- 1 file changed, 5 insertions(+)
+ ...epro-issue-fix-with-cc-crate-hashmap.patch | 67 -------------------
+ recipes-devtools/rust/rust-source.inc         |  1 -
+ 2 files changed, 68 deletions(-)
+ delete mode 100644 recipes-devtools/rust/files/repro-issue-fix-with-cc-cra=
+te-hashmap.patch
 
-diff --git a/classes-recipe/cargo_common.bbclass b/classes-recipe/cargo_common.bbclass
-index 5bf9dc5..885994a 100644
---- a/classes-recipe/cargo_common.bbclass
-+++ b/classes-recipe/cargo_common.bbclass
-@@ -51,6 +51,11 @@ CARGO_TARGET_SUBDIR = "${RUST_HOST_SYS}/${BUILD_DIR}"
- # Where we download our registry and dependencies to
- export CARGO_HOME = "${WORKDIR}/cargo_home"
- 
-+# Crates that compile C or assembly sources do so through the cc crate, which
-+# is not covered by the rustc specific RUST_DEBUG_REMAP, so map the vendoring
-+# directory for the C compiler as well.
-+DEBUG_PREFIX_MAP += "-ffile-prefix-map=${CARGO_HOME}=${TARGET_DBGSRC_DIR}"
-+
- # Don't instruct cargo to use crates downloaded by bitbake. Some rust packages,
- # for example the rust compiler itself, come with their own vendored sources.
- # Specifying two [source.crates-io] will not work.
--- 
+diff --git a/recipes-devtools/rust/files/repro-issue-fix-with-cc-crate-hash=
+map.patch b/recipes-devtools/rust/files/repro-issue-fix-with-cc-crate-hashm=
+ap.patch
+deleted file mode 100644
+index efb379a..0000000
+--- a/recipes-devtools/rust/files/repro-issue-fix-with-cc-crate-hashmap.pat=
+ch
++++ /dev/null
+@@ -1,67 +0,0 @@
+-rust: reproducibility issue fix with v1.84
+-
+-A few crates are using the updated version of the 'cc' crate and this is c=
+ausing the generated object file names containing a unique hashmap id.
+-By the following changes same hash values will be genarted even for diffre=
+nt build paths.
+-
+-Below are the links for detailed bug description & discusssion with upstre=
+am rust.
+-https://github.com/rust-lang/cc-rs/pull/1277
+-
+-Upstream-Status: Submitted [https://github.com/rust-lang/cc-rs/pull/1277]
+-Signed-off-by: Harish Sadineni <Harish.Sadineni@windriver.com>
+-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+-diff --git a/vendor/cc-1.2.0/src/command_helpers.rs b/vendor/cc-1.2.0/src/=
+command_helpers.rs
+-index fe919a5239..2b1f442019 100644
+---- a/vendor/cc-1.2.0/src/command_helpers.rs
+-+++ b/vendor/cc-1.2.0/src/command_helpers.rs
+-@@ -289,6 +289,7 @@
+- /// and store them in the output Object.
+- pub(crate) fn objects_from_files(files: &[Arc<Path>], dst: &Path) -> Resu=
+lt<Vec<Object>, Error> {
+-     let mut objects =3D Vec::with_capacity(files.len());
+-+    let target_substring =3D ["rustc"];
+-     for file in files {
+-         let basename =3D file
+-             .file_name()
+-@@ -309,6 +310,26 @@
+-             })?
+-             .to_string_lossy();
+-
+-+        // Function to find the position of the first occurrence of the t=
+arget substring
+-+        fn find_target_position(s: &str, targets: &[&str]) -> Option<usiz=
+e> {
+-+            let mut pos =3D None;
+-+            for target in targets {
+-+                if let Some(index) =3D s.rfind(target) {
+-+                    //If a target is found and pos is None, set it
+-+                        if pos.is_none() || index < pos.unwrap() {
+-+                            pos =3D Some(index);
+-+                        }
+-+                }
+-+            }
+-+            pos
+-+        }
+-+
+-+        let filtered_dirname =3D if let Some(pos) =3D find_target_positio=
+n(&dirname, &target_substring) {
+-+            dirname[pos..].to_string()  //Keep everything from the target=
+ substring onwards
+-+        }  else {
+-+            dirname.to_string()  //If target substring is not found, keep=
+ the original dirname
+-+        };
+-+
+-         // Hash the dirname. This should prevent conflicts if we have mul=
+tiple
+-         // object files with the same filename in different subfolders.
+-         let mut hasher =3D hash_map::DefaultHasher::new();
+-@@ -326,7 +347,7 @@
+-             dirname
+-         };
+-
+--        hasher.write(dirname.as_bytes());
+-+        hasher.write(filtered_dirname.as_bytes());
+-         let obj =3D dst
+-             .join(format!("{:016x}-{}", hasher.finish(), basename))
+-             .with_extension("o");
+-diff --git a/vendor/cc-1.2.0/.cargo-checksum.json b/vendor/cc-1.2.0/.cargo=
+-checksum.json
+-index b070eeb322..ba768ff86f 100644
+---- a/vendor/cc-1.2.0/.cargo-checksum.json
+-+++ b/vendor/cc-1.2.0/.cargo-checksum.json
+-@@ -1 +1 @@
+--{"$comment":"This file only protects against accidental modifications. It=
+ is not a security mechanism and does not protect against malicious changes=
+.","files":{".cargo_vcs_info.json":"d6e26674a9d7de87dab83262a14f2377988a1e0=
+87e4b514f3983f8dd141ea813","CHANGELOG.md":"fb0a3bcb34301d2578bef86feabe9305=
+7068cb1906a7f10b584f58ff6123e8c6","Cargo.lock":"b661254fadca74408d53742755b=
+371f7ae29e501e851aeae13bcd14a51883321","Cargo.toml":"50debe1b2fc050e8b305bd=
+d514509d98cdbc59e96e5f10888df4b6fca19d3a75","Cargo.toml.orig":"0aff9dc74ddb=
+e3bfe89ad9698212a6a18d6124b9593780aad25e277d28e9a71f","LICENSE-APACHE":"a60=
+eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT=
+":"378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397","READM=
+E.md":"f1ddbede208a5b78333a25dac0a7598e678e9b601a7d99a791069bddaf180dfe","c=
+lippy.toml":"aa7850db4350883c8f373bd0d6b4d19bf3b75f13c1c238e24368c109cb52fb=
+1d","src/command_helpers.rs":"b766a70e39b8ea7bb57afd288bcac205a23f6a26ac561=
+9cb1d5b10f70c5dfdea","src/detect_compiler_family.c":"97ca4b021495611e828bec=
+ea6187add37414186a16dfedd26c2947cbce6e8b2f","src/lib.rs":"221ba9475100303b5=
+c694b2a02e5353452ee08a29e4e4d4d67ea8fcbd87605df","src/parallel/async_execut=
+or.rs":"4ce24435fff6b6555b43fee042c16bd65d4150d0346567f246b9190d85b45983","=
+src/parallel/job_token.rs":"018a01cb00182270bbcb68e31e7a7c5c621a95f086e4c68=
+cfa2bf557ac24e5f2","src/parallel/mod.rs":"bd9c1334d17d138c281961c690b8d8118=
+a2d6295a7d6cd7296826255436fa063","src/parallel/stderr.rs":"74384d41198740a6=
+fce0877f144262db09fb091225fa8fbfa771314bb11487c6","src/target.rs":"7313240d=
+b078ad85c1209a42a5fa96c3692b5d6e5093c7f366a1b99677247109","src/target/apple=
+.rs":"6afbecac9f66aa72db55694413532f80b2753f28466a6213d1aa901a03c78bcd","sr=
+c/target/generated.rs":"af067e1c291e895ddb591f92534eed0c48977cdb2b58f823942=
+3e07c6de31cd3","src/target/llvm.rs":"e1db4a7fb8b905ee9853781f2fcc64a9d3b481=
+54e4c8b6cb12f5373c5935da6e","src/target/parser.rs":"4f2129a24273d62bf8ab339=
+098e7f758e4e42b0df369dd2b0eb1b20726be91f8","src/tempfile.rs":"ebafb5b0e5d08=
+b0706916ed911d4245240e60c3e2d0c9a1630c520842988a2b3","src/tool.rs":"2e65500=
+62e021f2b394388172bbb01e86fe6a94d2395bcb3c85a9e86690da1a9","src/utilities.r=
+s":"52b30b24a1c31cdefb105309ee5220cfc9fca76eaf4e6d6509c3e19f431448fe","src/=
+windows/com.rs":"a2800ddb81215fff2bf618336f5c4ff8e8bdb746dd18b795873c7304b3=
+f2a5e3","src/windows/find_tools.rs":"0ff410bd71f08ee88e99609c15be5f1bc16ad7=
+bd07a83918d13a70c8465642e2","src/windows/mod.rs":"34cfa201cfbcac7ccaa3ea529=
+5d3e4200439af3cc5c6433baf81502596040a89","src/windows/registry.rs":"c521b72=
+c825e8095843e73482ffa810ed066ad8bb9f86e6db0c5c143c171aba1","src/windows/set=
+up_config.rs":"754439cbab492afd44c9755abcbec1a41c9b2c358131cee2df13c0e996db=
+bec8","src/windows/vs_instances.rs":"946527cf8fd32c3472f6a2884dcdec29076310=
+1097334c7478f9c24c3950db6b","src/windows/winapi.rs":"250d51c1826d1a2329e988=
+9dd9f058cfce253dbf2a678b076147c6cdb5db046c","src/windows/windows_sys.rs":"e=
+2714c8307bfa083b9745eb0e46cadd7f98d7b88abf45a7637172019324e34b8","src/windo=
+ws/windows_targets.rs":"5b4648ebc22b028caca9f4b4bf8881fe2d094b7bec217264ba2=
+e6e2c49d1ccee"},"package":"1aeb932158bd710538c73702db6945cb68a8fb08c519e6e1=
+2706b94263b36db8"}
+-\ No newline at end of file
+-+{"$comment":"This file only protects against accidental modifications. It=
+ is not a security mechanism and does not protect against malicious changes=
+.","files":{".cargo_vcs_info.json":"d6e26674a9d7de87dab83262a14f2377988a1e0=
+87e4b514f3983f8dd141ea813","CHANGELOG.md":"fb0a3bcb34301d2578bef86feabe9305=
+7068cb1906a7f10b584f58ff6123e8c6","Cargo.lock":"b661254fadca74408d53742755b=
+371f7ae29e501e851aeae13bcd14a51883321","Cargo.toml":"50debe1b2fc050e8b305bd=
+d514509d98cdbc59e96e5f10888df4b6fca19d3a75","Cargo.toml.orig":"0aff9dc74ddb=
+e3bfe89ad9698212a6a18d6124b9593780aad25e277d28e9a71f","LICENSE-APACHE":"a60=
+eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT=
+":"378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397","READM=
+E.md":"f1ddbede208a5b78333a25dac0a7598e678e9b601a7d99a791069bddaf180dfe","c=
+lippy.toml":"aa7850db4350883c8f373bd0d6b4d19bf3b75f13c1c238e24368c109cb52fb=
+1d","src/command_helpers.rs":"174101852b2633a2478cef20d063fb9c2f1b092eac479=
+13a6e708c85663b8404","src/detect_compiler_family.c":"97ca4b021495611e828bec=
+ea6187add37414186a16dfedd26c2947cbce6e8b2f","src/lib.rs":"221ba9475100303b5=
+c694b2a02e5353452ee08a29e4e4d4d67ea8fcbd87605df","src/parallel/async_execut=
+or.rs":"4ce24435fff6b6555b43fee042c16bd65d4150d0346567f246b9190d85b45983","=
+src/parallel/job_token.rs":"018a01cb00182270bbcb68e31e7a7c5c621a95f086e4c68=
+cfa2bf557ac24e5f2","src/parallel/mod.rs":"bd9c1334d17d138c281961c690b8d8118=
+a2d6295a7d6cd7296826255436fa063","src/parallel/stderr.rs":"74384d41198740a6=
+fce0877f144262db09fb091225fa8fbfa771314bb11487c6","src/target.rs":"7313240d=
+b078ad85c1209a42a5fa96c3692b5d6e5093c7f366a1b99677247109","src/target/apple=
+.rs":"6afbecac9f66aa72db55694413532f80b2753f28466a6213d1aa901a03c78bcd","sr=
+c/target/generated.rs":"af067e1c291e895ddb591f92534eed0c48977cdb2b58f823942=
+3e07c6de31cd3","src/target/llvm.rs":"e1db4a7fb8b905ee9853781f2fcc64a9d3b481=
+54e4c8b6cb12f5373c5935da6e","src/target/parser.rs":"4f2129a24273d62bf8ab339=
+098e7f758e4e42b0df369dd2b0eb1b20726be91f8","src/tempfile.rs":"ebafb5b0e5d08=
+b0706916ed911d4245240e60c3e2d0c9a1630c520842988a2b3","src/tool.rs":"2e65500=
+62e021f2b394388172bbb01e86fe6a94d2395bcb3c85a9e86690da1a9","src/utilities.r=
+s":"52b30b24a1c31cdefb105309ee5220cfc9fca76eaf4e6d6509c3e19f431448fe","src/=
+windows/com.rs":"a2800ddb81215fff2bf618336f5c4ff8e8bdb746dd18b795873c7304b3=
+f2a5e3","src/windows/find_tools.rs":"0ff410bd71f08ee88e99609c15be5f1bc16ad7=
+bd07a83918d13a70c8465642e2","src/windows/mod.rs":"34cfa201cfbcac7ccaa3ea529=
+5d3e4200439af3cc5c6433baf81502596040a89","src/windows/registry.rs":"c521b72=
+c825e8095843e73482ffa810ed066ad8bb9f86e6db0c5c143c171aba1","src/windows/set=
+up_config.rs":"754439cbab492afd44c9755abcbec1a41c9b2c358131cee2df13c0e996db=
+bec8","src/windows/vs_instances.rs":"946527cf8fd32c3472f6a2884dcdec29076310=
+1097334c7478f9c24c3950db6b","src/windows/winapi.rs":"250d51c1826d1a2329e988=
+9dd9f058cfce253dbf2a678b076147c6cdb5db046c","src/windows/windows_sys.rs":"e=
+2714c8307bfa083b9745eb0e46cadd7f98d7b88abf45a7637172019324e34b8","src/windo=
+ws/windows_targets.rs":"5b4648ebc22b028caca9f4b4bf8881fe2d094b7bec217264ba2=
+e6e2c49d1ccee"},"package":"1aeb932158bd710538c73702db6945cb68a8fb08c519e6e1=
+2706b94263b36db8"}
+diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/=
+rust-source.inc
+index 3b41db1..24382ef 100644
+--- a/recipes-devtools/rust/rust-source.inc
++++ b/recipes-devtools/rust/rust-source.inc
+@@ -3,7 +3,6 @@ RUST_VERSION ?=3D "${@d.getVar('PV').split('-')[0]}"
+ SRC_URI +=3D "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.=
+tar.xz;name=3Drust \
+             file://0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux=
+-g.patch;patchdir=3D${RUSTSRC} \
+             file://rust-oe-selftest.patch;patchdir=3D${RUSTSRC} \
+-            file://repro-issue-fix-with-cc-crate-hashmap.patch;patchdir=3D=
+${RUSTSRC} \
+             file://0001-src-core-build_steps-tool.rs-switch-off-lto-for-ru=
+st.patch;patchdir=3D${RUSTSRC} \
+             file://0002-Fix-rust-build-failure-with-unstable-options.patch=
+;patchdir=3D${RUSTSRC} \
+             file://0003-bootstrap-skip-StdarchVerify-when-remote-testing.p=
+atch;patchdir=3D${RUSTSRC} \
+--=20
 2.56.1
 
