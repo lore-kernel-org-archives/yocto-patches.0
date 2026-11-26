@@ -1,46 +1,50 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.13878.1795700012155247693
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14113.1795700838239866905
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 26 Nov 2026 05:33:32 -0800
+ Thu, 26 Nov 2026 05:47:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mailbox.org header.s=mail20150812 header.b=O7oUIJDn;
- spf=pass (domain: mailbox.org, ip: 80.241.56.161, mailfrom: patrick.vogelaar.dev@mailbox.org)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+ dkim=pass header.i=@mailbox.org header.s=mail20150812 header.b=wqQ/s9eG;
+ spf=pass (domain: mailbox.org, ip: 80.241.56.171, mailfrom: patrick.vogelaar.dev@mailbox.org)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4jZyDR4GrlzKmFq;
-	Thu, 26 Nov 2026 14:33:27 +0100 (CET)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4jZyXL0DdKzMlq2;
+	Thu, 26 Nov 2026 14:47:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1795700007;
+	t=1795700834;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Ffd557PTEO2IAwPXVJJZe7SyvWSRiqnxJOMV+vjz46w=;
-	b=O7oUIJDnkcKU8pOyfe68FTCOtYz4lHLMuQSrFEDmEUdidIErw9cAVoO+Vo8AWvKxIBqqju
-	tmSFR74BBa60cV7+H2ifRJDQTn9SL8wM9bulMSsa5CV5o37b8gQdCiy7cXwv+WEcJ/iCth
-	INVsij3WGMuse01sF7xwWm+1lOafx3XNPH/EV83qFNNPL+g028Un/26cDI6RNTv7+OeSmj
-	S+m5QbUwlkPZcgGv86G3mkxoHais4QuP06jP+UUrihCR2oLhgjrIYSMlp25CoqWKyJqDvL
-	MS9vGfqL/gKu3WlvLkk2dZw1MMgWh65cmjVSaovaNlPbmAVNxaOm1NiNm2WE7w==
-Date: Thu, 26 Nov 2026 14:33:27 +0100 (CET)
-From: "Patrick Vogelaar" <patrick.vogelaar.dev@mailbox.org>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c8UzoicoLpfWf+qz0GolL/DCXwvMDuw1ba0CqljGyoQ=;
+	b=wqQ/s9eGVRqo0VS5KIX3giOHAK7BYkDwHd/rwT7TijpFeYopwcXd+5GmE6ZldUUYwXBgL7
+	2+nYoCpR+vTa3nxN4AFhvMw/Ha6Ne8fv9pyR/3QL7rJ7LNiAb0D4vKyc5LxH6+TXxuM4LT
+	afDE+gY4ZWabu0pcgmPPbngQpToZaD4pU6BEI3kEgk3cAfQuLtgLtPm7va2sldfoqvohst
+	kup0zgIQUW7EDlX+/pHOSxPM3lOBWSdNY5CfbEjL8kW5UVTaz2vemxnKaTpS+Yz1zpNO6N
+	NVrrD9L+TwZJlENbcbAaHA48TUyp8LX0F5IdkuPlCIlJv+9noFFmCnUqEji4Dg==
+Date: Thu, 26 Nov 2026 14:47:13 +0100 (CET)
+From: patrick.vogelaar.dev@mailbox.org
 To: "yocto-patches@lists.yoctoproject.org"
  <yocto-patches@lists.yoctoproject.org>
 Cc: "scott.murray@konsulko.com" <scott.murray@konsulko.com>
-Message-ID: <917882156.181166.1795700007162@app.mailbox.org>
-Subject: [meta-lts-mixins][scarthgap/rust] build problem with suricata
+Message-ID: <1501876072.182298.1795700833777@app.mailbox.org>
+In-Reply-To: <917882156.181166.1795700007162@app.mailbox.org>
+References: <917882156.181166.1795700007162@app.mailbox.org>
+Subject: Re: [meta-lts-mixins][scarthgap/rust] build problem with suricata
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Priority: 3
 Importance: Normal
 X-Mailer: Open-Xchange Mailer v8.54.538
 X-Originating-Client: open-xchange-appsuite
-X-MBO-RS-META: akeaboa7tnqwdji7ej674fgn9ihkzuri
-X-MBO-RS-ID: 9ff64c67c11fd3af3f5
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: ydniu5e7ubbp54wjh9rwr4wjaxjam33q
+X-MBO-RS-ID: e12317846a0fec3b740
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Nov 2026 13:36:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5542
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Nov 2026 13:47:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5543
+
 
 Hi all,
 
