@@ -1,59 +1,59 @@
 Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9700.1795884897330226024
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9695.1795884890822638092
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 28 Nov 2026 08:54:57 -0800
+ Sat, 28 Nov 2026 08:54:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=Uynml0i6;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=HjKqg+cS;
  spf=pass (domain: konsulko.com, ip: 209.85.128.44, mailfrom: scott.murray@konsulko.com)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4bb64ef5a14so88098755e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 08:54:57 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4bb6ba3b244so92680945e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 08:54:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1795884895; x=1796489695; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1795884889; x=1796489689; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=8XBD6ALQaJK92nf+7vncZ1lO+0yF5z3VJSCPnraprLA=;
-        b=Uynml0i67AVhQxA2BSB/fOlsZ6hGBbd1iV8cSZ1eyKNiTwmQm/oXB791mn7548RCP6
-         FzP+bRDQ+8tWR3Imk6GlYdWx+AyDk/oSv0COJ3Irns5oAJ53jKBO5rbvYH6JwoWTMUhW
-         wMcB/sbILsI3NQB5QQLmiRRO1Rdg5UCPtBLa8=
+        bh=DGJ33Sv6mrFv0EKY2paYZsuyffqNuvLNLm0BK3iNdGA=;
+        b=HjKqg+cSigaCbzatFq3LZRfiY4UnBC+cwNiscRwrVaWPu021aekA5PQcpwdxwXomAj
+         03YP3C8VgmgAgut05NK43kbkFNrMXpBudCMfvFrQcex589+00mE+jPeYqJWm10dLByRB
+         YUN/Ak9EwjWehqfyLzyowPwRtg01T5o0aSS+k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795884895; x=1796489695;
+        d=1e100.net; s=20260707; t=1795884889; x=1796489689;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=8XBD6ALQaJK92nf+7vncZ1lO+0yF5z3VJSCPnraprLA=;
-        b=q2EaU+1XLf9iW9Cze1Rpl/N9qjQDSdeW3LbQsJ83GeWNq+bMt0p/03x0jRgksVUfnZ
-         CcWsCfsqN05/RyAbkmAdhZvQieTHwk/fw2Z0AsvgjYG6vDDhu8mlAypXGmwsQR/MA72V
-         /q1BeHOFWJEBp1wYNbtXSDMb70YKyqyj8CTFecd7yR5JbQisFIhvDJxEtj/oW4OJAFGm
-         JFEENQUTQ5Z3KoDYSU+SxyhPEsyzwBZDVRzuLxDDUVETyHDN/tIKfFftrBiiG2fftU/2
-         6CrKerjEFT3P3WVcn3sOsQdQE47zYatIGosuA21pFDqpibOvqmMAzi+6f42PckmmhVSk
-         7K+w==
-X-Gm-Message-State: APuU4Z+PDlAnKRqnOcQrduA1VEqfxSPeqs4rYnjv7ScSA5s9FJTsIkLs
-	5PC2p0vKGbOEYfykfc39nc+pXptZLo0ok/SpfwxJyii5Y7MoLyGKa9nOHI5nEXwElHdmEz7oS/o
-	40Ou7uWw=
-X-Gm-Gg: AZFdTZd+54JInBitEF7ojrOFTZRCoMc2d1isM+2HLqP7chA9h+goHCgh0R8Y9qwVkHT
-	v8l0VCgYZLh/wDXc6kSenvB/0cY7hy44xdkS+hrV66N6ErP7NVNmHgTTQzfVjqtmH2ZDBZbjLK0
-	jWTRfLfispG7YHK1jlA4OnT0XNgk8etJY1KANovU9/eWcLjXYn52C7BRIoAgwAe/cE6fqk9QB12
-	S80+zjqlRbqql6a8IMmtMDBpXQO17E6yOCDRDmQjUGr62HHqyyVihEsQi2rgVdnYlzpQEBQxATC
-	hfoi/N7RqS5/snpGCdSUT9Wd4cwaYnRrDGQ7c8QF7/wMIgsvkMdYtwG1PnvhTL7Z+DnLSfbem7p
-	AxsPJZiZTmpmIZCe9JkX0Nk+y3fO8N/lhd431k+or3iQhJXQ0opDo9XI+QKDvDoCJHJl4rPpF8e
-	3ZxtoU3jmItsuAq247tCNs29izkyUdoGE9P6NRErCXKMbIg/TenTjdQ3HpLh1mdBedFZaHQV/l1
-	p4vv7Gr5yKXATQQDKcp/FYWNk1yy5B3f9Xs9EJR9F2HIy4+J8hiQSeB+jXTHLysCaurORwFURJ2
-	CIisFwAtkqYD2ogduh3Y739QtpniZC4v32GQbvv89UaMWwcVr/kFdMkaGYa6Y5dHuFmkU79VR9n
-	leLWFaiiGjDwtoNWqapkbA+MHvKGTHk5cqFqApAQYJecudSHh9v8=
-X-Received: by 2002:a05:600d:1c:b0:4bb:9dbd:feb7 with SMTP id 5b1f17b1804b1-4bb9dbdff35mr301298855e9.9.1795884895549;
-        Sat, 28 Nov 2026 08:54:55 -0800 (PST)
+        bh=DGJ33Sv6mrFv0EKY2paYZsuyffqNuvLNLm0BK3iNdGA=;
+        b=dANgp5XsWLTj7HsgxhF8wriTOqZ+DN/vdRT+h6BX1p7ppHiunSbXnza4sWvp91pFvV
+         7sxyj5p9FD2Fi68saImCkWx59W6hqU1u3a95JjZeG8Ay/thORvfDfRptumPZaefIkwDP
+         6gCDQ1vGPW17mvwO3pHQh9AluDQGjkcLNNm0kY9dNZ5op49s/gRhcsxUDRupbW0WdMUK
+         aNLDhY0BzLfTYrfv9L0FHjMkfiM6HjIyHU9VcMQzLDNkhvcSqjnBIakB/iXLEDHrwOr7
+         wCU2BFGutA+RoViDgMnWRoi9SbPzIg1L+RVzvNN5m6LFa65zOvJxaok9iT9+3DD7gO1H
+         aFJw==
+X-Gm-Message-State: APuU4Z81dsVC+4vg9Cv6Au/Yvxxa7V+h8qAx2XEUZDubAYQHQKGZ8Z3R
+	WZmciJ6buGlVu2VY0de9OGkpOAr7+wFOODe2aiMkn1HzRvUTeDZe5Grxp6+Q6KIiXZiH/fXysSW
+	s+owYOjM=
+X-Gm-Gg: AZFdTZezS5K4tLoWU5TmhvwEnpoc2kmcdq9hciPhAK39Q6D2yrJVZpUnjta+wm2agS2
+	PJHrDy6mOvxqjGw+Q5rq8XJUAxrJ37dQBbkwbFLu55DAcqoFk9LMvRvImaMxkp9/y84woSZGsoj
+	VAQ3nMX/M0IjCvLP3rNrLc7cs++8+AzZ7VL9b9v6HIKXUayMbgTD+293XlSviDY01H8VVTzEnru
+	cBBYjrhX6/nCsvbk1Gkyw43Ug3jUPSWd554ETxfYydeqZMRExN6IOcQyFGYxFEKTIa1xpBQBzJ6
+	W63qJr2zgzrSot+H9GQSx4GJJVi/KsdIXFzzkxPmLBoAlqvI04rCkS+RU2GYIIPkrkBAVsi4R/+
+	04BfgANmJ8+LcuO5kGYVD68+fVE/WT/nvR33MoDJcx+yXjE2FlAZ/C9qBm584zQ5efCYGu7sOqn
+	+FxdDiR623RYGGiUw/5OnCi8Nz70tV8BFN+BAIToQlhky6ANDDTsSF/vKYLXzvJ+YxEe3ZY+Ct2
+	e01DYttoDVpjTOvOLxg6rOr9GKqekqLHbQkzJwKR++lL1WpGUTEGoUzYqeEfwZavswuCxLBHRrL
+	R4V8Jl3kxAsK3wePqrFFNU+ciA/Ddhg3YOzWLNfUAu9fNAQed4Q0Qse8UVCZxLbCq8AYXq6XyAa
+	YggYfT9zZxN0UEaY8YoaREigKhO4OwQ==
+X-Received: by 2002:a05:600c:45d4:b0:4a2:84c:52f3 with SMTP id 5b1f17b1804b1-4bb8880988cmr587736825e9.6.1795884889034;
+        Sat, 28 Nov 2026 08:54:49 -0800 (PST)
 Return-Path: <scott.murray@konsulko.com>
 Received: from tone.k.g (lan.nucleusys.com. [92.247.61.126])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853ca452sm755951155e9.15.2026.11.28.08.54.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853ca452sm755951155e9.15.2026.11.28.08.54.48
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Nov 2026 08:54:54 -0800 (PST)
+        Sat, 28 Nov 2026 08:54:48 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][wrynose][PATCH 09/14] suricata: drop oe_cargo_build usage
-Date: Sat, 28 Nov 2026 18:54:27 +0200
-Message-ID: <3a1f0ae15c1cd131fdded7bdf5c3c6cb4fbf11a5.1795883420.git.scott.murray@konsulko.com>
+Subject: [meta-security][wrynose][PATCH 03/14] swtpm: Add missing useradd inherit
+Date: Sat, 28 Nov 2026 18:54:21 +0200
+Message-ID: <f6ec42c446996eabe949e7058de13e70af939256.1795883420.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1795883420.git.scott.murray@konsulko.com>
 References: <cover.1795883420.git.scott.murray@konsulko.com>
@@ -61,44 +61,31 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 16:55:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5579
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5573
 Content-Type: text/plain; charset="utf-8"
 
-Accommodate removal of oe_cargo_build function in oe-core commit
-a64ac03a61 by renaming our local override to cargo_do_compile to get
-the same effect.  This allows building with the wrynose/rust mixin
-layer.
+The swtpm recipe has USERADD and GROUPADD definitions, but has never
+inherited the useradd bbclass, fix that.
 
+Reported-by: Ehsan Emami <ehsan@emami.net>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-ids/suricata/suricata_8.0.6.bb | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-ids/suricata/suricata_8.0.6.bb b/recipes-ids/suricata/suricata_8.0.6.bb
-index 2001cb4..29f259b 100644
---- a/recipes-ids/suricata/suricata_8.0.6.bb
-+++ b/recipes-ids/suricata/suricata_8.0.6.bb
-@@ -86,12 +86,17 @@ CFLAGS += "-Wno-error=incompatible-pointer-types \
- # breaks building this recipe. Providing a copy of the original function
- # Armin 2025/04/01
- #
--oe_cargo_build () {
-+# 08/2026 note - oe_cargo_build function inlined into cargo_do_compile
-+# upstream in openembedded-core commit a64ac03a61, handle by renaming
-+# our forked function to cargo_do_compile to override it directly.
-+# This still works since before a64ac03a61 cargo_do_compile did nothing
-+# but call oe_cargo_build.
-+cargo_do_compile () {
-     export RUSTFLAGS="${RUSTFLAGS}"
-     bbnote "Using rust targets from ${RUST_TARGET_PATH}"
-     bbnote "cargo = $(which ${CARGO})"
--    bbnote "${CARGO} build ${CARGO_BUILD_FLAGS}$@"
--    "${CARGO}" build ${CARGO_BUILD_FLAGS}"$@"
-+    bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} $@"
-+    "${CARGO}" build ${CARGO_BUILD_FLAGS} "$@"
- }
+diff --git a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
+index 8472f02..8488d01 100644
+--- a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
++++ b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
+@@ -12,7 +12,7 @@ SRC_URI = "git://github.com/stefanberger/swtpm.git;branch=stable-0.10;protocol=h
+ PE = "2"
  
- do_compile () {
+ PARALLEL_MAKE = ""
+-inherit autotools pkgconfig perlnative
++inherit autotools pkgconfig perlnative useradd
+ 
+ TSS_USER = "tss"
+ TSS_GROUP = "tss"
 -- 
 2.47.3
 
