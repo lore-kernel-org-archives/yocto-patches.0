@@ -1,174 +1,119 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9104.1795882552714146511
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9317.1795883248495689490
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 28 Nov 2026 08:15:52 -0800
+ Sat, 28 Nov 2026 08:27:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=RWIy7e/t;
- spf=pass (domain: konsulko.com, ip: 209.85.219.47, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-92123f02faeso95936956d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 08:15:52 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=pL4JhFeG;
+ spf=pass (domain: konsulko.com, ip: 209.85.128.45, mailfrom: scott.murray@konsulko.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4bb64ef5a00so74119805e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 08:27:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1795882552; x=1796487352; darn=lists.yoctoproject.org;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bGp8zSmTHK+MCOrcISxiYUgeCN4ULRCUu6Z7WysuypQ=;
-        b=RWIy7e/t9HfX1xrp0+bBqUDL15IZZF5Meo6yMO1UQeITvKDZgUSBNrs9UJgM6cBIFH
-         c4yHQE1tmsEIujjkLYC7DFTlgYJLBDMkDyrWLkuFDG1gOuw05uWsdssX4rI2WlHy7jqf
-         EIAaeMq9WNFPj/tk6O1tqkgOOIIDSP12KyZcI=
+        d=konsulko.com; s=google; t=1795883247; x=1796488047; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=RZLBtS89FSx0++xuJuRm41ybF7GMAz0Jxg4/zLbb/zk=;
+        b=pL4JhFeGrnvWrokEIT4dAJJgOuabbujPKGhYQTEyAOzpdQju9wDpkS+PbeqsuqO38l
+         3cqI/7p9KPfjAktMbDCMjXs3CJeWROC7TAB0FgIGD9plZsyiJUhq2aDvKR47tV5qWo0U
+         bt1pypwGT2v/8xGzFpfU7dMy5wkbDUEJlGetE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795882552; x=1796487352;
-        h=content-type:mime-version:references:message-id:in-reply-to:subject
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=bGp8zSmTHK+MCOrcISxiYUgeCN4ULRCUu6Z7WysuypQ=;
-        b=uIe8FkfZ4M51M/SCerBCyw8IwAtKs+b4xqrXIA2LpHR+PFAbZoRnxASgqpVxG8WT8q
-         LzVJU5UDg1QBUdZNFsfyuHEPqDNXhMkw1oe4dh/EeSswqGPxWQWSVHS2q+curWBoxBcQ
-         +drKiFEHQo7zqBdIdrv1lt5Zah18WGritGl2SEYz1fwq9VRKWuZgPN/ImeGm2KyKT9nh
-         TrFsL+sP2SLIlVNWs8gODoQYtIZczx8WO+Nc8nucJmPk3sudO5xXgY5c4CqJhnyGGOvC
-         cgYqWRMHhsYpn3Am+MqqAd2W+BcabgRzDZEb1EtNeCxXWfxsIYbeemoqi3dmvYiJgiUQ
-         VEHw==
-X-Gm-Message-State: APuU4Z+89lOgQq3fzb+WmWTITJJV3a2ShgNsnqxd/i0NV4L7ppDcU/7D
-	ak3AG8Bzf4evACKKvHfiHmf3Di94GCL9PsxVHh5kT/MDo8amLY7pzZzlc5msupmAK7E/m0QA53j
-	9cn8l
-X-Gm-Gg: AZFdTZdTBbR7eAsXDtut2xRgdvSPvFxqQYq/c3rkVXokmE4zxZ3ntIb9/u5TXcNPrWy
-	elbOLxgExmkp9S0LcD0hdZMqXIndr7AIQpMI+vMvZ7MeTzm/k/8Tegn7P2N5/YaiQqANspcYpX9
-	0fOfHp9rVQE3VsUqQsKhh1A/DBTOT7h/7EQP7nH9Ei3CWkvvhEmTblJyf48f462uFvCZE8hHLw5
-	bNqMIFvYtcOL9cXmT7dqB1lmO8pl47s1o48WJtH3mfP8atDxUBYo7JBwBA+E8UYzD8xd/YNdksZ
-	QNGN8qqjc4RoRIYiaokWH9vDdi854xC+lby7weVqACkYKepffmAx66BQmn1gknsRoUL4rUOA9wd
-	FT4vSZBAyi56Z/qA7lPHI0GpPl/dmFduNThSW4pDksvORhH4/aUnkb0cofN7BXW4H+FpmSaHRnh
-	mXvJXIPMWlJjrS31RinNn/4Kai5k/E8QZiGRxk7E0xuu/ytRUjVEpnqfjZJsZ1P4dQALV0PENjc
-	9Kl5a0L1sBN68OB3nMVbNr5hO7kir2c9ofmPJJDgEmpu8o9+PmZG2RPW2y+5vKe94XQWSkOyxoM
-	hdtgrLx0y7CqkevIwKW0mjnW6slGBmID3yNg8DeeO97vyTb8Xti5wAZObjAOJSTasPZkauphAfz
-	ECTam5Asp8PtB1G8n706ObF81rqzTdbWBRuuNZbH6TLoWqy6nv/h7cCUY
-X-Received: by 2002:a05:6214:4287:b0:921:907b:ea0a with SMTP id 6a1803df08f44-921907bf270mr153443446d6.28.1795882551247;
-        Sat, 28 Nov 2026 08:15:51 -0800 (PST)
+        d=1e100.net; s=20260707; t=1795883247; x=1796488047;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=RZLBtS89FSx0++xuJuRm41ybF7GMAz0Jxg4/zLbb/zk=;
+        b=SjyX1vyL13x32n6Bc1cLP4pNk+UGPAtr68GdsI9uUSKI70r/SKidUblQfYSFT8Rb+R
+         HJpwPLYxYugojp0Q5nxWuXgOl0GIMKzaZ51TeZ9qguOipNgzYqJXZ0z4bquqIxxjKh0a
+         CWvcLwBl3gzeqMOWZkCv7TsD0ew1fWgDXBWekDm5AAnl0/W945GjLkSu/iKBFPGm8h54
+         yM0v2/Ww58RKGClGcxPihAKve+Y7nlOp9H3Zaxs2d3NyvmU/6Hlo2zj3UI6RenuCE7On
+         7Fqld0fJ2IWUCLpDZvgiYWjRzADrd2WnUFc9NsKOZyBUKmeAVNDipmxV5U0nu5pDGPrf
+         fgqA==
+X-Gm-Message-State: APuU4Z/cCushTASjpb1pNpkgFM5l9Uts6Zxz9zdjq8517hJNDmFOa+Jz
+	W2rnmpRAht5CqOAWJ1j5eKHGQNS13KeqtyuMJe+KKu0LIUboUldF21XaiKfIcOItNwwFEem2rXq
+	so7AT
+X-Gm-Gg: AZFdTZeyQ4DfBvwrhSaUIWPkt+R5DGwjmnrm94o9u7ehu+7WHqRwPqKPlpNw7c7rRhG
+	Cjz93bO0Efsx7rR4HaXG4gSOXgaBaFeva4nChcmlauo4oqQGVMYIJzTCjZ8sLc9xdfHf/lPAv46
+	OcpVCjJAqV5Kt1dBXvxZV4lrkmh+xjon+1TRYP7FGyzqSivs6HwFpoMmB2uIry1fADbH5MSg/A7
+	NzAKaWbu24Lt1b25d/vS0yuX0nSBC1xvD1DuNqP+EcsqJuyByhGKZ26YTB7Co+G6/Cfdg8PPr5Q
+	kk/J1sOb5JRw7xP4UYIZnxOO+sbB90RfCMh8BY9i/a7nEWanJcyGLNFjWFx5xr0Y2mGzr6BylkX
+	Lvqw74SbvTtDv3e3/EekKX/qXmq1Vfl6RYAm5x0ZcUzq5ujPq5DjGj1m9EeWBc1ngke8gvwyAa/
+	6sIXUSKBA50+yaPPjMY85EDYbvLstGaLnMjkcQ1b9DqanCggH5zROWHPdYB+LAl931u7B+gg6zG
+	bdod5MUgr4OgphzUtdCGgWvrc5HhQyG5rQcrnBirgXLq+JTGy/5AB8SufYh5sjGS45Tgd/gV1wy
+	ta7CyjZquLfBqrsiyl059xmipBjfKd8/GqphfGVEgu8vjKWXf8X7P65mnoPnbZwD1eQ/sd3SAy2
+	/aU8V8M92C5t1cAycARxUVDJLSlCiqCCp4Sj8qGlEE/dYtZXqKu8=
+X-Received: by 2002:a05:600c:64c8:b0:4a0:1c0e:b057 with SMTP id 5b1f17b1804b1-4bb887e2380mr520781795e9.4.1795883246300;
+        Sat, 28 Nov 2026 08:27:26 -0800 (PST)
 Return-Path: <scott.murray@konsulko.com>
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9217fd18b2asm90107056d6.21.2026.11.28.08.15.50
+Received: from tone.k.g (lan.nucleusys.com. [92.247.61.126])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb90655f5asm529202045e9.1.2026.11.28.08.27.25
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Nov 2026 08:15:50 -0800 (PST)
-Date: Sat, 28 Nov 2026 11:15:50 -0500 (EST)
+        Sat, 28 Nov 2026 08:27:25 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 00/19]
- Update to 1.99.1
-In-Reply-To: <18EB6A6B0F1A16D2.1929676@lists.yoctoproject.org>
-Message-ID: <0e175e2f-d1a0-3375-30b9-a98c71ebc856@konsulko.com>
-References: <18EB6A6B0F1A16D2.1929676@lists.yoctoproject.org>
+Subject: [meta-security][PATCH 00/10] Assorted updates 11/28
+Date: Sat, 28 Nov 2026 18:27:03 +0200
+Message-ID: <cover.1795882913.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 16:15:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5558
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 16:27:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5559
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, 25 Nov 2026, Scott Murray via yocto-patches wrote:
-
-> This patch series for the scarthgap/rust mixin layer backports the
-> recent Rust toolchain changes in oe-core master branch to pull in
-> the 1.98.1 -> 1.99.0 -> 1.99.1 updates and other fixes.
->
-> I intend to merge this series to scarthgap/rust by end of day tomorrow
-> (November 26, EST) unless an issue is pointed out.
-
-My apologies, I got head down on something and forgot to merge these,
-they have now been merged to scarthgap/rust.
+This series rolls up recent contributions along with a handful of
+package updates and a build fix from myself.  I have pushed them
+to master-next, and plan to merge them sometime on Tuesday, Dec. 1,
+if there are no objections.
 
 Scott
 
 
-> Changes:
->
-> Ankur Tyagi (1):
->   librsvg: upgrade 2.63.2 -> 2.63.3
->
-> Deepesh Varatharajan (1):
->   cargo-c: upgrade 0.10.25 -> 0.10.26
->
-> Harish Sadineni (1):
->   rust-cross-canadian: install target-specific env scripts and fix
->     rustlib lookup
->
-> Hemanth Kumar M D (2):
->   rust: Upgrade 1.98.1 -> 1.99.0
->   rust-target-config: fix invalid +v5 LLVM feature for armv5
->
-> Jaipaul Cheernam (1):
->   librsvg: upgrade 2.63.3 -> 2.63.4
->
-> Khem Raj (1):
->   rust-common: Use 64-bit time_t libc layouts for riscv32 musl
->
-> Markus Volk (1):
->   cargo_common: map the cargo vendoring directory for the C compiler
->
-> Peter Tatrai (1):
->   rust: add secure-plt to generated powerpc targets
->
-> Richard Purdie (1):
->   librsvg: upgrade 2.63.0 -> 2.63.2
->
-> Ross Burton (2):
->   librsvg: upgrade 2.62.3 -> 2.63.0
->   classes/cargo_c: use CARGO_C_BUILD_FLAGS for cargo-c flags
->
-> Sowmya Sathram (1):
->   rust: Upgrade 1.99.0 -> 1.99.1
->
-> Sunil Dora (5):
->   rust: drop the cc object-name reproducibility patch
->   rust: hash cc object names relative to their source roots
->   rust: keep the build host triple out of cargo unit metadata
->   rust: backport deterministic DocLinkResMap serialisation
->   rust: sort hygiene data before it is encoded
->
-> Vasileios Anagnostopoulos (1):
->   ptest-cargo: align test and application build environments
->
->  classes-recipe/cargo_c.bbclass                |   6 +-
->  classes-recipe/cargo_common.bbclass           |   5 +
->  classes-recipe/ptest-cargo.bbclass            |  35 +-
->  classes-recipe/rust-common.bbclass            |   3 +
->  classes-recipe/rust-target-config.bbclass     |   6 +-
->  conf/layer.conf                               |   4 +-
->  recipes-devtools/cargo-c/cargo-c-crates.inc   | 332 +++----
->  ....0.bb => cargo-c_0.10.26+cargo-0.100.0.bb} |   2 +-
->  .../rust/{cargo_1.98.1.bb => cargo_1.99.1.bb} |   0
->  ...l-codes-on-riscv32gc-unknown-linux-g.patch | 219 -----
->  ...teps-tool.rs-switch-off-lto-for-rust.patch |  51 +-
->  ...ommits-from-rust-Fix-selftest-llvm23.patch | 661 -------------
->  ...-host-triple-from-unit-metadata-hash.patch |  62 ++
->  ...hygiene-encoding-order-deterministic.patch |  59 ++
->  ...llvm-Do-not-pass-amx-tf32-to-LLVM-23.patch |  38 -
->  ...ject-names-relative-to-source-roots.patch} | 118 +--
->  .../rust/files/rust-oe-selftest.patch         |  14 +-
->  ...ibstd-rs_1.98.1.bb => libstd-rs_1.99.1.bb} |   0
->  recipes-devtools/rust/rust-cross-canadian.inc |   9 +-
->  ....98.1.bb => rust-cross-canadian_1.99.1.bb} |   0
->  ...ust-llvm_1.98.1.bb => rust-llvm_1.99.1.bb} |   0
->  recipes-devtools/rust/rust-snapshot.inc       | 104 +-
->  recipes-devtools/rust/rust-source.inc         |   9 +-
->  ...source_1.98.1.bb => rust-source_1.99.1.bb} |   0
->  .../rust/{rust_1.98.1.bb => rust_1.99.1.bb}   |   2 -
->  recipes-gnome/librsvg/librsvg-crates.inc      | 924 +++++++++---------
->  ...append-RUSTFLAGS-to-rustc-executable.patch |   2 +-
->  ...e-care-of-deprecated-assert_cmd-Comm.patch |   2 +-
->  .../{librsvg_2.62.3.bb => librsvg_2.63.4.bb}  |   2 +-
->  29 files changed, 934 insertions(+), 1735 deletions(-)
->  rename recipes-devtools/cargo-c/{cargo-c_0.10.25+cargo-0.99.0.bb => cargo-c_0.10.26+cargo-0.100.0.bb} (87%)
->  rename recipes-devtools/rust/{cargo_1.98.1.bb => cargo_1.99.1.bb} (100%)
->  delete mode 100644 recipes-devtools/rust/files/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch
->  delete mode 100644 recipes-devtools/rust/files/0004-Backport-commits-from-rust-Fix-selftest-llvm23.patch
->  create mode 100644 recipes-devtools/rust/files/0004-cargo-omit-host-triple-from-unit-metadata-hash.patch
->  create mode 100644 recipes-devtools/rust/files/0005-rustc-span-make-hygiene-encoding-order-deterministic.patch
->  delete mode 100644 recipes-devtools/rust/files/0005-rustc_codegen_llvm-Do-not-pass-amx-tf32-to-LLVM-23.patch
->  rename recipes-devtools/rust/files/{repro-issue-fix-with-cc-crate-hashmap.patch => cc-hash-object-names-relative-to-source-roots.patch} (68%)
->  rename recipes-devtools/rust/{libstd-rs_1.98.1.bb => libstd-rs_1.99.1.bb} (100%)
->  rename recipes-devtools/rust/{rust-cross-canadian_1.98.1.bb => rust-cross-canadian_1.99.1.bb} (100%)
->  rename recipes-devtools/rust/{rust-llvm_1.98.1.bb => rust-llvm_1.99.1.bb} (100%)
->  rename recipes-devtools/rust/{rust-source_1.98.1.bb => rust-source_1.99.1.bb} (100%)
->  rename recipes-devtools/rust/{rust_1.98.1.bb => rust_1.99.1.bb} (99%)
->  rename recipes-gnome/librsvg/{librsvg_2.62.3.bb => librsvg_2.63.4.bb} (98%)
->
->
+Changes:
+
+Francesco Dolcini (1):
+  systemd: do not enable efi for tpm2
+
+Niranjan Reddy Mekala (2):
+  swtpm: upgrade 0.10.0 -> 0.10.2
+  swtpm: backport sysusers and tmpfiles support
+
+Scott Murray (7):
+  parsec-tool: Fix building with Rust 1.100
+  suricata: Upgrade 8.0.6 -> 8.0.8
+  python3-suricata-update: Upgrade 1.3.6 -> 1.3.8
+  crowdsec: Upgrade 1.8.1 -> 1.8.2
+  aide: Upgrade 0.19.4 -> 0.19.5
+  sssd: Upgrade 2.13.1 -> 2.13.2
+  ding-libs: Update LIC_FILES_CHKSUM
+
+ .../sssd/{sssd_2.13.1.bb => sssd_2.13.2.bb}   |   2 +-
+ .../0001-Update-picky-asn1-x509-version.patch |  47 +++++
+ .../parsec-tool/parsec-tool-crates.inc        |   4 +-
+ .../parsec-tool/parsec-tool_0.7.0.bb          |   1 +
+ .../recipes-core/systemd/systemd_%.bbappend   |   2 +-
+ ...ll-sysusers.d-and-tmpfiles.d-configs.patch |  86 ++++++++
+ ...2-swtpm-sync-sysuser.d-with-tpm2-tss.patch |  29 +++
+ .../{swtpm_0.10.0.bb => swtpm_0.10.2.bb}      |  11 +-
+ .../aide/{aide_0.19.4.bb => aide_0.19.5.bb}   |   2 +-
+ recipes-ids/crowdsec/crowdsec-go-mods.inc     | 185 +++++++++--------
+ recipes-ids/crowdsec/crowdsec-licenses.inc    | 194 +++++++++---------
+ .../{crowdsec_1.8.1.bb => crowdsec_1.8.2.bb}  |   2 +-
+ ....6.bb => python3-suricata-update_1.3.8.bb} |   2 +-
+ recipes-ids/suricata/suricata-crates.inc      | 101 +++++----
+ .../{suricata_8.0.6.bb => suricata_8.0.8.bb}  |   2 +-
+ recipes-security/ding-libs/ding-libs_0.7.0.bb |   3 +-
+ 16 files changed, 423 insertions(+), 250 deletions(-)
+ rename dynamic-layers/networking-layer/recipes-security/sssd/{sssd_2.13.1.bb => sssd_2.13.2.bb} (98%)
+ create mode 100644 meta-parsec/recipes-parsec/parsec-tool/files/0001-Update-picky-asn1-x509-version.patch
+ create mode 100644 meta-tpm/recipes-tpm/swtpm/swtpm/0001-swtpm-install-sysusers.d-and-tmpfiles.d-configs.patch
+ create mode 100644 meta-tpm/recipes-tpm/swtpm/swtpm/0002-swtpm-sync-sysuser.d-with-tpm2-tss.patch
+ rename meta-tpm/recipes-tpm/swtpm/{swtpm_0.10.0.bb => swtpm_0.10.2.bb} (84%)
+ rename recipes-ids/aide/{aide_0.19.4.bb => aide_0.19.5.bb} (96%)
+ rename recipes-ids/crowdsec/{crowdsec_1.8.1.bb => crowdsec_1.8.2.bb} (96%)
+ rename recipes-ids/suricata/{python3-suricata-update_1.3.6.bb => python3-suricata-update_1.3.8.bb} (90%)
+ rename recipes-ids/suricata/{suricata_8.0.6.bb => suricata_8.0.8.bb} (98%)
+
+-- 
+2.47.3
+
