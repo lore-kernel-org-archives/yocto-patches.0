@@ -1,59 +1,59 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9325.1795883256187510805
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9319.1795883250085278552
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 28 Nov 2026 08:27:36 -0800
+ Sat, 28 Nov 2026 08:27:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=rdcEabBj;
- spf=pass (domain: konsulko.com, ip: 209.85.221.49, mailfrom: scott.murray@konsulko.com)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-490c3ae81d3so5646312f8f.2
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 08:27:35 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Uoht8N6s;
+ spf=pass (domain: konsulko.com, ip: 209.85.221.54, mailfrom: scott.murray@konsulko.com)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-492fcbfaa88so6107432f8f.3
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 08:27:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1795883254; x=1796488054; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1795883248; x=1796488048; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=m7qPgtzE6FT2q3pW/fCknkh2eDbw/ORVF8LIKJE4uyo=;
-        b=rdcEabBjT42mFkdu3AIk70+BQ/obs6eMdPZszJsa3jrBuT/dQKkldqSHXFliWdjYRq
-         KtRm4Wl5mmg0EFftj/GfPXS7vVxjk8PwSMvi0ATWdXlPfk31uvTcI7WTtBNmWI+wXKIg
-         xw3DDaFGqk0hqkdK0Zt7aaG4TGMmQpmgnh7WE=
+        bh=VxOGH6TCB0T3vYb+F0E37DA7Jrg8rC9A+gT5oftqr/A=;
+        b=Uoht8N6s6lHLaCOnMzbsqCLadTIjSPnGa+UwZKutQ7lz4tXdvVBpX7ir5ZkDW5UoHJ
+         uKUoWaMCwqt3brLAHDIn9xQe2bxNG0UTkHbFz4oOAl+rWDg7O01OZa+b2rV7fsNo/mqD
+         zT3AzFxnfjbQBnAtgUT7VBqnJjZYt+H1ny3/o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795883254; x=1796488054;
+        d=1e100.net; s=20260707; t=1795883248; x=1796488048;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=m7qPgtzE6FT2q3pW/fCknkh2eDbw/ORVF8LIKJE4uyo=;
-        b=nE8nS5oKEPLbhcyw9AGVIzvf5Xboso3eAnx52WmaH/RJyLbTdAL3kzXtZ4ZAMvkBAv
-         ZKahF3EhbRtQqtwLp9N1peGlx0WsqUPWD1OYLSe58C+S8IAtTp7AHeBMPcfc3CxYIJch
-         6ZSlKleaYDvNUsdubk8xXQsZ6TaYJusNtmCdTyNCTLrYNDyjglh5sECTmxmcrGXd/AeJ
-         zPsqUmvJiaXi7wMll88D0/Lv+B8Z0Yj3klI2w90h7+UE9urG/lXqbtuzVffBgVbFNABJ
-         X4Qcg5ehRPpCKS59NiEVu+uu6y+FogqqA5Z+Qt0Z67xjWf/scIEwNxtKgfscfpJuNKsv
-         +zJw==
-X-Gm-Message-State: APuU4Z9QCtp+PGV+dYoY4VoAV+lDN71DpSY3Pdp+UtqBzNkWyt6w9Xp7
-	Pks2AnzQg0sK29UjUFZGg63Fk7xc/wc8Rg7mRMsfYClRvzkyxRF6kcpfDHKXLdFsRZ2eGRefHIb
-	6wVV6e/s=
-X-Gm-Gg: AZFdTZe88Bt5imM8Y0PwBv/mVdXDW9MsgoOojrrPe5kcMLx98Dk7OfU+UqsRN1o+D9A
-	INSYqvC9ST6uHD3sM0HAMerQW5rgDf3HQmJbt5Cpj52n2Aemo2+vUgmKRCFuFWWFTsdCAq0Kjn4
-	xMy9OQChs7xJlXqsf55nlhD43oFMcwt/DqvoNgLANxJGJWVtLhCd9F10xAAxs0jx8WxB8gpkp+N
-	UYwzt2Tg9cyM+UaaQbZ9erNdWLP4MaS7GHnnqVpqQHTGFW8ouTWNcBvauR8BElup9ufbR7YklAb
-	w8RUwRPFxz1hnYuPNLb6844ikZX8wSI/ndergT28IZEhOrIY9zOJRphXAs46GMNNRwFz1ERSFzk
-	69z7/12Dqhb5wKsEow6of7zUIc9QqGmb/9+f+Jl37f/SNPqJPfrcTEDW/QP5jed4oY8ZcCMt2bE
-	dI3Ygc7zJkJVo+Ub2j2NEk684/XNoBRXNf8bfCeFimbVVH0WadRGuroeNvSemaci6DQf7iqX4CB
-	JWZs1GR+a6LuoAEPAAjBO5UQhPhPrhChUUodKlQXOKuhEeHSnQKWWJTVG/PGDd0cIL+Oz4wASyd
-	QjLdmED4klRXb0OdqpLLsNUjBSxwV+ODIFPP3RVlOoZX3PFu0oLqriCTXMmDsB/V97MtIPPosjk
-	/QVYUbz/LlTXzaE8ITFr2N88srkp81w==
-X-Received: by 2002:a05:600c:64c6:b0:4bb:6a75:d04f with SMTP id 5b1f17b1804b1-4bb88807d96mr538639885e9.8.1795883254265;
-        Sat, 28 Nov 2026 08:27:34 -0800 (PST)
+        bh=VxOGH6TCB0T3vYb+F0E37DA7Jrg8rC9A+gT5oftqr/A=;
+        b=PkQCH7HxnZ1ClYSsVb+Q+LrFk9WI8UAohOPRRoo9mKEq0QQJchQgMSVTtWGcipCBjy
+         0Z7+MRSDHH67Upn7LWyHQu7wav7JvdJN3qhOvCLbEW9nuKoUo10C8o0CTvfvDXK39iS7
+         iuwqUN5ZAmO/dE6DfrN4YZpQbxVTkuhbw3mOecaSz+EStSemFOovmD5jaASQ44JAl3ly
+         PP8ZG9m8v8QsObQnttfFSG/yBDjKMp2ViF7dM1QFk5CMdbK85Ptbjmnf3GStnwxYeLbe
+         lMJckvGioEpGDXulOkyh1IQjV6ibkGkr9fh7Tg+A1HUl9Sn6tB5z1pANSy4nLiiWz1DO
+         QWnA==
+X-Gm-Message-State: APuU4Z/+A6d11mluk9rv7/VIbJaKCzNM5DJpGu/tbeQ5oLKAagEeutQ1
+	A4P2q6uBzUpKV5oFGS1+t2lKAaEbIxXdxi96dXqWQ8r6YbLel/LzM84/jyDERF+9LnDuldEMkG4
+	kHvU+2Dw=
+X-Gm-Gg: AZFdTZcnTOJbcf8vJjuqYiHFQIgaqsWop5wgbRHe4viYCB1rd2una7ljewbEOZTCUYS
+	wbZy2ou+MrX47E2ce1efo4iIvOS9btCEgXvl/YlVOsx84oTRf73W0UqKfWgTZlhRKDa+rGDKnO4
+	qRE15PtTwLIlM53SKZXHNADKZxcfHdq8ZPIEmYOXsUzSOjdYvZYL3yX0opqAT9GbXxU5vMRQlMB
+	dNKm3PXcx9Bp+48i4ICc+FkJg/h9GuIo+khsIGHru4fiOGYvr0Y4uFTesPuFP4ykCG4cZWeJ3bm
+	6hM7YdLC9CnmqvgP0RJ2YWsOS+Qu7gJ1KP1U/YucXKTqD5vRvTd6ncnDBw4Hgfd/ZVFpFNMTsWQ
+	AWn9Xl1GKSDqJdCE3jrNGsD7w5KPos7oSu6oLUxTRzIgDiBtQf3lIvT7LjLFWqaqMf/aKz3OjVY
+	RvvPDbhORkb4gCz4+gHxsfDAGhO8Ia10ArGWeMeJzaPiIbRqNYadlEk8ga7E4cHuH6vHzRxYgE+
+	dQd1c2YsmEpPPkoOow2MNfGpMdbCfxY9fmdGTUtRGcPEdbuVAW/E8TOeVgwF2He+jvPQUbXkGb0
+	FdS98+vsg9BBslwBpm2i5j4ajjy3g3cLbOogBmWfTCBllUTtlssfjn/rKuJDOGTuQbRDxKgAV2n
+	NEvy72SbFRpBlV63n42j1E5hYhnq5zQ==
+X-Received: by 2002:a05:600c:848a:b0:4a1:fbd2:f689 with SMTP id 5b1f17b1804b1-4bb8880993amr537859035e9.7.1795883247893;
+        Sat, 28 Nov 2026 08:27:27 -0800 (PST)
 Return-Path: <scott.murray@konsulko.com>
 Received: from tone.k.g (lan.nucleusys.com. [92.247.61.126])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb90655f5asm529202045e9.1.2026.11.28.08.27.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb90655f5asm529202045e9.1.2026.11.28.08.27.27
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Nov 2026 08:27:33 -0800 (PST)
+        Sat, 28 Nov 2026 08:27:27 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 09/10] sssd: Upgrade 2.13.1 -> 2.13.2
-Date: Sat, 28 Nov 2026 18:27:12 +0200
-Message-ID: <8d57c9cb2ccd5743796d8fa869f51c264731d957.1795882913.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 02/10] swtpm: backport sysusers and tmpfiles support
+Date: Sat, 28 Nov 2026 18:27:05 +0200
+Message-ID: <546d551b9166f5ddb7c90040fd65f6db68361ede.1795882913.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1795882913.git.scott.murray@konsulko.com>
 References: <cover.1795882913.git.scott.murray@konsulko.com>
@@ -61,33 +61,182 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Nov 2026 16:27:39 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5568
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/5561
 Content-Type: text/plain; charset="utf-8"
 
-Release notes:
-https://sssd.io/release-notes/sssd-2.13.2.html
+From: Niranjan Reddy Mekala <nirameka@qti.qualcomm.com>
 
+Backport the upstream sysusers.d and tmpfiles.d integration to
+provision the tss user and /var/lib/swtpm-localca declaratively.
+
+Also backport the follow-up change that aligns the tss sysusers
+definition with tpm2-tss to avoid conflicting definitions.
+
+Package the generated sysusers.d and tmpfiles.d configuration files.
+
+Signed-off-by: Niranjan Reddy Mekala <nirameka@qti.qualcomm.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../recipes-security/sssd/{sssd_2.13.1.bb => sssd_2.13.2.bb}    | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename dynamic-layers/networking-layer/recipes-security/sssd/{sssd_2.13.1.bb => sssd_2.13.2.bb} (98%)
+ ...ll-sysusers.d-and-tmpfiles.d-configs.patch | 86 +++++++++++++++++++
+ ...2-swtpm-sync-sysuser.d-with-tpm2-tss.patch | 29 +++++++
+ meta-tpm/recipes-tpm/swtpm/swtpm_0.10.2.bb    |  9 +-
+ 3 files changed, 123 insertions(+), 1 deletion(-)
+ create mode 100644 meta-tpm/recipes-tpm/swtpm/swtpm/0001-swtpm-install-sysusers.d-and-tmpfiles.d-configs.patch
+ create mode 100644 meta-tpm/recipes-tpm/swtpm/swtpm/0002-swtpm-sync-sysuser.d-with-tpm2-tss.patch
 
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.1.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.2.bb
-similarity index 98%
-rename from dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.1.bb
-rename to dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.2.bb
-index 1e71300..303a121 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.1.bb
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.13.2.bb
-@@ -24,7 +24,7 @@ SRC_URI = "https://github.com/SSSD/sssd/releases/download/${PV}/${BP}.tar.gz \
-            file://fix-ldblibdir.patch \
-            file://musl_fixup.patch \
-            "
--SRC_URI[sha256sum] = "05ea79e89f0be399983925b8874ac196d6dc5fd4416f83609557b9fc8ef798b5"
-+SRC_URI[sha256sum] = "449d2e69dfc7fbbadaf971514561482abdcabd08014ea942323a28862de9f328"
+diff --git a/meta-tpm/recipes-tpm/swtpm/swtpm/0001-swtpm-install-sysusers.d-and-tmpfiles.d-configs.patch b/meta-tpm/recipes-tpm/swtpm/swtpm/0001-swtpm-install-sysusers.d-and-tmpfiles.d-configs.patch
+new file mode 100644
+index 0000000..3fc414d
+--- /dev/null
++++ b/meta-tpm/recipes-tpm/swtpm/swtpm/0001-swtpm-install-sysusers.d-and-tmpfiles.d-configs.patch
+@@ -0,0 +1,86 @@
++From d318d40469474eb8f3ccc4a6e9fe0ba100814e20 Mon Sep 17 00:00:00 2001
++From: Luca Boccassi <luca.boccassi@gmail.com>
++Date: Mon, 22 Sep 2025 17:56:24 +0100
++Subject: [PATCH] swtpm: install sysusers.d and tmpfiles.d configs
++
++These configuration files will create the required user, group and
++data directory on first boot/factory reset/package installation,
++without requiring manual scripts or actions. This is very important
++for image-based OSes, but it is useful in other cases to, to allow
++using declarative configuration instead of scripts.
++
++RPM now has built-in support for sysusers.d too.
++
++https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html
++https://www.freedesktop.org/software/systemd/man/latest/sysusers.d.html
++
++Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
++Upstream-Status: Backport [https://github.com/stefanberger/swtpm/commit/d318d40469474eb8f3ccc4a6e9fe0ba100814e20]
++---
++ .gitignore                 |  2 ++
++ configure.ac               |  2 ++
++ src/Makefile.am            | 10 ++++++++++
++ src/swtpm-sysusers.conf.in |  1 +
++ src/swtpm-tmpfiles.conf.in |  1 +
++ 5 files changed, 16 insertions(+)
++ create mode 100644 src/swtpm-sysusers.conf.in
++ create mode 100644 src/swtpm-tmpfiles.conf.in
++
++diff --git a/.gitignore b/.gitignore
++index 579d0be..012ef88 100644
++--- a/.gitignore
+++++ b/.gitignore
++@@ -63,6 +63,8 @@ Makefile
++ /src/swtpm_ioctl/swtpm_ioctl
++ /src/swtpm_localca/swtpm_localca
++ /src/swtpm_setup/swtpm_setup
+++/src/swtpm-sysusers.conf
+++/src/swtpm-tmpfiles.conf
++ /src/utils/swtpm_conf.h
++ /test-driver
++ tests/*.log
++diff --git a/configure.ac b/configure.ac
++index afcd18a..4eab9f4 100644
++--- a/configure.ac
+++++ b/configure.ac
++@@ -502,6 +502,8 @@ AC_CONFIG_FILES([Makefile                   \
++ 		src/swtpm_ioctl/Makefile    \
++ 		src/swtpm_localca/Makefile  \
++ 		src/swtpm_setup/Makefile    \
+++		src/swtpm-sysusers.conf     \
+++		src/swtpm-tmpfiles.conf     \
++ 		src/utils/Makefile          \
++ 		src/utils/swtpm_conf.h      \
++ 		man/Makefile                \
++diff --git a/src/Makefile.am b/src/Makefile.am
++index 9e03c78..c36d5cc 100644
++--- a/src/Makefile.am
+++++ b/src/Makefile.am
++@@ -17,3 +17,13 @@ if WITH_SELINUX
++ SUBDIRS += \
++ 	selinux
++ endif
+++
+++sysusersdir = $(prefix)/lib/sysusers.d
+++sysusers_DATA = swtpm-sysusers.conf
+++
+++tmpfilesdir = $(prefix)/lib/tmpfiles.d
+++tmpfiles_DATA = swtpm-tmpfiles.conf
+++
+++EXTRA_DIST = \
+++	swtpm-sysusers.conf \
+++	swtpm-tmpfiles.conf
++diff --git a/src/swtpm-sysusers.conf.in b/src/swtpm-sysusers.conf.in
++new file mode 100644
++index 0000000..0b02ca4
++--- /dev/null
+++++ b/src/swtpm-sysusers.conf.in
++@@ -0,0 +1 @@
+++u! @TSS_USER@ - "TPM software stack" @LOCALSTATEDIR@/lib/swtpm-localca
++diff --git a/src/swtpm-tmpfiles.conf.in b/src/swtpm-tmpfiles.conf.in
++new file mode 100644
++index 0000000..afe2d13
++--- /dev/null
+++++ b/src/swtpm-tmpfiles.conf.in
++@@ -0,0 +1 @@
+++d @LOCALSTATEDIR@/lib/swtpm-localca 0750 @TSS_USER@ root
+diff --git a/meta-tpm/recipes-tpm/swtpm/swtpm/0002-swtpm-sync-sysuser.d-with-tpm2-tss.patch b/meta-tpm/recipes-tpm/swtpm/swtpm/0002-swtpm-sync-sysuser.d-with-tpm2-tss.patch
+new file mode 100644
+index 0000000..edc0402
+--- /dev/null
++++ b/meta-tpm/recipes-tpm/swtpm/swtpm/0002-swtpm-sync-sysuser.d-with-tpm2-tss.patch
+@@ -0,0 +1,29 @@
++From b64b114c9c6941d9729fcc2ad511f108a3affaef Mon Sep 17 00:00:00 2001
++From: Luca Boccassi <luca.boccassi@gmail.com>
++Date: Wed, 7 Oct 2026 08:29:09 +0200
++Subject: [PATCH] swtpm: sync sysuser.d with tpm2-tss
++
++tpm2-tss has shipped a sysusers.d file since 2019 for the tss user:
++
++https://github.com/tpm2-software/tpm2-tss/commit/c43f3c2190eb06e731c5bf7c2849d07f5f8503a5
++
++When two sysusers.d configs have a conflict, the tool raises a warning,
++and the result depends on alphabetic sorting of the config names which
++isn't great. Sync the content: drop the '!', drop the homedir (not used
++anyway) and modify the GECOS string.
++
++Fixes: d318d4046947 ("swtpm: install sysusers.d and tmpfiles.d configs")
++
++Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
++Upstream-Status: Backport [https://github.com/stefanberger/swtpm/commit/b64b114c9c6941d9729fcc2ad511f108a3affaef]
++---
++ src/swtpm-sysusers.conf.in | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/src/swtpm-sysusers.conf.in b/src/swtpm-sysusers.conf.in
++index 0b02ca4..a9a1779 100644
++--- a/src/swtpm-sysusers.conf.in
+++++ b/src/swtpm-sysusers.conf.in
++@@ -1 +1 @@
++-u! @TSS_USER@ - "TPM software stack" @LOCALSTATEDIR@/lib/swtpm-localca
+++u @TSS_USER@ - "tss user for tpm2"
+diff --git a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.2.bb b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.2.bb
+index 1e91a91..50d2cfc 100644
+--- a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.2.bb
++++ b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.2.bb
+@@ -8,7 +8,10 @@ SECTION = "apps"
+ DEPENDS = "libtasn1 coreutils-native expect-native socat-native glib-2.0 net-tools-native libtpms json-glib"
  
- inherit autotools pkgconfig gettext python3native features_check systemd useradd github-releases
+ SRCREV = "32b5a0575991a73398de9749d63cafd847008af2"
+-SRC_URI = "git://github.com/stefanberger/swtpm.git;branch=stable-0.10;protocol=https"
++SRC_URI = "git://github.com/stefanberger/swtpm.git;branch=stable-0.10;protocol=https \
++           file://0001-swtpm-install-sysusers.d-and-tmpfiles.d-configs.patch \
++           file://0002-swtpm-sync-sysuser.d-with-tpm2-tss.patch \
++          "
+ PE = "2"
+ 
+ PARALLEL_MAKE = ""
+@@ -40,6 +43,10 @@ USERADD_PARAM:${PN} = "--system -g ${TSS_GROUP} --home-dir / \
+ 
+ PACKAGE_BEFORE_PN = "${PN}-cuse"
+ FILES:${PN}-cuse = "${bindir}/swtpm_cuse"
++FILES:${PN} += " \
++    ${libdir}/sysusers.d/swtpm-sysusers.conf \
++    ${libdir}/tmpfiles.d/swtpm-tmpfiles.conf \
++"
+ 
+ INSANE_SKIP:${PN}   += "dev-so"
  
 -- 
 2.47.3
